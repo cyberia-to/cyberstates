@@ -42,14 +42,31 @@ pop_in(S)  = Σ  w(D→S) × pop(D)   / world_pop   × 100
 
 where `w(A→B)` is the access weight a holder of A's passport faces at B's
 border, `pop` is population, and `cap` is the state's **money supply in USD**
-— the same figure as the CAP column. Economy here means the stock of the
-state's token in circulation, not annual GDP flow: a state is scored by how
-much monetized wealth its passport reaches, in keeping with the token frame of
-the whole table.
+— the same figure as the CAP column.
 
 Each sub-index reads as "weighted percent of the world":
 `eco_out = 62` means the passport reaches 62% of the world's money at full
 value after visa friction.
+
+## Why money supply, not GDP
+
+GDP is the nonsensical metric here, not the alternative. It is an accounting
+flow — a year of transactions, inflated by government spending, imputed rents
+and statistical revisions — and it answers a question nobody at a border is
+asking. A visa does not grant you a share of last year's transactions. It
+grants you access to a territory where wealth is **held**.
+
+Money supply is the stock of the state's token in circulation: the market's
+own ledger of how much monetized wealth lives behind that border. It is
+measured the same way this table measures everything else — a state is a
+token, its economy is that token's cap. Scoring passports against money stock
+instead of GDP flow is not a proxy or a compromise; it is the correct measure
+for an instrument whose value is access to wealth, not participation in
+accounting.
+
+The practical difference is visible in the table: China's deep money (M2
+≈ $42T) outweighs its GDP share, and states that monetize little weigh in
+through the population axis — which is exactly where their weight belongs.
 
 ## Folding four into two
 
@@ -93,9 +110,9 @@ normalized by world totals, folded by the geometric mean: one number.
 
 ## Honest limitations
 
-- **Money supply ≠ GDP.** The economy axis rewards monetized wealth stock.
-  States with deep money (China's M2) weigh more than their GDP share; poor
-  but populous states weigh in through the population axis instead.
+- **Money aggregates are not uniform.** States report money supply on
+  slightly different aggregate definitions and dates; the CAP column is the
+  best single USD figure per state, not a synchronized global snapshot.
 - **Weights are judgment calls.** 0.8 for visa-on-arrival and 0.1 for
   embassy-visa are defensible, not derivable. Shifting them reshuffles the
   middle of the table, not the extremes.
