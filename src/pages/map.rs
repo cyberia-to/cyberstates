@@ -57,12 +57,14 @@ fn value_to_color(val: f64, max: f64) -> String {
     format!("rgb({:.0},{:.0},{:.0})", r.min(255.0), g.min(255.0), b.min(255.0))
 }
 
-fn colorize_map(metric: MapMetric) {
+fn colorize_map(metric: MapMetric, query: &str) {
     let countries = load_countries();
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
 
-    // Pre-compute indices and values
+    // Pre-compute indices and values; a search query keeps only matching
+    // states lit — the rest of the world goes dark
+    let query = query.to_lowercase();
     let mut values: HashMap<String, f64> = HashMap::new();
     let mut max_val: f64 = 0.0;
 
@@ -74,7 +76,13 @@ fn colorize_map(metric: MapMetric) {
             MapMetric::Cap => (c.money_supply_b_usd + 1.0).ln().max(0.0),
         };
         if val > max_val { max_val = val; }
-        values.insert(c.code.clone(), val);
+        let visible = query.is_empty()
+            || c.name.to_lowercase().contains(&query)
+            || c.code.to_lowercase().contains(&query)
+            || c.currency_code.to_lowercase().contains(&query);
+        if visible {
+            values.insert(c.code.clone(), val);
+        }
     }
 
     // Find all path elements in the SVG
@@ -121,14 +129,16 @@ fn setup_click_handlers() {
 #[component]
 pub fn MapPage() -> impl IntoView {
     let (metric, set_metric) = signal(MapMetric::Freedom);
+    let (search, set_search) = signal(String::new());
 
     // Colorize + click handlers after DOM is ready
     Effect::new(move |_| {
         let m = metric.get();
+        let q = search.get();
         let window = web_sys::window().unwrap();
         // Use setTimeout to ensure inner_html SVG is in the DOM
         let cb = Closure::wrap(Box::new(move || {
-            colorize_map(m);
+            colorize_map(m, &q);
             setup_click_handlers();
         }) as Box<dyn FnMut()>);
         let _ = window.set_timeout_with_callback_and_timeout_and_arguments_0(
@@ -137,13 +147,50 @@ pub fn MapPage() -> impl IntoView {
         cb.forget();
     });
 
+    Effect::new(move |_| {
+        document().set_title(&format!(
+            "Cyberstates map by {} — Global Visa Openness Analytics",
+            metric.get().label().to_lowercase()
+        ));
+    });
+
     let metrics = [MapMetric::Freedom, MapMetric::Openness, MapMetric::Population, MapMetric::Cap];
 
     view! {
         <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <a href="/" class="back-link">"← BACK TO TABLE"</a>
-                <div style="display: flex; gap: 6px;">
+            // Header row 1: logo — search — nav, same panel as the table pages
+            <div class="header-row1">
+                <div class="logo-zone">
+                    <a href="/" style="text-decoration: none;">
+                        <h1 class="logo">
+                            <span style="color: var(--cyber-green);">"CYBER"</span>
+                            <span style="color: #fff;">"STATES"</span>
+                        </h1>
+                    </a>
+                    <div class="logo-suffix">
+                        {move || format!("map · by {}", metric.get().label().to_lowercase())}
+                    </div>
+                </div>
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search country, code, or currency..."
+                    on:input=move |ev| {
+                        let target = ev.target().unwrap();
+                        let input: web_sys::HtmlInputElement = target.unchecked_into();
+                        set_search.set(input.value());
+                    }
+                />
+                <div class="map-zone">
+                    <a href="/methodology" class="method-btn">"METHODOLOGY"</a>
+                    <a href="/tokens" class="tokens-btn">"TOKENS"</a>
+                    <a href="/" class="map-btn">"TABLE"</a>
+                </div>
+            </div>
+
+            // Header row 2: metric pills
+            <div class="header-row2">
+                <div class="region-pills">
                     {metrics.into_iter().map(|m| {
                         let label = m.label();
                         view! {
