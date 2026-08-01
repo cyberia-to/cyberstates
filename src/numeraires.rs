@@ -2,6 +2,7 @@
 //! prices in USD, bitcoin, ether, or gold. Rates are baked at data-refresh
 //! time by update_market_data.py (gold via PAXG = 1 troy oz).
 
+pub const CNY_USD: f64 = 0.147822; // USD per 1 CNY
 pub const BTC_USD: f64 = 63030.0;
 pub const ETH_USD: f64 = 1866.81;
 pub const XAU_USD: f64 = 4043.92; // per troy oz
@@ -12,17 +13,29 @@ pub const GRAMS_PER_OZ: f64 = 31.1034768;
 #[derive(Clone, Copy, PartialEq)]
 pub enum Numeraire {
     Usd,
+    Cny,
     Btc,
     Eth,
     Gold,
 }
 
 impl Numeraire {
-    pub const ALL: [Numeraire; 4] = [Self::Usd, Self::Btc, Self::Eth, Self::Gold];
+    pub const ALL: [Numeraire; 5] = [Self::Usd, Self::Cny, Self::Btc, Self::Eth, Self::Gold];
+
+    pub fn name(&self) -> &'static str {
+        match self {
+            Self::Usd => "USD",
+            Self::Cny => "CNY",
+            Self::Btc => "BTC",
+            Self::Eth => "ETH",
+            Self::Gold => "GOLD",
+        }
+    }
 
     pub fn label(&self) -> &'static str {
         match self {
-            Self::Usd => "$",
+            Self::Usd => "🇺🇸 $",
+            Self::Cny => "🇨🇳 ¥",
             Self::Btc => "₿",
             Self::Eth => "Ξ",
             Self::Gold => "Au",
@@ -56,6 +69,11 @@ pub fn fmt_cap(b_usd: f64, n: Numeraire) -> String {
             if b_usd >= 1000.0 { format!("${:.1}T", b_usd / 1000.0) }
             else { format!("${:.0}B", b_usd) }
         }
+        Numeraire::Cny => {
+            let cny_b = b_usd / CNY_USD;
+            if cny_b >= 1000.0 { format!("¥{:.1}T", cny_b / 1000.0) }
+            else { format!("¥{:.0}B", cny_b) }
+        }
         Numeraire::Btc => {
             let (v, s) = scaled(usd / BTC_USD);
             format!("₿{}{}", sig(v), s)
@@ -82,6 +100,12 @@ pub fn fmt_price(usd: f64, n: Numeraire) -> String {
             if usd >= 1.0 { format!("${:.2}", usd) }
             else if usd >= 0.01 { format!("${:.4}", usd) }
             else { format!("${:.6}", usd) }
+        }
+        Numeraire::Cny => {
+            let cny = usd / CNY_USD;
+            if cny >= 1.0 { format!("¥{:.2}", cny) }
+            else if cny >= 0.01 { format!("¥{:.4}", cny) }
+            else { format!("¥{:.6}", cny) }
         }
         Numeraire::Btc => {
             let sats = usd / BTC_USD * 1e8;

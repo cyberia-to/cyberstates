@@ -76,7 +76,7 @@ body {
 }
 
 .search-input {
-    flex: 0 1 420px;
+    flex: 0 1 370px;
     min-width: 180px;
     padding: 10px 16px;
     background: #050505;
@@ -189,19 +189,38 @@ body {
     gap: 14px;
 }
 
-.numeraire-toggle {
-    display: flex;
-    gap: 4px;
+.num-chooser {
+    position: relative;
 }
 
-.numeraire-toggle .region-pill {
-    padding: 4px 10px;
+.num-btn {
+    padding: 7px 12px;
     font-size: 12px;
+    white-space: nowrap;
+}
+
+.num-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 70;
+    flex-direction: column;
+    gap: 4px;
+    background: #070a08;
+    border: 1px solid #1c2a1e;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+}
+
+.num-menu .region-pill {
+    text-align: left;
+    white-space: nowrap;
 }
 
 /* Search command panel */
 .search-wrap {
-    flex: 0 1 420px;
+    flex: 0 1 370px;
     min-width: 180px;
     position: relative;
 }

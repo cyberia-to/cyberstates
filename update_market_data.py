@@ -64,6 +64,9 @@ try:
         "https://api.coingecko.com/api/v3/simple/price"
         "?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd"))
     nsrc = open("src/numeraires.rs").read()
+    if "CNY" in rates and rates["CNY"] > 0:
+        nsrc = re.sub(r'pub const CNY_USD: f64 = [0-9.]+;',
+                      f'pub const CNY_USD: f64 = {1.0 / rates["CNY"]:.6f};', nsrc)
     nsrc = re.sub(r'pub const BTC_USD: f64 = [0-9.]+;',
                   f'pub const BTC_USD: f64 = {cg["bitcoin"]["usd"]:.1f};', nsrc)
     nsrc = re.sub(r'pub const ETH_USD: f64 = [0-9.]+;',

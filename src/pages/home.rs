@@ -5,6 +5,7 @@ use crate::data::*;
 use crate::components::table::*;
 use crate::components::nav::SiteNav;
 use crate::numeraires::Numeraire;
+use crate::components::numeraire_chooser::NumeraireChooser;
 
 fn region_slug(r: &str) -> String {
     r.to_lowercase().replace(' ', "-")
@@ -343,7 +344,9 @@ pub fn HomePage() -> impl IntoView {
                         <div class="panel-hint">"mix text and filters: europe cap>1t · / focuses · esc closes"</div>
                     </div>
                 </div>
-                <SiteNav active="STATES" />
+                <SiteNav active="STATES">
+                    <NumeraireChooser numeraire=numeraire set_numeraire=set_numeraire />
+                </SiteNav>
             </div>
 
             // Header row 2: sort landings — real links, every one a page
@@ -369,17 +372,6 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
-                <div class="count-zone">
-                    <div class="numeraire-toggle">
-                        {Numeraire::ALL.map(|n| {
-                            view! {
-                                <button
-                                    class=move || if numeraire.get() == n { "region-pill active" } else { "region-pill" }
-                                    on:click=move |_| set_numeraire.set(n)
-                                >{n.label()}</button>
-                            }
-                        }).collect_view()}
-                    </div>
                 <p class="state-count">
                     {move || {
                         let region = state.get().0;
@@ -392,7 +384,6 @@ pub fn HomePage() -> impl IntoView {
                         format!("{} of {} states", count, total)
                     }}
                 </p>
-                </div>
             </div>
 
             // Table

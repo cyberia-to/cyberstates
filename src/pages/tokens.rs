@@ -3,6 +3,7 @@ use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::nav::SiteNav;
 use crate::numeraires::{fmt_cap, fmt_price, Numeraire};
+use crate::components::numeraire_chooser::NumeraireChooser;
 
 #[derive(Clone, Copy, PartialEq)]
 enum TokenSort {
@@ -89,23 +90,14 @@ pub fn TokensPage() -> impl IntoView {
                         set_search.set(input.value());
                     }
                 />
-                <SiteNav active="TOKENS" />
+                <SiteNav active="TOKENS">
+                    <NumeraireChooser numeraire=numeraire set_numeraire=set_numeraire />
+                </SiteNav>
             </div>
 
-            // Count + numeraire
+            // Count
             <div class="header-row2">
                 <div></div>
-                <div class="count-zone">
-                    <div class="numeraire-toggle">
-                        {Numeraire::ALL.map(|n| {
-                            view! {
-                                <button
-                                    class=move || if numeraire.get() == n { "region-pill active" } else { "region-pill" }
-                                    on:click=move |_| set_numeraire.set(n)
-                                >{n.label()}</button>
-                            }
-                        }).collect_view()}
-                    </div>
                 <p class="state-count">
                     {move || {
                         let query = search.get().to_lowercase();
@@ -115,7 +107,6 @@ pub fn TokensPage() -> impl IntoView {
                         format!("{} of {} tokens", count, total)
                     }}
                 </p>
-                </div>
             </div>
 
             // Table

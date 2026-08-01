@@ -4,7 +4,7 @@ use leptos::prelude::*;
 /// The current page's button renders as an outline — "you are here" —
 /// so the header never changes shape between pages.
 #[component]
-pub fn SiteNav(active: &'static str) -> impl IntoView {
+pub fn SiteNav(active: &'static str, #[prop(optional)] children: Option<Children>) -> impl IntoView {
     const ITEMS: [(&str, &str, &str); 4] = [
         ("STATES", "/", "nav-states"),
         ("TOKENS", "/tokens", "nav-tokens"),
@@ -14,6 +14,7 @@ pub fn SiteNav(active: &'static str) -> impl IntoView {
 
     view! {
         <div class="map-zone">
+            {children.map(|c| c())}
             {ITEMS.map(|(label, href, cls)| {
                 let here = label == active;
                 view! {
