@@ -90,39 +90,18 @@ pub fn fmt_cap(b_usd: f64, n: Numeraire) -> String {
 }
 
 /// Format a unit price given in USD under a numeraire.
+/// One column — one format: fixed decimals per numeraire so every value
+/// in the column is digit-for-digit comparable and decimal-aligned.
 /// BTC prices in sats, ETH in micro-ether, gold in milligrams.
 pub fn fmt_price(usd: f64, n: Numeraire) -> String {
     if usd <= 0.0 {
         return "N/A".to_string();
     }
     match n {
-        Numeraire::Usd => {
-            if usd >= 1.0 { format!("${:.2}", usd) }
-            else if usd >= 0.01 { format!("${:.4}", usd) }
-            else { format!("${:.6}", usd) }
-        }
-        Numeraire::Cny => {
-            let cny = usd / CNY_USD;
-            if cny >= 1.0 { format!("¥{:.2}", cny) }
-            else if cny >= 0.01 { format!("¥{:.4}", cny) }
-            else { format!("¥{:.6}", cny) }
-        }
-        Numeraire::Btc => {
-            let sats = usd / BTC_USD * 1e8;
-            if sats >= 100.0 { format!("{:.0} sat", sats) }
-            else if sats >= 1.0 { format!("{:.1} sat", sats) }
-            else { format!("{:.3} sat", sats) }
-        }
-        Numeraire::Eth => {
-            let micro = usd / ETH_USD * 1e6;
-            let (v, s) = scaled(micro);
-            format!("{}{} μΞ", sig(v), s)
-        }
-        Numeraire::Gold => {
-            let mg = usd / XAU_USD * GRAMS_PER_OZ * 1000.0;
-            if mg >= 1000.0 { format!("{:.1} g Au", mg / 1000.0) }
-            else if mg >= 1.0 { format!("{:.1} mg Au", mg) }
-            else { format!("{:.3} mg Au", mg) }
-        }
+        Numeraire::Usd => format!("${:.6}", usd),
+        Numeraire::Cny => format!("¥{:.6}", usd / CNY_USD),
+        Numeraire::Btc => format!("{:.2} sat", usd / BTC_USD * 1e8),
+        Numeraire::Eth => format!("{:.2} μΞ", usd / ETH_USD * 1e6),
+        Numeraire::Gold => format!("{:.2} mg Au", usd / XAU_USD * GRAMS_PER_OZ * 1000.0),
     }
 }
