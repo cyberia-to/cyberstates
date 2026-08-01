@@ -29,6 +29,7 @@ pub fn MethodologyPage() -> impl IntoView {
                 </div>
                 <div class="map-zone">
                     <a href="/" class="tokens-btn">"STATES"</a>
+                    <a href="/tokens" class="tokens-btn">"TOKENS"</a>
                     <a href="/map" class="map-btn">"MAP"</a>
                 </div>
             </div>

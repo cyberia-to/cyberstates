@@ -165,6 +165,7 @@ pub fn HomePage() -> impl IntoView {
                     }
                 />
                 <div class="map-zone">
+                    <a href="/methodology" class="method-btn">"METHODOLOGY"</a>
                     <a href="/tokens" class="tokens-btn">"TOKENS"</a>
                     <a href="/map" class="map-btn">"MAP"</a>
                 </div>
