@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 use crate::data::{Country, SortField};
-use crate::numeraires::{fmt_cap, fmt_price, Numeraire};
+use crate::numeraires::{fmt_cap, price_parts, Numeraire};
 
 fn score_color(v: f64) -> &'static str {
     if v > 60.0 { "var(--cyber-green)" }
@@ -78,7 +78,12 @@ pub fn CountryRow(country: Country, rank: usize, #[prop(into)] numeraire: Signal
                     {token_code.clone()}
                 </a>
             </td>
-            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">{move || fmt_price(price_usd, numeraire.get())}</td>
+            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
+                {move || {
+                    let (head, tail) = price_parts(price_usd, numeraire.get());
+                    view! { <span>{head}</span><span class="price-tail">{tail}</span> }
+                }}
+            </td>
             <td class="tabular-nums" style="text-align: right; color: #888;">{supply_fmt.clone()}</td>
             <td class="tabular-nums" style="text-align: right;">{move || fmt_cap(cap_b_usd, numeraire.get())}</td>
             <td class="tabular-nums" style:color=freedom_color style="text-align: right; font-weight: 700;">{freedom_str.clone()}</td>

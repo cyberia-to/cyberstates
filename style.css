@@ -189,6 +189,11 @@ body {
     gap: 14px;
 }
 
+.price-tail {
+    font-size: 0.78em;
+    opacity: 0.45;
+}
+
 .num-chooser {
     position: relative;
 }

@@ -89,19 +89,29 @@ pub fn fmt_cap(b_usd: f64, n: Numeraire) -> String {
     }
 }
 
-/// Format a unit price given in USD under a numeraire.
-/// One column — one format: fixed decimals per numeraire so every value
-/// in the column is digit-for-digit comparable and decimal-aligned.
-/// BTC prices in sats, ETH in micro-ether, gold in milligrams.
-pub fn fmt_price(usd: f64, n: Numeraire) -> String {
+/// Split a price into (bright head, dim tail) for rendering: the head
+/// carries the readable magnitude, the tail carries precision digits or
+/// the unit suffix at reduced size/brightness.
+pub fn price_parts(usd: f64, n: Numeraire) -> (String, String) {
     if usd <= 0.0 {
-        return "N/A".to_string();
+        return ("N/A".to_string(), String::new());
     }
     match n {
-        Numeraire::Usd => format!("${:.6}", usd),
-        Numeraire::Cny => format!("¥{:.6}", usd / CNY_USD),
-        Numeraire::Btc => format!("{:.2} sat", usd / BTC_USD * 1e8),
-        Numeraire::Eth => format!("{:.2} μΞ", usd / ETH_USD * 1e6),
-        Numeraire::Gold => format!("{:.2} mg Au", usd / XAU_USD * GRAMS_PER_OZ * 1000.0),
+        Numeraire::Usd | Numeraire::Cny => {
+            let (sym, v) = match n {
+                Numeraire::Cny => ("¥", usd / CNY_USD),
+                _ => ("$", usd),
+            };
+            let full = format!("{:.6}", v);
+            let (int, frac) = full.split_once('.').unwrap();
+            (format!("{}{}.{}", sym, int, &frac[..2]), frac[2..].to_string())
+        }
+        Numeraire::Btc => (format!("{:.2}", usd / BTC_USD * 1e8), " sat".to_string()),
+        Numeraire::Eth => (format!("{:.2}", usd / ETH_USD * 1e6), " μΞ".to_string()),
+        Numeraire::Gold => (
+            format!("{:.2}", usd / XAU_USD * GRAMS_PER_OZ * 1000.0),
+            " mg Au".to_string(),
+        ),
     }
 }
+

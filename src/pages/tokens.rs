@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::nav::SiteNav;
-use crate::numeraires::{fmt_cap, fmt_price, Numeraire};
+use crate::numeraires::{fmt_cap, price_parts, Numeraire};
 use crate::components::numeraire_chooser::NumeraireChooser;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -161,7 +161,12 @@ pub fn TokensPage() -> impl IntoView {
                                                 <span style="font-size: 14px;">{flags}</span>
                                                 {(more > 0).then(|| view! { <span style="color: #444;">{format!(" +{}", more)}</span> })}
                                             </td>
-                                            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">{move || fmt_price(price_usd, numeraire.get())}</td>
+                                            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
+                                                {move || {
+                                                    let (head, tail) = price_parts(price_usd, numeraire.get());
+                                                    view! { <span>{head}</span><span class="price-tail">{tail}</span> }
+                                                }}
+                                            </td>
                                             <td class="tabular-nums" style="text-align: right; color: #888;">{supply}</td>
                                             <td class="tabular-nums" style="text-align: right;">{move || fmt_cap(cap_b_usd, numeraire.get())}</td>
                                         </tr>
