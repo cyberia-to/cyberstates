@@ -1,5 +1,6 @@
 use leptos::prelude::*;
 use crate::data::{Country, SortField};
+use crate::numeraires::{fmt_cap, fmt_price, Numeraire};
 
 fn score_color(v: f64) -> &'static str {
     if v > 60.0 { "var(--cyber-green)" }
@@ -38,7 +39,7 @@ pub fn SortableHeader(
 }
 
 #[component]
-pub fn CountryRow(country: Country, rank: usize) -> impl IntoView {
+pub fn CountryRow(country: Country, rank: usize, #[prop(into)] numeraire: Signal<Numeraire>) -> impl IntoView {
     let code = country.code.to_lowercase();
     let href = format!("/country/{}", code);
     let idx = country.index();
@@ -49,9 +50,9 @@ pub fn CountryRow(country: Country, rank: usize) -> impl IntoView {
     let token_slug = token_code.to_lowercase();
     let pop_fmt = country.population_fmt();
     let area_fmt = country.land_area_fmt();
-    let price_fmt = country.price_fmt();
+    let price_usd = country.token_price_usd;
+    let cap_b_usd = country.money_supply_b_usd;
     let supply_fmt = country.supply_fmt();
-    let cap_fmt = country.cap_fmt();
     let freedom_str = format!("{:.1}", idx.freedom);
     let openness_str = format!("{:.1}", idx.openness);
 
@@ -77,9 +78,9 @@ pub fn CountryRow(country: Country, rank: usize) -> impl IntoView {
                     {token_code.clone()}
                 </a>
             </td>
-            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">{price_fmt.clone()}</td>
+            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">{move || fmt_price(price_usd, numeraire.get())}</td>
             <td class="tabular-nums" style="text-align: right; color: #888;">{supply_fmt.clone()}</td>
-            <td class="tabular-nums" style="text-align: right;">{cap_fmt.clone()}</td>
+            <td class="tabular-nums" style="text-align: right;">{move || fmt_cap(cap_b_usd, numeraire.get())}</td>
             <td class="tabular-nums" style:color=freedom_color style="text-align: right; font-weight: 700;">{freedom_str.clone()}</td>
             <td class="tabular-nums" style:color=openness_color style="text-align: right; font-weight: 700;">{openness_str.clone()}</td>
         </tr>

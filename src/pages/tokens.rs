@@ -2,6 +2,7 @@ use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::nav::SiteNav;
+use crate::numeraires::{fmt_cap, fmt_price, Numeraire};
 
 #[derive(Clone, Copy, PartialEq)]
 enum TokenSort {
@@ -19,6 +20,7 @@ pub fn TokensPage() -> impl IntoView {
     let (sort, set_sort) = signal(TokenSort::Cap);
     let (ascending, set_ascending) = signal(false);
     let (search, set_search) = signal(String::new());
+    let (numeraire, set_numeraire) = signal(Numeraire::Usd);
 
     let on_sort = move |field: TokenSort| {
         if sort.get() == field {
@@ -90,9 +92,20 @@ pub fn TokensPage() -> impl IntoView {
                 <SiteNav active="TOKENS" />
             </div>
 
-            // Count
+            // Count + numeraire
             <div class="header-row2">
                 <div></div>
+                <div class="count-zone">
+                    <div class="numeraire-toggle">
+                        {Numeraire::ALL.map(|n| {
+                            view! {
+                                <button
+                                    class=move || if numeraire.get() == n { "region-pill active" } else { "region-pill" }
+                                    on:click=move |_| set_numeraire.set(n)
+                                >{n.label()}</button>
+                            }
+                        }).collect_view()}
+                    </div>
                 <p class="state-count">
                     {move || {
                         let query = search.get().to_lowercase();
@@ -102,6 +115,7 @@ pub fn TokensPage() -> impl IntoView {
                         format!("{} of {} tokens", count, total)
                     }}
                 </p>
+                </div>
             </div>
 
             // Table
@@ -139,9 +153,9 @@ pub fn TokensPage() -> impl IntoView {
                                     let n_states = t.countries.len();
                                     let flags: String = t.countries.iter().take(12).map(|(_, _, f)| f.as_str()).collect::<Vec<_>>().join(" ");
                                     let more = n_states.saturating_sub(12);
-                                    let price = t.price_fmt();
+                                    let price_usd = t.price_usd;
+                                    let cap_b_usd = t.total_supply_b_usd;
                                     let supply = t.supply_fmt();
-                                    let cap = t.cap_fmt();
                                     view! {
                                         <tr on:click=move |_| {
                                             if let Some(window) = web_sys::window() {
@@ -156,9 +170,9 @@ pub fn TokensPage() -> impl IntoView {
                                                 <span style="font-size: 14px;">{flags}</span>
                                                 {(more > 0).then(|| view! { <span style="color: #444;">{format!(" +{}", more)}</span> })}
                                             </td>
-                                            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">{price}</td>
+                                            <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">{move || fmt_price(price_usd, numeraire.get())}</td>
                                             <td class="tabular-nums" style="text-align: right; color: #888;">{supply}</td>
-                                            <td class="tabular-nums" style="text-align: right;">{cap}</td>
+                                            <td class="tabular-nums" style="text-align: right;">{move || fmt_cap(cap_b_usd, numeraire.get())}</td>
                                         </tr>
                                     }
                                 })

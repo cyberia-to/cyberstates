@@ -58,6 +58,25 @@ try:
 except Exception as e:
     print(f"warn: FRED M2 fetch failed ({e}); US falls back to revalue")
 
+# --- numeraires: BTC / ETH / gold (PAXG = 1 troy oz) ------------------
+try:
+    cg = json.loads(fetch(
+        "https://api.coingecko.com/api/v3/simple/price"
+        "?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd"))
+    nsrc = open("src/numeraires.rs").read()
+    nsrc = re.sub(r'pub const BTC_USD: f64 = [0-9.]+;',
+                  f'pub const BTC_USD: f64 = {cg["bitcoin"]["usd"]:.1f};', nsrc)
+    nsrc = re.sub(r'pub const ETH_USD: f64 = [0-9.]+;',
+                  f'pub const ETH_USD: f64 = {cg["ethereum"]["usd"]:.2f};', nsrc)
+    nsrc = re.sub(r'pub const XAU_USD: f64 = [0-9.]+;',
+                  f'pub const XAU_USD: f64 = {cg["pax-gold"]["usd"]:.2f};', nsrc)
+    nsrc = re.sub(r'pub const NUMERAIRE_DATE: &str = "[^"]*";',
+                  f'pub const NUMERAIRE_DATE: &str = "{fx_date}";', nsrc)
+    open("src/numeraires.rs", "w").write(nsrc)
+    print(f'numeraires: BTC ${cg["bitcoin"]["usd"]:,} ETH ${cg["ethereum"]["usd"]:,} XAU ${cg["pax-gold"]["usd"]:,}')
+except Exception as e:
+    print(f"warn: numeraire fetch failed ({e}); src/numeraires.rs unchanged")
+
 # --- rewrite tomls ----------------------------------------------------
 re_code = re.compile(r'^code = "([^"]+)"', re.M)
 re_cur = re.compile(r'^currency_code = "([^"]+)"', re.M)

@@ -183,6 +183,22 @@ body {
     .state-count { text-align: left; }
 }
 
+.count-zone {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.numeraire-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.numeraire-toggle .region-pill {
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
 /* Search command panel */
 .search-wrap {
     flex: 0 1 420px;

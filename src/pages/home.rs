@@ -4,6 +4,7 @@ use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::table::*;
 use crate::components::nav::SiteNav;
+use crate::numeraires::Numeraire;
 
 fn region_slug(r: &str) -> String {
     r.to_lowercase().replace(' ', "-")
@@ -152,6 +153,7 @@ pub fn HomePage() -> impl IntoView {
         .map(String::from)
         .unwrap_or_default();
     let (search, set_search) = signal(initial_q);
+    let (numeraire, set_numeraire) = signal(Numeraire::Usd);
 
     let (panel_open, set_panel_open) = signal(false);
     let input_ref = NodeRef::<leptos::html::Input>::new();
@@ -367,6 +369,17 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
+                <div class="count-zone">
+                    <div class="numeraire-toggle">
+                        {Numeraire::ALL.map(|n| {
+                            view! {
+                                <button
+                                    class=move || if numeraire.get() == n { "region-pill active" } else { "region-pill" }
+                                    on:click=move |_| set_numeraire.set(n)
+                                >{n.label()}</button>
+                            }
+                        }).collect_view()}
+                    </div>
                 <p class="state-count">
                     {move || {
                         let region = state.get().0;
@@ -379,6 +392,7 @@ pub fn HomePage() -> impl IntoView {
                         format!("{} of {} states", count, total)
                     }}
                 </p>
+                </div>
             </div>
 
             // Table
@@ -417,7 +431,7 @@ pub fn HomePage() -> impl IntoView {
                                 .into_iter()
                                 .enumerate()
                                 .map(|(i, country)| {
-                                    view! { <CountryRow country=country rank={i + 1} /> }
+                                    view! { <CountryRow country=country rank={i + 1} numeraire=numeraire /> }
                                 })
                                 .collect::<Vec<_>>()
                         }}

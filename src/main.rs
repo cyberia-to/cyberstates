@@ -1,5 +1,6 @@
 mod app;
 mod data;
+mod numeraires;
 mod components;
 mod pages;
 
