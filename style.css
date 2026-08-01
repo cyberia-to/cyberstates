@@ -155,7 +155,7 @@ body {
         gap: 12px;
     }
     .logo-zone { order: 1; flex: 1 1 auto; }
-    .map-zone  { order: 2; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+    .map-zone  { order: 2; flex: 1 1 100%; max-width: 100%; flex-wrap: wrap; justify-content: flex-start; gap: 6px; }
     .search-input { order: 3; flex: 1 1 100%; }
 
     .header-row2 {
@@ -239,6 +239,54 @@ body {
     .search-panel { width: 100%; }
     .panel-row { flex-direction: column; gap: 4px; }
     .panel-label { padding-top: 0; }
+}
+
+/* State page */
+.state-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.state-scores {
+    flex: 0 1 460px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.visa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* half-width visa tables: natural layout, never force the page wide */
+.visa-grid .cyber-table {
+    min-width: 0;
+    table-layout: auto;
+}
+
+@media (max-width: 900px) {
+    .visa-grid { grid-template-columns: 1fr; }
+    .state-hero { align-items: stretch; }
+    .state-scores { flex: 1 1 100%; }
+}
+
+@media (max-width: 640px) {
+    .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat-card { min-width: 0; }
+    .stat-value { font-size: 18px; }
 }
 
 /* Rendered markdown — methodology and future prose pages */

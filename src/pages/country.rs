@@ -1,5 +1,7 @@
 use leptos::prelude::*;
+use wasm_bindgen::JsCast;
 use crate::data::*;
+use crate::components::nav::SiteNav;
 
 #[component]
 pub fn CountryPage() -> impl IntoView {
@@ -13,11 +15,11 @@ pub fn CountryPage() -> impl IntoView {
     };
 
     view! {
-        <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
             {move || match country() {
                 None => view! {
                     <div>
-                        <a href="/" class="back-link">"← BACK TO TABLE"</a>
+                        <SiteHeader suffix="not found".to_string() />
                         <h1 style="color: var(--cyber-red); margin-top: 40px;">"STATE NOT FOUND"</h1>
                     </div>
                 }.into_any(),
@@ -72,43 +74,46 @@ pub fn CountryPage() -> impl IntoView {
                     let eco_in = format!("{:.1}%", idx.eco_in_pct);
                     let pop_out = format!("{:.1}%", idx.pop_out_pct);
                     let pop_in = format!("{:.1}%", idx.pop_in_pct);
-                    let freedom_val = format!("{:.1}", idx.freedom);
-                    let openness_val = format!("{:.1}", idx.openness);
 
                     // Get visa data
                     let outgoing = get_visa_outgoing(&c.code);
                     let incoming = get_visa_incoming(&c.name);
 
+                    let suffix = name.to_lowercase();
                     view! {
                         <div>
-                            <a href="/" class="back-link">"← BACK TO TABLE"</a>
+                            <SiteHeader suffix=suffix />
 
-                            // Hero
-                            <div class="country-hero" style="margin-top: 20px;">
-                                <div style="font-size: 72px; margin-bottom: 16px;">{flag}</div>
-                                <h1 style="font-size: clamp(32px, 6vw, 56px); font-weight: 700; color: #fff; margin: 0;">
-                                    {name}
-                                </h1>
-                                <div style="display: flex; gap: 16px; align-items: center; margin-top: 12px;">
-                                    <span style="font-size: 14px; color: #555; letter-spacing: 3px;">{code_str}</span>
-                                    <span style:color=region_color style="font-size: 12px; padding: 4px 12px; border-radius: 2px; border: 1px solid; letter-spacing: 1px;">{region}</span>
+                            // Hero: identity left, the two scores right
+                            <div class="state-hero">
+                                <div class="state-identity">
+                                    <div style="display: flex; align-items: center; gap: 20px;">
+                                        <span style="font-size: clamp(48px, 8vw, 72px); line-height: 1;">{flag}</span>
+                                        <div>
+                                            <h1 style="font-size: clamp(28px, 5vw, 52px); font-weight: 700; color: #fff; margin: 0; line-height: 1.05;">
+                                                {name}
+                                            </h1>
+                                            <div style="display: flex; gap: 12px; align-items: center; margin-top: 10px;">
+                                                <span style="font-size: 13px; color: #555; letter-spacing: 3px;">{code_str}</span>
+                                                <span style:color=region_color style="font-size: 11px; padding: 3px 10px; border-radius: 2px; border: 1px solid; letter-spacing: 1px;">{region}</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                // Freedom + Openness bars
-                                <div style="margin-top: 30px; max-width: 500px; display: flex; flex-direction: column; gap: 12px;">
+                                <div class="state-scores">
                                     <div>
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"MOVING FREEDOM"</span>
-                                            <span class="tabular-nums" style:color=freedom_color style="font-size: 16px; font-weight: 700;">{freedom_str}</span>
+                                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"MOVING FREEDOM · √(eco_out × pop_out)"</span>
+                                            <span class="tabular-nums" style:color=freedom_color style="font-size: 22px; font-weight: 700;">{freedom_str}</span>
                                         </div>
                                         <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
                                             <div class="openness-bar" style:width=freedom_bar style:background=freedom_color></div>
                                         </div>
                                     </div>
                                     <div>
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"BORDER OPENNESS"</span>
-                                            <span class="tabular-nums" style:color=openness_color style="font-size: 16px; font-weight: 700;">{openness_str}</span>
+                                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"BORDER OPENNESS · √(eco_in × pop_in)"</span>
+                                            <span class="tabular-nums" style:color=openness_color style="font-size: 22px; font-weight: 700;">{openness_str}</span>
                                         </div>
                                         <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
                                             <div class="openness-bar" style:width=openness_bar style:background=openness_color></div>
@@ -118,7 +123,7 @@ pub fn CountryPage() -> impl IntoView {
                             </div>
 
                             // Stats grid
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 30px;">
+                            <div class="stat-grid" style="margin-top: 28px;">
                                 <div class="stat-card">
                                     <div class="stat-label">"POPULATION"</div>
                                     <div class="stat-value">{pop}</div>
@@ -149,16 +154,11 @@ pub fn CountryPage() -> impl IntoView {
                             </div>
 
                             // Openness index
-                            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 20px;">
+                            <div class="stat-grid" style="margin-top: 12px;">
                                 <div class="stat-card">
                                     <div class="stat-label">"ECO OUT"</div>
                                     <div class="stat-value" style="color: var(--cyber-green);">{eco_out}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"world economy accessible"</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"ECO IN"</div>
-                                    <div class="stat-value" style="color: var(--cyber-magenta);">{eco_in}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"world economy can visit"</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"POP OUT"</div>
@@ -166,24 +166,19 @@ pub fn CountryPage() -> impl IntoView {
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"world population accessible"</div>
                                 </div>
                                 <div class="stat-card">
+                                    <div class="stat-label">"ECO IN"</div>
+                                    <div class="stat-value" style="color: var(--cyber-magenta);">{eco_in}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"world economy can visit"</div>
+                                </div>
+                                <div class="stat-card">
                                     <div class="stat-label">"POP IN"</div>
                                     <div class="stat-value" style="color: var(--cyber-pink);">{pop_in}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"world population can visit"</div>
                                 </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"FREEDOM"</div>
-                                    <div class="stat-value" style:color=freedom_color>{freedom_val}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"√(eco_out × pop_out)"</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"OPENNESS"</div>
-                                    <div class="stat-value" style:color=openness_color>{openness_val}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"√(eco_in × pop_in)"</div>
-                                </div>
                             </div>
 
                             // Visa sections side by side
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px;">
+                            <div class="visa-grid" style="margin-top: 40px;">
                                 <FilterableVisaSection
                                     title="OUTGOING — WHERE CITIZENS CAN TRAVEL"
                                     title_color="var(--cyber-green)"
@@ -199,6 +194,40 @@ pub fn CountryPage() -> impl IntoView {
                     }.into_any()
                 }
             }}
+        </div>
+    }
+}
+
+/// Standard site shell header for drill-down pages: logo + suffix, search
+/// that jumps to the states table on Enter, and the constant nav.
+#[component]
+pub fn SiteHeader(suffix: String) -> impl IntoView {
+    view! {
+        <div class="header-row1">
+            <div class="logo-zone">
+                <a href="/" style="text-decoration: none;">
+                    <h1 class="logo">
+                        <span style="color: var(--cyber-green);">"CYBER"</span>
+                        <span style="color: #fff;">"STATES"</span>
+                    </h1>
+                </a>
+                <div class="logo-suffix">{suffix}</div>
+            </div>
+            <input
+                type="text"
+                class="search-input"
+                placeholder="Search country, code, or currency..."
+                on:keydown=move |ev| {
+                    if ev.key() == "Enter" {
+                        let target = ev.target().unwrap();
+                        let input: web_sys::HtmlInputElement = target.unchecked_into();
+                        if let Some(w) = web_sys::window() {
+                            let _ = w.location().set_href(&format!("/?q={}", input.value()));
+                        }
+                    }
+                }
+            />
+            <SiteNav active="" />
         </div>
     }
 }
