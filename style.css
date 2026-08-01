@@ -175,6 +175,72 @@ body {
     .state-count { text-align: left; }
 }
 
+/* Search command panel */
+.search-wrap {
+    flex: 0 1 420px;
+    min-width: 180px;
+    position: relative;
+}
+
+.search-wrap .search-input {
+    width: 100%;
+    flex: none;
+}
+
+.search-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: max(100%, 560px);
+    max-width: 90vw;
+    z-index: 60;
+    background: #070a08;
+    border: 1px solid #1c2a1e;
+    border-radius: 4px;
+    padding: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 255, 65, 0.06);
+}
+
+.panel-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.panel-label {
+    flex: 0 0 52px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #555;
+    padding-top: 7px;
+}
+
+.panel-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.filter-chip {
+    color: var(--cyber-yellow);
+    border-color: #3a3212;
+}
+
+.panel-hint {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+    .search-wrap { order: 3; flex: 1 1 100%; }
+    .search-panel { width: 100%; }
+    .panel-row { flex-direction: column; gap: 4px; }
+    .panel-label { padding-top: 0; }
+}
+
 /* Rendered markdown — methodology and future prose pages */
 .prose-cyber {
     margin-top: 8px;

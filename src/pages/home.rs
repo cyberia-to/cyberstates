@@ -62,6 +62,74 @@ fn parse_path(path: &str) -> (String, SortField, bool) {
     (region, field, asc)
 }
 
+
+#[derive(Clone, Copy, PartialEq)]
+enum NumField { Pop, Cap, Land, Freedom, Openness }
+
+#[derive(Clone, Copy)]
+struct NumFilter { field: NumField, gt: bool, val: f64 }
+
+/// Split the raw search string into free text and typed numeric filters:
+/// `europe cap>1t freedom>60` -> ("europe", [cap>1000, freedom>60])
+fn parse_query(raw: &str) -> (String, Vec<NumFilter>) {
+    let mut text = Vec::new();
+    let mut filters = Vec::new();
+    for tok in raw.split_whitespace() {
+        match parse_filter_token(tok) {
+            Some(f) => filters.push(f),
+            None => text.push(tok),
+        }
+    }
+    (text.join(" "), filters)
+}
+
+fn parse_filter_token(tok: &str) -> Option<NumFilter> {
+    let t = tok.to_lowercase();
+    let (idx, gt) = t.find('>').map(|i| (i, true)).or_else(|| t.find('<').map(|i| (i, false)))?;
+    let field = match &t[..idx] {
+        "pop" | "population" => NumField::Pop,
+        "cap" => NumField::Cap,
+        "land" | "area" => NumField::Land,
+        "freedom" | "free" => NumField::Freedom,
+        "openness" | "open" => NumField::Openness,
+        _ => return None,
+    };
+    let rest = &t[idx + 1..];
+    if rest.is_empty() { return None; }
+    let (num_part, suffix) = match rest.chars().last() {
+        Some(c @ ('k' | 'm' | 'b' | 't')) => (&rest[..rest.len() - 1], Some(c)),
+        _ => (rest, None),
+    };
+    let base: f64 = num_part.parse().ok()?;
+    // cap lives in billions USD; pop and land in raw units
+    let mult = match (field, suffix) {
+        (NumField::Cap, Some('k')) => 1e-6,
+        (NumField::Cap, Some('m')) => 1e-3,
+        (NumField::Cap, Some('b')) | (NumField::Cap, None) => 1.0,
+        (NumField::Cap, Some('t')) => 1e3,
+        (_, Some('k')) => 1e3,
+        (_, Some('m')) => 1e6,
+        (_, Some('b')) => 1e9,
+        (_, Some('t')) => 1e12,
+        (_, None) => 1.0,
+        _ => 1.0,
+    };
+    Some(NumFilter { field, gt, val: base * mult })
+}
+
+fn passes(c: &Country, f: &NumFilter) -> bool {
+    let v = match f.field {
+        NumField::Pop => c.population as f64,
+        NumField::Cap => c.money_supply_b_usd,
+        NumField::Land => c.land_area_km2 as f64,
+        NumField::Freedom => c.index().freedom,
+        NumField::Openness => c.index().openness,
+    };
+    if f.gt { v > f.val } else { v < f.val }
+}
+
+const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "land>1m"];
+
 #[component]
 pub fn HomePage() -> impl IntoView {
     let countries = load_countries();
@@ -84,6 +152,33 @@ pub fn HomePage() -> impl IntoView {
         .map(String::from)
         .unwrap_or_default();
     let (search, set_search) = signal(initial_q);
+
+    let (panel_open, set_panel_open) = signal(false);
+    let input_ref = NodeRef::<leptos::html::Input>::new();
+    let wrap_ref = NodeRef::<leptos::html::Div>::new();
+
+    // "/" focuses search from anywhere on the page
+    Effect::new(move |_| {
+        use wasm_bindgen::prelude::*;
+        let closure = Closure::wrap(Box::new(move |ev: web_sys::KeyboardEvent| {
+            if ev.key() == "/" {
+                let tag = ev.target()
+                    .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
+                    .map(|e| e.tag_name())
+                    .unwrap_or_default();
+                if tag != "INPUT" && tag != "TEXTAREA" {
+                    ev.prevent_default();
+                    if let Some(inp) = input_ref.get_untracked() {
+                        let _ = inp.focus();
+                    }
+                }
+            }
+        }) as Box<dyn FnMut(web_sys::KeyboardEvent)>);
+        if let Some(w) = web_sys::window() {
+            let _ = w.add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref());
+        }
+        closure.forget();
+    });
 
     let nav = use_navigate();
     let nav_sort = nav.clone();
@@ -112,7 +207,7 @@ pub fn HomePage() -> impl IntoView {
     let filtered_sorted = move || {
         let mut list = countries.clone();
         let (region, field, asc) = state.get();
-        let query = search.get().to_lowercase();
+        let (query, filters) = parse_query(&search.get().to_lowercase());
 
         if region != "All" {
             list.retain(|c| c.region == region);
@@ -123,6 +218,9 @@ pub fn HomePage() -> impl IntoView {
                     || c.code.to_lowercase().contains(&query)
                     || c.currency_code.to_lowercase().contains(&query)
             });
+        }
+        for f in &filters {
+            list.retain(|c| passes(c, f));
         }
 
         list.sort_by(|a, b| {
@@ -165,54 +263,121 @@ pub fn HomePage() -> impl IntoView {
                         }}
                     </div>
                 </div>
-                <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search country, code, or currency..."
-                    prop:value=move || search.get()
-                    on:input=move |ev| {
-                        let target = ev.target().unwrap();
-                        let input: web_sys::HtmlInputElement = target.unchecked_into();
-                        set_search.set(input.value());
+                <div
+                    class="search-wrap"
+                    node_ref=wrap_ref
+                    on:focusout=move |ev| {
+                        // close only when focus leaves the wrapper entirely
+                        let inside = ev.related_target()
+                            .and_then(|t| t.dyn_into::<web_sys::Node>().ok())
+                            .map(|n| wrap_ref.get_untracked().map(|w| w.contains(Some(&n))).unwrap_or(false))
+                            .unwrap_or(false);
+                        if !inside {
+                            set_panel_open.set(false);
+                        }
                     }
-                />
+                    on:keydown=move |ev| {
+                        if ev.key() == "Escape" {
+                            set_panel_open.set(false);
+                            if let Some(inp) = input_ref.get_untracked() {
+                                let _ = inp.blur();
+                            }
+                        }
+                    }
+                >
+                    <input
+                        type="text"
+                        class="search-input"
+                        placeholder="Search — or filter: freedom>60, cap>1t..."
+                        node_ref=input_ref
+                        prop:value=move || search.get()
+                        on:focus=move |_| set_panel_open.set(true)
+                        on:input=move |ev| {
+                            let target = ev.target().unwrap();
+                            let input: web_sys::HtmlInputElement = target.unchecked_into();
+                            set_search.set(input.value());
+                        }
+                    />
+                    <div class="search-panel" style:display=move || if panel_open.get() { "block" } else { "none" }>
+                        <div class="panel-row">
+                            <span class="panel-label">"REGION"</span>
+                            <div class="panel-chips">
+                                {REGIONS.iter().map(|&r| {
+                                    let r_click = r.to_string();
+                                    let r_class = r.to_string();
+                                    let nav_r = nav.clone();
+                                    view! {
+                                        <button
+                                            class=move || if state.get().0 == r_class { "region-pill active" } else { "region-pill" }
+                                            on:click=move |_| {
+                                                let (_, field, asc) = state.get();
+                                                nav_r(&landing_path(&r_click, field, asc), Default::default());
+                                            }
+                                        >{r}</button>
+                                    }
+                                }).collect::<Vec<_>>()}
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">"SORT"</span>
+                            <div class="panel-chips">
+                                {[SortField::Cap, SortField::Freedom, SortField::Openness, SortField::Population, SortField::LandArea, SortField::Name, SortField::Token].map(|f| {
+                                    let nav_f = nav.clone();
+                                    view! {
+                                        <button
+                                            class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
+                                            on:click=move |_| {
+                                                let (region, cur, asc) = state.get();
+                                                let next_asc = if cur == f { !asc } else { false };
+                                                nav_f(&landing_path(&region, f, next_asc), Default::default());
+                                            }
+                                        >
+                                            {move || {
+                                                let (_, cur, asc) = state.get();
+                                                if cur == f { format!("{} {}", f.label(), if asc { "▲" } else { "▼" }) } else { f.label().to_string() }
+                                            }}
+                                        </button>
+                                    }
+                                }).collect_view()}
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">"FILTER"</span>
+                            <div class="panel-chips">
+                                {FILTER_EXAMPLES.map(|ex| {
+                                    view! {
+                                        <button
+                                            class="region-pill filter-chip"
+                                            on:click=move |_| {
+                                                let cur = search.get_untracked();
+                                                let sep = if cur.is_empty() || cur.ends_with(' ') { "" } else { " " };
+                                                set_search.set(format!("{}{}{}", cur, sep, ex));
+                                                if let Some(inp) = input_ref.get_untracked() {
+                                                    let _ = inp.focus();
+                                                }
+                                            }
+                                        >{ex}</button>
+                                    }
+                                }).collect_view()}
+                            </div>
+                        </div>
+                        <div class="panel-hint">"mix text and filters: europe cap>1t · / focuses · esc closes"</div>
+                    </div>
+                </div>
                 <SiteNav active="STATES" />
             </div>
 
-            // Header row 2: region filters | count
+            // Header row 2: count (filters live in the search panel)
             <div class="header-row2">
-                <div class="region-pills">
-                    {REGIONS.iter().map(|&r| {
-                        let r_owned = r.to_string();
-                        let r_for_class = r.to_string();
-                        let r_for_click = r.to_string();
-                        let nav_pill = nav.clone();
-                        view! {
-                            <button
-                                class=move || {
-                                    if state.get().0 == r_for_class {
-                                        "region-pill active"
-                                    } else {
-                                        "region-pill"
-                                    }
-                                }
-                                on:click=move |_| {
-                                    let (_, field, asc) = state.get();
-                                    nav_pill(&landing_path(&r_for_click, field, asc), Default::default());
-                                }
-                            >
-                                {r_owned}
-                            </button>
-                        }
-                    }).collect::<Vec<_>>()}
-                </div>
+                <div></div>
                 <p class="state-count">
                     {move || {
                         let region = state.get().0;
-                        let query = search.get().to_lowercase();
+                        let (query, filters) = parse_query(&search.get().to_lowercase());
                         let count = countries_for_count.iter().filter(|c| {
                             (region == "All" || c.region == region)
                             && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
+                            && filters.iter().all(|f| passes(c, f))
                         }).count();
                         format!("{} of {} states", count, total)
                     }}
