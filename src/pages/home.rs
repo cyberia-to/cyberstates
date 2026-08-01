@@ -319,29 +319,6 @@ pub fn HomePage() -> impl IntoView {
                             </div>
                         </div>
                         <div class="panel-row">
-                            <span class="panel-label">"SORT"</span>
-                            <div class="panel-chips">
-                                {[SortField::Cap, SortField::Freedom, SortField::Openness, SortField::Population, SortField::LandArea, SortField::Name, SortField::Token].map(|f| {
-                                    let nav_f = nav.clone();
-                                    view! {
-                                        <button
-                                            class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
-                                            on:click=move |_| {
-                                                let (region, cur, asc) = state.get();
-                                                let next_asc = if cur == f { !asc } else { false };
-                                                nav_f(&landing_path(&region, f, next_asc), Default::default());
-                                            }
-                                        >
-                                            {move || {
-                                                let (_, cur, asc) = state.get();
-                                                if cur == f { format!("{} {}", f.label(), if asc { "▲" } else { "▼" }) } else { f.label().to_string() }
-                                            }}
-                                        </button>
-                                    }
-                                }).collect_view()}
-                            </div>
-                        </div>
-                        <div class="panel-row">
                             <span class="panel-label">"FILTER"</span>
                             <div class="panel-chips">
                                 {FILTER_EXAMPLES.map(|ex| {
@@ -367,9 +344,29 @@ pub fn HomePage() -> impl IntoView {
                 <SiteNav active="STATES" />
             </div>
 
-            // Header row 2: count (filters live in the search panel)
+            // Header row 2: sort landings — real links, every one a page
             <div class="header-row2">
-                <div></div>
+                <div class="region-pills">
+                    <span class="sort-label">"SORT"</span>
+                    {[SortField::Cap, SortField::Freedom, SortField::Openness, SortField::Population, SortField::LandArea, SortField::Name, SortField::Token].map(|f| {
+                        view! {
+                            <a
+                                class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
+                                href=move || {
+                                    let (region, cur, asc) = state.get();
+                                    // active sort links to its flipped direction
+                                    let next_asc = if cur == f { !asc } else { false };
+                                    landing_path(&region, f, next_asc)
+                                }
+                            >
+                                {move || {
+                                    let (_, cur, asc) = state.get();
+                                    if cur == f { format!("{} {}", f.label(), if asc { "▲" } else { "▼" }) } else { f.label().to_string() }
+                                }}
+                            </a>
+                        }
+                    }).collect_view()}
+                </div>
                 <p class="state-count">
                     {move || {
                         let region = state.get().0;

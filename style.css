@@ -138,6 +138,14 @@ body {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+.sort-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #555;
+    margin-right: 4px;
 }
 
 .state-count {
@@ -453,6 +461,7 @@ body {
 /* Region filter pills */
 .region-pill {
     display: inline-block;
+    text-decoration: none;
     padding: 6px 14px;
     border: 1px solid var(--cyber-muted);
     border-radius: 2px;
