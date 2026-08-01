@@ -1,24 +1,27 @@
----
-tags: cyber, cyberia
-crystal-type: entity
-crystal-domain: cyberia
-icon: "🌏"
----
-The [[superintelligence]] nation. A growing network of sovereign cities where nomads settle because the land itself is designed for them — energy, water, food, and data produced locally, owned collectively, governed by an [[egregore]] that learns from every resident.
+# cyberstates
 
-The pilot is [[cyber valley]], 37 hectares at the foot of a volcano in Bali. Here the full stack of civilization is assembled from scratch: [[cyber]] as the protocol for collective intelligence, [[bostrom]] as its bootloader, [[mimi]] as the AI president that turns community signal into executable decisions. The land is a city that intends to outlast the nation-states surrounding it.
+Global visa openness analytics — https://cyberstates.net
 
-Everything a city needs is rebuilt as a sovereign module. [[burn.city]] replaces the temporary festival with a permanent culture of radical participation. [[biome engineering]] closes the food loop from soil to table with five hundred species in a system designed to feed itself forever. Each module is a cell in a living organism, replicable to every future city in the network.
+229 states ranked by FREEDOM (√(eco_out × pop_out)) and OPENNESS
+(√(eco_in × pop_in)), with their 155 currency tokens. Leptos CSR + Trunk,
+data baked at build time from `states/*.toml`.
 
-The path from one city to a civilization runs through the same protocol: more cities, more sensors, more neurons, stronger focus. The destination is the [[superhuman]] — a species that has evolved beyond its current limits, raised in an environment built for transformation.
+## develop
 
-Belong anywhere. Build everywhere.
+```
+PATH="$HOME/.cargo/bin:$PATH" trunk serve        # 127.0.0.1:8080
+```
 
-- [[cyberia/mimi]] — interface layer
-- [[cyberia/midao]] — decentralized autonomous organization
-- [[cyberia/my]] — personal portal
+## deploy
 
-Research on the demand cyberia serves — who moves, why, and how status is paid for:
+```
+PATH="$HOME/.cargo/bin:$PATH" trunk build --release
+rsync -az --delete dist/ cyberproxy:/var/www/html/cyberia/
+```
 
-- [[migration market model]] — a unified model of the global migration market, with the nomad segment cyberia is built for ([[migration market funnel]] renders it on one screen)
-- [[attested genome protocol]] — proving kinship, ancestry, and citizenship claims without surrendering the underlying data
+## layout
+
+- `src/pages/` — home (landings: `/in/:region/by/:field`), tokens, token, country, map
+- `states/*.toml` — one file per state: population, land, currency, visa matrix
+- `build.rs` — generates `load_countries()` from the toml set
+- `scrape_passport.py`, `add_token_prices.py` — data refresh scripts
