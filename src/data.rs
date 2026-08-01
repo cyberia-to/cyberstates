@@ -335,7 +335,7 @@ pub enum SortField {
 impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
-            Self::Name => "COUNTRY",
+            Self::Name => "STATE",
             Self::Population => "POPULATION",
             Self::LandArea => "LAND AREA",
             Self::Token => "TOKEN",

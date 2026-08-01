@@ -275,7 +275,7 @@ fn FilterableVisaSection(
                 <table class="cyber-table" style="font-size: 12px;">
                     <thead>
                         <tr>
-                            <th style="padding: 8px 12px;">"COUNTRY"</th>
+                            <th style="padding: 8px 12px;">"STATE"</th>
                             <th style="padding: 8px 12px;">"ACCESS"</th>
                             <th style="padding: 8px 12px; text-align: right;">"DAYS"</th>
                         </tr>
