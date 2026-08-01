@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::data::*;
+use crate::components::nav::SiteNav;
 
 #[derive(Clone, Copy, PartialEq)]
 enum TokenSort {
@@ -86,11 +87,7 @@ pub fn TokensPage() -> impl IntoView {
                         set_search.set(input.value());
                     }
                 />
-                <div class="map-zone">
-                    <a href="/methodology" class="method-btn">"METHODOLOGY"</a>
-                    <a href="/" class="tokens-btn">"STATES"</a>
-                    <a href="/map" class="map-btn">"MAP"</a>
-                </div>
+                <SiteNav active="TOKENS" />
             </div>
 
             // Count

@@ -3,6 +3,7 @@ use leptos_router::hooks::{use_location, use_navigate};
 use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::table::*;
+use crate::components::nav::SiteNav;
 
 fn region_slug(r: &str) -> String {
     r.to_lowercase().replace(' ', "-")
@@ -72,7 +73,17 @@ pub fn HomePage() -> impl IntoView {
     let sort_field = Signal::derive(move || state.get().1);
     let ascending = Signal::derive(move || state.get().2);
 
-    let (search, set_search) = signal(String::new());
+    let initial_q = web_sys::window()
+        .and_then(|w| w.location().search().ok())
+        .and_then(|s| s.strip_prefix('?').map(str::to_string))
+        .and_then(|s| {
+            s.split('&')
+                .find_map(|kv| kv.strip_prefix("q=").map(str::to_string))
+        })
+        .and_then(|v| js_sys::decode_uri_component(&v.replace('+', " ")).ok())
+        .map(String::from)
+        .unwrap_or_default();
+    let (search, set_search) = signal(initial_q);
 
     let nav = use_navigate();
     let nav_sort = nav.clone();
@@ -158,17 +169,14 @@ pub fn HomePage() -> impl IntoView {
                     type="text"
                     class="search-input"
                     placeholder="Search country, code, or currency..."
+                    prop:value=move || search.get()
                     on:input=move |ev| {
                         let target = ev.target().unwrap();
                         let input: web_sys::HtmlInputElement = target.unchecked_into();
                         set_search.set(input.value());
                     }
                 />
-                <div class="map-zone">
-                    <a href="/methodology" class="method-btn">"METHODOLOGY"</a>
-                    <a href="/tokens" class="tokens-btn">"TOKENS"</a>
-                    <a href="/map" class="map-btn">"MAP"</a>
-                </div>
+                <SiteNav active="STATES" />
             </div>
 
             // Header row 2: region filters | count

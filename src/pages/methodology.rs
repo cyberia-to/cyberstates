@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 use pulldown_cmark::{html, Options, Parser};
+use wasm_bindgen::JsCast;
+use crate::components::nav::SiteNav;
 
 const METHODOLOGY_MD: &str = include_str!("../../methodology.md");
 
@@ -16,7 +18,7 @@ pub fn MethodologyPage() -> impl IntoView {
     });
 
     view! {
-        <div style="max-width: 860px; margin: 0 auto; padding: 20px;">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
             <div class="header-row1">
                 <div class="logo-zone">
                     <a href="/" style="text-decoration: none;">
@@ -27,14 +29,25 @@ pub fn MethodologyPage() -> impl IntoView {
                     </a>
                     <div class="logo-suffix">"methodology"</div>
                 </div>
-                <div class="map-zone">
-                    <a href="/" class="tokens-btn">"STATES"</a>
-                    <a href="/tokens" class="tokens-btn">"TOKENS"</a>
-                    <a href="/map" class="map-btn">"MAP"</a>
-                </div>
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search country, code, or currency..."
+                    on:keydown=move |ev| {
+                        if ev.key() == "Enter" {
+                            let target = ev.target().unwrap();
+                            let input: web_sys::HtmlInputElement = target.unchecked_into();
+                            let q = input.value();
+                            if let Some(w) = web_sys::window() {
+                                let _ = w.location().set_href(&format!("/?q={}", q));
+                            }
+                        }
+                    }
+                />
+                <SiteNav active="METHODOLOGY" />
             </div>
 
-            <div class="prose-cyber" inner_html=html_out></div>
+            <div class="prose-cyber" style="max-width: 860px;" inner_html=html_out></div>
         </div>
     }
 }

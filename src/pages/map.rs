@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use std::collections::HashMap;
 use crate::data::*;
+use crate::components::nav::SiteNav;
 
 const WORLD_SVG: &str = include_str!("../../assets/world.svg");
 
@@ -181,11 +182,7 @@ pub fn MapPage() -> impl IntoView {
                         set_search.set(input.value());
                     }
                 />
-                <div class="map-zone">
-                    <a href="/methodology" class="method-btn">"METHODOLOGY"</a>
-                    <a href="/tokens" class="tokens-btn">"TOKENS"</a>
-                    <a href="/" class="map-btn">"TABLE"</a>
-                </div>
+                <SiteNav active="MAP" />
             </div>
 
             // Header row 2: metric pills
