@@ -3,6 +3,8 @@ use leptos_router::hooks::{use_location, use_navigate};
 use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::table::*;
+use crate::pages::map::{setup_click_handlers, value_to_color};
+use std::collections::HashMap;
 use crate::components::nav::SiteNav;
 use crate::numeraires::Numeraire;
 use crate::components::numeraire_chooser::NumeraireChooser;
@@ -64,6 +66,8 @@ fn parse_path(path: &str) -> (String, SortField, bool) {
     (region, field, asc)
 }
 
+
+const WORLD_SVG: &str = include_str!("../../assets/world.svg");
 
 #[derive(Clone, Copy, PartialEq)]
 enum NumField { Pop, Cap, Land, Freedom, Openness }
@@ -185,11 +189,11 @@ pub fn HomePage() -> impl IntoView {
 
     let nav = use_navigate();
     let nav_sort = nav.clone();
-    let on_sort = SignalSetter::map(move |field: SortField| {
+    let on_sort = move |field: SortField| {
         let (region, cur, asc) = state.get();
         let next_asc = if cur == field { !asc } else { false };
         nav_sort(&landing_path(&region, field, next_asc), Default::default());
-    });
+    };
 
     // Landing title: "Cyberstates in Europe by freedom"
     Effect::new(move |_| {
@@ -204,6 +208,56 @@ pub fn HomePage() -> impl IntoView {
         }
         t.push_str(" — Global Visa Openness Analytics");
         document().set_title(&t);
+    });
+
+    // Desktop side map: paint the world by the active rating object;
+    // region/search/numeric filters dim non-matching states live.
+    let countries_for_map = countries.clone();
+    Effect::new(move |_| {
+        let (region, field, _) = state.get();
+        let (query, filters) = parse_query(&search.get().to_lowercase());
+        let mut values: HashMap<String, f64> = HashMap::new();
+        for c in &countries_for_map {
+            let visible = (region == "All" || c.region == region)
+                && (query.is_empty()
+                    || c.name.to_lowercase().contains(&query)
+                    || c.code.to_lowercase().contains(&query)
+                    || c.currency_code.to_lowercase().contains(&query))
+                && filters.iter().all(|f| passes(c, f));
+            if visible {
+                let v = c.metric(field);
+                // log-compress heavy-tailed axes so the palette spreads
+                let v = match field {
+                    SortField::Freedom | SortField::Openness => v,
+                    _ => (v + 1.0).ln().max(0.0),
+                };
+                values.insert(c.code.clone(), v);
+            }
+        }
+        let max_val = values.values().cloned().fold(0.0_f64, f64::max);
+        if let Some(w) = web_sys::window() {
+            use wasm_bindgen::prelude::*;
+            let cb = Closure::wrap(Box::new(move || {
+                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                    if let Ok(paths) = doc.query_selector_all("svg.world-map path[id]") {
+                        for i in 0..paths.length() {
+                            if let Some(node) = paths.item(i) {
+                                let el: web_sys::Element = node.unchecked_into();
+                                if let Some(id) = el.get_attribute("id") {
+                                    let color = values.get(&id)
+                                        .map(|&v| value_to_color(v, max_val))
+                                        .unwrap_or_else(|| "#1a1a1a".to_string());
+                                    let _ = el.set_attribute("style", &format!("fill: {}; cursor: pointer;", color));
+                                }
+                            }
+                        }
+                    }
+                }
+                setup_click_handlers();
+            }) as Box<dyn FnMut()>);
+            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 200);
+            cb.forget();
+        }
     });
 
     let countries_for_count = countries.clone();
@@ -227,15 +281,7 @@ pub fn HomePage() -> impl IntoView {
         }
 
         list.sort_by(|a, b| {
-            let ord = match field {
-                SortField::Name => a.name.cmp(&b.name),
-                SortField::Population => a.population.cmp(&b.population),
-                SortField::LandArea => a.land_area_km2.cmp(&b.land_area_km2),
-                SortField::Token => a.currency_code.cmp(&b.currency_code),
-                SortField::Cap => a.money_supply_b_usd.partial_cmp(&b.money_supply_b_usd).unwrap_or(std::cmp::Ordering::Equal),
-                SortField::Freedom => a.index().freedom.partial_cmp(&b.index().freedom).unwrap_or(std::cmp::Ordering::Equal),
-                SortField::Openness => a.index().openness.partial_cmp(&b.index().openness).unwrap_or(std::cmp::Ordering::Equal),
-            };
+            let ord = a.metric(field).partial_cmp(&b.metric(field)).unwrap_or(std::cmp::Ordering::Equal);
             if asc { ord } else { ord.reverse() }
         });
 
@@ -353,7 +399,7 @@ pub fn HomePage() -> impl IntoView {
             <div class="header-row2">
                 <div class="region-pills">
                     <span class="sort-label">"SORT"</span>
-                    {[SortField::Cap, SortField::Freedom, SortField::Openness, SortField::Population, SortField::LandArea, SortField::Name, SortField::Token].map(|f| {
+                    {SortField::ALL.map(|f| {
                         view! {
                             <a
                                 class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
@@ -386,48 +432,57 @@ pub fn HomePage() -> impl IntoView {
                 </p>
             </div>
 
-            // Table
-            <div style="overflow-x: auto; border: 1px solid #111; border-radius: 4px;">
-                <table class="cyber-table">
-                    // fixed layout: widths live here, not in row content — filtering must not move columns
-                    <colgroup>
-                        <col style="width: 5%;" />   // #
-                        <col style="width: 18%;" />  // country
-                        <col style="width: 11%;" />  // population
-                        <col style="width: 12%;" />  // land area
-                        <col style="width: 7%;" />   // token
-                        <col style="width: 10%;" />  // price
-                        <col style="width: 9%;" />   // supply
-                        <col style="width: 9%;" />   // cap
-                        <col style="width: 9.5%;" /> // freedom
-                        <col style="width: 9.5%;" /> // openness
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th style="width: 40px; cursor: default;">"#"</th>
-                            <SortableHeader field=SortField::Name current=sort_field ascending=ascending on_click=on_sort />
-                            <SortableHeader field=SortField::Population current=sort_field ascending=ascending on_click=on_sort />
-                            <SortableHeader field=SortField::LandArea current=sort_field ascending=ascending on_click=on_sort />
-                            <SortableHeader field=SortField::Token current=sort_field ascending=ascending on_click=on_sort />
-                            <th class="th-static">"PRICE"</th>
-                            <th class="th-static">"SUPPLY"</th>
-                            <SortableHeader field=SortField::Cap current=sort_field ascending=ascending on_click=on_sort />
-                            <SortableHeader field=SortField::Freedom current=sort_field ascending=ascending on_click=on_sort />
-                            <SortableHeader field=SortField::Openness current=sort_field ascending=ascending on_click=on_sort />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {move || {
-                            filtered_sorted()
-                                .into_iter()
-                                .enumerate()
-                                .map(|(i, country)| {
-                                    view! { <CountryRow country=country rank={i + 1} numeraire=numeraire /> }
-                                })
-                                .collect::<Vec<_>>()
-                        }}
-                    </tbody>
-                </table>
+            // Table + desktop map, split
+            <div class="home-split">
+                <div class="table-pane">
+                    <div style="overflow-x: auto; border: 1px solid #111; border-radius: 4px;">
+                        <table class="cyber-table slim">
+                            // fixed layout: widths live here, not in row content
+                            <colgroup>
+                                <col style="width: 7%;" />   // #
+                                <col style="width: 36%;" />  // state
+                                <col style="width: 15%;" />  // token
+                                <col style="width: 21%;" />  // price
+                                <col style="width: 21%;" />  // rating object
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th style="cursor: default; text-align: right;">"#"</th>
+                                    <th class="th-static">"STATE"</th>
+                                    <th class="th-static">"TOKEN"</th>
+                                    <th class="th-static" style="text-align: right;">"PRICE"</th>
+                                    <th
+                                        class=move || format!("cyber-table-th sorted {}", if ascending.get() { "sort-asc" } else { "sort-desc" })
+                                        style="text-align: right;"
+                                        on:click=move |_| on_sort(sort_field.get())
+                                    >
+                                        {move || sort_field.get().label()}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {move || {
+                                    filtered_sorted()
+                                        .into_iter()
+                                        .enumerate()
+                                        .map(|(i, country)| {
+                                            view! { <CountryRow country=country rank={i + 1} numeraire=numeraire field=sort_field /> }
+                                        })
+                                        .collect::<Vec<_>>()
+                                }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="map-pane">
+                    <div class="world-map-container" inner_html=WORLD_SVG></div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
+                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">"LOW"</span>
+                        <div style="width: 240px; height: 8px; border-radius: 4px; background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);"></div>
+                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">"HIGH"</span>
+                        <span style="font-size: 10px; color: #444; letter-spacing: 2px; margin-left: 12px;">{move || sort_field.get().label()}</span>
+                    </div>
+                </div>
             </div>
 
             // Footer

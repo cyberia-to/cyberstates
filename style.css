@@ -289,6 +289,46 @@ body {
     .panel-label { padding-top: 0; }
 }
 
+/* Home split: slim table + desktop map */
+.home-split {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.table-pane {
+    flex: 0 0 620px;
+    min-width: 0;
+}
+
+.map-pane {
+    flex: 1 1 auto;
+    min-width: 0;
+    position: sticky;
+    top: 20px;
+}
+
+.map-pane .world-map-container svg {
+    width: 100%;
+    height: auto;
+}
+
+.cyber-table.slim {
+    min-width: 520px;
+}
+
+@media (max-width: 1100px) {
+    .map-pane { display: none; }
+    .table-pane { flex: 1 1 auto; }
+}
+
+@media (max-width: 640px) {
+    .cyber-table.slim { min-width: 0; }
+    .cyber-table.slim th,
+    .cyber-table.slim td { padding-left: 8px; padding-right: 8px; }
+    .cyber-table.slim .price-tail { display: none; } /* head only — tail needs room phones lack */
+}
+
 /* State page */
 .state-hero {
     display: flex;

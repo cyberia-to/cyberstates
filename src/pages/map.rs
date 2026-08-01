@@ -26,7 +26,7 @@ impl MapMetric {
     }
 }
 
-fn value_to_color(val: f64, max: f64) -> String {
+pub fn value_to_color(val: f64, max: f64) -> String {
     if max <= 0.0 { return "#111".to_string(); }
     let t = (val / max).min(1.0).max(0.0);
 
@@ -101,7 +101,7 @@ fn colorize_map(metric: MapMetric, query: &str) {
     }
 }
 
-fn setup_click_handlers() {
+pub fn setup_click_handlers() {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
 

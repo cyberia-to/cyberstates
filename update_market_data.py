@@ -73,8 +73,6 @@ try:
                   f'pub const ETH_USD: f64 = {cg["ethereum"]["usd"]:.2f};', nsrc)
     nsrc = re.sub(r'pub const XAU_USD: f64 = [0-9.]+;',
                   f'pub const XAU_USD: f64 = {cg["pax-gold"]["usd"]:.2f};', nsrc)
-    nsrc = re.sub(r'pub const NUMERAIRE_DATE: &str = "[^"]*";',
-                  f'pub const NUMERAIRE_DATE: &str = "{fx_date}";', nsrc)
     open("src/numeraires.rs", "w").write(nsrc)
     print(f'numeraires: BTC ${cg["bitcoin"]["usd"]:,} ETH ${cg["ethereum"]["usd"]:,} XAU ${cg["pax-gold"]["usd"]:,}')
 except Exception as e:

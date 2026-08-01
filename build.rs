@@ -59,7 +59,6 @@ fn main() {
     entries.sort_by_key(|e| e.file_name());
 
     let mut code = String::from("pub fn load_countries() -> Vec<crate::data::Country> {\n    vec![\n");
-    let mut visa_map: HashMap<String, Vec<&VisaAccessToml>> = HashMap::new();
 
     // We need to keep parsed data alive for references
     let mut parsed: Vec<(String, CountryToml)> = Vec::new();

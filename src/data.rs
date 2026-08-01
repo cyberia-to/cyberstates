@@ -161,29 +161,6 @@ impl Country {
         fmt_usd_billions(self.money_supply_b_usd)
     }
 
-    /// Supply in native tokens = cap / price
-    pub fn supply(&self) -> f64 {
-        if self.token_price_usd > 0.0 {
-            self.money_supply_b_usd / self.token_price_usd
-        } else {
-            0.0
-        }
-    }
-
-    pub fn supply_fmt(&self) -> String {
-        let s = self.supply();
-        if s <= 0.0 {
-            "N/A".to_string()
-        } else if s >= 1_000_000.0 {
-            format!("{:.1}Q", s / 1_000_000.0)
-        } else if s >= 1000.0 {
-            format!("{:.0}T", s / 1000.0)
-        } else if s >= 1.0 {
-            format!("{:.0}B", s)
-        } else {
-            format!("{:.1}B", s)
-        }
-    }
 
     pub fn price_fmt(&self) -> String {
         if self.token_price_usd <= 0.0 {
@@ -198,6 +175,24 @@ impl Country {
     }
 
     /// Weighted index: economy and population reach, both directions
+    /// Value of the rating object for this state, in the field's raw unit
+    /// (cap in B USD, human/land in USD, scores 0-100, counts raw).
+    pub fn metric(&self, f: SortField) -> f64 {
+        match f {
+            SortField::Cap => self.money_supply_b_usd,
+            SortField::Human => {
+                if self.population > 0 { self.money_supply_b_usd * 1e9 / self.population as f64 } else { 0.0 }
+            }
+            SortField::Land => {
+                if self.land_area_km2 > 0 { self.money_supply_b_usd * 1e9 / self.land_area_km2 as f64 } else { 0.0 }
+            }
+            SortField::Freedom => self.index().freedom,
+            SortField::Openness => self.index().openness,
+            SortField::Population => self.population as f64,
+            SortField::Area => self.land_area_km2 as f64,
+        }
+    }
+
     /// Weights: visa-free=1.0, VoA=0.8, eta/e-visa=0.5, visa-required=0.1, no-admission=0.0
     pub fn index(&self) -> CountryIndex {
         let countries = load_countries();
@@ -323,50 +318,56 @@ pub const REGIONS: &[&str] = &[
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum SortField {
-    Name,
-    Population,
-    LandArea,
-    Token,
     Cap,
+    Human,
+    Land,
     Freedom,
     Openness,
+    Population,
+    Area,
 }
 
 impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
-            Self::Name => "STATE",
-            Self::Population => "POPULATION",
-            Self::LandArea => "LAND AREA",
-            Self::Token => "TOKEN",
             Self::Cap => "CAP",
+            Self::Human => "HUMAN",
+            Self::Land => "LAND",
             Self::Freedom => "FREEDOM",
             Self::Openness => "OPENNESS",
+            Self::Population => "POPULATION",
+            Self::Area => "AREA",
         }
     }
 
     pub fn slug(&self) -> &'static str {
         match self {
-            Self::Name => "name",
-            Self::Population => "population",
-            Self::LandArea => "land",
-            Self::Token => "token",
             Self::Cap => "cap",
+            Self::Human => "human",
+            Self::Land => "land",
             Self::Freedom => "freedom",
             Self::Openness => "openness",
+            Self::Population => "population",
+            Self::Area => "area",
         }
     }
 
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
-            "name" => Self::Name,
-            "population" => Self::Population,
-            "land" => Self::LandArea,
-            "token" => Self::Token,
             "cap" => Self::Cap,
+            "human" => Self::Human,
+            "land" => Self::Land,
             "freedom" => Self::Freedom,
             "openness" => Self::Openness,
+            "population" => Self::Population,
+            "area" => Self::Area,
             _ => return None,
         })
     }
+
+    /// The seven rating objects, in display order.
+    pub const ALL: [SortField; 7] = [
+        Self::Cap, Self::Human, Self::Land, Self::Freedom,
+        Self::Openness, Self::Population, Self::Area,
+    ];
 }
