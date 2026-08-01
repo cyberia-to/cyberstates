@@ -175,6 +175,88 @@ body {
     .state-count { text-align: left; }
 }
 
+/* Rendered markdown — methodology and future prose pages */
+.prose-cyber {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #b8c2cc;
+}
+
+.prose-cyber h1 {
+    font-size: 26px;
+    color: var(--cyber-green);
+    letter-spacing: 1px;
+    margin: 28px 0 12px;
+}
+
+.prose-cyber h2 {
+    font-size: 17px;
+    color: var(--cyber-cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 32px 0 10px;
+}
+
+.prose-cyber p { margin: 10px 0; }
+
+.prose-cyber a { color: var(--cyber-cyan); text-decoration: none; }
+.prose-cyber a:hover { color: var(--cyber-green); }
+
+.prose-cyber strong { color: #e8eef4; }
+.prose-cyber em { color: #d0d8e0; }
+
+.prose-cyber code {
+    font-family: 'Play', monospace;
+    background: #0a0f0a;
+    border: 1px solid #1a241a;
+    border-radius: 2px;
+    padding: 1px 5px;
+    color: var(--cyber-yellow);
+    font-size: 13px;
+}
+
+.prose-cyber pre {
+    background: #050505;
+    border: 1px solid #111;
+    border-radius: 4px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 14px 0;
+}
+
+.prose-cyber pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--cyber-green);
+}
+
+.prose-cyber table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13px;
+}
+
+.prose-cyber th {
+    text-align: left;
+    color: var(--cyber-green);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--cyber-muted);
+    padding: 8px 12px;
+}
+
+.prose-cyber td {
+    border-bottom: 1px solid #111;
+    padding: 8px 12px;
+}
+
+.prose-cyber ul, .prose-cyber ol { margin: 10px 0 10px 24px; }
+.prose-cyber li { margin: 6px 0; }
+
 /* Cyber table */
 .cyber-table {
     width: 100%;
