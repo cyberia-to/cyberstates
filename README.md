@@ -16,7 +16,7 @@ PATH="$HOME/.cargo/bin:$PATH" trunk serve        # 127.0.0.1:8080
 
 ```
 PATH="$HOME/.cargo/bin:$PATH" trunk build --release
-rsync -az --delete dist/ cyberproxy:/var/www/html/cyberia/
+rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
 ```
 
 ## layout
