@@ -6,8 +6,8 @@ population = 6364943
 land_area_km2 = 21041
 currency_code = "USD"
 currency_name = "American Dollar"
-money_supply_b_usd = 18.0
-token_price_usd = 1.0000
+money_supply_b_usd = 23.6
+token_price_usd = 1.000000
 visa_free_destinations = 142
 visa_free_inbound = 138
 

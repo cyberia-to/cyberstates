@@ -6,8 +6,8 @@ population = 16767842
 land_area_km2 = 181035
 currency_code = "KHR"
 currency_name = "Cambodian Riel"
-money_supply_b_usd = 25.0
-token_price_usd = 0.0002450
+money_supply_b_usd = 63.4
+token_price_usd = 0.000247
 visa_free_destinations = 55
 visa_free_inbound = 175
 

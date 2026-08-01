@@ -6,8 +6,8 @@ population = 227679
 land_area_km2 = 964
 currency_code = "STN"
 currency_name = "Sao Tome and Principe Dobra"
-money_supply_b_usd = 0.2
-token_price_usd = 0.04400
+money_supply_b_usd = 0.179
+token_price_usd = 0.046986
 visa_free_destinations = 65
 visa_free_inbound = 182
 

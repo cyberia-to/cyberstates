@@ -6,8 +6,8 @@ population = 11148278
 land_area_km2 = 89342
 currency_code = "JOD"
 currency_name = "Jordanian Dinar"
-money_supply_b_usd = 45.0
-token_price_usd = 1.4100
+money_supply_b_usd = 61.2
+token_price_usd = 1.410437
 visa_free_destinations = 88
 visa_free_inbound = 110
 

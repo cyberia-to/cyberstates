@@ -6,8 +6,8 @@ population = 22156000
 land_area_km2 = 65610
 currency_code = "LKR"
 currency_name = "Sri Lankan Rupee"
-money_supply_b_usd = 20.0
-token_price_usd = 0.003300
+money_supply_b_usd = 28.2
+token_price_usd = 0.002978
 visa_free_destinations = 47
 visa_free_inbound = 160
 

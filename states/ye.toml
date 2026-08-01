@@ -6,8 +6,8 @@ population = 34449825
 land_area_km2 = 527968
 currency_code = "YER"
 currency_name = "Yemeni Rial"
-money_supply_b_usd = 5.0
-token_price_usd = 0.004000
+money_supply_b_usd = 5.2
+token_price_usd = 0.004194
 visa_free_destinations = 34
 visa_free_inbound = 20
 

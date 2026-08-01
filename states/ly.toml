@@ -6,8 +6,8 @@ population = 7137931
 land_area_km2 = 1759540
 currency_code = "LYD"
 currency_name = "Libyan Dinar"
-money_supply_b_usd = 65.0
-token_price_usd = 0.20700
+money_supply_b_usd = 16.0
+token_price_usd = 0.155902
 visa_free_destinations = 40
 visa_free_inbound = 20
 

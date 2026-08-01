@@ -6,8 +6,8 @@ population = 28647293
 land_area_km2 = 475442
 currency_code = "XAF"
 currency_name = "Central African Franc"
-money_supply_b_usd = 12.0
-token_price_usd = 0.001650
+money_supply_b_usd = 8.3
+token_price_usd = 0.001755
 visa_free_destinations = 52
 visa_free_inbound = 130
 

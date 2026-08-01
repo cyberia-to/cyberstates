@@ -6,8 +6,8 @@ population = 5917648
 land_area_km2 = 733
 currency_code = "SGD"
 currency_name = "Singapore Dollar"
-money_supply_b_usd = 600.0
-token_price_usd = 0.75000
+money_supply_b_usd = 558
+token_price_usd = 0.779460
 visa_free_destinations = 196
 visa_free_inbound = 110
 

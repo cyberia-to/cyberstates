@@ -6,8 +6,8 @@ population = 5212173
 land_area_km2 = 51100
 currency_code = "CRC"
 currency_name = "Costa Rican Colon"
-money_supply_b_usd = 25.0
-token_price_usd = 0.001900
+money_supply_b_usd = 57.7
+token_price_usd = 0.002200
 visa_free_destinations = 148
 visa_free_inbound = 128
 

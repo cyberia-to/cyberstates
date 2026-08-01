@@ -7,7 +7,7 @@ land_area_km2 = 117600
 currency_code = "ERN"
 currency_name = "Eritrean Nakfa"
 money_supply_b_usd = 3.0
-token_price_usd = 0.06670
+token_price_usd = 0.066667
 visa_free_destinations = 39
 visa_free_inbound = 25
 

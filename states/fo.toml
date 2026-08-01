@@ -6,8 +6,8 @@ population = 54000
 land_area_km2 = 1393
 currency_code = "DKK"
 currency_name = "Danish Krone"
-money_supply_b_usd = 2.5
-token_price_usd = 0.1460
+money_supply_b_usd = 2.6
+token_price_usd = 0.154153
 visa_free_destinations = 0
 visa_free_inbound = 0
 

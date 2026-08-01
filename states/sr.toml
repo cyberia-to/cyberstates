@@ -6,8 +6,8 @@ population = 618040
 land_area_km2 = 163820
 currency_code = "SRD"
 currency_name = "Surinamese Dollar"
-money_supply_b_usd = 2.0
-token_price_usd = 0.02800
+money_supply_b_usd = 2.9
+token_price_usd = 0.026372
 visa_free_destinations = 92
 visa_free_inbound = 125
 

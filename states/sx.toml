@@ -6,8 +6,8 @@ population = 44000
 land_area_km2 = 34
 currency_code = "ANG"
 currency_name = "Netherlands Antillean Guilder"
-money_supply_b_usd = 0.8
-token_price_usd = 0.5587
+money_supply_b_usd = 0.800
+token_price_usd = 0.558659
 visa_free_destinations = 0
 visa_free_inbound = 0
 

@@ -7,7 +7,7 @@ land_area_km2 = 10400
 currency_code = "LBP"
 currency_name = "Lebanese Pound"
 money_supply_b_usd = 40.0
-token_price_usd = 6.67e-05
+token_price_usd = 0.000011
 visa_free_destinations = 54
 visa_free_inbound = 50
 

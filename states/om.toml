@@ -6,8 +6,8 @@ population = 4644384
 land_area_km2 = 309500
 currency_code = "OMR"
 currency_name = "Omani Rial"
-money_supply_b_usd = 40.0
-token_price_usd = 2.5974
+money_supply_b_usd = 40.1
+token_price_usd = 2.600801
 visa_free_destinations = 93
 visa_free_inbound = 85
 

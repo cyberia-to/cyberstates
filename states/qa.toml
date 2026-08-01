@@ -6,8 +6,8 @@ population = 2979915
 land_area_km2 = 11586
 currency_code = "QAR"
 currency_name = "Qatari Riyal"
-money_supply_b_usd = 170.0
-token_price_usd = 0.27470
+money_supply_b_usd = 204
+token_price_usd = 0.274725
 visa_free_destinations = 116
 visa_free_inbound = 88
 

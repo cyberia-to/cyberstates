@@ -6,8 +6,8 @@ population = 8796669
 land_area_km2 = 41285
 currency_code = "CHF"
 currency_name = "Swiss Franc"
-money_supply_b_usd = 1100.0
-token_price_usd = 1.1300
+money_supply_b_usd = 1205
+token_price_usd = 1.237376
 visa_free_destinations = 192
 visa_free_inbound = 93
 

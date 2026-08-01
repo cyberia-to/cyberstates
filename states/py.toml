@@ -6,8 +6,8 @@ population = 6861524
 land_area_km2 = 406752
 currency_code = "PYG"
 currency_name = "Paraguayan Guarani"
-money_supply_b_usd = 15.0
-token_price_usd = 0.0001340
+money_supply_b_usd = 29.4
+token_price_usd = 0.000167
 visa_free_destinations = 143
 visa_free_inbound = 120
 

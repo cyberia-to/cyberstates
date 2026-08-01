@@ -6,8 +6,8 @@ population = 48109006
 land_area_km2 = 1861484
 currency_code = "SDG"
 currency_name = "Sudanese Pound"
-money_supply_b_usd = 12.0
-token_price_usd = 0.001670
+money_supply_b_usd = 2.5
+token_price_usd = 0.001957
 visa_free_destinations = 41
 visa_free_inbound = 50
 

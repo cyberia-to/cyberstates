@@ -6,8 +6,8 @@ population = 277534122
 land_area_km2 = 1904569
 currency_code = "IDR"
 currency_name = "Indonesian Rupiah"
-money_supply_b_usd = 450.0
-token_price_usd = 6.3e-05
+money_supply_b_usd = 562
+token_price_usd = 0.000055
 visa_free_destinations = 78
 visa_free_inbound = 120
 

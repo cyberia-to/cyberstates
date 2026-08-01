@@ -6,8 +6,8 @@ population = 48582334
 land_area_km2 = 241038
 currency_code = "UGX"
 currency_name = "Ugandan Shilling"
-money_supply_b_usd = 8.0
-token_price_usd = 0.0002640
+money_supply_b_usd = 13.7
+token_price_usd = 0.000271
 visa_free_destinations = 66
 visa_free_inbound = 188
 

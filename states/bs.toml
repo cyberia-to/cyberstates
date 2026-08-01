@@ -6,8 +6,8 @@ population = 412623
 land_area_km2 = 13943
 currency_code = "BSD"
 currency_name = "Bahamian Dollar"
-money_supply_b_usd = 8.0
-token_price_usd = 1.0000
+money_supply_b_usd = 9.6
+token_price_usd = 1.000000
 visa_free_destinations = 138
 visa_free_inbound = 130
 

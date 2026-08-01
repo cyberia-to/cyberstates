@@ -6,8 +6,8 @@ population = 9200617
 land_area_km2 = 207600
 currency_code = "BYN"
 currency_name = "Belarusian Ruble"
-money_supply_b_usd = 15.0
-token_price_usd = 0.30600
+money_supply_b_usd = 18.7
+token_price_usd = 0.344221
 visa_free_destinations = 78
 visa_free_inbound = 50
 

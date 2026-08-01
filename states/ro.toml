@@ -6,8 +6,8 @@ population = 19051562
 land_area_km2 = 238391
 currency_code = "RON"
 currency_name = "Romanian Leu"
-money_supply_b_usd = 80.0
-token_price_usd = 0.21700
+money_supply_b_usd = 174
+token_price_usd = 0.219214
 visa_free_destinations = 178
 visa_free_inbound = 90
 

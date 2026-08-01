@@ -6,8 +6,8 @@ population = 13238559
 land_area_km2 = 27834
 currency_code = "BIF"
 currency_name = "Burundian Franc"
-money_supply_b_usd = 1.5
-token_price_usd = 0.0003500
+money_supply_b_usd = 2.7
+token_price_usd = 0.000334
 visa_free_destinations = 47
 visa_free_inbound = 168
 

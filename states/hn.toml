@@ -6,8 +6,8 @@ population = 10432860
 land_area_km2 = 112492
 currency_code = "HNL"
 currency_name = "Honduran Lempira"
-money_supply_b_usd = 15.0
-token_price_usd = 0.04100
+money_supply_b_usd = 28.5
+token_price_usd = 0.037342
 visa_free_destinations = 138
 visa_free_inbound = 138
 

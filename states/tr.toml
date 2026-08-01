@@ -6,8 +6,8 @@ population = 85372377
 land_area_km2 = 783562
 currency_code = "TRY"
 currency_name = "Turkish Lira"
-money_supply_b_usd = 350.0
-token_price_usd = 0.03300
+money_supply_b_usd = 562
+token_price_usd = 0.021037
 visa_free_destinations = 116
 visa_free_inbound = 75
 

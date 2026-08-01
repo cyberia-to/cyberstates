@@ -6,8 +6,8 @@ population = 36947025
 land_area_km2 = 2149690
 currency_code = "SAR"
 currency_name = "Saudi Riyal"
-money_supply_b_usd = 600.0
-token_price_usd = 0.26670
+money_supply_b_usd = 600
+token_price_usd = 0.266667
 visa_free_destinations = 93
 visa_free_inbound = 85
 

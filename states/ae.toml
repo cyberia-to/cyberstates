@@ -6,8 +6,8 @@ population = 9365145
 land_area_km2 = 83600
 currency_code = "AED"
 currency_name = "Emirates Dirham"
-money_supply_b_usd = 500.0
-token_price_usd = 0.27230
+money_supply_b_usd = 750
+token_price_usd = 0.272294
 visa_free_destinations = 199
 visa_free_inbound = 125
 

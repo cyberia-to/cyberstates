@@ -7,7 +7,7 @@ land_area_km2 = 75417
 currency_code = "PAB"
 currency_name = "Panamanian Balboa"
 money_supply_b_usd = 40.0
-token_price_usd = 1.0000
+token_price_usd = 1.000000
 visa_free_destinations = 143
 visa_free_inbound = 125
 
