@@ -120,26 +120,6 @@ pub fn CountryPage() -> impl IntoView {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="state-scores">
-                                    <div>
-                                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">{format!("TRAVEL FREEDOM · √(eco_out × pop_out) · {}", r_freedom)}</span>
-                                            <span class="tabular-nums" style:color=freedom_color style="font-size: 22px; font-weight: 700;">{freedom_str}</span>
-                                        </div>
-                                        <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
-                                            <div class="openness-bar" style:width=freedom_bar style:background=freedom_color></div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">{format!("HOSPITALITY · √(eco_in × pop_in) · {}", r_hosp)}</span>
-                                            <span class="tabular-nums" style:color=openness_color style="font-size: 22px; font-weight: 700;">{openness_str}</span>
-                                        </div>
-                                        <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
-                                            <div class="openness-bar" style:width=openness_bar style:background=openness_color></div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             // Fundamental: measured, not computed
@@ -196,29 +176,31 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                             </div>
 
-                            // Openness index
-                            <div class="stat-grid" style="margin-top: 12px;">
+                            // the two visa-matrix scores: value, bar, and the
+                            // formula with its live components
+                            <div class="score-grid" style="margin-top: 12px;">
                                 <div class="stat-card">
-                                    <div class="stat-label">"ECO OUT"</div>
-                                    <div class="stat-value" style="color: var(--cyber-green);">{eco_out}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"world economy accessible"</div>
+                                    <div class="stat-label">"TRAVEL FREEDOM"<span class="rank-badge">{r_freedom}</span></div>
+                                    <div class="stat-value tabular-nums" style:color=freedom_color>{freedom_str}</div>
+                                    <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden; margin-top: 8px;">
+                                        <div class="openness-bar" style:width=freedom_bar style:background=freedom_color></div>
+                                    </div>
+                                    <div style="font-size: 11px; color: #444; margin-top: 8px;">
+                                        "√( eco out "<span style="color: var(--cyber-green);">{eco_out}</span>" × pop out "<span style="color: var(--cyber-cyan);">{pop_out}</span>" )  — of world reachable"
+                                    </div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"POP OUT"</div>
-                                    <div class="stat-value" style="color: var(--cyber-cyan);">{pop_out}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"world population accessible"</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"ECO IN"</div>
-                                    <div class="stat-value" style="color: var(--cyber-magenta);">{eco_in}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"world economy can visit"</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"POP IN"</div>
-                                    <div class="stat-value" style="color: var(--cyber-pink);">{pop_in}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"world population can visit"</div>
+                                    <div class="stat-label">"HOSPITALITY"<span class="rank-badge">{r_hosp}</span></div>
+                                    <div class="stat-value tabular-nums" style:color=openness_color>{openness_str}</div>
+                                    <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden; margin-top: 8px;">
+                                        <div class="openness-bar" style:width=openness_bar style:background=openness_color></div>
+                                    </div>
+                                    <div style="font-size: 11px; color: #444; margin-top: 8px;">
+                                        "√( eco in "<span style="color: var(--cyber-magenta);">{eco_in}</span>" × pop in "<span style="color: var(--cyber-pink);">{pop_in}</span>" )  — of world admitted"
+                                    </div>
                                 </div>
                             </div>
+
 
                             // Visa sections side by side
                             <div class="visa-grid" style="margin-top: 40px;">

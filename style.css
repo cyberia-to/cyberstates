@@ -358,6 +358,12 @@ body {
     margin-bottom: 10px;
 }
 
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+}
+
 .stat-label .rank-badge {
     float: right;
     color: var(--cyber-green);
