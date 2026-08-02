@@ -16,7 +16,7 @@ pub fn CountryPage() -> impl IntoView {
     };
 
     view! {
-        <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
+        <div style="max-width: 1440px; margin: 0 auto; padding: 20px;">
             {move || match country() {
                 None => view! {
                     <div>

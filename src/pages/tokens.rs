@@ -70,7 +70,7 @@ pub fn TokensPage() -> impl IntoView {
     };
 
     view! {
-        <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
+        <div style="max-width: 1440px; margin: 0 auto; padding: 20px;">
             // Header row 1: logo — centered search — states/map flush right
             <div class="header-row1">
                 <div class="logo-zone">

@@ -18,7 +18,7 @@ pub fn MethodologyPage() -> impl IntoView {
     });
 
     view! {
-        <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
+        <div style="max-width: 1440px; margin: 0 auto; padding: 20px;">
             <div class="header-row1">
                 <div class="logo-zone">
                     <a href="/" style="text-decoration: none;">
