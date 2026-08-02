@@ -21,9 +21,11 @@ outright. Inheritance runs in every direction:
 - downward: [Guam](/state/gu) inherits American law wholesale, then
   overrides the two domains a visitor actually touches — entry and tax.
   [Hong Kong](/state/hk) inherits [China](/state/cn)'s sovereignty and
-  overrides token, border and law: three overrides that make it more
-  distinct at street level than most UN members. [Greenland](/state/gl)
-  does the same under [Denmark](/state/dk).
+  overrides token, border and law — a dependency holding more of the
+  stack than [Monaco](/state/mc), a full UN member with no currency of
+  its own, no customs of its own, and defense borrowed from France by
+  treaty. [Greenland](/state/gl) runs the same overrides under
+  [Denmark](/state/dk).
 - upward: thirty European cyberstates delegate their token domain to a
   shared mint and keep borders and law. A federation is upward
   inheritance made permanent: [Micronesia](/state/fm)'s four member
