@@ -25,3 +25,16 @@ rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
 - `states/*.toml` — one file per state: population, land, currency, visa matrix
 - `build.rs` — generates `load_countries()` from the toml set
 - `scrape_passport.py`, `add_token_prices.py` — data refresh scripts
+
+## roadmap
+
+- **time axis** — stocks gain history; the honest flow is the derivative
+  of an audited stock: inflation as emission (the ledger's count of what
+  was printed), capital growth as adoption, migration as the tape.
+- **rule domains** — border is quoted; token integrity, property rights
+  for foreigners, taxation and exit join it, same shape.
+- **relational layer** — offshore token holdings, trade, migration flows:
+  the kernel is scalar, the world is a graph.
+- **refined stocks** — habitable area, age structure.
+- **the venue** — quotes become positions; new cyberstates IPO onto the
+  table.
