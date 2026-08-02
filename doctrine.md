@@ -74,7 +74,7 @@ cities. No honest measure of wealth rises from ruin.
 What matters about a household is not its annual churn but what it owns;
 what matters about a state is not how fast its economy spins but what it
 keeps: the wealth the world agrees to hold behind its border, in its
-token. Stock, not flow. Result, not activity.
+token. Stock primary, flow follows. Result, not activity.
 
 Price the states by what they hold and the world order rearranges: as of
 August 2026, [China](/state/cn) holds almost twice the wealth
