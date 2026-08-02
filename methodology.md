@@ -9,7 +9,7 @@ Capital flight is a sell-off. Citizenship is a position, and every human
 alive holds at least one. What the market never had is a terminal —
 no ticker, no quotes, no listing rules.
 
-Cyberstates is that terminal: all 230 sovereignties quoted under one
+Cyberstates is that terminal: all 230 cyberstates quoted under one
 methodology, from no privileged point of view.
 
 ## The accounting
@@ -32,33 +32,41 @@ holds more of the world's wealth in its token; a state people flee bleeds
 cap. The ratings are the quotes of this market, and the pages behind them
 are its asset profiles.
 
-## The unit: what counts as a state
+## The cyberstate
 
-A row in this table is not a UN seat. It is a **jurisdiction**: a territory
-with a population that presents its own rules to the world — its own border
-regime, its own choice of token, its own legal surface.
+A row in this table is not a UN seat. It is a **cyberstate**: a territory
+whose population establishes the rules in force on it — the border regime,
+the token, the legal surface.
 
-Sovereignty is nested, outsourced, and sometimes absent; the jurisdiction
-is what remains when you ask where the rules actually come from:
+Sovereignty, in this frame, is not binary. It is a palette of rule
+domains — border, token, law, defense, taxation — and each domain can be
+held locally, inherited from a larger state, delegated upward to a union,
+or overridden outright. Cyberstates nest, subordinate and inherit in both
+directions:
 
-- **Micronesia** (the Federated States) is one row — one border regime, one
-  rented token, one legal surface — although it is itself a federation of
-  four states and its defense belongs to America by compact. The Marshall
-  Islands and Palau share its ocean and its regional name, and are separate
-  rows: their compacts, borders and rules are their own.
-- **Guam** is a row without a UN seat: nominal sovereignty sits in
-  Washington, but the border you cross, the taxes you owe and the visa
-  waiver you enter on are Guam's.
-- **Hong Kong** under China, **Greenland** under Denmark, the thirty
-  eurozone jurisdictions sharing one token — the same logic. Token and
-  state are many-to-many; that is why tokens have their own table.
-- **Antarctica** is the limit case that proves the rule: rules without a
-  sovereign — a treaty instead of a throne — a jurisdiction with zero
-  capital and the planet's second-largest territory.
+- **Micronesia** (the Federated States) is one row: four member states
+  inherit most rules from their federation; the federation holds border
+  and law locally, rents its token from America and delegates defense to
+  it by compact. The Marshall Islands and Palau share its ocean and its
+  regional name — separate rows, because their rule-sets are their own.
+- **Guam** inherits American sovereignty wholesale, then overrides the
+  domains a visitor actually touches: its own entry waiver, its own tax
+  code. A row with no UN seat.
+- **Hong Kong** inherits China's sovereignty and overrides token, border
+  and law — three domains that make it more distinct at street level than
+  many UN members. **Greenland** does the same under Denmark.
+- The **eurozone** inherits upward: thirty cyberstates delegate the token
+  domain to a shared mint while keeping their borders and laws. Token and
+  state are many-to-many — which is why tokens have their own table.
+- **Transnistria** holds every domain de facto and none de jure.
+  **Antarctica** is the limit case: a rule-set with no owner at all — a
+  treaty instead of a throne — zero capital, the planet's second-largest
+  territory.
 
-Nobody ever interacts with sovereignty in the abstract. You land at a
-border, hold a token, sign under a law. The jurisdiction is the surface
-where states touch humans — so the jurisdiction is the unit.
+Nobody interacts with sovereignty in the abstract. You land at a border,
+hold a token, sign under a law. The cyberstate is the surface where rules
+touch humans — and every row of this table is such a surface, whatever
+pyramid of inheritance stands behind it.
 
 ## Fundamental and derived
 
@@ -202,15 +210,16 @@ the numeraire; intuitions are not — which is exactly why the switch exists.
 
 ## Who gets listed
 
-230 jurisdictions: UN members, their autonomous territories, partially
+230 cyberstates: UN members, their autonomous territories, partially
 recognized and unrecognized states — Abkhazia, Transnistria, Somaliland,
 Kosovo and their kin — and Antarctica.
 
 The listing rule is existence, not recognition: a territory, a population,
-and a distinct rule-interface to the world. Recognition is one state's
-opinion about another; this table records where the rules actually differ.
-The registry is open-ended — a network state lists the day its rules
-become the interface of a territory.
+a rule-set of its own. Recognition is one state's opinion about another;
+this table records where the rules actually differ. The registry is
+open-ended, and the threshold is exact: any community becomes a cyberstate
+the day its rules become the interface of a territory. Nothing else was
+ever required — the old states just had a head start.
 
 ## Data
 
