@@ -14,7 +14,7 @@ pub fn MethodologyPage() -> impl IntoView {
     html::push_html(&mut html_out, parser);
 
     Effect::new(move |_| {
-        document().set_title("Cyberstates methodology — Global Visa Openness Analytics");
+        document().set_title("Cyberstates methodology — the sovereignty terminal");
     });
 
     view! {

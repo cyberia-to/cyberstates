@@ -1,15 +1,22 @@
 # Methodology
 
-Cyberstates is not a visa index with extra columns. It is an accounting
-system for sovereignty: every state measured as an economic object — a
-token, a territory, a population, a set of rights — under one methodology,
-from no privileged point of view.
+Every state on Earth is a token: backed by territory, secured by a
+population, governed by protocol rules called laws, and priced by the
+wealth the world agrees to hold in its currency.
 
-## The frame: every state is a token
+The market for these tokens has always existed. Migration is a trade.
+Capital flight is a sell-off. Citizenship is a position, and every human
+alive holds at least one. What the market never had is a terminal —
+no ticker, no quotes, no listing rules.
+
+Cyberstates is that terminal: all 230 sovereignties quoted under one
+methodology, from no privileged point of view.
+
+## The accounting
 
 A state issues a currency and demands its use. That currency is the state's
 token, and the wealth the world agrees to hold in it is the token's
-capitalization. Read the columns of any crypto exchange against this table:
+capitalization. Read the columns of any exchange against this table:
 
 | on an exchange | here |
 |---|---|
@@ -22,8 +29,8 @@ capitalization. Read the columns of any crypto exchange against this table:
 
 This is not a metaphor — it is the same accounting. A state people trust
 holds more of the world's wealth in its token; a state people flee bleeds
-cap. The table is a market report on sovereignty, and every human is a
-holder of at least one position in it.
+cap. The ratings are the quotes of this market, and the pages behind them
+are its asset profiles.
 
 ## Fundamental and derived
 

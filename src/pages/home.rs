@@ -189,7 +189,7 @@ pub fn HomePage() -> impl IntoView {
             t.push_str(&format!(" in {}", region));
         }
         t.push_str(&format!(" by {}", field.label().to_lowercase()));
-        t.push_str(" — Global Visa Openness Analytics");
+        t.push_str(" — the sovereignty terminal");
         document().set_title(&t);
     });
 

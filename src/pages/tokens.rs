@@ -42,7 +42,7 @@ pub fn TokensPage() -> impl IntoView {
     };
 
     Effect::new(move |_| {
-        document().set_title("Cyberstates tokens — Global Visa Openness Analytics");
+        document().set_title("Cyberstates tokens — the sovereignty terminal");
     });
 
     let tokens_for_count = tokens.clone();
