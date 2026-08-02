@@ -1,5 +1,6 @@
 use leptos::prelude::*;
 use crate::data::*;
+use crate::pages::country::SiteHeader;
 
 #[component]
 pub fn TokenPage() -> impl IntoView {
@@ -12,11 +13,11 @@ pub fn TokenPage() -> impl IntoView {
     };
 
     view! {
-        <div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
             {move || match token() {
                 None => view! {
                     <div>
-                        <a href="/" class="back-link">"← BACK TO TABLE"</a>
+                        <SiteHeader suffix="not found".to_string() />
                         <h1 style="color: var(--cyber-red); margin-top: 40px;">"TOKEN NOT FOUND"</h1>
                     </div>
                 }.into_any(),
@@ -25,46 +26,61 @@ pub fn TokenPage() -> impl IntoView {
                     let name = t.name.clone();
                     let price = t.price_fmt();
                     let cap = t.cap_fmt();
+                    let supply = t.supply_fmt();
                     let num_countries = t.countries.len();
                     let countries = t.countries.clone();
                     let total_supply = t.total_supply_b_usd;
+                    let suffix = format!("{} · {}", code.to_lowercase(), name.to_lowercase());
 
                     view! {
                         <div>
-                            <a href="/" class="back-link">"← BACK TO TABLE"</a>
+                            <SiteHeader suffix=suffix />
 
-                            // Hero
-                            <div class="country-hero" style="margin-top: 20px;">
-                                <div style="font-size: 14px; letter-spacing: 3px; color: #444; margin-bottom: 8px;">"TOKEN"</div>
-                                <h1 style="font-size: clamp(40px, 8vw, 72px); font-weight: 700; color: var(--cyber-yellow); margin: 0;">
-                                    {code.clone()}
-                                </h1>
-                                <div style="font-size: 18px; color: #888; margin-top: 8px;">
-                                    {name}
+                            // Hero: identity, mirroring the state page
+                            <div class="state-hero">
+                                <div class="state-identity">
+                                    <div style="display: flex; align-items: center; gap: 20px;">
+                                        <div>
+                                            <h1 style="font-size: clamp(28px, 5vw, 52px); font-weight: 700; color: var(--cyber-yellow); margin: 0; line-height: 1.05;">
+                                                {code.clone()}
+                                            </h1>
+                                            <div style="display: flex; gap: 12px; align-items: center; margin-top: 10px;">
+                                                <span style="font-size: 13px; color: #888; letter-spacing: 1px;">{name}</span>
+                                                <span style="color: var(--cyber-yellow); font-size: 11px; padding: 3px 10px; border-radius: 2px; border: 1px solid; letter-spacing: 1px;">"TOKEN"</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            // Stats
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 30px;">
+                            // Fundamental, in site vocabulary
+                            <div class="section-label" style="margin-top: 28px;">"FUNDAMENTAL"</div>
+                            <div class="stat-grid">
                                 <div class="stat-card">
-                                    <div class="stat-label">"PRICE (USD)"</div>
+                                    <div class="stat-label">"PRICE"</div>
                                     <div class="stat-value" style="color: var(--cyber-orange);">{price}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"USD per token"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"MARKET CAP"</div>
+                                    <div class="stat-label">"SUPPLY"</div>
+                                    <div class="stat-value" style="color: #888;">{supply}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"CAPITAL"</div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">{cap}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"STATES USING"</div>
+                                    <div class="stat-label">"STATES"</div>
                                     <div class="stat-value" style="color: var(--cyber-cyan);">{num_countries}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"states running on this token"</div>
                                 </div>
                             </div>
 
                             // Countries using this token
-                            <div style="margin-top: 40px;">
-                                <div style="font-size: 11px; letter-spacing: 3px; color: var(--cyber-yellow); margin-bottom: 16px;">
-                                    "STATES USING THIS TOKEN"
-                                </div>
+                            <div style="margin-top: 32px;">
+                                <div class="section-label">"STATES ON THIS TOKEN"</div>
                                 <div style="border: 1px solid #111; border-radius: 4px;">
                                     <table class="cyber-table" style="font-size: 13px;">
                                         <thead>
