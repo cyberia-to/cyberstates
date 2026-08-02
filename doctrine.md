@@ -76,9 +76,9 @@ what matters about a state is not how fast its economy spins but what it
 keeps: the wealth the world agrees to hold behind its border, in its
 token. Stock, not flow. Result, not activity.
 
-Price the states by what they hold and the world order rearranges:
-[China](/state/cn)'s ¥307T of deep money stands first, ahead of
-[America](/state/us) — a ranking no GDP table has ever printed.
+Price the states by what they hold and the world order rearranges: as of
+August 2026, [China](/state/cn) holds almost twice the wealth
+[America](/state/us) does — a ranking no GDP table has ever printed.
 
 ## 5. Three stocks exhaust the countable state
 
@@ -101,7 +101,7 @@ CAPITAL = PRICE × SUPPLY
 ```
 
 Nothing in this kernel is opinion: every number is measured or is
-arithmetic on measurements. Today the kernel prices
+arithmetic on measurements. As of August 2026 the kernel prices
 [Luxembourg](/state/lu)'s backing at ~$484k per resident and
 [Monaco](/state/mc)'s territory at ~$5.3B per km², while
 [Antarctica](/state/aq) prices at exactly zero — the visible supply
