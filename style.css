@@ -351,6 +351,21 @@ body {
 }
 
 /* State page */
+.section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.stat-label .rank-badge {
+    float: right;
+    color: var(--cyber-green);
+    opacity: 0.75;
+    letter-spacing: 1px;
+}
+
+
 .state-hero {
     display: flex;
     justify-content: space-between;

@@ -62,6 +62,22 @@ pub fn CountryPage() -> impl IntoView {
                     let supply = c.supply_fmt();
                     let human_value = fmt_value(c.metric(SortField::Human), Numeraire::Usd);
                     let land_value = fmt_value(c.metric(SortField::Land), Numeraire::Usd);
+
+                    // rank in each rating = position in that landing's table
+                    let all_states = load_countries();
+                    let rank_of = |f: SortField| -> String {
+                        let mine = c.metric(f);
+                        let ahead = all_states.iter().filter(|o| o.metric(f) > mine).count();
+                        format!("#{}", ahead + 1)
+                    };
+                    let r_capital = rank_of(SortField::Capital);
+                    let r_human = rank_of(SortField::Human);
+                    let r_land = rank_of(SortField::Land);
+                    let r_freedom = rank_of(SortField::Freedom);
+                    let r_hosp = rank_of(SortField::Hospitality);
+                    let r_pop = rank_of(SortField::Population);
+                    let r_area = rank_of(SortField::Area);
+                    let r_density = rank_of(SortField::Density);
                     let freedom_str = format!("{:.1}", idx.freedom);
                     let freedom_bar = format!("{}%", idx.freedom.min(100.0));
                     let openness_str = format!("{:.1}", idx.openness);
@@ -107,7 +123,7 @@ pub fn CountryPage() -> impl IntoView {
                                 <div class="state-scores">
                                     <div>
                                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"TRAVEL FREEDOM · √(eco_out × pop_out)"</span>
+                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">{format!("TRAVEL FREEDOM · √(eco_out × pop_out) · {}", r_freedom)}</span>
                                             <span class="tabular-nums" style:color=freedom_color style="font-size: 22px; font-weight: 700;">{freedom_str}</span>
                                         </div>
                                         <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
@@ -116,7 +132,7 @@ pub fn CountryPage() -> impl IntoView {
                                     </div>
                                     <div>
                                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"HOSPITALITY · √(eco_in × pop_in)"</span>
+                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">{format!("HOSPITALITY · √(eco_in × pop_in) · {}", r_hosp)}</span>
                                             <span class="tabular-nums" style:color=openness_color style="font-size: 22px; font-weight: 700;">{openness_str}</span>
                                         </div>
                                         <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
@@ -126,8 +142,9 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                             </div>
 
-                            // Token block
-                            <div class="stat-grid" style="margin-top: 28px;">
+                            // Fundamental: measured, not computed
+                            <div class="section-label" style="margin-top: 28px;">"FUNDAMENTAL"</div>
+                            <div class="stat-grid">
                                 <div class="stat-card">
                                     <div class="stat-label">"TOKEN"</div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">
@@ -145,35 +162,37 @@ pub fn CountryPage() -> impl IntoView {
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"CAPITAL"</div>
+                                    <div class="stat-label">"CAPITAL"<span class="rank-badge">{r_capital}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">{cap}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
                                 </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"POPULATION"<span class="rank-badge">{r_pop}</span></div>
+                                    <div class="stat-value">{pop}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"AREA"<span class="rank-badge">{r_area}</span></div>
+                                    <div class="stat-value" style="color: var(--cyber-blue);">{area}</div>
+                                </div>
                             </div>
 
-                            // Ratings
-                            <div class="stat-grid" style="margin-top: 12px;">
+                            // Derived: computed from the fundamentals
+                            <div class="section-label" style="margin-top: 20px;">"DERIVED"</div>
+                            <div class="stat-grid">
                                 <div class="stat-card">
-                                    <div class="stat-label">"HUMAN VALUE"</div>
+                                    <div class="stat-label">"HUMAN VALUE"<span class="rank-badge">{r_human}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-green);">{human_value}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per person"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"LAND VALUE"</div>
+                                    <div class="stat-label">"LAND VALUE"<span class="rank-badge">{r_land}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-cyan);">{land_value}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per km²"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"POPULATION"</div>
-                                    <div class="stat-value">{pop}</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"AREA"</div>
-                                    <div class="stat-value" style="color: var(--cyber-blue);">{area}</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"DENSITY"</div>
+                                    <div class="stat-label">"DENSITY"<span class="rank-badge">{r_density}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-purple);">{density}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"population per km²"</div>
                                 </div>
                             </div>
 
