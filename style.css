@@ -310,6 +310,9 @@ body {
     height: min(calc(100vh - 220px), calc((100vw - 552px) * 0.6573));
     width: auto;
     max-width: 100%;
+    /* the projection is natively south-up; flipping it puts the Americas
+       and Africa in their familiar orientation */
+    transform: rotate(180deg);
 }
 
 .cyber-table.slim {
