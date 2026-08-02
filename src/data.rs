@@ -351,7 +351,7 @@ impl SortField {
             Self::Capital => "CAPITAL",
             Self::Human => "HUMAN VALUE",
             Self::Land => "LAND VALUE",
-            Self::Freedom => "MOVEMENT FREEDOM",
+            Self::Freedom => "TRAVEL FREEDOM",
             Self::Hospitality => "HOSPITALITY",
             Self::Population => "POPULATION",
             Self::Area => "AREA",

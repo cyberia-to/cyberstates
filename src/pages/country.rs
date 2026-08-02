@@ -103,7 +103,7 @@ pub fn CountryPage() -> impl IntoView {
                                 <div class="state-scores">
                                     <div>
                                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"MOVING FREEDOM · √(eco_out × pop_out)"</span>
+                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"TRAVEL FREEDOM · √(eco_out × pop_out)"</span>
                                             <span class="tabular-nums" style:color=freedom_color style="font-size: 22px; font-weight: 700;">{freedom_str}</span>
                                         </div>
                                         <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
