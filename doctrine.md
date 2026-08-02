@@ -63,6 +63,11 @@ simply never been quoted.
 GDP measures the pedaling, not the arrival. It is a flow of transactions
 — government spending counted at cost, rents imputed to owners living in
 their own homes, churn for churn's sake — reset to zero every January.
+And, most damning of all, it is self-reported: each state's own bureau
+assembles it from surveys, models and imputations, conjures it out of
+thin air, revises it for years after, and no outsider can audit a single
+line. A money stock is a ledger; a GDP is a press release.
+
 A war raises GDP twice: once making the shells, once rebuilding the
 cities. No honest measure of wealth rises from ruin.
 
