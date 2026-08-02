@@ -3,7 +3,7 @@ use pulldown_cmark::{html, Options, Parser};
 use wasm_bindgen::JsCast;
 use crate::components::nav::SiteNav;
 
-const METHODOLOGY_MD: &str = include_str!("../../methodology.md");
+const METHODOLOGY_MD: &str = include_str!("../../doctrine.md");
 
 #[component]
 pub fn MethodologyPage() -> impl IntoView {
@@ -14,7 +14,7 @@ pub fn MethodologyPage() -> impl IntoView {
     html::push_html(&mut html_out, parser);
 
     Effect::new(move |_| {
-        document().set_title("Cyberstates methodology — the sovereignty terminal");
+        document().set_title("Cyberstates doctrine — the sovereignty terminal");
     });
 
     view! {
@@ -27,7 +27,7 @@ pub fn MethodologyPage() -> impl IntoView {
                             <span style="color: #fff;">"STATES"</span>
                         </h1>
                     </a>
-                    <div class="logo-suffix">"methodology"</div>
+                    <div class="logo-suffix">"doctrine"</div>
                 </div>
                 <input
                     type="text"
@@ -44,7 +44,7 @@ pub fn MethodologyPage() -> impl IntoView {
                         }
                     }
                 />
-                <SiteNav active="METHODOLOGY" />
+                <SiteNav active="DOCTRINE" />
             </div>
 
             <div class="prose-cyber" style="max-width: 860px; margin: 0 auto;" inner_html=html_out></div>

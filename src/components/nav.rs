@@ -8,7 +8,7 @@ pub fn SiteNav(active: &'static str, #[prop(optional)] children: Option<Children
     const ITEMS: [(&str, &str, &str); 3] = [
         ("STATES", "/", "nav-states"),
         ("TOKENS", "/tokens", "nav-tokens"),
-        ("METHODOLOGY", "/methodology", "nav-method"),
+        ("DOCTRINE", "/doctrine", "nav-method"),
     ];
 
     view! {

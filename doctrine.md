@@ -1,4 +1,4 @@
-# Methodology
+# Doctrine
 
 Every state on Earth is a token: backed by territory, secured by a
 population, governed by protocol rules called laws, and priced by the
@@ -11,26 +11,6 @@ no ticker, no quotes, no listing rules.
 
 Cyberstates is that terminal: all 230 cyberstates quoted under one
 methodology, from no privileged point of view.
-
-## The accounting
-
-A state issues a currency and demands its use. That currency is the state's
-token, and the wealth the world agrees to hold in it is the token's
-capitalization. Read the columns of any exchange against this table:
-
-| on an exchange | here |
-|---|---|
-| token | the state's currency |
-| price | USD per unit |
-| supply | units in circulation |
-| market cap | money supply — the state's CAPITAL |
-| holders | population |
-| protocol rules | borders, rights, visa regimes |
-
-This is not a metaphor — it is the same accounting. A state people trust
-holds more of the world's wealth in its token; a state people flee bleeds
-cap. The ratings are the quotes of this market, and the pages behind them
-are its asset profiles.
 
 ## The cyberstate
 
@@ -67,6 +47,26 @@ Nobody interacts with sovereignty in the abstract. You land at a border,
 hold a token, sign under a law. The cyberstate is the surface where rules
 touch humans — and every row of this table is such a surface, whatever
 pyramid of inheritance stands behind it.
+
+## The accounting
+
+A state issues a currency and demands its use. That currency is the state's
+token, and the wealth the world agrees to hold in it is the token's
+capitalization. Read the columns of any exchange against this table:
+
+| on an exchange | here |
+|---|---|
+| token | the state's currency |
+| price | USD per unit |
+| supply | units in circulation |
+| market cap | money supply — the state's CAPITAL |
+| holders | population |
+| protocol rules | borders, rights, visa regimes |
+
+This is not a metaphor — it is the same accounting. A state people trust
+holds more of the world's wealth in its token; a state people flee bleeds
+cap. The ratings are the quotes of this market, and the pages behind them
+are its asset profiles.
 
 ## Fundamental and derived
 
