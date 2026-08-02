@@ -285,8 +285,9 @@ body {
 /* Home split: slim table + desktop map */
 .home-split {
     display: flex;
-    gap: 24px;
+    gap: 16px;
     align-items: flex-start;
+    margin-right: -20px; /* bleed the map to the physical screen edge */
 }
 
 .table-pane {
@@ -304,12 +305,7 @@ body {
 .map-pane .world-map-container svg {
     width: 100%;
     height: auto;
-    max-height: calc(100vh - 120px); /* the map fills the freed width but stays on one screen */
-}
-
-.map-pane .world-map-container {
-    display: flex;
-    justify-content: center;
+    display: block; /* width governs — no meet-slack, no centering pockets */
 }
 
 .cyber-table.slim {
