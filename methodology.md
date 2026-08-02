@@ -100,7 +100,8 @@ normalized by world totals, folded by the geometric mean: one number.
 ## Data
 
 - **Visa matrix** — scraped from public passport-index data; every ordered
-  pair of the 229 states, five regimes.
+  pair of the 229 visa-issuing states, five regimes. Antarctica is listed
+  but sits outside the matrix — no passports, no visas, scores of zero.
 - **Population, land area, money supply, token prices** — one TOML file per
   state in [`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
   assembled from public statistics; money supply converted to USD at current
@@ -121,5 +122,5 @@ normalized by world totals, folded by the geometric mean: one number.
 - **Bilateral nuance is flattened.** Duration of stay, work rights, refusal
   rates, and reciprocity asymmetries are not modeled — a 30-day visa-free and
   a 180-day visa-free both count 1.0.
-- **229 states include partially recognized ones.** Their matrices are
+- **230 states include partially recognized ones.** Their matrices are
   sparser and their scores accordingly conservative.
