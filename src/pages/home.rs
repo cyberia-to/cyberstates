@@ -127,7 +127,7 @@ fn passes(c: &Country, f: &NumFilter) -> bool {
     if f.gt { v > f.val } else { v < f.val }
 }
 
-const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "land>1m"];
+const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "area>1m"];
 
 #[component]
 pub fn HomePage() -> impl IntoView {
@@ -425,7 +425,7 @@ pub fn HomePage() -> impl IntoView {
                                     <th class="th-static">"TOKEN"</th>
                                     <th class="th-static" style="text-align: right;">"PRICE"</th>
                                     <th class="th-static metric-th" style="text-align: right;">
-                                        {move || sort_field.get().label()}
+                                        {move || sort_field.get().short()}
                                     </th>
                                 </tr>
                             </thead>

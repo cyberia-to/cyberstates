@@ -332,6 +332,20 @@ pub enum SortField {
 }
 
 impl SortField {
+    /// One-word header for the narrow table column — never wraps.
+    pub fn short(&self) -> &'static str {
+        match self {
+            Self::Capital => "CAPITAL",
+            Self::Human => "HUMAN",
+            Self::Land => "LAND",
+            Self::Freedom => "FREEDOM",
+            Self::Hospitality => "HOSPITALITY",
+            Self::Population => "POPULATION",
+            Self::Area => "AREA",
+            Self::Density => "DENSITY",
+        }
+    }
+
     pub fn label(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
@@ -348,8 +362,8 @@ impl SortField {
     pub fn slug(&self) -> &'static str {
         match self {
             Self::Capital => "capital",
-            Self::Human => "human",
-            Self::Land => "land",
+            Self::Human => "human-value",
+            Self::Land => "land-value",
             Self::Freedom => "freedom",
             Self::Hospitality => "hospitality",
             Self::Population => "population",
@@ -361,8 +375,8 @@ impl SortField {
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
             "capital" | "cap" => Self::Capital,
-            "human" => Self::Human,
-            "land" => Self::Land,
+            "human-value" | "human" => Self::Human,
+            "land-value" | "land" => Self::Land,
             "freedom" => Self::Freedom,
             "hospitality" | "openness" => Self::Hospitality,
             "population" => Self::Population,

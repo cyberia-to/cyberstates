@@ -323,8 +323,8 @@ body {
 }
 
 .cyber-table th.metric-th {
-    white-space: normal; /* HUMAN VALUE / MOVEMENT FREEDOM wrap instead of clipping */
-    line-height: 1.4;
+    white-space: nowrap; /* one-word headers — never two lines */
+    letter-spacing: 1px;
 }
 
 /* constant header height: one-line and two-line labels occupy the same
