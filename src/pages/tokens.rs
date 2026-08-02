@@ -21,7 +21,7 @@ pub fn TokensPage() -> impl IntoView {
     let (sort, set_sort) = signal(TokenSort::Cap);
     let (ascending, set_ascending) = signal(false);
     let (search, set_search) = signal(String::new());
-    let (numeraire, set_numeraire) = signal(Numeraire::Usd);
+    let (numeraire, set_numeraire) = signal(Numeraire::Btc);
 
     let on_sort = move |field: TokenSort| {
         if sort.get() == field {

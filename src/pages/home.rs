@@ -150,7 +150,7 @@ pub fn HomePage() -> impl IntoView {
         .map(String::from)
         .unwrap_or_default();
     let (search, set_search) = signal(initial_q);
-    let (numeraire, set_numeraire) = signal(Numeraire::Usd);
+    let (numeraire, set_numeraire) = signal(Numeraire::Btc);
 
     let (panel_open, set_panel_open) = signal(false);
     let input_ref = NodeRef::<leptos::html::Input>::new();
