@@ -239,10 +239,12 @@ are confined to this appendix.
 ## Appendix D — where the instrument must go
 
 Flow follows stock — so the stocks must gain a time axis. The honest
-flow is the derivative of an audited stock: inflation is the decay of a
-token's ledger, capital growth is its adoption, migration is the
-derivative of population — the market's own tape. A flow with no stock
-beneath it is a GDP; a flow derived from a ledger is a chart.
+flow is the derivative of an audited stock: inflation is emission — the
+ledger's own count of how much was printed, diluting every holder; not
+the price basket assembled by the same bureaus that assemble GDP.
+Capital growth is adoption. Migration is the derivative of population —
+the market's own tape. A flow with no stock beneath it is a GDP; a flow
+derived from a ledger is a chart.
 
 The four unquoted rule domains must join the border. The scalar kernel
 must learn the graph: who holds whose token offshore, who trades with
