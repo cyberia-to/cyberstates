@@ -334,6 +334,7 @@ pub const REGIONS: &[&str] = &[
     "Middle East",
     "North America",
     "Oceania",
+    "Antarctica",
 ];
 
 #[derive(Clone, Copy, PartialEq)]
