@@ -6,8 +6,10 @@ is its token. The wealth the world agrees to hold in that token is its
 price.
 
 The market for these tokens has always existed. Migration is a trade.
-Capital flight is a sell-off. Citizenship is a position, and every human
-alive holds at least one. What the market never had is a terminal —
+Capital flight is a sell-off. Citizenship is a position: most humans
+alive hold at least one, and the millions who hold none have a name —
+apatrides, the stateless — proof by existence that a passport is a
+holding, not a birthright. What the market never had is a terminal:
 no ticker, no quotes, no listing rules.
 
 Cyberstates is that terminal: all 230 cyberstates quoted under one
