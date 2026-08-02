@@ -1,14 +1,13 @@
 use leptos::prelude::*;
 
-/// The four destinations, always present, always in this order and color.
+/// The three destinations, always present, always in this order and color.
 /// The current page's button renders as an outline — "you are here" —
 /// so the header never changes shape between pages.
 #[component]
 pub fn SiteNav(active: &'static str, #[prop(optional)] children: Option<Children>) -> impl IntoView {
-    const ITEMS: [(&str, &str, &str); 4] = [
+    const ITEMS: [(&str, &str, &str); 3] = [
         ("STATES", "/", "nav-states"),
         ("TOKENS", "/tokens", "nav-tokens"),
-        ("MAP", "/map", "nav-map"),
         ("METHODOLOGY", "/methodology", "nav-method"),
     ];
 

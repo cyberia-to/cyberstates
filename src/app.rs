@@ -7,7 +7,6 @@ use crate::pages::country::CountryPage;
 use crate::pages::token::TokenPage;
 use crate::pages::tokens::TokensPage;
 use crate::pages::methodology::MethodologyPage;
-use crate::pages::map::MapPage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -20,7 +19,7 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/in/:region") view=HomePage />
                 <Route path=path!("/in/:region/by/:field") view=HomePage />
                 <Route path=path!("/in/:region/by/:field/asc") view=HomePage />
-                <Route path=path!("/map") view=MapPage />
+                <Route path=path!("/map") view=HomePage />
                 <Route path=path!("/tokens") view=TokensPage />
                 <Route path=path!("/methodology") view=MethodologyPage />
                 <Route path=path!("/state/:code") view=CountryPage />

@@ -117,7 +117,6 @@ body {
 
 .nav-states { --btn-c: var(--cyber-green); }
 .nav-tokens { --btn-c: var(--cyber-yellow); }
-.nav-map    { --btn-c: #b8c2cc; }
 .nav-method { --btn-c: var(--cyber-cyan); }
 
 .nav-btn.nav-here {
@@ -291,7 +290,7 @@ body {
 }
 
 .table-pane {
-    flex: 0 0 620px;
+    flex: 0 0 500px;
     min-width: 0;
 }
 
@@ -299,17 +298,28 @@ body {
     flex: 1 1 auto;
     min-width: 0;
     position: sticky;
-    top: 20px;
+    top: 16px;
 }
 
+/* the map is the hero: as large as viewport height and pane width allow,
+   box aspect = viewBox aspect (no internal letterbox), hugging the right */
 .map-pane .world-map-container svg {
-    width: 100%;
-    height: auto;
-    display: block; /* width governs — no meet-slack, no centering pockets */
+    display: block;
+    margin-left: auto;
+    aspect-ratio: 782 / 514;
+    height: min(calc(100vh - 220px), calc((100vw - 552px) * 0.6573));
+    width: auto;
+    max-width: 100%;
 }
 
 .cyber-table.slim {
-    min-width: 520px;
+    min-width: 460px;
+}
+
+.cyber-table.slim th,
+.cyber-table.slim td {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .cyber-table th.metric-th {
