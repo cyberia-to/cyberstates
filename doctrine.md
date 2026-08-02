@@ -27,22 +27,22 @@ held locally, inherited from a larger state, delegated upward to a union,
 or overridden outright. Cyberstates nest, subordinate and inherit in both
 directions:
 
-- **Micronesia** (the Federated States) is one row: four member states
+- [Micronesia](/state/fm) (the Federated States) is one row: four member states
   inherit most rules from their federation; the federation holds border
-  and law locally, rents its token from America and delegates defense to
-  it by compact. The Marshall Islands and Palau share its ocean and its
+  and law locally, rents its token from [America](/state/us) and delegates defense to
+  it by compact. The [Marshall Islands](/state/mh) and [Palau](/state/pw) share its ocean and its
   regional name — separate rows, because their rule-sets are their own.
-- **Guam** inherits American sovereignty wholesale, then overrides the
+- [Guam](/state/gu) inherits American sovereignty wholesale, then overrides the
   domains a visitor actually touches: its own entry waiver, its own tax
   code. A row with no UN seat.
-- **Hong Kong** inherits China's sovereignty and overrides token, border
+- [Hong Kong](/state/hk) inherits [China](/state/cn)'s sovereignty and overrides token, border
   and law — three domains that make it more distinct at street level than
-  many UN members. **Greenland** does the same under Denmark.
+  many UN members. [Greenland](/state/gl) does the same under [Denmark](/state/dk).
 - The **eurozone** inherits upward: thirty cyberstates delegate the token
   domain to a shared mint while keeping their borders and laws. Token and
   state are many-to-many — which is why tokens have their own table.
-- **Transnistria** holds every domain de facto and none de jure.
-  **Antarctica** is the limit case: a rule-set with no owner at all — a
+- [Transnistria](/state/pmr) holds every domain de facto and none de jure.
+  [Antarctica](/state/aq) is the limit case: a rule-set with no owner at all — a
   treaty instead of a throne — zero capital, the planet's second-largest
   territory.
 
@@ -109,8 +109,8 @@ instead of GDP flow is not a proxy or a compromise; it is the correct
 measure for instruments whose value is access to wealth, not participation
 in accounting.
 
-The practical difference is visible in the table: China's deep money
-(M2 ≈ ¥307T) makes it the #1 state by capital, ahead of America — a
+The practical difference is visible in the table: [China](/state/cn)'s deep money
+(M2 ≈ ¥307T) makes it the #1 state by capital, ahead of [America](/state/us) — a
 different world order than the GDP league tables print.
 
 ## Human value and land value
@@ -120,14 +120,14 @@ exist once you accept the capital frame.
 
 **Human value** is the capital standing behind each member of the state.
 Not income, not productivity — the monetized trust the state's token
-carries per person. Luxembourg backs each resident with ~$484k, Monaco
-with ~$295k, Switzerland with ~$137k; at the other end of the table the
+carries per person. [Luxembourg](/state/lu) backs each resident with ~$484k, [Monaco](/state/mc)
+with ~$295k, [Switzerland](/state/ch) with ~$137k; at the other end of the table the
 number collapses to double digits. When a person migrates, this is the
 number that changes: they move their life from one token's backing to
 another's.
 
-**Land value** is the monetization density of territory. Monaco runs at
-~$5.3B per km², Singapore at ~$760M; Antarctica at exactly zero — 14.2M km²
+**Land value** is the monetization density of territory. [Monaco](/state/mc) runs at
+~$5.3B per km², [Singapore](/state/sg) at ~$760M; [Antarctica](/state/aq) at exactly zero — 14.2M km²
 entirely outside money. Where the number is high, the state has turned
 territory into ledger; where it is low, land exists that money has not yet
 reached. This is the supply curve of the planet's unmonetized space.
@@ -135,7 +135,7 @@ reached. This is the supply curve of the planet's unmonetized space.
 ## The freedom pair
 
 A passport is an option contract on the planet. Its value is not how many
-*countries* it enters — counting Liechtenstein and China as equal units is
+*countries* it enters — counting [Liechtenstein](/state/li) and [China](/state/cn) as equal units is
 nonsense — but how much of the world's **capital** and **population** it
 reaches. Symmetrically, a state's hospitality is not how many passports it
 admits, but how much of the world it lets in.
@@ -192,9 +192,9 @@ will not change shape.
 The table prices in USD by default because the dollar is the world's
 current unit of account — a convention, not a truth. The numeraire switch
 re-denominates every capital and price into CNY, BTC, ETH, or gold, and
-the convention becomes visible: America's capital is ¥157T in the #1
+the convention becomes visible: [America](/state/us)'s capital is ¥157T in the #1
 state's token, ₿370M in bitcoin — more bitcoin than will ever exist —
-and China's is its own ¥307T, the cleanest self-reference in the table.
+and [China](/state/cn)'s is its own ¥307T, the cleanest self-reference in the table.
 
 The dollar is a row in this table, not its ruler. Ranks are invariant to
 the numeraire; intuitions are not — which is exactly why the switch exists.
@@ -204,7 +204,7 @@ the numeraire; intuitions are not — which is exactly why the switch exists.
 - **Every rating reads top-down.** There is no ascending mode: a rating is
   a claim about what matters, and its table starts with the most of it.
 - **Every state carries its ranks.** A state page shows the position in all
-  eight ratings — China: capital #1, population #2, area #4, travel
+  eight ratings — [China](/state/cn): capital #1, population #2, area #4, travel
   freedom #199. A profile in eight numbers.
 - **The map is the table painted.** Money and score ratings color by rank
   percentile; population and area — by log magnitude (their polygons
@@ -214,8 +214,8 @@ the numeraire; intuitions are not — which is exactly why the switch exists.
 ## Who gets listed
 
 230 cyberstates: UN members, their autonomous territories, partially
-recognized and unrecognized states — Abkhazia, Transnistria, Somaliland,
-Kosovo and their kin — and Antarctica.
+recognized and unrecognized states — [Abkhazia](/state/abk), [Transnistria](/state/pmr), [Somaliland](/state/sol),
+[Kosovo](/state/xk) and their kin — and [Antarctica](/state/aq).
 
 The listing rule is existence, not recognition: a territory, a population,
 a rule-set of its own. Recognition is one state's opinion about another;
@@ -227,7 +227,7 @@ ever required — the old states just had a head start.
 ## Data
 
 - **Visa matrix** — scraped from public passport-index data; every ordered
-  pair of the 229 visa-issuing states, five regimes. Antarctica is listed
+  pair of the 229 visa-issuing states, five regimes. [Antarctica](/state/aq) is listed
   but sits outside the matrix — no passports, no visas, scores of zero.
 - **Money supply** — World Bank broad money (latest year ≥ 2018) and FRED
   M2 for the US, converted at live FX; refreshed by script, guarded
