@@ -469,9 +469,15 @@ pub fn HomePage() -> impl IntoView {
                 <div class="map-pane">
                     <div class="world-map-container" inner_html=WORLD_SVG></div>
                     <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
-                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">"LOW"</span>
+                        // red is always the bad end; the end labels follow the
+                        // rating's polarity (density: red = HIGH)
+                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
+                            {move || if sort_field.get().lower_is_better() { "HIGH" } else { "LOW" }}
+                        </span>
                         <div style="width: 240px; height: 8px; border-radius: 4px; background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);"></div>
-                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">"HIGH"</span>
+                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
+                            {move || if sort_field.get().lower_is_better() { "LOW" } else { "HIGH" }}
+                        </span>
                         <span style="font-size: 10px; color: #444; letter-spacing: 2px; margin-left: 12px;">{move || sort_field.get().label()}</span>
                     </div>
                 </div>
