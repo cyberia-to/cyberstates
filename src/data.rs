@@ -332,6 +332,12 @@ pub enum SortField {
 }
 
 impl SortField {
+    /// Ratings where a LOWER value is the good end — map colors invert
+    /// so green always means "better".
+    pub fn lower_is_better(&self) -> bool {
+        matches!(self, Self::Density)
+    }
+
     /// One-word header for the narrow table column — never wraps.
     pub fn short(&self) -> &'static str {
         match self {

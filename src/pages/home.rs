@@ -219,6 +219,8 @@ pub fn HomePage() -> impl IntoView {
         let mut values: HashMap<String, f64> = HashMap::new();
         for (i, (code, _)) in ranked.into_iter().enumerate() {
             let t = if n > 1 { i as f64 / (n - 1) as f64 } else { 1.0 };
+            // green always means better: invert for lower-is-better ratings
+            let t = if field.lower_is_better() { 1.0 - t } else { t };
             // keep the floor above the "unpainted" dark threshold
             values.insert(code, 0.02 + 0.98 * t);
         }
