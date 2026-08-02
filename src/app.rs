@@ -23,6 +23,7 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/map") view=MapPage />
                 <Route path=path!("/tokens") view=TokensPage />
                 <Route path=path!("/methodology") view=MethodologyPage />
+                <Route path=path!("/state/:code") view=CountryPage />
                 <Route path=path!("/country/:code") view=CountryPage />
                 <Route path=path!("/token/:code") view=TokenPage />
             </Routes>

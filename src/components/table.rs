@@ -13,14 +13,15 @@ fn score_color(v: f64) -> &'static str {
 /// Render the rating-object cell: value formatted per field, scores colored.
 pub fn metric_cell(c: &Country, f: SortField, n: Numeraire) -> (String, &'static str) {
     match f {
-        SortField::Cap => (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0"),
+        SortField::Capital => (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0"),
         SortField::Human | SortField::Land => (fmt_value(c.metric(f), n), "#e0e0e0"),
-        SortField::Freedom | SortField::Openness => {
+        SortField::Freedom | SortField::Hospitality => {
             let v = c.metric(f);
             (format!("{:.1}", v), score_color(v))
         }
         SortField::Population => (c.population_fmt(), "#e0e0e0"),
         SortField::Area => (c.land_area_fmt(), "#e0e0e0"),
+        SortField::Density => (format!("{:.1}/km²", c.metric(f)), "#e0e0e0"),
     }
 }
 
@@ -32,7 +33,7 @@ pub fn CountryRow(
     #[prop(into)] field: Signal<SortField>,
 ) -> impl IntoView {
     let code = country.code.to_lowercase();
-    let href = format!("/country/{}", code);
+    let href = format!("/state/{}", code);
 
     let flag = country.flag.clone();
     let name = country.name.clone();

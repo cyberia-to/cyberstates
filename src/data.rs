@@ -179,7 +179,7 @@ impl Country {
     /// (cap in B USD, human/land in USD, scores 0-100, counts raw).
     pub fn metric(&self, f: SortField) -> f64 {
         match f {
-            SortField::Cap => self.money_supply_b_usd,
+            SortField::Capital => self.money_supply_b_usd,
             SortField::Human => {
                 if self.population > 0 { self.money_supply_b_usd * 1e9 / self.population as f64 } else { 0.0 }
             }
@@ -187,9 +187,12 @@ impl Country {
                 if self.land_area_km2 > 0 { self.money_supply_b_usd * 1e9 / self.land_area_km2 as f64 } else { 0.0 }
             }
             SortField::Freedom => self.index().freedom,
-            SortField::Openness => self.index().openness,
+            SortField::Hospitality => self.index().openness,
             SortField::Population => self.population as f64,
             SortField::Area => self.land_area_km2 as f64,
+            SortField::Density => {
+                if self.land_area_km2 > 0 { self.population as f64 / self.land_area_km2 as f64 } else { 0.0 }
+            }
         }
     }
 
@@ -318,56 +321,60 @@ pub const REGIONS: &[&str] = &[
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum SortField {
-    Cap,
+    Capital,
     Human,
     Land,
     Freedom,
-    Openness,
+    Hospitality,
     Population,
     Area,
+    Density,
 }
 
 impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
-            Self::Cap => "CAP",
-            Self::Human => "HUMAN",
-            Self::Land => "LAND",
-            Self::Freedom => "FREEDOM",
-            Self::Openness => "OPENNESS",
+            Self::Capital => "CAPITAL",
+            Self::Human => "HUMAN VALUE",
+            Self::Land => "LAND VALUE",
+            Self::Freedom => "MOVEMENT FREEDOM",
+            Self::Hospitality => "HOSPITALITY",
             Self::Population => "POPULATION",
             Self::Area => "AREA",
+            Self::Density => "DENSITY",
         }
     }
 
     pub fn slug(&self) -> &'static str {
         match self {
-            Self::Cap => "cap",
+            Self::Capital => "capital",
             Self::Human => "human",
             Self::Land => "land",
             Self::Freedom => "freedom",
-            Self::Openness => "openness",
+            Self::Hospitality => "hospitality",
             Self::Population => "population",
             Self::Area => "area",
+            Self::Density => "density",
         }
     }
 
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
-            "cap" => Self::Cap,
+            "capital" | "cap" => Self::Capital,
             "human" => Self::Human,
             "land" => Self::Land,
             "freedom" => Self::Freedom,
-            "openness" => Self::Openness,
+            "hospitality" | "openness" => Self::Hospitality,
             "population" => Self::Population,
             "area" => Self::Area,
+            "density" => Self::Density,
             _ => return None,
         })
     }
 
-    /// The seven rating objects, in display order.
-    pub const ALL: [SortField; 7] = [
-        Self::Cap, Self::Human, Self::Land, Self::Freedom,
-        Self::Openness, Self::Population, Self::Area,
+    /// The eight ratings, in display order.
+    pub const ALL: [SortField; 8] = [
+        Self::Capital, Self::Human, Self::Land, Self::Freedom,
+        Self::Hospitality, Self::Population, Self::Area, Self::Density,
     ];
 }

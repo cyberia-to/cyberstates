@@ -17,17 +17,15 @@ fn region_from_slug(s: &str) -> Option<String> {
     REGIONS.iter().find(|r| region_slug(r) == s).map(|r| r.to_string())
 }
 
-/// Canonical landing path for a view state. Root = All regions, cap descending.
-fn landing_path(region: &str, field: SortField, asc: bool) -> String {
+/// Canonical landing path for a view state. Root = All regions by capital.
+/// Every rating reads top-down — there is no ascending direction.
+fn landing_path(region: &str, field: SortField) -> String {
     let mut p = String::new();
     if region != "All" {
         p.push_str(&format!("/in/{}", region_slug(region)));
     }
-    if field != SortField::Cap || asc {
+    if field != SortField::Capital {
         p.push_str(&format!("/by/{}", field.slug()));
-        if asc {
-            p.push_str("/asc");
-        }
     }
     if p.is_empty() {
         p.push('/');
@@ -35,12 +33,11 @@ fn landing_path(region: &str, field: SortField, asc: bool) -> String {
     p
 }
 
-/// Parse a landing path back into (region, field, ascending).
-fn parse_path(path: &str) -> (String, SortField, bool) {
+/// Parse a landing path back into (region, field).
+fn parse_path(path: &str) -> (String, SortField) {
     let segs: Vec<&str> = path.split('/').filter(|s| !s.is_empty()).collect();
     let mut region = "All".to_string();
-    let mut field = SortField::Cap;
-    let mut asc = false;
+    let mut field = SortField::Capital;
     let mut i = 0;
     while i < segs.len() {
         match segs[i] {
@@ -55,15 +52,11 @@ fn parse_path(path: &str) -> (String, SortField, bool) {
                     field = f;
                 }
                 i += 2;
-                if segs.get(i) == Some(&"asc") {
-                    asc = true;
-                    i += 1;
-                }
             }
             _ => i += 1,
         }
     }
-    (region, field, asc)
+    (region, field)
 }
 
 
@@ -145,7 +138,6 @@ pub fn HomePage() -> impl IntoView {
     let location = use_location();
     let state = Memo::new(move |_| parse_path(&location.pathname.get()));
     let sort_field = Signal::derive(move || state.get().1);
-    let ascending = Signal::derive(move || state.get().2);
 
     let initial_q = web_sys::window()
         .and_then(|w| w.location().search().ok())
@@ -188,24 +180,15 @@ pub fn HomePage() -> impl IntoView {
     });
 
     let nav = use_navigate();
-    let nav_sort = nav.clone();
-    let on_sort = move |field: SortField| {
-        let (region, cur, asc) = state.get();
-        let next_asc = if cur == field { !asc } else { false };
-        nav_sort(&landing_path(&region, field, next_asc), Default::default());
-    };
 
-    // Landing title: "Cyberstates in Europe by freedom"
+    // Landing title: "Cyberstates in Europe by movement freedom"
     Effect::new(move |_| {
-        let (region, field, asc) = state.get();
+        let (region, field) = state.get();
         let mut t = String::from("Cyberstates");
         if region != "All" {
             t.push_str(&format!(" in {}", region));
         }
         t.push_str(&format!(" by {}", field.label().to_lowercase()));
-        if asc {
-            t.push_str(" ascending");
-        }
         t.push_str(" — Global Visa Openness Analytics");
         document().set_title(&t);
     });
@@ -214,7 +197,7 @@ pub fn HomePage() -> impl IntoView {
     // region/search/numeric filters dim non-matching states live.
     let countries_for_map = countries.clone();
     Effect::new(move |_| {
-        let (region, field, _) = state.get();
+        let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
         let mut values: HashMap<String, f64> = HashMap::new();
         for c in &countries_for_map {
@@ -228,7 +211,7 @@ pub fn HomePage() -> impl IntoView {
                 let v = c.metric(field);
                 // log-compress heavy-tailed axes so the palette spreads
                 let v = match field {
-                    SortField::Freedom | SortField::Openness => v,
+                    SortField::Freedom | SortField::Hospitality => v,
                     _ => (v + 1.0).ln().max(0.0),
                 };
                 values.insert(c.code.clone(), v);
@@ -263,7 +246,7 @@ pub fn HomePage() -> impl IntoView {
     let countries_for_count = countries.clone();
     let filtered_sorted = move || {
         let mut list = countries.clone();
-        let (region, field, asc) = state.get();
+        let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
 
         if region != "All" {
@@ -281,8 +264,7 @@ pub fn HomePage() -> impl IntoView {
         }
 
         list.sort_by(|a, b| {
-            let ord = a.metric(field).partial_cmp(&b.metric(field)).unwrap_or(std::cmp::Ordering::Equal);
-            if asc { ord } else { ord.reverse() }
+            b.metric(field).partial_cmp(&a.metric(field)).unwrap_or(std::cmp::Ordering::Equal)
         });
 
         list
@@ -299,15 +281,12 @@ pub fn HomePage() -> impl IntoView {
                     </h1>
                     <div class="logo-suffix">
                         {move || {
-                            let (region, field, asc) = state.get();
+                            let (region, field) = state.get();
                             let mut s = String::new();
                             if region != "All" {
                                 s.push_str(&format!("in {} · ", region.to_lowercase()));
                             }
                             s.push_str(&format!("by {}", field.label().to_lowercase()));
-                            if asc {
-                                s.push_str(" ↑");
-                            }
                             s
                         }}
                     </div>
@@ -359,8 +338,8 @@ pub fn HomePage() -> impl IntoView {
                                         <button
                                             class=move || if state.get().0 == r_class { "region-pill active" } else { "region-pill" }
                                             on:click=move |_| {
-                                                let (_, field, asc) = state.get();
-                                                nav_r(&landing_path(&r_click, field, asc), Default::default());
+                                                let (_, field) = state.get();
+                                                nav_r(&landing_path(&r_click, field), Default::default());
                                             }
                                         >{r}</button>
                                     }
@@ -395,25 +374,16 @@ pub fn HomePage() -> impl IntoView {
                 </SiteNav>
             </div>
 
-            // Header row 2: sort landings — real links, every one a page
+            // Header row 2: rating landings — real links, every one a page
             <div class="header-row2">
                 <div class="region-pills">
-                    <span class="sort-label">"SORT"</span>
                     {SortField::ALL.map(|f| {
                         view! {
                             <a
                                 class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
-                                href=move || {
-                                    let (region, cur, asc) = state.get();
-                                    // active sort links to its flipped direction
-                                    let next_asc = if cur == f { !asc } else { false };
-                                    landing_path(&region, f, next_asc)
-                                }
+                                href=move || landing_path(&state.get().0, f)
                             >
-                                {move || {
-                                    let (_, cur, asc) = state.get();
-                                    if cur == f { format!("{} {}", f.label(), if asc { "▲" } else { "▼" }) } else { f.label().to_string() }
-                                }}
+                                {f.label()}
                             </a>
                         }
                     }).collect_view()}
@@ -451,11 +421,7 @@ pub fn HomePage() -> impl IntoView {
                                     <th class="th-static">"STATE"</th>
                                     <th class="th-static">"TOKEN"</th>
                                     <th class="th-static" style="text-align: right;">"PRICE"</th>
-                                    <th
-                                        class=move || format!("cyber-table-th sorted {}", if ascending.get() { "sort-asc" } else { "sort-desc" })
-                                        style="text-align: right;"
-                                        on:click=move |_| on_sort(sort_field.get())
-                                    >
+                                    <th class="th-static metric-th" style="text-align: right;">
                                         {move || sort_field.get().label()}
                                     </th>
                                 </tr>

@@ -259,7 +259,7 @@ fn FilterableVisaSection(
     let entries_with_href: Vec<(VisaAccess, Option<String>)> = entries.into_iter().map(|e| {
         let href = all_countries.iter()
             .find(|c| c.name == e.country)
-            .map(|c| format!("/country/{}", c.code.to_lowercase()));
+            .map(|c| format!("/state/{}", c.code.to_lowercase()));
         (e, href)
     }).collect();
 

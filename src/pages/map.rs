@@ -113,7 +113,7 @@ pub fn setup_click_handlers() {
                 let code = id.to_lowercase();
                 let closure = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
                     if let Some(w) = web_sys::window() {
-                        let _ = w.location().set_href(&format!("/country/{}", code));
+                        let _ = w.location().set_href(&format!("/state/{}", code));
                     }
                 }) as Box<dyn FnMut(web_sys::MouseEvent)>);
 

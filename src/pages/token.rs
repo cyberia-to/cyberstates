@@ -75,7 +75,7 @@ pub fn TokenPage() -> impl IntoView {
                                         </thead>
                                         <tbody>
                                             {countries.into_iter().map(|(ccode, cname, cflag)| {
-                                                let href = format!("/country/{}", ccode.to_lowercase());
+                                                let href = format!("/state/{}", ccode.to_lowercase());
                                                 let all_countries = load_countries();
                                                 let supply = all_countries.iter()
                                                     .find(|c| c.code == ccode)
