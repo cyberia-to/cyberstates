@@ -47,7 +47,7 @@ pub fn MethodologyPage() -> impl IntoView {
                 <SiteNav active="METHODOLOGY" />
             </div>
 
-            <div class="prose-cyber" style="max-width: 860px;" inner_html=html_out></div>
+            <div class="prose-cyber" style="max-width: 860px; margin: 0 auto;" inner_html=html_out></div>
         </div>
     }
 }

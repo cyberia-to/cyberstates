@@ -1,6 +1,6 @@
 # Methodology
 
-How the FREEDOM and OPENNESS scores are computed for all 229 states.
+How the TRAVEL FREEDOM and HOSPITALITY scores are computed for all 230 states.
 
 ## The idea
 
@@ -12,8 +12,8 @@ admits, but how much of the world it lets in.
 
 Two directions, two scores:
 
-- **FREEDOM** — what the state's passport opens *outward* for its holders.
-- **OPENNESS** — what the state's border opens *inward* for everyone else.
+- **TRAVEL FREEDOM** — what the state's passport opens *outward* for its holders.
+- **HOSPITALITY** — what the state's border opens *inward* for everyone else.
 
 ## Access weights
 
@@ -71,8 +71,8 @@ through the population axis — which is exactly where their weight belongs.
 ## Folding four into two
 
 ```
-FREEDOM  = √( eco_out × pop_out )
-OPENNESS = √( eco_in  × pop_in  )
+TRAVEL FREEDOM = √( eco_out × pop_out )
+HOSPITALITY    = √( eco_in  × pop_in  )
 ```
 
 The geometric mean, not the arithmetic one, and deliberately so:
