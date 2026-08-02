@@ -161,6 +161,23 @@ impl Country {
         fmt_usd_billions(self.money_supply_b_usd)
     }
 
+    /// Supply in native tokens = cap / price, scaled B/T/Q.
+    pub fn supply_fmt(&self) -> String {
+        if self.token_price_usd <= 0.0 {
+            return "N/A".to_string();
+        }
+        let s = self.money_supply_b_usd / self.token_price_usd;
+        if s <= 0.0 {
+            "N/A".to_string()
+        } else if s >= 1_000_000.0 {
+            format!("{:.1}Q", s / 1_000_000.0)
+        } else if s >= 1000.0 {
+            format!("{:.0}T", s / 1000.0)
+        } else {
+            format!("{:.0}B", s)
+        }
+    }
+
 
     pub fn price_fmt(&self) -> String {
         if self.token_price_usd <= 0.0 {

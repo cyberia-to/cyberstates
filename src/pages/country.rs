@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::data::*;
+use crate::numeraires::{fmt_value, Numeraire};
 use crate::components::nav::SiteNav;
 
 #[component]
@@ -58,6 +59,9 @@ pub fn CountryPage() -> impl IntoView {
                     let token_name = c.currency_name.clone();
                     let price = c.price_fmt();
                     let cap = c.cap_fmt();
+                    let supply = c.supply_fmt();
+                    let human_value = fmt_value(c.metric(SortField::Human), Numeraire::Usd);
+                    let land_value = fmt_value(c.metric(SortField::Land), Numeraire::Usd);
                     let freedom_str = format!("{:.1}", idx.freedom);
                     let freedom_bar = format!("{}%", idx.freedom.min(100.0));
                     let openness_str = format!("{:.1}", idx.openness);
@@ -112,7 +116,7 @@ pub fn CountryPage() -> impl IntoView {
                                     </div>
                                     <div>
                                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"BORDER OPENNESS · √(eco_in × pop_in)"</span>
+                                            <span style="font-size: 10px; letter-spacing: 2px; color: #444;">"HOSPITALITY · √(eco_in × pop_in)"</span>
                                             <span class="tabular-nums" style:color=openness_color style="font-size: 22px; font-weight: 700;">{openness_str}</span>
                                         </div>
                                         <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden;">
@@ -122,16 +126,8 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                             </div>
 
-                            // Stats grid
+                            // Token block
                             <div class="stat-grid" style="margin-top: 28px;">
-                                <div class="stat-card">
-                                    <div class="stat-label">"POPULATION"</div>
-                                    <div class="stat-value">{pop}</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">"LAND AREA"</div>
-                                    <div class="stat-value" style="color: var(--cyber-cyan);">{area}</div>
-                                </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"TOKEN"</div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">
@@ -144,8 +140,36 @@ pub fn CountryPage() -> impl IntoView {
                                     <div class="stat-value" style="color: var(--cyber-orange);">{price}</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"CAP"</div>
+                                    <div class="stat-label">"SUPPLY"</div>
+                                    <div class="stat-value" style="color: #888;">{supply}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"CAPITAL"</div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">{cap}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
+                                </div>
+                            </div>
+
+                            // Ratings
+                            <div class="stat-grid" style="margin-top: 12px;">
+                                <div class="stat-card">
+                                    <div class="stat-label">"HUMAN VALUE"</div>
+                                    <div class="stat-value" style="color: var(--cyber-green);">{human_value}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per person"</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"LAND VALUE"</div>
+                                    <div class="stat-value" style="color: var(--cyber-cyan);">{land_value}</div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per km²"</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"POPULATION"</div>
+                                    <div class="stat-value">{pop}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">"AREA"</div>
+                                    <div class="stat-value" style="color: var(--cyber-blue);">{area}</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"DENSITY"</div>
