@@ -154,7 +154,13 @@ column in the table.*
 
 ---
 
-## Appendix A — pricing the border domain
+## Appendix A — the doctrine applied: pricing the border domain
+
+Thesis 6 claims that any freedom is an option over the kernel and can be
+priced. This appendix is the claim made operational — the first domain,
+the border, priced end to end. Every other domain of the stack will pass
+through this same mill: choose the frictions, weight them, integrate over
+the world's capital and population, fold.
 
 The visa matrix covers every ordered pair of states; each access regime
 keeps a fraction of the option's value:
@@ -201,38 +207,36 @@ by world totals, folded: one number.
 These weights are the single place judgment enters the system, and they
 are confined to this appendix.
 
-## Appendix B — data
+## Appendix B — the measurements and their limits
 
-- **Visa matrix** — scraped from public passport-index data; every
-  ordered pair of the 229 visa-issuing states, five regimes.
-  [Antarctica](/state/aq) is listed but sits outside the matrix — no
-  passports, no visas, scores of zero.
-- **Money supply** — World Bank broad money (latest year ≥ 2018) and FRED
-  M2 for [America](/state/us), converted at live FX; refreshed by script,
-  guarded against redenominations.
-- **Population, area, token prices** — one TOML file per state in
-  [`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
-  assembled from public statistics.
-- **Numeraires** — BTC, ETH and gold (via PAXG = 1 troy oz) at refresh
-  time.
-- Everything is baked in at build time — the table is a snapshot, not a
-  live feed.
+The kernel is only as good as its measurements, so each source carries
+its honesty clause in the same breath.
 
-## Appendix C — honest limitations
+**Capital** — World Bank broad money (latest year ≥ 2018), FRED M2 for
+[America](/state/us), converted at live FX; script-refreshed, guarded
+against redenominations. *Its limit:* states report money on slightly
+different aggregate definitions and dates — CAPITAL is the best single
+figure per state, not a synchronized global snapshot, and human value
+and land value are exactly as good as capital is.
 
-- **Money aggregates are not uniform.** States report money supply on
-  slightly different definitions and dates; CAPITAL is the best single
-  USD figure per state, not a synchronized global snapshot. Human value
-  and land value inherit this caveat — they are exactly as good as
-  capital is.
-- **Weights are judgment calls.** 0.8 for visa-on-arrival and 0.1 for
-  embassy-visa are defensible, not derivable. Shifting them reshuffles
-  the middle of the table, not the extremes.
-- **The matrix is a snapshot.** Visa regimes change weekly; the table is
-  as fresh as its last scrape.
-- **Bilateral nuance is flattened.** Duration of stay, work rights,
-  refusal rates and reciprocity are not modeled — a 30-day and a 180-day
-  visa-free both count 1.0.
-- **Partially recognized states have sparser matrices**, and their
-  scores are accordingly conservative.
+**The visa matrix** — scraped from public passport-index data: every
+ordered pair of the 229 visa-issuing states, five regimes.
+[Antarctica](/state/aq) is listed but sits outside the matrix — no
+passports, no visas, scores of zero. *Its limits:* regimes change
+weekly, so the matrix is as fresh as its last scrape; bilateral nuance
+is flattened — a 30-day and a 180-day visa-free both count 1.0, work
+rights and refusal rates are not modeled; partially recognized states
+have sparser matrices and correspondingly conservative scores.
 
+**Population, area, token prices** — one TOML file per state in
+[`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
+assembled from public statistics. *Their limit:* census quality varies
+by state; area counts ice and orchard alike.
+
+**Numeraires** — BTC, ETH and gold (via PAXG = 1 troy oz) at refresh
+time. *Their limit:* a snapshot, like everything here — the table is
+baked at build time, not a live feed.
+
+The weights of Appendix A carry the one limit that is not a measurement
+problem: they are judgment. Shifting them reshuffles the middle of every
+freedom table, never the extremes.
