@@ -217,8 +217,24 @@ pub fn HomePage() -> impl IntoView {
         ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
         let n = ranked.len();
         let mut values: HashMap<String, f64> = HashMap::new();
-        for (i, (code, _)) in ranked.into_iter().enumerate() {
-            let t = if n > 1 { i as f64 / (n - 1) as f64 } else { 1.0 };
+        // POPULATION and AREA are already visually encoded by polygon size,
+        // so rank paints every visible state green. Linear magnitude breaks
+        // that redundancy: giants pop, and an empty giant (huge area, small
+        // population) reads instantly. Everything else colors by rank.
+        let linear = matches!(field, SortField::Population | SortField::Area);
+        let (vmin, vmax) = if linear && n > 0 {
+            (ranked.first().map(|x| x.1).unwrap_or(0.0), ranked.last().map(|x| x.1).unwrap_or(1.0))
+        } else {
+            (0.0, 1.0)
+        };
+        for (i, (code, v)) in ranked.into_iter().enumerate() {
+            let t = if linear {
+                if vmax > vmin { (v - vmin) / (vmax - vmin) } else { 1.0 }
+            } else if n > 1 {
+                i as f64 / (n - 1) as f64
+            } else {
+                1.0
+            };
             // green always means better: invert for lower-is-better ratings
             let t = if field.lower_is_better() { 1.0 - t } else { t };
             // keep the floor above the "unpainted" dark threshold
