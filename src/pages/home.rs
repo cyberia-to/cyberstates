@@ -217,19 +217,28 @@ pub fn HomePage() -> impl IntoView {
         ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
         let n = ranked.len();
         let mut values: HashMap<String, f64> = HashMap::new();
-        // POPULATION and AREA are already visually encoded by polygon size,
-        // so rank paints every visible state green. Linear magnitude breaks
-        // that redundancy: giants pop, and an empty giant (huge area, small
-        // population) reads instantly. Everything else colors by rank.
-        let linear = matches!(field, SortField::Population | SortField::Area);
-        let (vmin, vmax) = if linear && n > 0 {
-            (ranked.first().map(|x| x.1).unwrap_or(0.0), ranked.last().map(|x| x.1).unwrap_or(1.0))
+        // POPULATION and AREA are already visually encoded by polygon size:
+        // rank paints every visible state green, linear drowns everything
+        // but the top-2 in red. Log min-max spreads the palette across
+        // orders of magnitude — micro-states red, mid-size yellow-cyan,
+        // giants green. Everything else colors by rank.
+        let log_scale = matches!(field, SortField::Population | SortField::Area);
+        // anchor the low end at the 10th percentile, not the absolute min:
+        // otherwise invisible micro-states eat the bottom half of the palette
+        let (vmin, vmax) = if log_scale && n > 0 {
+            let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
+            let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+            (p10, top)
         } else {
             (0.0, 1.0)
         };
         for (i, (code, v)) in ranked.into_iter().enumerate() {
-            let t = if linear {
-                if vmax > vmin { (v - vmin) / (vmax - vmin) } else { 1.0 }
+            let t = if log_scale {
+                if vmax > vmin {
+                    ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+                } else {
+                    1.0
+                }
             } else if n > 1 {
                 i as f64 / (n - 1) as f64
             } else {
