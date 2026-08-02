@@ -1,54 +1,53 @@
 # Methodology
 
-How the TRAVEL FREEDOM and HOSPITALITY scores are computed for all 230 states.
+Cyberstates is not a visa index with extra columns. It is an accounting
+system for sovereignty: every state measured as an economic object — a
+token, a territory, a population, a set of rights — under one methodology,
+from no privileged point of view.
 
-## The idea
+## The frame: every state is a token
 
-A passport is an option contract on the planet. Its value is not how many
-*countries* you can enter — counting Liechtenstein and China as equal units is
-nonsense — but how much of the world's **economy** and **population** you can
-reach with it. Symmetrically, a state's openness is not how many passports it
-admits, but how much of the world it lets in.
+A state issues a currency and demands its use. That currency is the state's
+token, and the wealth the world agrees to hold in it is the token's
+capitalization. Read the columns of any crypto exchange against this table:
 
-Two directions, two scores:
+| on an exchange | here |
+|---|---|
+| token | the state's currency |
+| price | USD per unit |
+| supply | units in circulation |
+| market cap | money supply — the state's CAPITAL |
+| holders | population |
+| protocol rules | borders, rights, visa regimes |
 
-- **TRAVEL FREEDOM** — what the state's passport opens *outward* for its holders.
-- **HOSPITALITY** — what the state's border opens *inward* for everyone else.
+This is not a metaphor — it is the same accounting. A state people trust
+holds more of the world's wealth in its token; a state people flee bleeds
+cap. The table is a market report on sovereignty, and every human is a
+holder of at least one position in it.
 
-## Access weights
+## Fundamental and derived
 
-The visa matrix covers every ordered pair of states. Each access regime gets a
-weight — the fraction of the option's value that survives the friction:
+Two kinds of numbers, never confused:
 
-| Regime | Weight | Reasoning |
+**Fundamental** — measured, not computed: population, area, price, supply,
+capital. They come from the world as it is.
+
+**Derived** — computed from fundamentals, and every derived number on this
+site carries its formula next to its value:
+
+| rating | formula | what it answers |
 |---|---|---|
-| visa-free | 1.00 | walk in |
-| visa-on-arrival | 0.80 | small fee and a queue at the border |
-| eTA / e-visa | 0.50 | online form, approval risk, waiting time |
-| visa-required | 0.10 | embassy interview: cost, delay, refusal risk — but a path exists |
-| no admission | 0.00 | the border is a wall |
+| CAPITAL | Σ money supply, in USD | how much wealth lives in this token |
+| HUMAN VALUE | capital / population | how much wealth stands behind each person |
+| LAND VALUE | capital / area | how monetized each km² is |
+| DENSITY | population / area | how crowded the land is |
+| TRAVEL FREEDOM | √(eco_out × pop_out) | how much of the world this passport opens |
+| HOSPITALITY | √(eco_in × pop_in) | how much of the world this border admits |
 
-## Four sub-indices
+The taxonomy is the audit trail: challenge a derived number and the dispute
+reduces to fundamentals and arithmetic — both inspectable.
 
-For a state S, over every other state D in the matrix:
-
-```
-eco_out(S) = Σ  w(S→D) × cap(D)   / world_cap   × 100
-pop_out(S) = Σ  w(S→D) × pop(D)   / world_pop   × 100
-
-eco_in(S)  = Σ  w(D→S) × cap(D)   / world_cap   × 100
-pop_in(S)  = Σ  w(D→S) × pop(D)   / world_pop   × 100
-```
-
-where `w(A→B)` is the access weight a holder of A's passport faces at B's
-border, `pop` is population, and `cap` is the state's **money supply in USD**
-— the same figure as the CAP column.
-
-Each sub-index reads as "weighted percent of the world":
-`eco_out = 62` means the passport reaches 62% of the world's money at full
-value after visa friction.
-
-## Why money supply, not GDP
+## Capital: why money stock, not GDP
 
 GDP is the nonsensical metric here, not the alternative. It is an accounting
 flow — a year of transactions, inflated by government spending, imputed rents
@@ -59,68 +58,154 @@ grants you access to a territory where wealth is **held**.
 Money supply is the stock of the state's token in circulation: the market's
 own ledger of how much monetized wealth lives behind that border. It is
 measured the same way this table measures everything else — a state is a
-token, its economy is that token's cap. Scoring passports against money stock
-instead of GDP flow is not a proxy or a compromise; it is the correct measure
-for an instrument whose value is access to wealth, not participation in
-accounting.
+token, its economy is that token's cap. Scoring states by money stock
+instead of GDP flow is not a proxy or a compromise; it is the correct
+measure for instruments whose value is access to wealth, not participation
+in accounting.
 
-The practical difference is visible in the table: China's deep money (M2
-≈ $42T) outweighs its GDP share, and states that monetize little weigh in
-through the population axis — which is exactly where their weight belongs.
+The practical difference is visible in the table: China's deep money
+(M2 ≈ ¥307T) makes it the #1 state by capital, ahead of America — a
+different world order than the GDP league tables print.
 
-## Folding four into two
+## Human value and land value
+
+The two ratios are the deepest cut in the table — the derivatives that only
+exist once you accept the capital frame.
+
+**Human value** is the capital standing behind each member of the state.
+Not income, not productivity — the monetized trust the state's token
+carries per person. Luxembourg backs each resident with ~$484k, Monaco
+with ~$295k, Switzerland with ~$137k; at the other end of the table the
+number collapses to double digits. When a person migrates, this is the
+number that changes: they move their life from one token's backing to
+another's.
+
+**Land value** is the monetization density of territory. Monaco runs at
+~$5.3B per km², Singapore at ~$760M; Antarctica at exactly zero — 14.2M km²
+entirely outside money. Where the number is high, the state has turned
+territory into ledger; where it is low, land exists that money has not yet
+reached. This is the supply curve of the planet's unmonetized space.
+
+## The freedom pair
+
+A passport is an option contract on the planet. Its value is not how many
+*countries* it enters — counting Liechtenstein and China as equal units is
+nonsense — but how much of the world's **capital** and **population** it
+reaches. Symmetrically, a state's hospitality is not how many passports it
+admits, but how much of the world it lets in.
+
+The visa matrix covers every ordered pair of states; each access regime
+keeps a fraction of the option's value:
+
+| Regime | Weight | Reasoning |
+|---|---|---|
+| visa-free | 1.00 | walk in |
+| visa-on-arrival | 0.80 | small fee and a queue at the border |
+| eTA / e-visa | 0.50 | online form, approval risk, waiting time |
+| visa-required | 0.10 | embassy interview: cost, delay, refusal risk — but a path exists |
+| no admission | 0.00 | the border is a wall |
+
+For a state S, over every other state D:
+
+```
+eco_out(S) = Σ  w(S→D) × capital(D) / world_capital × 100
+pop_out(S) = Σ  w(S→D) × pop(D)     / world_pop     × 100
+
+eco_in(S)  = Σ  w(D→S) × capital(D) / world_capital × 100
+pop_in(S)  = Σ  w(D→S) × pop(D)     / world_pop     × 100
+```
+
+Each sub-index reads as "weighted percent of the world": `eco_out = 62`
+means the passport reaches 62% of the world's money at full value after
+visa friction. The fold into one score:
 
 ```
 TRAVEL FREEDOM = √( eco_out × pop_out )
 HOSPITALITY    = √( eco_in  × pop_in  )
 ```
 
-The geometric mean, not the arithmetic one, and deliberately so:
+The geometric mean, deliberately:
 
-1. **Both dimensions must be real.** A passport that reaches all the money but
-   none of the people (or the reverse) is a broken option. The geometric mean
-   punishes imbalance: √(80 × 20) = 40, while (80+20)/2 = 50 would flatter it.
-2. **Zero is contagious.** A hypothetical passport admitted nowhere scores 0,
-   not "half of whatever the other axis says".
+1. **Both dimensions must be real.** A passport that reaches all the money
+   but none of the people (or the reverse) is a broken option. The
+   geometric mean punishes imbalance: √(80 × 20) = 40, where the arithmetic
+   mean would flatter it with 50.
+2. **Zero is contagious.** A passport admitted nowhere scores 0, not "half
+   of whatever the other axis says".
 3. **Scale stays intuitive.** Both inputs are 0–100, so the score is 0–100.
 
-## Worked example (illustrative numbers)
+**Movement is only the first freedom.** The same shape measures every other
+liberty a state grants or withholds: the freedom to hold and move capital,
+to own land as a foreigner, to speak, to leave — each is an option over the
+world's capital and population, each can be weighted, summed and folded
+exactly like the visa matrix. The freedom stack will grow; the methodology
+will not change shape.
 
-A passport with visa-free access to the EU and the US, e-visa to China, and
-visa-required for India:
+## No privileged numeraire
 
-```
-eco_out = 1.0×(EU cap) + 1.0×(US cap) + 0.5×(CN cap) + 0.1×(IN cap) + …
-```
+The table prices in USD by default because the dollar is the world's
+current unit of account — a convention, not a truth. The numeraire switch
+re-denominates every capital and price into CNY, BTC, ETH, or gold, and
+the convention becomes visible: America's capital is ¥157T in the #1
+state's token, ₿370M in bitcoin — more bitcoin than will ever exist —
+and China's is its own ¥307T, the cleanest self-reference in the table.
 
-China's $42T money supply enters at half weight — an e-visa regime costs the
-holder 50% of that option's value. India's $2.7T enters at one tenth. Summed,
-normalized by world totals, folded by the geometric mean: one number.
+The dollar is a row in this table, not its ruler. Ranks are invariant to
+the numeraire; intuitions are not — which is exactly why the switch exists.
+
+## Ranks and reading
+
+- **Every rating reads top-down.** There is no ascending mode: a rating is
+  a claim about what matters, and its table starts with the most of it.
+- **Every state carries its ranks.** A state page shows the position in all
+  eight ratings — China: capital #1, population #2, area #4, travel
+  freedom #199. A profile in eight numbers.
+- **The map is the table painted.** Money and score ratings color by rank
+  percentile; population and area — by log magnitude (their polygons
+  already encode size); density inverts, because green must always mean
+  better and red worse, whatever the axis.
+
+## Who gets listed
+
+230 states: UN members, partially recognized states — Abkhazia,
+Transnistria, Somaliland, Kosovo and their kin — and Antarctica, the one
+continent with no sovereign at all, listed with zero capital, zero
+passports and the second-largest territory on the planet.
+
+The listing rule is existence, not recognition: territory, population,
+de-facto authority. Recognition is one state's opinion about another;
+this table records what holds ground. The registry is open-ended — the
+day a network state holds any of the three, it belongs here too.
 
 ## Data
 
 - **Visa matrix** — scraped from public passport-index data; every ordered
   pair of the 229 visa-issuing states, five regimes. Antarctica is listed
   but sits outside the matrix — no passports, no visas, scores of zero.
-- **Population, land area, money supply, token prices** — one TOML file per
-  state in [`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
-  assembled from public statistics; money supply converted to USD at current
-  token prices.
-- Everything is baked into the app at build time — the table you see is a
+- **Money supply** — World Bank broad money (latest year ≥ 2018) and FRED
+  M2 for the US, converted at live FX; refreshed by script, guarded
+  against redenominations.
+- **Population, area, token prices** — one TOML file per state in
+  [`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
+  assembled from public statistics.
+- **Numeraires** — BTC, ETH and gold (via PAXG = 1 troy oz) at refresh
+  time.
+- Everything is baked into the app at build time — the table is a
   snapshot, not a live feed.
 
 ## Honest limitations
 
 - **Money aggregates are not uniform.** States report money supply on
-  slightly different aggregate definitions and dates; the CAP column is the
-  best single USD figure per state, not a synchronized global snapshot.
+  slightly different definitions and dates; CAPITAL is the best single USD
+  figure per state, not a synchronized global snapshot. Human value and
+  land value inherit this caveat — they are exactly as good as capital is.
 - **Weights are judgment calls.** 0.8 for visa-on-arrival and 0.1 for
   embassy-visa are defensible, not derivable. Shifting them reshuffles the
   middle of the table, not the extremes.
 - **The matrix is a snapshot.** Visa regimes change weekly; the table is as
   fresh as its last scrape.
-- **Bilateral nuance is flattened.** Duration of stay, work rights, refusal
-  rates, and reciprocity asymmetries are not modeled — a 30-day visa-free and
-  a 180-day visa-free both count 1.0.
-- **230 states include partially recognized ones.** Their matrices are
-  sparser and their scores accordingly conservative.
+- **Bilateral nuance is flattened.** Duration of stay, work rights,
+  refusal rates and reciprocity are not modeled — a 30-day and a 180-day
+  visa-free both count 1.0.
+- **Partially recognized states have sparser matrices**, and their scores
+  are accordingly conservative.
