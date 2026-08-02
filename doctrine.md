@@ -1,8 +1,9 @@
 # Doctrine
 
-Every state on Earth is a token: backed by territory, secured by a
-population, governed by protocol rules called laws, and priced by the
-wealth the world agrees to hold in its currency.
+A cyberstate is a territory with a population that establishes the rules
+in force on it. The rules are its protocol. The currency the rules demand
+is its token. The wealth the world agrees to hold in that token is its
+price.
 
 The market for these tokens has always existed. Migration is a trade.
 Capital flight is a sell-off. Citizenship is a position, and every human
@@ -10,7 +11,7 @@ alive holds at least one. What the market never had is a terminal —
 no ticker, no quotes, no listing rules.
 
 Cyberstates is that terminal: all 230 cyberstates quoted under one
-methodology, from no privileged point of view.
+doctrine, from no privileged point of view.
 
 ## The cyberstate
 
