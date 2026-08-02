@@ -199,25 +199,30 @@ pub fn HomePage() -> impl IntoView {
     Effect::new(move |_| {
         let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
+        // Rank coloring: the map is the table painted — each visible state's
+        // color is its percentile under the active rating, so the full
+        // palette is always in play and the worst state burns red no matter
+        // how the raw axis is distributed.
+        let mut ranked: Vec<(String, f64)> = countries_for_map.iter()
+            .filter(|c| {
+                (region == "All" || c.region == region)
+                    && (query.is_empty()
+                        || c.name.to_lowercase().contains(&query)
+                        || c.code.to_lowercase().contains(&query)
+                        || c.currency_code.to_lowercase().contains(&query))
+                    && filters.iter().all(|f| passes(c, f))
+            })
+            .map(|c| (c.code.clone(), c.metric(field)))
+            .collect();
+        ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+        let n = ranked.len();
         let mut values: HashMap<String, f64> = HashMap::new();
-        for c in &countries_for_map {
-            let visible = (region == "All" || c.region == region)
-                && (query.is_empty()
-                    || c.name.to_lowercase().contains(&query)
-                    || c.code.to_lowercase().contains(&query)
-                    || c.currency_code.to_lowercase().contains(&query))
-                && filters.iter().all(|f| passes(c, f));
-            if visible {
-                let v = c.metric(field);
-                // log-compress heavy-tailed axes so the palette spreads
-                let v = match field {
-                    SortField::Freedom | SortField::Hospitality => v,
-                    _ => (v + 1.0).ln().max(0.0),
-                };
-                values.insert(c.code.clone(), v);
-            }
+        for (i, (code, _)) in ranked.into_iter().enumerate() {
+            let t = if n > 1 { i as f64 / (n - 1) as f64 } else { 1.0 };
+            // keep the floor above the "unpainted" dark threshold
+            values.insert(code, 0.02 + 0.98 * t);
         }
-        let max_val = values.values().cloned().fold(0.0_f64, f64::max);
+        let max_val = 1.0;
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
             let cb = Closure::wrap(Box::new(move || {
