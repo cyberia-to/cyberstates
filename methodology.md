@@ -32,6 +32,34 @@ holds more of the world's wealth in its token; a state people flee bleeds
 cap. The ratings are the quotes of this market, and the pages behind them
 are its asset profiles.
 
+## The unit: what counts as a state
+
+A row in this table is not a UN seat. It is a **jurisdiction**: a territory
+with a population that presents its own rules to the world — its own border
+regime, its own choice of token, its own legal surface.
+
+Sovereignty is nested, outsourced, and sometimes absent; the jurisdiction
+is what remains when you ask where the rules actually come from:
+
+- **Micronesia** (the Federated States) is one row — one border regime, one
+  rented token, one legal surface — although it is itself a federation of
+  four states and its defense belongs to America by compact. The Marshall
+  Islands and Palau share its ocean and its regional name, and are separate
+  rows: their compacts, borders and rules are their own.
+- **Guam** is a row without a UN seat: nominal sovereignty sits in
+  Washington, but the border you cross, the taxes you owe and the visa
+  waiver you enter on are Guam's.
+- **Hong Kong** under China, **Greenland** under Denmark, the thirty
+  eurozone jurisdictions sharing one token — the same logic. Token and
+  state are many-to-many; that is why tokens have their own table.
+- **Antarctica** is the limit case that proves the rule: rules without a
+  sovereign — a treaty instead of a throne — a jurisdiction with zero
+  capital and the planet's second-largest territory.
+
+Nobody ever interacts with sovereignty in the abstract. You land at a
+border, hold a token, sign under a law. The jurisdiction is the surface
+where states touch humans — so the jurisdiction is the unit.
+
 ## Fundamental and derived
 
 Two kinds of numbers, never confused:
@@ -174,15 +202,15 @@ the numeraire; intuitions are not — which is exactly why the switch exists.
 
 ## Who gets listed
 
-230 states: UN members, partially recognized states — Abkhazia,
-Transnistria, Somaliland, Kosovo and their kin — and Antarctica, the one
-continent with no sovereign at all, listed with zero capital, zero
-passports and the second-largest territory on the planet.
+230 jurisdictions: UN members, their autonomous territories, partially
+recognized and unrecognized states — Abkhazia, Transnistria, Somaliland,
+Kosovo and their kin — and Antarctica.
 
-The listing rule is existence, not recognition: territory, population,
-de-facto authority. Recognition is one state's opinion about another;
-this table records what holds ground. The registry is open-ended — the
-day a network state holds any of the three, it belongs here too.
+The listing rule is existence, not recognition: a territory, a population,
+and a distinct rule-interface to the world. Recognition is one state's
+opinion about another; this table records where the rules actually differ.
+The registry is open-ended — a network state lists the day its rules
+become the interface of a territory.
 
 ## Data
 
