@@ -238,11 +238,15 @@ are confined to this appendix.
 
 ## Appendix D — where the instrument must go
 
-Stocks must become flows: inflation as the decay rate of every token,
-capital growth as its adoption, migration volume as the market's own
-tape. The four unquoted rule domains must join the border. The scalar
-kernel must learn the graph: who holds whose token offshore, who trades
-with whom, who moves where. Area must learn to tell ice from orchard;
+Flow follows stock — so the stocks must gain a time axis. The honest
+flow is the derivative of an audited stock: inflation is the decay of a
+token's ledger, capital growth is its adoption, migration is the
+derivative of population — the market's own tape. A flow with no stock
+beneath it is a GDP; a flow derived from a ledger is a chart.
+
+The four unquoted rule domains must join the border. The scalar kernel
+must learn the graph: who holds whose token offshore, who trades with
+whom, who moves where. Area must learn to tell ice from orchard;
 population must learn its age structure. And a terminal precedes a
 venue: quotes become positions, and new cyberstates will not merely
 appear in the table — they will IPO onto it.
