@@ -340,11 +340,53 @@ body {
     .table-pane { flex: 1 1 auto; }
 }
 
+/* slim table columns — widths live here so viewports can reshape them */
+.cyber-table.slim col.c-rank { width: 9%; }
+.cyber-table.slim col.c-state { width: 34%; }
+.cyber-table.slim col.c-token { width: 13%; }
+.cyber-table.slim col.c-price { width: 22%; }
+.cyber-table.slim col.c-metric { width: 22%; }
+
+/* the mobile sub-line under the state name; invisible on desktop */
+.cyber-table.slim .row-sub { display: none; }
+
 @media (max-width: 640px) {
     .cyber-table.slim { min-width: 0; }
     .cyber-table.slim th,
     .cyber-table.slim td { padding-left: 8px; padding-right: 8px; }
-    .cyber-table.slim .price-tail { display: none; } /* head only — tail needs room phones lack */
+
+    /* world-class list: rank · name-over-token·price · metric */
+    .cyber-table.slim col.c-rank { width: 10%; }
+    .cyber-table.slim col.c-state { width: 55%; }
+    .cyber-table.slim col.c-token { width: 0; }
+    .cyber-table.slim col.c-price { width: 0; }
+    .cyber-table.slim col.c-metric { width: 35%; }
+
+    /* token and price cells stay in flow (fixed-layout column mapping)
+       but vanish into their zero-width columns */
+    .cyber-table.slim th:nth-child(3),
+    .cyber-table.slim td:nth-child(3),
+    .cyber-table.slim th:nth-child(4),
+    .cyber-table.slim td:nth-child(4) {
+        visibility: hidden;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .cyber-table.slim .row-name { font-size: 14px; font-weight: 500; }
+    .cyber-table.slim .row-sub {
+        display: block;
+        font-size: 11px;
+        color: #555;
+        margin-top: 3px;
+        padding-left: 24px; /* aligns under the name, past the flag */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cyber-table.slim .row-sub .price-tail { font-size: 1em; opacity: 0.6; }
+    .cyber-table.slim td:last-child { font-size: 15px; }
+    .cyber-table.slim tbody td { padding-top: 12px; padding-bottom: 12px; }
 }
 
 /* State page */

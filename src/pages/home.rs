@@ -444,11 +444,11 @@ pub fn HomePage() -> impl IntoView {
                         <table class="cyber-table slim">
                             // fixed layout: widths live here, not in row content
                             <colgroup>
-                                <col style="width: 9%;" />   // #
-                                <col style="width: 34%;" />  // state
-                                <col style="width: 13%;" />  // token
-                                <col style="width: 22%;" />  // price
-                                <col style="width: 22%;" />  // rating object
+                                <col class="c-rank" />
+                                <col class="c-state" />
+                                <col class="c-token" />
+                                <col class="c-price" />
+                                <col class="c-metric" />
                             </colgroup>
                             <thead>
                                 <tr>
