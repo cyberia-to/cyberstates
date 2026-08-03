@@ -499,6 +499,12 @@ pub fn HomePage() -> impl IntoView {
                 <div><span class="text-cyber-green">"FREEDOM"</span>" — √(eco_out × pop_out) weighted travel freedom"</div>
                 <div><span class="text-cyber-magenta">"HOSPITALITY"</span>" — √(eco_in × pop_in) weighted border openness"</div>
                 <div style="color: #444; margin-top: 4px;">"Weights: visa-free=1.0, VoA=0.8, eTA/eVisa=0.5, visa-required=0.1, no-admission=0.0"" · "<a href="/doctrine" style="color: var(--cyber-green); text-decoration: none;">"DOCTRINE →"</a></div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #111;">
+                    <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" style="color: #555; text-decoration: none; font-size: 11px; letter-spacing: 1px;">
+                        <span style="margin-right: 6px;">"🏴"</span>
+                        "a "<span style="color: var(--cyber-green);">"cyberia"</span>" project · @cyberiacap"
+                    </a>
+                </div>
             </div>
         </div>
     }
