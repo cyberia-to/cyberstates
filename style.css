@@ -150,17 +150,21 @@ body {
 
 /* Mobile: compact chrome — it serves the table, not itself */
 @media (max-width: 640px) {
+    /* two rows total: [logo | nav] and [ratings | count] */
     .header-row1 {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
         gap: 8px;
         margin-bottom: 10px;
     }
-    /* logo and suffix share one line */
-    .logo-zone { order: 1; flex: 1 1 auto; display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-    .logo { font-size: 22px; }
-    .logo-suffix { margin-top: 0; }
-    .map-zone  { order: 2; flex: 1 1 100%; max-width: 100%; flex-wrap: wrap; justify-content: flex-start; gap: 6px; }
-    .search-input { order: 3; flex: 1 1 100%; }
+    .logo-zone { flex: 0 1 auto; min-width: 0; }
+    .logo { font-size: 20px; }
+    /* the suffix duplicates the highlighted rating pill; the active nav
+       button duplicates the page itself — neither earns its pixels here */
+    .logo-suffix { display: none; }
+    .map-zone .nav-here { display: none; }
+    .map-zone { flex: 0 0 auto; flex-wrap: nowrap; gap: 6px; }
 
     .nav-btn { padding: 6px 10px; font-size: 11px; letter-spacing: 1px; }
     .num-btn { padding: 5px 8px; font-size: 11px; }
