@@ -50,25 +50,8 @@ pub fn CountryRow(
         }>
             <td style="color: #333; text-align: right;">{rank}</td>
             <td>
-                <div>
-                    <span style="margin-right: 8px; font-size: 16px;">{flag.clone()}</span>
-                    <span class="row-name" style="color: #ccc;">{name.clone()}</span>
-                </div>
-                <div class="row-sub">
-                    <span style="color: var(--cyber-yellow);">{token_code.clone()}</span>
-                    " · "
-                    {move || {
-                        let (head, tail) = price_parts(price_usd, numeraire.get());
-                        // a tail that starts with a space is a unit — keep it.
-                        // decimal tails are noise at this size, unless the
-                        // head alone reads as zero
-                        if tail.starts_with(' ') || head.ends_with("0.00") {
-                            format!("{}{}", head, tail)
-                        } else {
-                            head
-                        }
-                    }}
-                </div>
+                <span style="margin-right: 8px; font-size: 16px;">{flag.clone()}</span>
+                <span style="color: #ccc;">{name.clone()}</span>
             </td>
             <td>
                 <a href=format!("/token/{}", token_slug) style="color: var(--cyber-yellow); text-decoration: none;"
