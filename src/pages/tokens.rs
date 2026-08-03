@@ -1,15 +1,86 @@
 use leptos::prelude::*;
+use leptos_router::hooks::use_location;
 use wasm_bindgen::JsCast;
+use std::collections::HashMap;
 use crate::data::*;
 use crate::components::nav::SiteNav;
-use crate::numeraires::{fmt_cap, price_parts, Numeraire};
+use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 
-#[derive(Clone, Copy, PartialEq)]
-enum TokenSort {
-    Code,
-    Name,
-    States,
-    Cap,
+/// Canonical landing path for a token rating. Root = by capital.
+fn landing_path(field: SortField) -> String {
+    if field == SortField::Capital {
+        "/tokens".to_string()
+    } else {
+        format!("/tokens/by/{}", field.slug())
+    }
+}
+
+fn parse_path(path: &str) -> SortField {
+    path.rsplit('/')
+        .next()
+        .and_then(SortField::from_slug)
+        .unwrap_or(SortField::Capital)
+}
+
+/// A token is the aggregate of its zone: capital is the token's cap,
+/// population and area sum over member states, the scores are the
+/// population-weighted average holder's scores.
+fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64)>) -> f64 {
+    match f {
+        SortField::Capital => t.total_supply_b_usd,
+        SortField::Human => {
+            if t.total_population > 0 { t.total_supply_b_usd * 1e9 / t.total_population as f64 } else { 0.0 }
+        }
+        SortField::Land => {
+            if t.total_area_km2 > 0 { t.total_supply_b_usd * 1e9 / t.total_area_km2 as f64 } else { 0.0 }
+        }
+        SortField::Density => {
+            if t.total_area_km2 > 0 { t.total_population as f64 / t.total_area_km2 as f64 } else { 0.0 }
+        }
+        SortField::Population => t.total_population as f64,
+        SortField::Area => t.total_area_km2 as f64,
+        SortField::Freedom | SortField::Hospitality => {
+            let (mut wsum, mut psum) = (0.0, 0.0);
+            for (code, _, _) in &t.countries {
+                if let Some((pop, fr, ho)) = scores.get(code) {
+                    let v = if f == SortField::Freedom { *fr } else { *ho };
+                    wsum += pop * v;
+                    psum += pop;
+                }
+            }
+            if psum > 0.0 { wsum / psum } else { 0.0 }
+        }
+    }
+}
+
+fn fmt_int(v: u64) -> String {
+    let s = v.to_string();
+    let mut out = String::new();
+    for (i, c) in s.chars().enumerate() {
+        if i > 0 && (s.len() - i) % 3 == 0 { out.push(','); }
+        out.push(c);
+    }
+    out
+}
+
+fn score_color(v: f64) -> &'static str {
+    if v > 60.0 { "var(--cyber-green)" }
+    else if v > 40.0 { "var(--cyber-cyan)" }
+    else if v > 25.0 { "var(--cyber-yellow)" }
+    else if v > 10.0 { "var(--cyber-orange)" }
+    else { "var(--cyber-red)" }
+}
+
+fn metric_cell(t: &Token, f: SortField, n: Numeraire, scores: &HashMap<String, (f64, f64, f64)>) -> (String, &'static str) {
+    let v = token_metric(t, f, scores);
+    match f {
+        SortField::Capital => (fmt_cap(v, n), "#e0e0e0"),
+        SortField::Human | SortField::Land => (fmt_value(v, n), "#e0e0e0"),
+        SortField::Freedom | SortField::Hospitality => (format!("{:.1}", v), score_color(v)),
+        SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
+        SortField::Area => (format!("{} km²", fmt_int(v as u64)), "#e0e0e0"),
+        SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
+    }
 }
 
 #[component]
@@ -17,69 +88,80 @@ pub fn TokensPage() -> impl IntoView {
     let tokens = get_tokens();
     let total = tokens.len();
 
-    let (sort, set_sort) = signal(TokenSort::Cap);
-    let (ascending, set_ascending) = signal(false);
+    // per-state (population, freedom, hospitality) for weighted zone scores
+    let scores: HashMap<String, (f64, f64, f64)> = load_countries()
+        .iter()
+        .map(|c| {
+            let idx = c.index();
+            (c.code.clone(), (c.population as f64, idx.freedom, idx.openness))
+        })
+        .collect();
+    let scores = std::sync::Arc::new(scores);
+
+    let location = use_location();
+    let field = Signal::derive(move || parse_path(&location.pathname.get()));
+
     let (search, set_search) = signal(String::new());
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
-    let on_sort = move |field: TokenSort| {
-        if sort.get() == field {
-            set_ascending.set(!ascending.get());
-        } else {
-            set_sort.set(field);
-            set_ascending.set(false);
-        }
-    };
-
-    let th_class = move |field: TokenSort| {
-        let mut c = String::from("cyber-table-th");
-        if sort.get() == field {
-            c.push_str(" sorted");
-            c.push_str(if ascending.get() { " sort-asc" } else { " sort-desc" });
-        }
-        c
-    };
-
     Effect::new(move |_| {
-        document().set_title("Cyberstates tokens — the sovereignty terminal");
+        document().set_title(&format!(
+            "Cyberstates tokens by {} — the sovereignty terminal",
+            field.get().label().to_lowercase()
+        ));
     });
 
     let tokens_for_count = tokens.clone();
+    let scores_for_sort = scores.clone();
     let filtered_sorted = move || {
-        let mut list = tokens.clone();
         let query = search.get().to_lowercase();
-        if !query.is_empty() {
-            list.retain(|t| {
-                t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
-            });
-        }
-
-        let field = sort.get();
-        let asc = ascending.get();
-        list.sort_by(|a, b| {
-            let ord = match field {
-                TokenSort::Code => a.code.cmp(&b.code),
-                TokenSort::Name => a.name.cmp(&b.name),
-                TokenSort::States => a.countries.len().cmp(&b.countries.len()),
-                TokenSort::Cap => a.total_supply_b_usd.partial_cmp(&b.total_supply_b_usd).unwrap_or(std::cmp::Ordering::Equal),
-            };
-            if asc { ord } else { ord.reverse() }
-        });
+        let f = field.get();
+        let mut list: Vec<(Token, f64)> = tokens
+            .iter()
+            .filter(|t| {
+                query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
+            })
+            .map(|t| {
+                let m = token_metric(t, f, &scores_for_sort);
+                (t.clone(), m)
+            })
+            .collect();
+        list.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
         list
     };
 
+    let scores_for_cells = scores.clone();
+
     view! {
         <div class="page-frame">
-            // Header row 1: logo — centered search — states/map flush right
+            // Header row 1: logo — nav
             <div class="header-row1">
                 <div class="logo-zone">
                     <h1 class="logo">
                         <span style="color: var(--cyber-green);">"CYBER"</span>
                         <span style="color: #fff;">"STATES"</span>
                     </h1>
-                    <div class="logo-suffix" style="color: rgba(255, 215, 0, 0.55);">"tokens · by cap"</div>
+                    <div class="logo-suffix" style="color: rgba(255, 215, 0, 0.55);">
+                        {move || format!("tokens · by {}", field.get().label().to_lowercase())}
+                    </div>
                 </div>
                 <SiteNav active="TOKENS" />
+            </div>
+
+            // Header row 2: the same eight ratings, for token zones
+            <div class="header-row2">
+                <div class="region-pills">
+                    {SortField::ALL.map(|f| {
+                        view! {
+                            <a
+                                class=move || if field.get() == f { "region-pill active" } else { "region-pill" }
+                                href=landing_path(f)
+                            >
+                                {f.label()}
+                            </a>
+                        }
+                    }).collect_view()}
+                </div>
             </div>
 
             // Table
@@ -88,38 +170,39 @@ pub fn TokensPage() -> impl IntoView {
                     <colgroup>
                         <col style="width: 5%;" />   // #
                         <col style="width: 9%;" />   // token
-                        <col style="width: 24%;" />  // name
-                        <col style="width: 30%;" />  // states
-                        <col style="width: 11%;" />  // price
-                        <col style="width: 11%;" />  // supply
-                        <col style="width: 10%;" />  // cap
+                        <col style="width: 22%;" />  // name
+                        <col style="width: 27%;" />  // states
+                        <col style="width: 15%;" />  // price
+                        <col style="width: 22%;" />  // rating object
                     </colgroup>
                     <thead>
                         <tr>
                             <th style="cursor: default;">"#"</th>
-                            <th class=move || th_class(TokenSort::Code) on:click=move |_| on_sort(TokenSort::Code)>"TOKEN"</th>
-                            <th class=move || th_class(TokenSort::Name) on:click=move |_| on_sort(TokenSort::Name)>"NAME"</th>
-                            <th class=move || th_class(TokenSort::States) on:click=move |_| on_sort(TokenSort::States)>"STATES"</th>
-                            <th class="th-static">"PRICE"</th>
-                            <th class="th-static">"SUPPLY"</th>
-                            <th class=move || th_class(TokenSort::Cap) on:click=move |_| on_sort(TokenSort::Cap)>"CAP"</th>
+                            <th class="th-static">"TOKEN"</th>
+                            <th class="th-static">"NAME"</th>
+                            <th class="th-static">"STATES"</th>
+                            <th class="th-static" style="text-align: right;">"PRICE"</th>
+                            <th class="th-static metric-th" style="text-align: right;">
+                                {move || field.get().short()}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         {move || {
+                            let scores = scores_for_cells.clone();
                             filtered_sorted()
                                 .into_iter()
                                 .enumerate()
-                                .map(|(i, t)| {
+                                .map(|(i, (t, _))| {
                                     let code = t.code.clone();
                                     let href = format!("/token/{}", code.to_lowercase());
                                     let name = t.name.clone();
                                     let n_states = t.countries.len();
-                                    let flags: String = t.countries.iter().take(12).map(|(_, _, f)| f.as_str()).collect::<Vec<_>>().join(" ");
-                                    let more = n_states.saturating_sub(12);
+                                    let flags: String = t.countries.iter().take(10).map(|(_, _, f)| f.as_str()).collect::<Vec<_>>().join(" ");
+                                    let more = n_states.saturating_sub(10);
                                     let price_usd = t.price_usd;
-                                    let cap_b_usd = t.total_supply_b_usd;
-                                    let supply = t.supply_fmt();
+                                    let t_for_metric = t.clone();
+                                    let scores = scores.clone();
                                     view! {
                                         <tr on:click=move |_| {
                                             if let Some(window) = web_sys::window() {
@@ -144,8 +227,12 @@ pub fn TokensPage() -> impl IntoView {
                                                     }
                                                 }}
                                             </td>
-                                            <td class="tabular-nums" style="text-align: right; color: #888;">{supply}</td>
-                                            <td class="tabular-nums" style="text-align: right;">{move || fmt_cap(cap_b_usd, numeraire.get())}</td>
+                                            <td class="tabular-nums" style="text-align: right; font-weight: 700;">
+                                                {move || {
+                                                    let (text, color) = metric_cell(&t_for_metric, field.get(), numeraire.get(), &scores);
+                                                    view! { <span style:color=color>{text}</span> }
+                                                }}
+                                            </td>
                                         </tr>
                                     }
                                 })

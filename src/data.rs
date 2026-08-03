@@ -116,6 +116,8 @@ pub struct Token {
     pub name: String,
     pub price_usd: f64,
     pub total_supply_b_usd: f64,
+    pub total_population: u64,
+    pub total_area_km2: u64,
     pub countries: Vec<(String, String, String)>, // (country_code, country_name, flag)
 }
 
@@ -129,9 +131,13 @@ pub fn get_tokens() -> Vec<Token> {
             name: c.currency_name.clone(),
             price_usd: c.token_price_usd,
             total_supply_b_usd: 0.0,
+            total_population: 0,
+            total_area_km2: 0,
             countries: Vec::new(),
         });
         entry.total_supply_b_usd += c.money_supply_b_usd;
+        entry.total_population += c.population;
+        entry.total_area_km2 += c.land_area_km2;
         entry.countries.push((c.code.clone(), c.name.clone(), c.flag.clone()));
         if entry.price_usd <= 0.0 && c.token_price_usd > 0.0 {
             entry.price_usd = c.token_price_usd;
