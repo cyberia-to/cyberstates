@@ -7,7 +7,6 @@ use crate::pages::map::{setup_click_handlers, value_to_color};
 use std::collections::HashMap;
 use crate::components::nav::SiteNav;
 use crate::numeraires::Numeraire;
-use crate::components::numeraire_chooser::NumeraireChooser;
 
 fn region_slug(r: &str) -> String {
     r.to_lowercase().replace(' ', "-")
@@ -150,7 +149,7 @@ pub fn HomePage() -> impl IntoView {
         .map(String::from)
         .unwrap_or_default();
     let (search, set_search) = signal(initial_q);
-    let (numeraire, set_numeraire) = signal(Numeraire::Btc);
+    let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
     let (panel_open, set_panel_open) = signal(false);
     let input_ref = NodeRef::<leptos::html::Input>::new();
@@ -324,9 +323,7 @@ pub fn HomePage() -> impl IntoView {
                         }}
                     </div>
                 </div>
-                <SiteNav active="STATES">
-                    <NumeraireChooser numeraire=numeraire set_numeraire=set_numeraire />
-                </SiteNav>
+                <SiteNav active="STATES" />
             </div>
 
             // Header row 2: rating landings — real links, every one a page

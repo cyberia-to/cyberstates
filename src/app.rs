@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use crate::numeraires::{load_numeraire, Numeraire};
 use leptos_router::components::*;
 use leptos_router::path;
 
@@ -10,6 +11,10 @@ use crate::pages::methodology::MethodologyPage;
 
 #[component]
 pub fn App() -> impl IntoView {
+    // one measure for the whole terminal, alive across pages and reloads
+    let numeraire = RwSignal::new(load_numeraire());
+    provide_context::<RwSignal<Numeraire>>(numeraire);
+
     view! {
         <Router>
             <Routes fallback=|| view! { <p style="color: var(--cyber-red); padding: 40px;">"404 — NOT FOUND"</p> }>

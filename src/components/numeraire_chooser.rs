@@ -1,14 +1,12 @@
 use leptos::prelude::*;
-use crate::numeraires::Numeraire;
+use crate::numeraires::{store_numeraire, Numeraire};
 
-/// Compact numeraire chooser: one button with the current token's flag,
-/// click opens the list. Lives in the header's right zone without
-/// widening it.
+/// Compact numeraire chooser: one button with the current token's symbol,
+/// click opens the list. Reads and writes the app-wide measure, so it can
+/// live in the header of every page.
 #[component]
-pub fn NumeraireChooser(
-    numeraire: ReadSignal<Numeraire>,
-    set_numeraire: WriteSignal<Numeraire>,
-) -> impl IntoView {
+pub fn NumeraireChooser() -> impl IntoView {
+    let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
     let (open, set_open) = signal(false);
     view! {
         <div class="num-chooser">
@@ -27,7 +25,8 @@ pub fn NumeraireChooser(
                         <button
                             class=move || if numeraire.get() == n { "region-pill active" } else { "region-pill" }
                             on:click=move |_| {
-                                set_numeraire.set(n);
+                                numeraire.set(n);
+                                store_numeraire(n);
                                 set_open.set(false);
                             }
                         >

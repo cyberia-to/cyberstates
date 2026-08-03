@@ -41,6 +41,27 @@ impl Numeraire {
         }
     }
 
+    pub fn slug(&self) -> &'static str {
+        match self {
+            Self::Usd => "usd",
+            Self::Cny => "cny",
+            Self::Btc => "btc",
+            Self::Eth => "eth",
+            Self::Gold => "gold",
+        }
+    }
+
+    pub fn from_slug(s: &str) -> Option<Self> {
+        Some(match s {
+            "usd" => Self::Usd,
+            "cny" => Self::Cny,
+            "btc" => Self::Btc,
+            "eth" => Self::Eth,
+            "gold" => Self::Gold,
+            _ => return None,
+        })
+    }
+
     /// Brand color for the symbol — fiat rides its flag, crypto and gold
     /// get their own hues so they read as first-class citizens.
     pub fn color(&self) -> &'static str {
@@ -155,3 +176,18 @@ pub fn price_parts(usd: f64, n: Numeraire) -> (String, String, String) {
     }
 }
 
+
+/// The chosen measure survives reloads: read at boot, written on change.
+pub fn load_numeraire() -> Numeraire {
+    web_sys::window()
+        .and_then(|w| w.local_storage().ok().flatten())
+        .and_then(|ls| ls.get_item("numeraire").ok().flatten())
+        .and_then(|v| Numeraire::from_slug(&v))
+        .unwrap_or(Numeraire::Btc)
+}
+
+pub fn store_numeraire(n: Numeraire) {
+    if let Some(ls) = web_sys::window().and_then(|w| w.local_storage().ok().flatten()) {
+        let _ = ls.set_item("numeraire", n.slug());
+    }
+}

@@ -150,6 +150,12 @@ body {
 
 /* Mobile: compact chrome — it serves the table, not itself */
 @media (max-width: 640px) {
+    /* the table earns edge-to-edge; the header earns its margins */
+    .header-row1,
+    .header-row2 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
     /* two rows total: [logo | nav] and [ratings | count] */
     .header-row1 {
         flex-wrap: nowrap;

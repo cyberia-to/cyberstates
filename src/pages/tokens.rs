@@ -3,7 +3,6 @@ use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::nav::SiteNav;
 use crate::numeraires::{fmt_cap, price_parts, Numeraire};
-use crate::components::numeraire_chooser::NumeraireChooser;
 
 #[derive(Clone, Copy, PartialEq)]
 enum TokenSort {
@@ -21,7 +20,7 @@ pub fn TokensPage() -> impl IntoView {
     let (sort, set_sort) = signal(TokenSort::Cap);
     let (ascending, set_ascending) = signal(false);
     let (search, set_search) = signal(String::new());
-    let (numeraire, set_numeraire) = signal(Numeraire::Btc);
+    let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
     let on_sort = move |field: TokenSort| {
         if sort.get() == field {
@@ -80,9 +79,7 @@ pub fn TokensPage() -> impl IntoView {
                     </h1>
                     <div class="logo-suffix" style="color: rgba(255, 215, 0, 0.55);">"tokens · by cap"</div>
                 </div>
-                <SiteNav active="TOKENS">
-                    <NumeraireChooser numeraire=numeraire set_numeraire=set_numeraire />
-                </SiteNav>
+                <SiteNav active="TOKENS" />
             </div>
 
             // Table
