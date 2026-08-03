@@ -16,7 +16,10 @@ pub fn NumeraireChooser(
                 class="region-pill num-btn"
                 on:click=move |_| set_open.update(|o| *o = !*o)
             >
-                {move || format!("{} ▾", numeraire.get().label())}
+                <span style:color=move || numeraire.get().color() style="font-weight: 700;">
+                    {move || numeraire.get().label()}
+                </span>
+                " ▾"
             </button>
             <div class="num-menu" style:display=move || if open.get() { "flex" } else { "none" }>
                 {Numeraire::ALL.map(|n| {
@@ -28,7 +31,8 @@ pub fn NumeraireChooser(
                                 set_open.set(false);
                             }
                         >
-                            {format!("{}  {}", n.label(), n.name())}
+                            <span style:color=n.color() style="font-weight: 700;">{n.label()}</span>
+                            {format!("  {}", n.name())}
                         </button>
                     }
                 }).collect_view()}

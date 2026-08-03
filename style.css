@@ -194,9 +194,15 @@ body {
     gap: 14px;
 }
 
-.price-tail {
+.price-tail,
+.price-frac {
     font-size: 0.78em;
     opacity: 0.45;
+}
+
+.price-unit {
+    font-size: 0.78em;
+    opacity: 0.6;
 }
 
 .num-chooser {
@@ -387,7 +393,9 @@ body {
     .cyber-table.slim th:first-child,
     .cyber-table.slim td:first-child { padding-left: 2px; padding-right: 4px; }
     .cyber-table.slim th { letter-spacing: 1px; } /* TOKEN must not clip to TOKE */
-    .cyber-table.slim .price-tail { display: none; } /* head only — tail needs room phones lack */
+    /* fractions are noise on a phone; the unit is not — a bare number
+       is a riddle */
+    .cyber-table.slim .price-frac { display: none; }
 }
 
 /* State page */

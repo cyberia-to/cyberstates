@@ -13,7 +13,6 @@ pub fn SiteNav(active: &'static str, #[prop(optional)] children: Option<Children
 
     view! {
         <div class="map-zone">
-            {children.map(|c| c())}
             {ITEMS.map(|(label, href, cls)| {
                 let here = label == active;
                 view! {
@@ -25,6 +24,7 @@ pub fn SiteNav(active: &'static str, #[prop(optional)] children: Option<Children
                     </a>
                 }
             }).collect_view()}
+            {children.map(|c| c())}
         </div>
     }
 }

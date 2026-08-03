@@ -40,6 +40,17 @@ impl Numeraire {
             Self::Gold => "Au",
         }
     }
+
+    /// Brand color for the symbol — fiat rides its flag, crypto and gold
+    /// get their own hues so they read as first-class citizens.
+    pub fn color(&self) -> &'static str {
+        match self {
+            Self::Usd | Self::Cny => "#e0e0e0",
+            Self::Btc => "#f7931a",
+            Self::Eth => "#627eea",
+            Self::Gold => "#ffd700",
+        }
+    }
 }
 
 /// Scale a positive number into (value, suffix) with k/M/B/T steps.
@@ -102,13 +113,19 @@ pub fn fmt_value(usd: f64, n: Numeraire) -> String {
     }
 }
 
-/// Split a price into (bright head, dim tail) for rendering: the head
-/// carries the readable magnitude, the tail carries precision digits or
-/// the unit suffix at reduced size/brightness.
-pub fn price_parts(usd: f64, n: Numeraire) -> (String, String) {
+/// Split a price into (bright head, dim fraction, unit): the head carries
+/// the readable magnitude, the fraction carries precision at reduced
+/// size/brightness, and the unit is always visible — a number without its
+/// unit is a riddle, not a price.
+pub fn price_parts(usd: f64, n: Numeraire) -> (String, String, String) {
     if usd <= 0.0 {
-        return ("N/A".to_string(), String::new());
+        return ("N/A".to_string(), String::new(), String::new());
     }
+    let split2 = |v: f64| {
+        let full = format!("{:.2}", v);
+        let (int, frac) = full.split_once('.').unwrap();
+        (int.to_string(), format!(".{}", frac))
+    };
     match n {
         Numeraire::Usd | Numeraire::Cny => {
             let (sym, v) = match n {
@@ -117,14 +134,24 @@ pub fn price_parts(usd: f64, n: Numeraire) -> (String, String) {
             };
             let full = format!("{:.6}", v);
             let (int, frac) = full.split_once('.').unwrap();
-            (format!("{}{}.{}", sym, int, &frac[..2]), frac[2..].to_string())
+            (
+                format!("{}{}.{}", sym, int, &frac[..2]),
+                frac[2..].to_string(),
+                String::new(),
+            )
         }
-        Numeraire::Btc => (format!("{:.2}", usd / BTC_USD * 1e8), " sat".to_string()),
-        Numeraire::Eth => (format!("{:.2}", usd / ETH_USD * 1e6), " μΞ".to_string()),
-        Numeraire::Gold => (
-            format!("{:.2}", usd / XAU_USD * GRAMS_PER_OZ * 1000.0),
-            " mg Au".to_string(),
-        ),
+        Numeraire::Btc => {
+            let (int, frac) = split2(usd / BTC_USD * 1e8);
+            (int, frac, " sat".to_string())
+        }
+        Numeraire::Eth => {
+            let (int, frac) = split2(usd / ETH_USD * 1e6);
+            (int, frac, " μΞ".to_string())
+        }
+        Numeraire::Gold => {
+            let (int, frac) = split2(usd / XAU_USD * GRAMS_PER_OZ * 1000.0);
+            (int, frac, " mg Au".to_string())
+        }
     }
 }
 

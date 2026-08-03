@@ -163,8 +163,12 @@ pub fn TokensPage() -> impl IntoView {
                                             </td>
                                             <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
                                                 {move || {
-                                                    let (head, tail) = price_parts(price_usd, numeraire.get());
-                                                    view! { <span>{head}</span><span class="price-tail">{tail}</span> }
+                                                    let (head, frac, unit) = price_parts(price_usd, numeraire.get());
+                                                    view! {
+                                                        <span>{head}</span>
+                                                        <span class="price-frac">{frac}</span>
+                                                        <span class="price-unit">{unit}</span>
+                                                    }
                                                 }}
                                             </td>
                                             <td class="tabular-nums" style="text-align: right; color: #888;">{supply}</td>
