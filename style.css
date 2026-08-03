@@ -29,6 +29,7 @@ html {
 }
 
 body {
+    overflow-x: hidden; /* inner regions own their h-scrolls; the page never does */
     font-family: 'Play', sans-serif;
     background: var(--cyber-black);
     color: var(--cyber-text);
@@ -147,23 +148,35 @@ body {
     white-space: nowrap;
 }
 
-/* Mobile: logo+map on one line, search full-width below,
-   pills in one scrollable row, count underneath */
+/* Mobile: compact chrome — it serves the table, not itself */
 @media (max-width: 640px) {
     .header-row1 {
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 8px;
+        margin-bottom: 10px;
     }
-    .logo-zone { order: 1; flex: 1 1 auto; }
+    /* logo and suffix share one line */
+    .logo-zone { order: 1; flex: 1 1 auto; display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+    .logo { font-size: 22px; }
+    .logo-suffix { margin-top: 0; }
     .map-zone  { order: 2; flex: 1 1 100%; max-width: 100%; flex-wrap: wrap; justify-content: flex-start; gap: 6px; }
     .search-input { order: 3; flex: 1 1 100%; }
 
+    .nav-btn { padding: 6px 10px; font-size: 11px; letter-spacing: 1px; }
+    .num-btn { padding: 5px 8px; font-size: 11px; }
+    .search-input { padding: 8px 12px; font-size: 12px; }
+    .region-pill { padding: 5px 10px; font-size: 11px; }
+
+    /* pills and count share one line */
     .header-row2 {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        align-items: center;
         gap: 8px;
+        margin-bottom: 8px;
     }
     .region-pills {
+        flex: 1 1 auto;
+        min-width: 0;
         flex-wrap: nowrap;
         overflow-x: auto;
         scrollbar-width: none; /* the pills row scrolls, no track needed */
@@ -172,7 +185,7 @@ body {
     }
     .region-pills::-webkit-scrollbar { display: none; }
     .region-pills .region-pill { flex: 0 0 auto; }
-    .state-count { text-align: left; }
+    .state-count { font-size: 11px; white-space: nowrap; }
 }
 
 .count-zone {
