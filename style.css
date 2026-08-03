@@ -434,9 +434,7 @@ body {
     .cyber-table.slim th:first-child,
     .cyber-table.slim td:first-child { padding-left: 2px; padding-right: 4px; }
     .cyber-table.slim th { letter-spacing: 1px; } /* TOKEN must not clip to TOKE */
-    /* fractions are noise on a phone; the unit is not — a bare number
-       is a riddle */
-    .cyber-table.slim .price-frac { display: none; }
+    /* fractions stay — dim and small, same beauty as desktop */
 }
 
 /* State page */

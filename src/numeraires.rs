@@ -37,7 +37,7 @@ impl Numeraire {
             Self::Cny => "🇨🇳 ¥",
             Self::Btc => "₿",
             Self::Eth => "Ξ",
-            Self::Gold => "Au",
+            Self::Gold => "🪙",
         }
     }
 
