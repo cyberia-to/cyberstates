@@ -303,7 +303,7 @@ pub fn HomePage() -> impl IntoView {
     };
 
     view! {
-        <div style="padding: 20px;">
+        <div class="page-shell">
             <div style="max-width: 1400px; margin: 0 auto;">
             // Header row 1: logo — centered search — map flush right
             <div class="header-row1">
@@ -440,7 +440,7 @@ pub fn HomePage() -> impl IntoView {
             // Table + desktop map, split — full viewport width
             <div class="home-split">
                 <div class="table-pane">
-                    <div style="overflow-x: auto; border: 1px solid #111; border-radius: 4px;">
+                    <div class="table-shell">
                         <table class="cyber-table slim">
                             // fixed layout: widths live here, not in row content
                             <colgroup>
