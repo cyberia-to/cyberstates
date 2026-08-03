@@ -4,6 +4,7 @@ use wasm_bindgen::JsCast;
 use std::collections::HashMap;
 use crate::data::*;
 use crate::components::nav::SiteNav;
+use crate::components::brand::BrandChooser;
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 
 /// Canonical landing path for a token rating. Root = by capital.
@@ -138,12 +139,31 @@ pub fn TokensPage() -> impl IntoView {
             // Header row 1: logo — nav
             <div class="header-row1">
                 <div class="logo-zone">
-                    <h1 class="logo">
-                        <span style="color: var(--cyber-green);">"CYBER"</span>
-                        <span style="color: #fff;">"STATES"</span>
-                    </h1>
+                    <BrandChooser active="TOKENS" />
                     <div class="logo-suffix" style="color: rgba(255, 215, 0, 0.55);">
                         {move || format!("tokens · by {}", field.get().label().to_lowercase())}
+                    </div>
+                </div>
+                <div class="rating-chooser">
+                    <button
+                        class="region-pill active rating-btn"
+                        on:click=move |_| set_rating_open.update(|o| *o = !*o)
+                    >
+                        {move || field.get().short()}
+                        <span style="opacity: 0.7;">" ▾"</span>
+                    </button>
+                    <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
+                        {SortField::ALL.map(|f| {
+                            view! {
+                                <a
+                                    class=move || if field.get() == f { "region-pill active" } else { "region-pill" }
+                                    href=landing_path(f)
+                                    on:click=move |_| set_rating_open.set(false)
+                                >
+                                    {f.label()}
+                                </a>
+                            }
+                        }).collect_view()}
                     </div>
                 </div>
                 <SiteNav active="TOKENS" />
@@ -162,28 +182,6 @@ pub fn TokensPage() -> impl IntoView {
                             </a>
                         }
                     }).collect_view()}
-                </div>
-                <div class="rating-chooser">
-                    <button
-                        class="region-pill active rating-btn"
-                        on:click=move |_| set_rating_open.update(|o| *o = !*o)
-                    >
-                        {move || format!("BY {}", field.get().label())}
-                        <span style="opacity: 0.7;">" ▾"</span>
-                    </button>
-                    <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
-                        {SortField::ALL.map(|f| {
-                            view! {
-                                <a
-                                    class=move || if field.get() == f { "region-pill active" } else { "region-pill" }
-                                    href=landing_path(f)
-                                    on:click=move |_| set_rating_open.set(false)
-                                >
-                                    {f.label()}
-                                </a>
-                            }
-                        }).collect_view()}
-                    </div>
                 </div>
             </div>
 

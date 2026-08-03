@@ -2,6 +2,7 @@ use leptos::prelude::*;
 use pulldown_cmark::{html, Options, Parser};
 use wasm_bindgen::JsCast;
 use crate::components::nav::SiteNav;
+use crate::components::brand::BrandChooser;
 
 const METHODOLOGY_MD: &str = include_str!("../../doctrine.md");
 
@@ -21,12 +22,7 @@ pub fn MethodologyPage() -> impl IntoView {
         <div class="page-frame">
             <div class="header-row1">
                 <div class="logo-zone">
-                    <a href="/" style="text-decoration: none;">
-                        <h1 class="logo">
-                            <span style="color: var(--cyber-green);">"CYBER"</span>
-                            <span style="color: #fff;">"STATES"</span>
-                        </h1>
-                    </a>
+                    <BrandChooser />
                     <div class="logo-suffix">"doctrine"</div>
                 </div>
                 <SiteNav active="DOCTRINE" />

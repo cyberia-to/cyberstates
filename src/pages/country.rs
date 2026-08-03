@@ -3,6 +3,7 @@ use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::numeraires::{fmt_value, Numeraire};
 use crate::components::nav::SiteNav;
+use crate::components::brand::BrandChooser;
 
 #[component]
 pub fn CountryPage() -> impl IntoView {
@@ -230,12 +231,7 @@ pub fn SiteHeader(suffix: String) -> impl IntoView {
     view! {
         <div class="header-row1">
             <div class="logo-zone">
-                <a href="/" style="text-decoration: none;">
-                    <h1 class="logo">
-                        <span style="color: var(--cyber-green);">"CYBER"</span>
-                        <span style="color: #fff;">"STATES"</span>
-                    </h1>
-                </a>
+                <BrandChooser />
                 <div class="logo-suffix">{suffix}</div>
             </div>
             <SiteNav active="" />

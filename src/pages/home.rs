@@ -6,6 +6,7 @@ use crate::components::table::*;
 use crate::pages::map::{setup_click_handlers, value_to_color};
 use std::collections::HashMap;
 use crate::components::nav::SiteNav;
+use crate::components::brand::BrandChooser;
 use crate::numeraires::Numeraire;
 
 fn region_slug(r: &str) -> String {
@@ -308,10 +309,7 @@ pub fn HomePage() -> impl IntoView {
             // Header row 1: logo — centered search — map flush right
             <div class="header-row1">
                 <div class="logo-zone">
-                    <h1 class="logo">
-                        <span style="color: var(--cyber-green);">"CYBER"</span>
-                        <span style="color: #fff;">"STATES"</span>
-                    </h1>
+                    <BrandChooser active="STATES" />
                     <div class="logo-suffix">
                         {move || {
                             let (region, field) = state.get();
@@ -322,6 +320,28 @@ pub fn HomePage() -> impl IntoView {
                             s.push_str(&format!("by {}", field.label().to_lowercase()));
                             s
                         }}
+                    </div>
+                </div>
+                <div class="rating-chooser">
+                    <button
+                        class="region-pill active rating-btn"
+                        on:click=move |_| set_rating_open.update(|o| *o = !*o)
+                    >
+                        {move || state.get().1.short()}
+                        <span style="opacity: 0.7;">" ▾"</span>
+                    </button>
+                    <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
+                        {SortField::ALL.map(|f| {
+                            view! {
+                                <a
+                                    class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
+                                    href=move || landing_path(&state.get().0, f)
+                                    on:click=move |_| set_rating_open.set(false)
+                                >
+                                    {f.label()}
+                                </a>
+                            }
+                        }).collect_view()}
                     </div>
                 </div>
                 <SiteNav active="STATES" />
@@ -341,28 +361,6 @@ pub fn HomePage() -> impl IntoView {
                             </a>
                         }
                     }).collect_view()}
-                </div>
-                <div class="rating-chooser">
-                    <button
-                        class="region-pill active rating-btn"
-                        on:click=move |_| set_rating_open.update(|o| *o = !*o)
-                    >
-                        {move || format!("BY {}", state.get().1.label())}
-                        <span style="opacity: 0.7;">" ▾"</span>
-                    </button>
-                    <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
-                        {SortField::ALL.map(|f| {
-                            view! {
-                                <a
-                                    class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
-                                    href=move || landing_path(&state.get().0, f)
-                                    on:click=move |_| set_rating_open.set(false)
-                                >
-                                    {f.label()}
-                                </a>
-                            }
-                        }).collect_view()}
-                    </div>
                 </div>
             </div>
 
@@ -518,17 +516,12 @@ pub fn HomePage() -> impl IntoView {
                 </div>
             </div>
 
-            // Footer
-            <div style="max-width: 1400px; margin: 24px auto 0; padding: 16px; background: #050505; border: 1px solid #111; border-radius: 4px; font-size: 10px; color: #333; line-height: 2;">
-                <div><span class="text-cyber-green">"FREEDOM"</span>" — √(eco_out × pop_out) weighted travel freedom"</div>
-                <div><span class="text-cyber-magenta">"HOSPITALITY"</span>" — √(eco_in × pop_in) weighted border openness"</div>
-                <div style="color: #444; margin-top: 4px;">"Weights: visa-free=1.0, VoA=0.8, eTA/eVisa=0.5, visa-required=0.1, no-admission=0.0"" · "<a href="/doctrine" style="color: var(--cyber-green); text-decoration: none;">"DOCTRINE →"</a></div>
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #111;">
-                    <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" style="color: #555; text-decoration: none; font-size: 11px; letter-spacing: 1px;">
-                        <span style="margin-right: 6px;">"🏴"</span>
-                        "a "<span style="color: var(--cyber-green);">"cyberia"</span>" project · @cyberiacap"
-                    </a>
-                </div>
+            // Footer: the maker's mark, nothing else
+            <div style="max-width: 1400px; margin: 24px auto 0; text-align: center;">
+                <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" style="color: #555; text-decoration: none; font-size: 11px; letter-spacing: 1px;">
+                    <span style="margin-right: 6px;">"🏴"</span>
+                    "a "<span style="color: var(--cyber-green);">"cyberia"</span>" project · @cyberiacap"
+                </a>
             </div>
         </div>
     }
