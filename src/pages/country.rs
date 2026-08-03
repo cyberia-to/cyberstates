@@ -238,6 +238,9 @@ pub fn SiteHeader(suffix: String) -> impl IntoView {
                 </a>
                 <div class="logo-suffix">{suffix}</div>
             </div>
+            <SiteNav active="" />
+        </div>
+        <div class="search-dock">
             <input
                 type="text"
                 class="search-input"
@@ -252,7 +255,6 @@ pub fn SiteHeader(suffix: String) -> impl IntoView {
                     }
                 }
             />
-            <SiteNav active="" />
         </div>
     }
 }

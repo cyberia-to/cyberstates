@@ -29,6 +29,12 @@ pub fn MethodologyPage() -> impl IntoView {
                     </a>
                     <div class="logo-suffix">"doctrine"</div>
                 </div>
+                <SiteNav active="DOCTRINE" />
+            </div>
+
+            <div class="prose-cyber" style="max-width: 860px; margin: 0 auto;" inner_html=html_out></div>
+
+            <div class="search-dock">
                 <input
                     type="text"
                     class="search-input"
@@ -44,10 +50,7 @@ pub fn MethodologyPage() -> impl IntoView {
                         }
                     }
                 />
-                <SiteNav active="DOCTRINE" />
             </div>
-
-            <div class="prose-cyber" style="max-width: 860px; margin: 0 auto;" inner_html=html_out></div>
         </div>
     }
 }

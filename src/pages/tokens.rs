@@ -80,16 +80,6 @@ pub fn TokensPage() -> impl IntoView {
                     </h1>
                     <div class="logo-suffix" style="color: rgba(255, 215, 0, 0.55);">"tokens · by cap"</div>
                 </div>
-                <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search token code or name..."
-                    on:input=move |ev| {
-                        let target = ev.target().unwrap();
-                        let input: web_sys::HtmlInputElement = target.unchecked_into();
-                        set_search.set(input.value());
-                    }
-                />
                 <SiteNav active="TOKENS">
                     <NumeraireChooser numeraire=numeraire set_numeraire=set_numeraire />
                 </SiteNav>
@@ -180,6 +170,20 @@ pub fn TokensPage() -> impl IntoView {
                         }}
                     </tbody>
                 </table>
+            </div>
+
+            // Search dock
+            <div class="search-dock">
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search token code or name..."
+                    on:input=move |ev| {
+                        let target = ev.target().unwrap();
+                        let input: web_sys::HtmlInputElement = target.unchecked_into();
+                        set_search.set(input.value());
+                    }
+                />
             </div>
         </div>
     }

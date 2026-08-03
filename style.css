@@ -234,6 +234,43 @@ body {
     white-space: nowrap;
 }
 
+/* Search dock — fixed command bar at the bottom of every page */
+.search-dock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(5, 6, 8, 0.92);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #111;
+}
+
+.search-dock .search-wrap,
+.search-dock .search-input {
+    flex: 1 1 640px;
+    max-width: 640px;
+}
+
+.search-dock .search-wrap .search-input {
+    max-width: none;
+}
+
+/* the filter panel opens upward from the dock */
+.search-dock .search-panel {
+    top: auto;
+    bottom: calc(100% + 8px);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 255, 65, 0.06);
+}
+
+/* content must never hide behind the dock */
+body {
+    padding-bottom: 76px;
+}
+
 /* Search command panel */
 .search-wrap {
     flex: 0 1 370px;

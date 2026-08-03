@@ -324,84 +324,6 @@ pub fn HomePage() -> impl IntoView {
                         }}
                     </div>
                 </div>
-                <div
-                    class="search-wrap"
-                    node_ref=wrap_ref
-                    on:focusout=move |ev| {
-                        // close only when focus leaves the wrapper entirely
-                        let inside = ev.related_target()
-                            .and_then(|t| t.dyn_into::<web_sys::Node>().ok())
-                            .map(|n| wrap_ref.get_untracked().map(|w| w.contains(Some(&n))).unwrap_or(false))
-                            .unwrap_or(false);
-                        if !inside {
-                            set_panel_open.set(false);
-                        }
-                    }
-                    on:keydown=move |ev| {
-                        if ev.key() == "Escape" {
-                            set_panel_open.set(false);
-                            if let Some(inp) = input_ref.get_untracked() {
-                                let _ = inp.blur();
-                            }
-                        }
-                    }
-                >
-                    <input
-                        type="text"
-                        class="search-input"
-                        placeholder="Search — or filter: freedom>60, cap>1t..."
-                        node_ref=input_ref
-                        prop:value=move || search.get()
-                        on:focus=move |_| set_panel_open.set(true)
-                        on:input=move |ev| {
-                            let target = ev.target().unwrap();
-                            let input: web_sys::HtmlInputElement = target.unchecked_into();
-                            set_search.set(input.value());
-                        }
-                    />
-                    <div class="search-panel" style:display=move || if panel_open.get() { "block" } else { "none" }>
-                        <div class="panel-row">
-                            <span class="panel-label">"REGION"</span>
-                            <div class="panel-chips">
-                                {REGIONS.iter().map(|&r| {
-                                    let r_click = r.to_string();
-                                    let r_class = r.to_string();
-                                    let nav_r = nav.clone();
-                                    view! {
-                                        <button
-                                            class=move || if state.get().0 == r_class { "region-pill active" } else { "region-pill" }
-                                            on:click=move |_| {
-                                                let (_, field) = state.get();
-                                                nav_r(&landing_path(&r_click, field), Default::default());
-                                            }
-                                        >{r}</button>
-                                    }
-                                }).collect::<Vec<_>>()}
-                            </div>
-                        </div>
-                        <div class="panel-row">
-                            <span class="panel-label">"FILTER"</span>
-                            <div class="panel-chips">
-                                {FILTER_EXAMPLES.map(|ex| {
-                                    view! {
-                                        <button
-                                            class="region-pill filter-chip"
-                                            on:click=move |_| {
-                                                let cur = search.get_untracked();
-                                                let sep = if cur.is_empty() || cur.ends_with(' ') { "" } else { " " };
-                                                set_search.set(format!("{}{}{}", cur, sep, ex));
-                                                if let Some(inp) = input_ref.get_untracked() {
-                                                    let _ = inp.focus();
-                                                }
-                                            }
-                                        >{ex}</button>
-                                    }
-                                }).collect_view()}
-                            </div>
-                        </div>
-                        <div class="panel-hint">"mix text and filters: europe cap>1t · / focuses · esc closes"</div>
-                    </div>
-                </div>
                 <SiteNav active="STATES">
                     <NumeraireChooser numeraire=numeraire set_numeraire=set_numeraire />
                 </SiteNav>
@@ -488,6 +410,88 @@ pub fn HomePage() -> impl IntoView {
                             {move || if sort_field.get().lower_is_better() { "LOW" } else { "HIGH" }}
                         </span>
                         <span style="font-size: 10px; color: #444; letter-spacing: 2px; margin-left: 12px;">{move || sort_field.get().label()}</span>
+                    </div>
+                </div>
+            </div>
+
+            // Search dock — the command line lives at the thumb
+            <div class="search-dock">
+                <div
+                    class="search-wrap"
+                    node_ref=wrap_ref
+                    on:focusout=move |ev| {
+                        // close only when focus leaves the wrapper entirely
+                        let inside = ev.related_target()
+                            .and_then(|t| t.dyn_into::<web_sys::Node>().ok())
+                            .map(|n| wrap_ref.get_untracked().map(|w| w.contains(Some(&n))).unwrap_or(false))
+                            .unwrap_or(false);
+                        if !inside {
+                            set_panel_open.set(false);
+                        }
+                    }
+                    on:keydown=move |ev| {
+                        if ev.key() == "Escape" {
+                            set_panel_open.set(false);
+                            if let Some(inp) = input_ref.get_untracked() {
+                                let _ = inp.blur();
+                            }
+                        }
+                    }
+                >
+                    <input
+                        type="text"
+                        class="search-input"
+                        placeholder="Search — or filter: freedom>60, cap>1t..."
+                        node_ref=input_ref
+                        prop:value=move || search.get()
+                        on:focus=move |_| set_panel_open.set(true)
+                        on:input=move |ev| {
+                            let target = ev.target().unwrap();
+                            let input: web_sys::HtmlInputElement = target.unchecked_into();
+                            set_search.set(input.value());
+                        }
+                    />
+                    <div class="search-panel" style:display=move || if panel_open.get() { "block" } else { "none" }>
+                        <div class="panel-row">
+                            <span class="panel-label">"REGION"</span>
+                            <div class="panel-chips">
+                                {REGIONS.iter().map(|&r| {
+                                    let r_click = r.to_string();
+                                    let r_class = r.to_string();
+                                    let nav_r = nav.clone();
+                                    view! {
+                                        <button
+                                            class=move || if state.get().0 == r_class { "region-pill active" } else { "region-pill" }
+                                            on:click=move |_| {
+                                                let (_, field) = state.get();
+                                                nav_r(&landing_path(&r_click, field), Default::default());
+                                            }
+                                        >{r}</button>
+                                    }
+                                }).collect::<Vec<_>>()}
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <span class="panel-label">"FILTER"</span>
+                            <div class="panel-chips">
+                                {FILTER_EXAMPLES.map(|ex| {
+                                    view! {
+                                        <button
+                                            class="region-pill filter-chip"
+                                            on:click=move |_| {
+                                                let cur = search.get_untracked();
+                                                let sep = if cur.is_empty() || cur.ends_with(' ') { "" } else { " " };
+                                                set_search.set(format!("{}{}{}", cur, sep, ex));
+                                                if let Some(inp) = input_ref.get_untracked() {
+                                                    let _ = inp.focus();
+                                                }
+                                            }
+                                        >{ex}</button>
+                                    }
+                                }).collect_view()}
+                            </div>
+                        </div>
+                        <div class="panel-hint">"mix text and filters: europe cap>1t · / focuses · esc closes"</div>
                     </div>
                 </div>
             </div>
