@@ -373,14 +373,17 @@ body {
 
 @media (max-width: 640px) {
     /* pixels are the budget: hairline gutters, no box around the table */
-    .page-shell { padding: 16px 4px 20px; }
+    .page-shell { padding: 16px 2px 20px; }
     .table-shell { border: none; border-radius: 0; }
 
     .cyber-table.slim { min-width: 0; }
     .cyber-table.slim th,
-    .cyber-table.slim td { padding-left: 8px; padding-right: 8px; }
-    /* the rank gutter earns its keep: fixed 30px, tight padding */
-    .cyber-table.slim col.c-rank { width: 30px; }
+    .cyber-table.slim td { padding-left: 6px; padding-right: 6px; }
+    /* fixed-px gutters for the narrow columns; every spare pixel
+       flows to state names and values */
+    .cyber-table.slim col.c-rank { width: 28px; }
+    .cyber-table.slim col.c-token { width: 44px; }
+    .cyber-table.slim td:nth-child(2) span:first-child { margin-right: 6px !important; }
     .cyber-table.slim th:first-child,
     .cyber-table.slim td:first-child { padding-left: 2px; padding-right: 4px; }
     .cyber-table.slim th { letter-spacing: 1px; } /* TOKEN must not clip to TOKE */
