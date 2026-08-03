@@ -152,6 +152,7 @@ pub fn HomePage() -> impl IntoView {
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
     let (panel_open, set_panel_open) = signal(false);
+    let (rating_open, set_rating_open) = signal(false);
     let input_ref = NodeRef::<leptos::html::Input>::new();
     let wrap_ref = NodeRef::<leptos::html::Div>::new();
 
@@ -326,7 +327,8 @@ pub fn HomePage() -> impl IntoView {
                 <SiteNav active="STATES" />
             </div>
 
-            // Header row 2: rating landings — real links, every one a page
+            // Header row 2: rating landings — pills on desktop, a dropdown
+            // at thumb scale
             <div class="header-row2">
                 <div class="region-pills">
                     {SortField::ALL.map(|f| {
@@ -339,6 +341,28 @@ pub fn HomePage() -> impl IntoView {
                             </a>
                         }
                     }).collect_view()}
+                </div>
+                <div class="rating-chooser">
+                    <button
+                        class="region-pill active rating-btn"
+                        on:click=move |_| set_rating_open.update(|o| *o = !*o)
+                    >
+                        {move || format!("BY {}", state.get().1.label())}
+                        <span style="opacity: 0.7;">" ▾"</span>
+                    </button>
+                    <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
+                        {SortField::ALL.map(|f| {
+                            view! {
+                                <a
+                                    class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
+                                    href=move || landing_path(&state.get().0, f)
+                                    on:click=move |_| set_rating_open.set(false)
+                                >
+                                    {f.label()}
+                                </a>
+                            }
+                        }).collect_view()}
+                    </div>
                 </div>
             </div>
 

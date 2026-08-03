@@ -102,6 +102,7 @@ pub fn TokensPage() -> impl IntoView {
     let field = Signal::derive(move || parse_path(&location.pathname.get()));
 
     let (search, set_search) = signal(String::new());
+    let (rating_open, set_rating_open) = signal(false);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
     Effect::new(move |_| {
@@ -161,6 +162,28 @@ pub fn TokensPage() -> impl IntoView {
                             </a>
                         }
                     }).collect_view()}
+                </div>
+                <div class="rating-chooser">
+                    <button
+                        class="region-pill active rating-btn"
+                        on:click=move |_| set_rating_open.update(|o| *o = !*o)
+                    >
+                        {move || format!("BY {}", field.get().label())}
+                        <span style="opacity: 0.7;">" ▾"</span>
+                    </button>
+                    <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
+                        {SortField::ALL.map(|f| {
+                            view! {
+                                <a
+                                    class=move || if field.get() == f { "region-pill active" } else { "region-pill" }
+                                    href=landing_path(f)
+                                    on:click=move |_| set_rating_open.set(false)
+                                >
+                                    {f.label()}
+                                </a>
+                            }
+                        }).collect_view()}
+                    </div>
                 </div>
             </div>
 

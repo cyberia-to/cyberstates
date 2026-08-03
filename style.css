@@ -177,6 +177,8 @@ body {
     .search-input { padding: 8px 12px; font-size: 12px; }
     .region-pill { padding: 5px 10px; font-size: 11px; }
 
+    .region-pills { display: none; }
+
     /* pills and count share one line */
     .header-row2 {
         flex-direction: row;
@@ -245,6 +247,41 @@ body {
 }
 
 /* Search dock — fixed command bar at the bottom of every page */
+/* mobile rating dropdown — desktop keeps the pills */
+.rating-chooser {
+    position: relative;
+    display: none;
+}
+
+.rating-btn {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.rating-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 70;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 220px;
+    background: #070a08;
+    border: 1px solid #1c2a1e;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+}
+
+.rating-menu .region-pill {
+    display: block;
+    text-align: left;
+}
+
+@media (max-width: 640px) {
+    .rating-chooser { display: block; }
+}
+
 .dock-count {
     align-self: center;
     font-size: 11px;
