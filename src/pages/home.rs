@@ -343,18 +343,6 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
-                <p class="state-count">
-                    {move || {
-                        let region = state.get().0;
-                        let (query, filters) = parse_query(&search.get().to_lowercase());
-                        let count = countries_for_count.iter().filter(|c| {
-                            (region == "All" || c.region == region)
-                            && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
-                            && filters.iter().all(|f| passes(c, f))
-                        }).count();
-                        format!("{} of {} states", count, total)
-                    }}
-                </p>
             </div>
 
             </div>
@@ -414,8 +402,21 @@ pub fn HomePage() -> impl IntoView {
                 </div>
             </div>
 
-            // Search dock — the command line lives at the thumb
+            // Search dock — the command line lives at the thumb; the count
+            // lives beside the filters that change it
             <div class="search-dock">
+                <span class="dock-count">
+                    {move || {
+                        let region = state.get().0;
+                        let (query, filters) = parse_query(&search.get().to_lowercase());
+                        let count = countries_for_count.iter().filter(|c| {
+                            (region == "All" || c.region == region)
+                            && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
+                            && filters.iter().all(|f| passes(c, f))
+                        }).count();
+                        if count == total { format!("{} cyberstates", total) } else { format!("{}/{} cyberstates", count, total) }
+                    }}
+                </span>
                 <div
                     class="search-wrap"
                     node_ref=wrap_ref

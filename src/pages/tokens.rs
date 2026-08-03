@@ -70,7 +70,7 @@ pub fn TokensPage() -> impl IntoView {
     };
 
     view! {
-        <div style="max-width: 1440px; margin: 0 auto; padding: 20px;">
+        <div class="page-frame">
             // Header row 1: logo — centered search — states/map flush right
             <div class="header-row1">
                 <div class="logo-zone">
@@ -85,22 +85,8 @@ pub fn TokensPage() -> impl IntoView {
                 </SiteNav>
             </div>
 
-            // Count
-            <div class="header-row2">
-                <div></div>
-                <p class="state-count">
-                    {move || {
-                        let query = search.get().to_lowercase();
-                        let count = tokens_for_count.iter().filter(|t| {
-                            query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
-                        }).count();
-                        format!("{} of {} tokens", count, total)
-                    }}
-                </p>
-            </div>
-
             // Table
-            <div style="overflow-x: auto; border: 1px solid #111; border-radius: 4px;">
+            <div class="table-shell">
                 <table class="cyber-table">
                     <colgroup>
                         <col style="width: 5%;" />   // #
@@ -174,6 +160,15 @@ pub fn TokensPage() -> impl IntoView {
 
             // Search dock
             <div class="search-dock">
+                <span class="dock-count">
+                    {move || {
+                        let query = search.get().to_lowercase();
+                        let count = tokens_for_count.iter().filter(|t| {
+                            query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
+                        }).count();
+                        if count == total { format!("{} tokens", total) } else { format!("{}/{} tokens", count, total) }
+                    }}
+                </span>
                 <input
                     type="text"
                     class="search-input"

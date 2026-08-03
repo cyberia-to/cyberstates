@@ -239,6 +239,15 @@ body {
 }
 
 /* Search dock — fixed command bar at the bottom of every page */
+.dock-count {
+    align-self: center;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #555;
+    white-space: nowrap;
+    margin-right: 12px;
+}
+
 .search-dock {
     position: fixed;
     bottom: 0;
@@ -345,6 +354,12 @@ body {
     padding: 20px;
 }
 
+.page-frame {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
 .table-shell {
     overflow-x: auto;
     border: 1px solid #111;
@@ -421,6 +436,7 @@ body {
 @media (max-width: 640px) {
     /* pixels are the budget: hairline gutters, no box around the table */
     .page-shell { padding: 16px 2px 20px; }
+    .page-frame { padding: 16px 2px 20px; }
     .table-shell { border: none; border-radius: 0; }
 
     .cyber-table.slim { min-width: 0; }
