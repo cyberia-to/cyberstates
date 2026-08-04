@@ -541,9 +541,12 @@ body {
     display: block;
     margin-left: auto;
     aspect-ratio: 847 / 689;
-    height: min(calc(100vh - 172px), calc((100vw - 552px) * 0.8133));
-    width: auto;
-    max-width: 100%;
+    /* width-driven: the map fills the whole band right of the table;
+       the bbox's empty corners overflow off-screen behind chrome/dock */
+    width: calc(100vw - 542px);
+    height: auto;
+    max-width: none;
+    margin-top: -34px;
 }
 
 .cyber-table.slim {
