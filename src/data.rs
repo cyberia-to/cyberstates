@@ -364,6 +364,28 @@ pub fn format_area(v: u64) -> String {
     compact_count(v as f64)
 }
 
+/// Listing class for the header toggles: every row is exactly one of
+/// planets (celestial bodies), continents (land aggregates) or
+/// countries (the terrestrial roll).
+#[derive(Clone, Copy, PartialEq)]
+pub enum ListingClass {
+    Planet,
+    Continent,
+    Country,
+}
+
+impl Country {
+    pub fn class(&self) -> ListingClass {
+        if self.region == "Solar System" {
+            ListingClass::Planet
+        } else if self.code == "AQ" || self.code == "OCNA" {
+            ListingClass::Continent
+        } else {
+            ListingClass::Country
+        }
+    }
+}
+
 /// Terrestrial = carries real population and capital; the visa index
 /// denominators sum over these only, so celestial and oceanic listings
 /// never dilute the scores.

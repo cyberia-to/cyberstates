@@ -72,10 +72,16 @@ fn map_values(
     query: &str,
     filters: &[NumFilter],
     cut: Option<f64>,
+    classes: (bool, bool, bool),
 ) -> std::collections::HashMap<String, f64> {
     let mut ranked: Vec<(String, f64)> = countries.iter()
         .filter(|c| {
-            (region == "All" || c.region == region)
+            (match c.class() {
+                ListingClass::Planet => classes.0,
+                ListingClass::Continent => classes.1,
+                ListingClass::Country => classes.2,
+            })
+                && (region == "All" || c.region == region)
                 && !(region == "Oceania" && c.code == "OCNA")
                 && (query.is_empty()
                     || c.name.to_lowercase().contains(query)
@@ -212,13 +218,22 @@ pub fn HomePage() -> impl IntoView {
     let initial_svg = {
         let (region, field) = parse_path(&location.pathname.get_untracked());
         let (q, filters) = parse_query(&initial_q.to_lowercase());
-        painted_world(&map_values(&countries, &region, field, &q, &filters, None))
+        painted_world(&map_values(&countries, &region, field, &q, &filters, None, (true, true, true)))
     };
     let (search, set_search) = signal(initial_q);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
     // color-bar filter: keep only states at least this good (0..1)
     let color_cut = RwSignal::new(None::<f64>);
+    // class toggles: planets / continents / countries, each independent
+    let show_planets = RwSignal::new(true);
+    let show_continents = RwSignal::new(true);
+    let show_countries = RwSignal::new(true);
+    let class_on = move |c: &Country| match c.class() {
+        ListingClass::Planet => show_planets.get(),
+        ListingClass::Continent => show_continents.get(),
+        ListingClass::Country => show_countries.get(),
+    };
     let (panel_open, set_panel_open) = signal(false);
     let (rating_open, set_rating_open) = signal(false);
     let input_ref = NodeRef::<leptos::html::Input>::new();
@@ -267,7 +282,10 @@ pub fn HomePage() -> impl IntoView {
     Effect::new(move |_| {
         let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
-        let values = map_values(&countries_for_map, &region, field, &query, &filters, color_cut.get());
+        let values = map_values(
+            &countries_for_map, &region, field, &query, &filters, color_cut.get(),
+            (show_planets.get(), show_continents.get(), show_countries.get()),
+        );
         let max_val = 1.0;
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
@@ -300,6 +318,7 @@ pub fn HomePage() -> impl IntoView {
         let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
 
+        list.retain(|c| class_on(c));
         if region != "All" {
             list.retain(|c| c.region == region);
             // the Oceania aggregate ranks globally, not among its own islands
@@ -393,6 +412,19 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
+                <div class="class-filter">
+                    {[
+                        ("\u{1FA90}", "planets", show_planets),
+                        ("\u{1F30D}", "continents", show_continents),
+                        ("\u{1F1FA}\u{1F1F3}", "countries", show_countries),
+                    ].map(|(icon, name, sig)| view! {
+                        <button
+                            class=move || if sig.get() { "class-toggle on" } else { "class-toggle" }
+                            title=name
+                            on:click=move |_| sig.update(|v| *v = !*v)
+                        >{icon}</button>
+                    })}
+                </div>
                 <RatingLegend field=sort_field cut=color_cut />
             </div>
 
@@ -451,7 +483,8 @@ pub fn HomePage() -> impl IntoView {
                         let region = state.get().0;
                         let (query, filters) = parse_query(&search.get().to_lowercase());
                         let count = countries_for_count.iter().filter(|c| {
-                            (region == "All" || c.region == region)
+                            class_on(c)
+                            && (region == "All" || c.region == region)
                             && !(region == "Oceania" && c.code == "OCNA")
                             && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
                             && filters.iter().all(|f| passes(c, f))

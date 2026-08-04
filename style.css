@@ -1108,6 +1108,46 @@ body {
     animation: menu-in 140ms ease-out;
 }
 
+/* class toggles: planets / continents / countries, each independent */
+.class-filter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.class-toggle {
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px 8px;
+    background: transparent;
+    border: 1px solid #222;
+    border-radius: 2px;
+    cursor: pointer;
+    filter: grayscale(1);
+    opacity: 0.35;
+    transition: all 0.15s;
+}
+
+.class-toggle.on {
+    filter: none;
+    opacity: 1;
+    border-color: #2c3a2c;
+}
+
+.class-toggle:hover {
+    border-color: var(--cyber-green);
+}
+
+/* when the toggles precede the legend, only the toggles push right */
+.class-filter + .legend-zone {
+    margin-left: 14px;
+}
+
+@media (max-width: 1360px) {
+    .class-filter { display: none; }
+}
+
 /* the legend is an instrument: the bar filters on click */
 .legend-zone {
     display: flex;
