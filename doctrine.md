@@ -1,16 +1,47 @@
 # Doctrine
 
-## 1. A state is a territory with a population that establishes its rules
+## 0. The axiom
 
-[Territory](/by/territory), [population](/by/population), [rules](/tokens) — three facts. Everything else attributed to
-statehood — thrones, seats, anthems, recognition — is opinion layered on
-top. Recognition in particular is one state's opinion about another;
-facts do not require it. Where a territory and a population produce rules
-that hold, a state exists. We call such a unit a **cyberstate**, and the
-word carries no metaphor: the rules are the protocol, the territory runs
-it, the population maintains it.
+A state is a territory with a population that establishes its rules.
 
-## 2. Sovereignty is a stack, and it was never binary
+Twelve words. Everything below follows from them.
+
+## 1. A state is a fact
+
+A territory, a population, rules that hold — where the three meet, a
+state exists. A fact of this kind can be observed, measured and quoted
+by anyone, from anywhere, with no one's permission.
+
+Everything else attributed to statehood — thrones, seats, anthems,
+recognition — is opinion layered on the fact. Recognition is one
+state's opinion about another, and facts do not take opinions: they
+take measurements. The schoolbook map of the world is a gallery of
+opinions; the ground beneath it is a ledger of facts, and this doctrine
+reads the ground.
+
+We call the unit a **cyberstate**, and the word carries no metaphor:
+the rules are the protocol, the [territory](/by/territory) runs it, the
+[population](/by/population) maintains it.
+
+## 2. The first rule is the token
+
+Before a state writes a single law, it has already answered the one
+question no inhabitant can escape: what is money here. The answer is
+the [token](/tokens) — the deepest rule of the stack. Constitutions are
+recited on holidays; the token is obeyed at every counter, every hour,
+by everyone, including those who cannot read. A state may mint its own
+answer, rent a neighbor's, or share one with thirty others — but no
+territory lives without one.
+
+The token is where the fact of a state meets its price. The wealth the
+world agrees to hold in a state's token is the market's running verdict
+on the entire rule-set behind it: change the rules, and the token feels
+it first. This terminal quotes states the way exchanges quote tokens,
+because at the deepest layer of the stack that is exactly what they
+are.
+
+
+## 3. Sovereignty is a stack, and it was never binary
 
 The schoolbook says a state is sovereign or it is not. Reality ships
 sovereignty as a stack of rule domains — border, token, law, defense,
@@ -45,7 +76,7 @@ abstraction. Two consequences follow. Measured domain by domain,
 inherited rules. And statehood becomes engineerable: change who holds
 which domain, and you have changed what the state is.
 
-## 3. States trade on a market, and always have
+## 4. States trade on a market, and always have
 
 Migration is a trade. Capital flight is a sell-off. Naturalization is a
 buy order, renunciation a sale, and a passport queue is an order book.
@@ -58,7 +89,7 @@ borders, citizenship law and tax codes are the market microstructure of
 that competition. The market has run for all of recorded history. It has
 simply never been quoted.
 
-## 4. Valuing states by GDP is the greatest error in the history of economics
+## 5. Valuing states by GDP is the greatest error in the history of economics
 
 GDP measures the pedaling, not the arrival. It is a flow of transactions
 — government spending counted at cost, rents imputed to owners living in
@@ -80,7 +111,7 @@ Price the states by what they hold and the world order rearranges: as of
 August 2026, [China](/state/cn) holds almost twice the wealth
 [America](/state/us) does — a ranking no GDP table has ever printed.
 
-## 5. Three stocks exhaust the countable state
+## 6. Three stocks exhaust the countable state
 
 Capital — the wealth held in the state's token. Population — the humans
 under its rules. Territory — the land its rules cover. Strip away
@@ -107,7 +138,7 @@ arithmetic on measurements. As of August 2026 the kernel prices
 [Antarctica](/state/aq) prices at exactly zero — the visible supply
 curve of the planet's unmonetized space.
 
-## 6. Freedoms are measurable
+## 7. Freedoms are measurable
 
 A right is an option: it has an underlying, a strike cost, and a value.
 A passport is an option contract on the planet — its value is the
@@ -123,7 +154,7 @@ an option over the same underlying, measurable in the same shape. The
 computation is mechanical (Appendix A); the principle is doctrinal:
 whatever a state grants or withholds can be priced.
 
-## 7. No numeraire is privileged
+## 8. No numeraire is privileged
 
 Money only ever measures money; every measurement of wealth is a choice
 of token. The dollar is the current convention — and a convention is all
@@ -133,7 +164,7 @@ survive any change of numeraire; intuitions do not. A doctrine that
 priced the world in only one state's token would be that state's
 doctrine, not a doctrine of states.
 
-## 8. Existence precedes recognition
+## 9. Existence precedes recognition
 
 The threshold of statehood is exact: a community becomes a cyberstate
 the day its rules become the interface of a territory. Nothing else was
@@ -156,7 +187,7 @@ column in the table.*
 
 ## Appendix A — the doctrine applied: pricing the border domain
 
-Thesis 6 claims that any freedom is an option over the kernel and can be
+Thesis 7 claims that any freedom is an option over the kernel and can be
 priced. This appendix is the claim made operational — the first domain,
 the border, priced end to end. Every other domain of the stack will pass
 through this same mill: choose the frictions, weight them, integrate over
