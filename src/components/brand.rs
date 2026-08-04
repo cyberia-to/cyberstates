@@ -15,7 +15,7 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
                 <span class="brand-flag" inner_html=FLAG_SVG></span>
                 <span style="color: var(--cyber-green);">"cyber"</span>
                 <span style="color: var(--cyber-green); margin: 0 1px;">"•"</span>
-                <span style="color: #fff;">{match active {
+                <span class="brand-word" style="color: #fff;">{match active {
                     "TOKENS" => "Tokens",
                     "DOCTRINE" => "Doctrine",
                     _ => "States",
