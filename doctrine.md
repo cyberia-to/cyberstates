@@ -167,17 +167,17 @@ doctrine, not a doctrine of states.
 The threshold of statehood is exact: a community becomes a cyberstate
 the day its rules become the interface of a territory. Nothing else was
 ever required — the old states just had a head start. By this test the
-roll today counts 271: UN members, their autonomous territories,
+roll today counts 272: UN members, their autonomous territories,
 partially recognized and unrecognized states —
 [Abkhazia](/state/abk), [Transnistria](/state/pmr),
 [Somaliland](/state/sol), [Kosovo](/state/xk) and their kin —
-[Antarctica](/state/aq), and beyond the atmosphere the forty
-solid-surface bodies of the solar system with the [Sun](/state/sun)
-itself, listed for its Dyson shell. From the [Moon](/state/luna) to
-[Sedna](/state/sedn) they hold territory the way Antarctica does —
-under a treaty instead of a throne — with population zero and capital
-zero: the supply curve of unmonetized space, quoted before the rules
-arrive. The same test admits what comes next: as
+[Antarctica](/state/aq), and the solar system as a listing class:
+[Earth](/state/erth) itself, quoted once more as a single body, the
+forty solid-surface worlds from the [Moon](/state/luna) to
+[Sedna](/state/sedn) — territory held the way Antarctica is held,
+under a treaty instead of a throne, population zero and capital zero,
+the supply curve of unmonetized space — and the [Sun](/state/sun),
+listed for its Dyson shell. The same test admits what comes next: as
 sovereignty becomes engineerable, the market of states acquires free
 entry, and new states will cross the threshold not by conquest but by
 competence.

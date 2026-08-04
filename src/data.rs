@@ -235,8 +235,14 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
         let countries = load_countries();
         let data = get_visa_data();
 
-        let total_cap: f64 = countries.iter().map(|c| c.money_supply_b_usd).sum();
-        let total_pop: f64 = countries.iter().map(|c| c.population as f64).sum();
+        // world totals are terrestrial: celestial listings (Earth the
+        // body among them) must not dilute the visa index denominators
+        let total_cap: f64 = countries.iter()
+            .filter(|c| c.region != "Solar System")
+            .map(|c| c.money_supply_b_usd).sum();
+        let total_pop: f64 = countries.iter()
+            .filter(|c| c.region != "Solar System")
+            .map(|c| c.population as f64).sum();
 
         let by_name: HashMap<&str, &Country> =
             countries.iter().map(|c| (c.name.as_str(), c)).collect();
