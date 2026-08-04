@@ -368,7 +368,7 @@ country = "Algeria"
 type = "visa-required"
 
 [[visa_access]]
-country = "America"
+country = "USA"
 type = "visa-required"
 
 [[visa_access]]

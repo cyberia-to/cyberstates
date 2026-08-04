@@ -710,7 +710,7 @@ country = "Sri Lanka"
 type = "visa-on-arrival"
 
 [[visa_access]]
-country = "America"
+country = "USA"
 type = "eta"
 
 [[visa_access]]

@@ -59,7 +59,7 @@ outright. Inheritance runs in every direction:
   shared mint and keep borders and law. A federation is upward
   inheritance made permanent: [Micronesia](/state/fm)'s four member
   states surrender most domains to their federation, which in turn rents
-  its token from [America](/state/us) and leases out defense by compact —
+  its token from [the USA](/state/us) and leases out defense by compact —
   while the [Marshall Islands](/state/mh) and [Palau](/state/pw), same
   ocean, same regional name, hold their own stacks and are therefore
   distinct states.
@@ -107,7 +107,7 @@ token. Stock primary, flow follows. Result, not activity.
 
 Price the states by what they hold and the world order rearranges: as of
 August 2026, [China](/state/cn) holds almost twice the wealth
-[America](/state/us) does — a ranking no GDP table has ever printed.
+[the USA](/state/us) does — a ranking no GDP table has ever printed.
 
 ## 6. Three stocks exhaust the countable state
 
@@ -156,7 +156,7 @@ whatever a state grants or withholds can be priced.
 
 Money only ever measures money; every measurement of wealth is a choice
 of token. The dollar is the current convention — and a convention is all
-it is: [America](/state/us)'s capital is equally ¥157T in the leading
+it is: [the USA](/state/us)'s capital is equally ¥157T in the leading
 state's token, or ₿370M — more bitcoin than will ever exist. Rankings
 survive any change of numeraire; intuitions do not. A doctrine that
 priced the world in only one state's token would be that state's
@@ -237,7 +237,7 @@ contagious (a passport admitted nowhere scores 0, not half of the other
 axis); and the scale stays 0–100.
 
 Worked example, illustrative: a passport with visa-free access to the EU
-and [America](/state/us), an e-visa to [China](/state/cn) and
+and [the USA](/state/us), an e-visa to [China](/state/cn) and
 visa-required for [India](/state/in) collects `1.0×(EU capital) +
 1.0×(US capital) + 0.5×(CN capital) + 0.1×(IN capital) + …` — China's
 capital enters at half weight, India's at one tenth; summed, normalized
@@ -252,7 +252,7 @@ The kernel is only as good as its measurements, so each source carries
 its honesty clause in the same breath.
 
 **Capital** — World Bank broad money (latest year ≥ 2018), FRED M2 for
-[America](/state/us), converted at live FX; script-refreshed, guarded
+[the USA](/state/us), converted at live FX; script-refreshed, guarded
 against redenominations. *Its limit:* states report money on slightly
 different aggregate definitions and dates — CAPITAL is the best single
 figure per state, not a synchronized global snapshot, and citizen value

@@ -13,7 +13,7 @@ visa_free_destinations = 128
 visa_free_inbound = 194
 
 [[visa_access]]
-country = "America"
+country = "USA"
 type = "visa-free"
 
 [[visa_access]]
