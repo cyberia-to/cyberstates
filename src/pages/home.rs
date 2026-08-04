@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
 use crate::components::legend::{goodness_keep, RatingLegend};
+use crate::components::solar::SolarPanel;
 use crate::numeraires::Numeraire;
 
 fn region_slug(r: &str) -> String {
@@ -433,6 +434,7 @@ pub fn HomePage() -> impl IntoView {
                 </div>
                 <div class="map-pane">
                     <div class="world-map-container" inner_html=initial_svg></div>
+                    <SolarPanel />
                 </div>
             </div>
 

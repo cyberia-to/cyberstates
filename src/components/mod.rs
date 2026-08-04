@@ -1,3 +1,4 @@
+pub mod solar;
 pub mod notyet;
 pub mod legend;
 pub mod table;
