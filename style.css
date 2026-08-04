@@ -1259,9 +1259,24 @@ body {
 
 .legend-clear:hover { border-color: var(--cyber-green); }
 
+/* the header inner box caps at 1400px, so the slim row is the rule at
+   EVERY width — full-fat pills + toggles + bar never fit 1400 */
+@media (min-width: 0px) {
+    .header-row2 { gap: 8px; }
+    .region-pills { gap: 4px; }
+    .region-pills .region-pill { padding: 6px 9px; letter-spacing: 0.5px; font-size: 11px; }
+    .legend-bar { width: 150px; }
+    .legend-zone { gap: 7px; }
+    .class-filter { gap: 4px; }
+    .class-toggle { padding: 3px 6px; font-size: 14px; }
+    .class-filter + .legend-zone { margin-left: 8px; }
+    .by-label { margin-right: 2px; }
+}
+
 /* below this the pills need the whole row — the bar yields */
 @media (max-width: 1360px) {
     .legend-zone { display: none; }
+    .class-filter { display: none; }
 }
 
 /* row highlight eases instead of flashing */
