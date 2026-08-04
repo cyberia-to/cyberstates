@@ -1010,9 +1010,12 @@ body {
     to   { opacity: 1; }
 }
 
-/* page navigation is a breath, not a dissolve: the old content fades
-   fully OUT, then the new content fades IN — no frame ever shows both.
-   the chrome and the dock sit in their own groups and never move */
+/* page navigation is a TRUE dissolve: the old frame holds still while
+   the new one fades in over it with normal alpha blending — the result
+   is a*new + (1-a)*old at every instant, so brightness can never dip
+   to black or spike additively. the old snapshot only fades in the
+   last third, which is invisible when covered and a clean exit when
+   the next page has no counterpart for it */
 
 /* NOTHING morphs position or size — the default group animation slides
    and stretches whatever changed geometry (chrome height, word width),
@@ -1021,8 +1024,10 @@ body {
 ::view-transition-group(*) {
     animation: none;
 }
-@keyframes vt-out {
-    to { opacity: 0; }
+@keyframes vt-hold-out {
+    0% { opacity: 1; }
+    66% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 @keyframes vt-in {
@@ -1030,12 +1035,23 @@ body {
     to { opacity: 1; }
 }
 
+/* normal blending, not the UA's plus-lighter: fade-over must not add */
+::view-transition-image-pair(root),
+::view-transition-image-pair(map) {
+    isolation: auto;
+}
+
+::view-transition-old(root), ::view-transition-new(root),
+::view-transition-old(map), ::view-transition-new(map) {
+    mix-blend-mode: normal;
+}
+
 ::view-transition-old(root) {
-    animation: vt-out 150ms ease-in both;
+    animation: vt-hold-out 260ms ease both;
 }
 
 ::view-transition-new(root) {
-    animation: vt-in 200ms ease-out 160ms both;
+    animation: vt-in 260ms ease both;
 }
 
 /* the chrome group is ONLY the constant row (logo+nav+numeraire) —
@@ -1054,13 +1070,13 @@ body {
 .map-pane { view-transition-name: map; }
 .search-dock { view-transition-name: dock; }
 
-/* the map breathes with the content — same beat as root */
+/* the map dissolves on the same beat as root */
 ::view-transition-old(map) {
-    animation: vt-out 150ms ease-in both;
+    animation: vt-hold-out 260ms ease both;
 }
 
 ::view-transition-new(map) {
-    animation: vt-in 200ms ease-out 160ms both;
+    animation: vt-in 260ms ease both;
 }
 
 /* chrome and dock: identical across pages — a plain quick cross-fade
