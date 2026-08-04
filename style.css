@@ -1426,27 +1426,30 @@ body {
 }
 
 /* ---- /solar cockpit: table · system · world --------------------------- */
-/* observatory: system stage left (table floats over it as glass),
-   the selected world as a full-height hero on the right */
+/* observatory, full bleed: the disk fills the height edge to edge and
+   tucks under the neighboring panels; nothing is symbolic-small */
 .solar-cockpit {
     display: grid;
-    grid-template-columns: 1fr minmax(520px, 44%);
-    height: calc(100vh - var(--chrome-h, 0px) - 150px);
-    min-height: 600px;
-    margin-top: 4px;
+    grid-template-columns: 1fr minmax(560px, 46%);
+    height: calc(100vh - var(--chrome-h, 0px) - 146px);
+    min-height: 620px;
+    margin: 2px calc(-1 * var(--pad-x, 20px)) 0;
 }
 
 .cockpit-stage {
     position: relative;
 }
 
+/* the disk: full height, square, centered on the free band between the
+   glass table and the world — its edges sweep under both */
 .cockpit-stage .solar-map {
     position: absolute;
     top: 0;
-    bottom: 0;
-    left: 330px;
-    width: calc(100% - 330px);
     height: 100%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    left: calc(322px + (100% - 322px) / 2);
+    transform: translateX(-50%);
 }
 
 .cockpit-table {
@@ -1504,8 +1507,16 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    padding: 4px 0 4px 26px;
-    border-left: 1px solid #10160f;
+    padding: 4px 18px 4px 26px;
+    /* the disk sweeps under this pane: empty areas let clicks through
+       to the dots beneath; real content re-enables itself */
+    pointer-events: none;
+}
+
+.cockpit-world .planet-head,
+.cockpit-world .planet-stats,
+.cockpit-world .world-canvas > * {
+    pointer-events: auto;
 }
 
 .world-canvas {

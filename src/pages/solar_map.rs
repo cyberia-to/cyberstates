@@ -240,7 +240,7 @@ pub fn SolarMapPage() -> impl IntoView {
             <div class="solar-cockpit">
                 <div class="cockpit-stage">
                 // the stage: the system fills the free band left of the world
-                <svg class="solar-map" viewBox="0 0 1000 940" preserveAspectRatio="xMidYMid meet">
+                <svg class="solar-map" viewBox="48 18 904 904">
                     <defs>
                         <filter id="dotglow" x="-100%" y="-100%" width="300%" height="300%">
                             <feGaussianBlur stdDeviation="2.4" result="b"></feGaussianBlur>
