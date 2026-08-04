@@ -523,6 +523,10 @@ body {
 .table-pane {
     flex: 0 0 500px;
     min-width: 0;
+    /* the grown map sweeps beneath — the table stays on top */
+    position: relative;
+    z-index: 7;
+    background: var(--cyber-black);
 }
 
 .map-pane {
@@ -541,12 +545,14 @@ body {
     display: block;
     margin-left: auto;
     aspect-ratio: 847 / 689;
-    /* width-driven: the map fills the whole band right of the table;
-       the bbox's empty corners overflow off-screen behind chrome/dock */
+    /* width-driven and then grown 1.4x: the land parallelogram fills the
+       band, the bbox corners and outlier islets spill off-stage */
     width: calc(100vw - 542px);
     height: auto;
     max-width: none;
     margin-top: -34px;
+    transform: scale(1.4);
+    transform-origin: 72% 40%;
 }
 
 .cyber-table.slim {
