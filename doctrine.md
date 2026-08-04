@@ -2,7 +2,7 @@
 
 ## 1. A state is a territory with a population that establishes its rules
 
-Territory, people, rules — three facts. Everything else attributed to
+Territory, population, rules — three facts. Everything else attributed to
 statehood — thrones, seats, anthems, recognition — is opinion layered on
 top. Recognition in particular is one state's opinion about another;
 facts do not require it. Where a territory and a population produce rules
