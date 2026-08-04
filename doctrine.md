@@ -4,8 +4,6 @@
 
 A state is a territory with a population that establishes its rules.
 
-Twelve words. Everything below follows from them.
-
 ## 1. A state is a fact
 
 A territory, a population, rules that hold — where the three meet, a
