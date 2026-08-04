@@ -37,7 +37,9 @@ impl Numeraire {
             Self::Cny => "🇨🇳 ¥",
             Self::Btc => "₿",
             Self::Eth => "Ξ",
-            Self::Gold => "🪙",
+            // a text glyph, not an emoji: emoji coins render silver-gray and
+            // refuse CSS color — ◉ takes the brand gold like ₿ takes orange
+            Self::Gold => "◉",
         }
     }
 
