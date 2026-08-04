@@ -1,0 +1,12 @@
+name = "Rhea"
+code = "RHEA"
+flag = "⛰️"
+region = "Solar System"
+population = 0
+land_area_km2 = 7325000
+currency_code = "RHEA"
+currency_name = "Rhea Credit"
+money_supply_b_usd = 0
+token_price_usd = 0
+visa_free_destinations = 0
+visa_free_inbound = 0

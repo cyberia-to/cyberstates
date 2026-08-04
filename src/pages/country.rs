@@ -46,6 +46,7 @@ pub fn CountryPage() -> impl IntoView {
                         "Middle East" => "var(--cyber-pink)",
                         "North America" => "var(--cyber-cyan)",
                         "Oceania" => "var(--cyber-green)",
+                        "Solar System" => "var(--cyber-red)",
                         _ => "#666",
                     };
 

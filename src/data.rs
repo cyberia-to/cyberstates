@@ -353,6 +353,7 @@ pub const REGIONS: &[&str] = &[
     "North America",
     "Oceania",
     "Antarctica",
+    "Solar System",
 ];
 
 #[derive(Clone, Copy, PartialEq)]
