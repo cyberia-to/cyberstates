@@ -1012,6 +1012,14 @@ body {
 /* page navigation is a breath, not a dissolve: the old content fades
    fully OUT, then the new content fades IN — no frame ever shows both.
    the chrome and the dock sit in their own groups and never move */
+
+/* NOTHING morphs position or size — the default group animation slides
+   and stretches whatever changed geometry (chrome height, word width),
+   which reads as flying in from the side. groups snap; only opacity
+   breathes */
+::view-transition-group(*) {
+    animation: none;
+}
 @keyframes vt-out {
     to { opacity: 0; }
 }
