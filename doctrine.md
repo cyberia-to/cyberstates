@@ -67,8 +67,8 @@ outright. Inheritance runs in every direction:
   in law. [Antarctica](/state/aq) inverts it — a rule-set with no owner,
   a treaty instead of a throne, running a continent.
 
-The stack is the reality a human meets: you land at a border, hold a
-token, sign under a law — always the top of the stack, never the
+The stack is the reality an inhabitant meets: you land at a border,
+hold a token, sign under a law — always the top of the stack, never the
 abstraction. Two consequences follow. Measured domain by domain,
 "sovereign" and "dependent" dissolve into portfolios of held and
 inherited rules. And statehood becomes engineerable: change who holds
@@ -82,7 +82,7 @@ Citizenship is a position: most humans hold at least one, and the
 millions who hold none have a name — apatrides, the stateless — proof by
 existence that citizenship is a holding, not a birthright.
 
-States compete for humans and capital whether they admit it or not;
+States compete for inhabitants and capital whether they admit it or not;
 borders, citizenship law and tax codes are the market microstructure of
 that competition. The market has run for all of recorded history. It has
 simply never been quoted.
@@ -111,13 +111,13 @@ August 2026, [China](/state/cn) holds almost twice the wealth
 
 ## 6. Three stocks exhaust the countable state
 
-Capital — the wealth held in the state's token. Population — the humans
+Capital — the wealth held in the state's token. Population — the lives
 under its rules. Territory — the land its rules cover. Strip away
 everything disputable and these three remain, and they admit exactly
 three exchange rates:
 
 ```
-HUMAN VALUE = CAPITAL / POPULATION    what stands behind each person
+HUMAN VALUE = CAPITAL / POPULATION    what stands behind each life
 LAND VALUE  = CAPITAL / TERRITORY     how monetized each km² is
 DENSITY     = POPULATION / TERRITORY  how crowded the land is
 ```
@@ -142,7 +142,7 @@ A right is an option: it has an underlying, a strike cost, and a value.
 A passport is an option contract on the planet — its value is the
 capital and population it reaches, discounted by the friction at each
 border. Weighted over every pair of states and folded by a geometric
-mean — so that money without people, or people without money, cannot
+mean — so that money without life, or life without money, cannot
 fake a score — the border domain yields two numbers: travel freedom
 outward, hospitality inward.
 
@@ -260,7 +260,9 @@ have sparser matrices and correspondingly conservative scores.
 **Population, territory, token prices** — one TOML file per state in
 [`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
 assembled from public statistics. *Their limit:* census quality varies
-by state; territory counts ice and orchard alike.
+by state, and every census counts human life only — the one form the
+world's ledgers have learned to enroll, not the only form the axiom
+admits; territory counts ice and orchard alike.
 
 **Numeraires** — BTC, ETH and gold (via PAXG = 1 troy oz) at refresh
 time. *Their limit:* a snapshot, like everything here — the table is
