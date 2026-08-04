@@ -67,10 +67,17 @@ fn dot_diameter(area_km2: u64) -> f64 {
 /// outer. Every dot links to its state page.
 #[component]
 pub fn SolarPanel() -> impl IntoView {
+    const FEATURED: [&str; 4] = ["SUN", "ERTH", "LUNA", "MARS"];
+
     let mut bodies: Vec<Country> = load_countries()
         .into_iter()
         .filter(|c| c.region == "Solar System")
         .collect();
+    let featured: Vec<Country> = FEATURED
+        .iter()
+        .filter_map(|code| bodies.iter().find(|c| c.code == *code).cloned())
+        .collect();
+    bodies.retain(|c| !FEATURED.contains(&c.code.as_str()));
     bodies.sort_by(|a, b| {
         earth_distance(&a.code)
             .partial_cmp(&earth_distance(&b.code))
@@ -79,34 +86,42 @@ pub fn SolarPanel() -> impl IntoView {
     let half = bodies.len().div_ceil(2);
     let outer = bodies.split_off(half);
 
-    let row = |bodies: Vec<Country>| {
+    let dot = |c: Country, scale: f64| {
+        let href = format!("/state/{}", c.code.to_lowercase());
+        let d = (dot_diameter(c.land_area_km2) * scale).clamp(4.0, 46.0);
+        let title = format!("{} — {}", c.name, c.land_area_fmt());
+        view! {
+            <a href=href class="solar-body" title=title>
+                <svg
+                    class="solar-dot"
+                    width=format!("{:.0}", d)
+                    height=format!("{:.0}", d)
+                    viewBox="0 0 10 10"
+                >
+                    <circle cx="5" cy="5" r="5" fill="#1a1a1a" data-code=c.code.clone()></circle>
+                </svg>
+            </a>
+        }
+    };
+
+    let row = move |bodies: Vec<Country>| {
         view! {
             <div class="solar-row">
-                {bodies.into_iter().map(|c| {
-                    let href = format!("/state/{}", c.code.to_lowercase());
-                    let d = dot_diameter(c.land_area_km2);
-                    let title = format!("{} — {}", c.name, c.land_area_fmt());
-                    view! {
-                        <a href=href class="solar-body" title=title>
-                            <svg
-                                class="solar-dot"
-                                width=format!("{:.0}", d)
-                                height=format!("{:.0}", d)
-                                viewBox="0 0 10 10"
-                            >
-                                <circle cx="5" cy="5" r="5" fill="#1a1a1a" data-code=c.code.clone()></circle>
-                            </svg>
-                        </a>
-                    }
-                }).collect_view()}
+                {bodies.into_iter().map(|c| dot(c, 1.0)).collect_view()}
             </div>
         }
     };
 
     view! {
         <div class="solar-panel">
-            {row(bodies)}
-            {row(outer)}
+            // the big four lead from the left, half again their log size
+            <div class="solar-featured">
+                {featured.into_iter().map(|c| dot(c, 1.5)).collect_view()}
+            </div>
+            <div class="solar-small">
+                {row(bodies)}
+                {row(outer)}
+            </div>
         </div>
     }
 }
