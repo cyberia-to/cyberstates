@@ -5,7 +5,10 @@ use std::collections::HashMap;
 use crate::data::*;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
+use crate::pages::map::{setup_click_handlers, value_to_color};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
+
+const WORLD_SVG: &str = include_str!("../../assets/world.svg");
 
 /// Canonical landing path for a token rating. Root = by capital.
 fn landing_path(field: SortField) -> String {
@@ -113,6 +116,77 @@ pub fn TokensPage() -> impl IntoView {
         ));
     });
 
+    // Desktop side map: every state wears its token's rank — currency
+    // zones surface as solid blocks of one color.
+    let tokens_for_map = tokens.clone();
+    let scores_for_map = scores.clone();
+    Effect::new(move |_| {
+        let f = field.get();
+        let query = search.get().to_lowercase();
+        let mut ranked: Vec<(Vec<String>, f64)> = tokens_for_map.iter()
+            .filter(|t| {
+                query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
+            })
+            .map(|t| {
+                let members = t.countries.iter().map(|(c, _, _)| c.clone()).collect();
+                (members, token_metric(t, f, &scores_for_map))
+            })
+            .collect();
+        ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+        let n = ranked.len();
+        // same palette rules as the states map: log min-max where polygon
+        // size already encodes the axis, rank percentile everywhere else
+        let log_scale = matches!(f, SortField::Population | SortField::Territory);
+        let (vmin, vmax) = if log_scale && n > 0 {
+            let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
+            let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+            (p10, top)
+        } else {
+            (0.0, 1.0)
+        };
+        let mut values: HashMap<String, f64> = HashMap::new();
+        for (i, (members, v)) in ranked.into_iter().enumerate() {
+            let t = if log_scale {
+                if vmax > vmin {
+                    ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+                } else {
+                    1.0
+                }
+            } else if n > 1 {
+                i as f64 / (n - 1) as f64
+            } else {
+                1.0
+            };
+            let t = if f.lower_is_better() { 1.0 - t } else { t };
+            for code in members {
+                values.insert(code, 0.02 + 0.98 * t);
+            }
+        }
+        if let Some(w) = web_sys::window() {
+            use wasm_bindgen::prelude::*;
+            let cb = Closure::wrap(Box::new(move || {
+                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                    if let Ok(paths) = doc.query_selector_all("svg.world-map path[id]") {
+                        for i in 0..paths.length() {
+                            if let Some(node) = paths.item(i) {
+                                let el: web_sys::Element = node.unchecked_into();
+                                if let Some(id) = el.get_attribute("id") {
+                                    let color = values.get(&id)
+                                        .map(|&v| value_to_color(v, 1.0))
+                                        .unwrap_or_else(|| "#1a1a1a".to_string());
+                                    let _ = el.set_attribute("style", &format!("fill: {}; cursor: pointer;", color));
+                                }
+                            }
+                        }
+                    }
+                }
+                setup_click_handlers();
+            }) as Box<dyn FnMut()>);
+            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 200);
+            cb.forget();
+        }
+    });
+
     let tokens_for_count = tokens.clone();
     let scores_for_sort = scores.clone();
     let filtered_sorted = move || {
@@ -135,7 +209,8 @@ pub fn TokensPage() -> impl IntoView {
     let scores_for_cells = scores.clone();
 
     view! {
-        <div class="page-frame">
+        <div class="page-shell">
+            <div style="max-width: 1400px; margin: 0 auto;">
             // Header row 1: logo — nav
             <div class="header-row1">
                 <div class="logo-zone">
@@ -184,22 +259,25 @@ pub fn TokensPage() -> impl IntoView {
                 </div>
             </div>
 
-            // Table
-            <div class="table-shell">
-                <table class="cyber-table">
+            </div>
+
+            // Table + desktop map, split — same stage as the states page
+            <div class="home-split">
+                <div class="table-pane">
+                    <div class="table-shell">
+                <table class="cyber-table slim">
+                    // fixed layout: widths live here, not in row content
                     <colgroup>
-                        <col style="width: 5%;" />   // #
-                        <col style="width: 9%;" />   // token
-                        <col style="width: 22%;" />  // name
-                        <col style="width: 27%;" />  // states
-                        <col style="width: 15%;" />  // price
-                        <col style="width: 22%;" />  // rating object
+                        <col class="c-rank" />
+                        <col class="c-token" />
+                        <col class="c-state" />
+                        <col class="c-price" />
+                        <col class="c-metric" />
                     </colgroup>
                     <thead>
                         <tr>
-                            <th style="cursor: default;">"#"</th>
+                            <th style="cursor: default; text-align: right;">"#"</th>
                             <th class="th-static">"TOKEN"</th>
-                            <th class="th-static">"NAME"</th>
                             <th class="th-static">"STATES"</th>
                             <th class="th-static" style="text-align: right;">"PRICE"</th>
                             <th class="th-static metric-th" style="text-align: right;">
@@ -216,10 +294,9 @@ pub fn TokensPage() -> impl IntoView {
                                 .map(|(i, (t, _))| {
                                     let code = t.code.clone();
                                     let href = format!("/token/{}", code.to_lowercase());
-                                    let name = t.name.clone();
                                     let n_states = t.countries.len();
-                                    let flags: String = t.countries.iter().take(10).map(|(_, _, f)| f.as_str()).collect::<Vec<_>>().join(" ");
-                                    let more = n_states.saturating_sub(10);
+                                    let flags: String = t.countries.iter().take(4).map(|(_, _, f)| f.as_str()).collect::<Vec<_>>().join(" ");
+                                    let more = n_states.saturating_sub(4);
                                     let price_usd = t.price_usd;
                                     let t_for_metric = t.clone();
                                     let scores = scores.clone();
@@ -231,9 +308,7 @@ pub fn TokensPage() -> impl IntoView {
                                         }>
                                             <td style="color: #333; text-align: right;">{i + 1}</td>
                                             <td style="color: var(--cyber-yellow); font-weight: 700;">{code}</td>
-                                            <td style="color: #ccc;">{name}</td>
-                                            <td>
-                                                <span style="color: #888; margin-right: 8px;">{n_states}</span>
+                                            <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                 <span style="font-size: 14px;">{flags}</span>
                                                 {(more > 0).then(|| view! { <span style="color: #444;">{format!(" +{}", more)}</span> })}
                                             </td>
@@ -260,6 +335,21 @@ pub fn TokensPage() -> impl IntoView {
                         }}
                     </tbody>
                 </table>
+                    </div>
+                </div>
+                <div class="map-pane">
+                    <div class="world-map-container" inner_html=WORLD_SVG></div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
+                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
+                            {move || if field.get().lower_is_better() { "HIGH" } else { "LOW" }}
+                        </span>
+                        <div style="width: 240px; height: 8px; border-radius: 4px; background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);"></div>
+                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
+                            {move || if field.get().lower_is_better() { "LOW" } else { "HIGH" }}
+                        </span>
+                        <span style="font-size: 10px; color: #444; letter-spacing: 2px; margin-left: 12px;">{move || format!("TOKEN {}", field.get().label())}</span>
+                    </div>
+                </div>
             </div>
 
             // Search dock
