@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use crate::data::*;
 use crate::pages::country::SiteHeader;
 
-/// /listing — where every "not yet" points. A quote that reads not yet
+/// /listing — where every "soon" points. A quote that reads soon
 /// marks a territory listed before its token: the ground is real, the
 /// first rule is unwritten.
 #[component]
@@ -20,9 +20,9 @@ pub fn ListingPage() -> impl IntoView {
         <div class="page-frame">
             <SiteHeader />
             <div class="prose-cyber" style="max-width: 860px; margin: 0 auto;">
-                <h2>"NOT YET"</h2>
+                <h2>"SOON"</h2>
                 <p>
-                    "A quote that reads " <span class="notyet" style="cursor: default;">"not yet"</span>
+                    "A quote that reads " <span class="notyet" style="cursor: default;">"soon"</span>
                     " marks a listing before its token."
                 </p>
                 <p>
@@ -50,7 +50,7 @@ pub fn ListingPage() -> impl IntoView {
                     }).collect_view()}
                 </div>
                 <p style="color: #555; font-size: 12px;">
-                    "A few terrestrial states read not yet on capital alone: their token
+                    "A few terrestrial states read soon on capital alone: their token
                     trades, but no reliable money-stock measurement exists — a data gap,
                     not a missing mint (see the Doctrine's Appendix B)."
                 </p>
