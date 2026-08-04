@@ -1,8 +1,8 @@
 name = "Brunei"
 code = "BN"
 flag = "🇧🇳"
-region = "Asia"
-oceans = "PAC"
+region = "Oceania"
+oceans = ""
 population = 449002
 land_area_km2 = 5765
 currency_code = "BND"

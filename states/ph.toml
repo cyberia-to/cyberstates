@@ -1,8 +1,8 @@
 name = "Philippines"
 code = "PH"
 flag = "🇵🇭"
-region = "Asia"
-oceans = "PAC"
+region = "Oceania"
+oceans = ""
 population = 117337368
 land_area_km2 = 300000
 currency_code = "PHP"

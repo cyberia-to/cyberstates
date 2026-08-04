@@ -1,8 +1,8 @@
 name = "Vincy"
 code = "VC"
 flag = "🇻🇨"
-region = "Latin America"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 103698
 land_area_km2 = 389
 currency_code = "XCD"

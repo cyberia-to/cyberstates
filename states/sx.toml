@@ -1,8 +1,8 @@
 name = "Martin"
 code = "SX"
 flag = "🇸🇽"
-region = "Latin America"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 44000
 land_area_km2 = 34
 currency_code = "ANG"

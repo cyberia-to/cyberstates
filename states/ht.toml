@@ -1,8 +1,8 @@
 name = "Haiti"
 code = "HT"
 flag = "🇭🇹"
-region = "Latin America"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 11724763
 land_area_km2 = 27750
 currency_code = "HTG"

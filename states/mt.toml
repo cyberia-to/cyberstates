@@ -1,8 +1,8 @@
 name = "Malta"
 code = "MT"
 flag = "🇲🇹"
-region = "Europe"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 535064
 land_area_km2 = 316
 currency_code = "EUR"

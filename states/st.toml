@@ -1,8 +1,8 @@
 name = "Sao Tome"
 code = "ST"
 flag = "🇸🇹"
-region = "Africa"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 227679
 land_area_km2 = 964
 currency_code = "STN"

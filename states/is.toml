@@ -1,8 +1,8 @@
 name = "Iceland"
 code = "IS"
 flag = "🇮🇸"
-region = "Europe"
-oceans = "ATL,ARCO"
+region = "Oceania"
+oceans = ""
 population = 383726
 land_area_km2 = 103000
 currency_code = "ISK"

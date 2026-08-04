@@ -1,8 +1,8 @@
 name = "Seychelles"
 code = "SC"
 flag = "🇸🇨"
-region = "Africa"
-oceans = "IND"
+region = "Oceania"
+oceans = ""
 population = 107660
 land_area_km2 = 459
 currency_code = "SCR"

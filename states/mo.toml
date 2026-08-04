@@ -1,8 +1,8 @@
 name = "Macau"
 code = "MO"
 flag = "🇲🇴"
-region = "Asia"
-oceans = "PAC"
+region = "Oceania"
+oceans = ""
 population = 695000
 land_area_km2 = 33
 currency_code = "MOP"

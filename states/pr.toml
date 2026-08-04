@@ -1,8 +1,8 @@
 name = "Puerto Rico"
 code = "PR"
 flag = "🇵🇷"
-region = "Latin America"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 3200000
 land_area_km2 = 9104
 currency_code = "USD"

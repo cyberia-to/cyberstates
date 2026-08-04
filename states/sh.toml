@@ -1,8 +1,8 @@
 name = "Helena"
 code = "SH"
 flag = "🇸🇭"
-region = "Africa"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 6100
 land_area_km2 = 394
 currency_code = "SHP"

@@ -247,7 +247,7 @@ pub fn CountryPage() -> impl IntoView {
 
                             // An ocean's aggregate is the sum of its shores —
                             // show the states, richest first, each a link
-                            {is_ocean.then(|| view! {
+                            {(is_ocean && member_count > 0).then(|| view! {
                                 <div style="margin-top: 32px;">
                                     <div class="section-label">
                                         {format!("{} ISLAND STATES IN THIS OCEAN", member_count)}

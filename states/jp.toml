@@ -1,8 +1,8 @@
 name = "Japan"
 code = "JP"
 flag = "🇯🇵"
-region = "Asia"
-oceans = "PAC"
+region = "Oceania"
+oceans = ""
 population = 123294513
 land_area_km2 = 377975
 currency_code = "JPY"

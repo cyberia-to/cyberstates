@@ -1,8 +1,8 @@
 name = "Barbados"
 code = "BB"
 flag = "🇧🇧"
-region = "Latin America"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 281995
 land_area_km2 = 430
 currency_code = "BBD"

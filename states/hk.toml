@@ -1,8 +1,8 @@
 name = "Hong Kong"
 code = "HK"
 flag = "🇭🇰"
-region = "Asia"
-oceans = "PAC"
+region = "Oceania"
+oceans = ""
 population = 7500000
 land_area_km2 = 1114
 currency_code = "HKD"

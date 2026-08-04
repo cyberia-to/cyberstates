@@ -1,8 +1,8 @@
 name = "Reunion"
 code = "RE"
 flag = "🇷🇪"
-region = "Africa"
-oceans = "IND"
+region = "Oceania"
+oceans = ""
 population = 900000
 land_area_km2 = 2511
 currency_code = "EUR"

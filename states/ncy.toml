@@ -1,8 +1,8 @@
 name = "North Cyprus"
 code = "NCY"
 flag = "🌙"
-region = "Europe"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 330000
 land_area_km2 = 3355
 currency_code = "TRY"

@@ -1,8 +1,8 @@
 name = "Madagascar"
 code = "MG"
 flag = "🇲🇬"
-region = "Africa"
-oceans = "IND"
+region = "Oceania"
+oceans = ""
 population = 30325732
 land_area_km2 = 587041
 currency_code = "MGA"

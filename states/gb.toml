@@ -1,8 +1,8 @@
 name = "Britain"
 code = "GB"
 flag = "🇬🇧"
-region = "Europe"
-oceans = "ATL"
+region = "Oceania"
+oceans = ""
 population = 67886011
 land_area_km2 = 243610
 currency_code = "GBP"

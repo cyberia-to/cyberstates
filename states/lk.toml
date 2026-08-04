@@ -1,8 +1,8 @@
 name = "Sri Lanka"
 code = "LK"
 flag = "🇱🇰"
-region = "Asia"
-oceans = "IND"
+region = "Oceania"
+oceans = ""
 population = 22156000
 land_area_km2 = 65610
 currency_code = "LKR"
