@@ -266,6 +266,21 @@ body {
     flex: 0 0 auto; /* the logo never shrinks — overflow must be seen, not hidden */
 }
 
+/* the flag scales with the wordmark — em-sized, baseline-tucked */
+.brand-flag {
+    display: inline-block;
+    width: 0.74em;
+    height: 0.74em;
+    margin-right: 0.16em;
+    vertical-align: -0.06em;
+}
+
+.brand-flag svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 .brand-caret {
     display: none;
     color: var(--cyber-green);

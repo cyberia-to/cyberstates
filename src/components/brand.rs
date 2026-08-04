@@ -1,5 +1,9 @@
 use leptos::prelude::*;
 
+/// The cyberia flag — seven lights in a ring — leads the wordmark.
+/// Rebuilt as crisp vectors from x.com/cyberiacap, colors sampled exact.
+const FLAG_SVG: &str = include_str!("../../assets/cyberia-flag.svg");
+
 /// The logo doubles as the view switcher: CYBERSTATES opens a menu of the
 /// two listing views. The caret shows only where space is scarce.
 #[component]
@@ -8,6 +12,7 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
     view! {
         <div class="brand-chooser">
             <h1 class="logo" on:click=move |_| set_open.update(|o| *o = !*o) style="cursor: pointer;">
+                <span class="brand-flag" inner_html=FLAG_SVG></span>
                 <span style="color: var(--cyber-green);">"cyber"</span>
                 <span style="color: var(--cyber-green); margin: 0 1px;">"•"</span>
                 <span style="color: #fff;">{match active {
