@@ -1009,8 +1009,22 @@ body {
    mount fade below is the fallback for the rest */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-    animation-duration: 240ms;
-    animation-timing-function: ease;
+    animation-duration: 300ms;
+    animation-timing-function: ease-in-out;
+}
+
+/* stable regions get their own transition groups: identical between
+   pages, they render rock-solid during the cross-fade instead of
+   dipping with the root — only what actually changed dissolves */
+.site-chrome { view-transition-name: chrome; }
+.map-pane { view-transition-name: map; }
+.search-dock { view-transition-name: dock; }
+
+::view-transition-old(chrome), ::view-transition-new(chrome),
+::view-transition-old(map), ::view-transition-new(map),
+::view-transition-old(dock), ::view-transition-new(dock) {
+    animation-duration: 300ms;
+    animation-timing-function: ease-in-out;
 }
 
 @supports not (view-transition-name: root) {
