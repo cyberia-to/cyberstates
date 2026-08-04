@@ -26,10 +26,12 @@ const LAYOUT: &[(&str, f64, f64, Option<&str>)] = &[
     ("CERE", 2.77, 70.0, None),
     ("PALL", 2.77, 125.0, None),
     ("HYGI", 3.14, 309.0, None),
+    ("JUPI", 5.2, 121.2, None),
     ("IO", 5.2, 121.2, Some("JUP")),
     ("EUPA", 5.2, 121.2, Some("JUP")),
     ("GANY", 5.2, 121.2, Some("JUP")),
     ("CALL", 5.2, 121.2, Some("JUP")),
+    ("SATN", 9.54, 14.9, None),
     ("MIMA", 9.54, 14.9, Some("SAT")),
     ("ENCE", 9.54, 14.9, Some("SAT")),
     ("TETH", 9.54, 14.9, Some("SAT")),
@@ -37,11 +39,13 @@ const LAYOUT: &[(&str, f64, f64, Option<&str>)] = &[
     ("RHEA", 9.54, 14.9, Some("SAT")),
     ("TITN", 9.54, 14.9, Some("SAT")),
     ("IAPE", 9.54, 14.9, Some("SAT")),
+    ("URAN", 19.2, 68.0, None),
     ("MIRA", 19.2, 68.0, Some("URA")),
     ("ARIE", 19.2, 68.0, Some("URA")),
     ("UMBR", 19.2, 68.0, Some("URA")),
     ("TNIA", 19.2, 68.0, Some("URA")),
     ("OBER", 19.2, 68.0, Some("URA")),
+    ("NEPT", 30.1, 2.4, None),
     ("TRIT", 30.1, 2.4, Some("NEP")),
     ("PLUT", 39.5, 303.0, None),
     ("CHAR", 39.5, 303.0, Some("PLUT")),
@@ -55,15 +59,6 @@ const LAYOUT: &[(&str, f64, f64, Option<&str>)] = &[
     ("GONG", 67.3, 332.0, None),
     ("ERIS", 67.7, 26.0, None),
     ("SEDN", 506.0, 57.0, None),
-];
-
-/// The unlisted hosts: gas and ice giants hold no solid surface, so they
-/// hold no listing — they render as ghost rings their moons orbit.
-const GHOSTS: &[(&str, f64, f64)] = &[
-    ("Jupiter", 5.2, 121.2),
-    ("Saturn", 9.54, 14.9),
-    ("Uranus", 19.2, 68.0),
-    ("Neptune", 30.1, 2.4),
 ];
 
 const CX: f64 = 500.0;
@@ -199,27 +194,13 @@ pub fn SolarMapPage() -> impl IntoView {
                     ></circle>
                 }).collect_view()}
 
-                // ghost giants: no solid surface, no listing
-                {GHOSTS.iter().map(|&(name, a, deg)| {
-                    let (x, y) = polar(a, deg);
-                    view! {
-                        <circle
-                            cx=x cy=y r="9"
-                            fill="#0a0a0a" stroke="#3a3a3a" stroke-width="1.2"
-                            stroke-dasharray="3 3"
-                        >
-                            <title>{format!("{} — gas, no solid surface: not listed", name)}</title>
-                        </circle>
-                    }
-                }).collect_view()}
-
                 // the listed bodies
                 {placed.into_iter().map(|(c, x, y, r)| {
                     let code = c.code.clone();
                     let href = format!("/state/{}", code.to_lowercase());
                     let title = format!("{} — {}", c.name, c.land_area_fmt());
                     let label = matches!(c.code.as_str(),
-                        "SUN" | "MERC" | "VENU" | "ERTH" | "MARS" | "CERE" | "TITN" | "TRIT" | "PLUT" | "ERIS" | "SEDN" | "GANY")
+                        "SUN" | "MERC" | "VENU" | "ERTH" | "MARS" | "CERE" | "JUPI" | "SATN" | "URAN" | "NEPT" | "PLUT" | "ERIS" | "SEDN")
                         .then(|| c.name.clone());
                     view! {
                         <g
