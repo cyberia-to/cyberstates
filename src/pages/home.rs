@@ -194,6 +194,49 @@ fn passes(c: &Country, f: &NumFilter) -> bool {
 
 const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "territory>1m"];
 
+/// Filters live in the URL: ?q= text, ?top=NN the legend cut (percent
+/// kept), ?classes= the enabled class toggles. Parse them back out.
+fn parse_filter_params(search: &str) -> (Option<f64>, (bool, bool, bool)) {
+    let mut cut = None;
+    let mut classes = (true, true, true);
+    for kv in search.trim_start_matches('?').split('&') {
+        if let Some(v) = kv.strip_prefix("top=") {
+            if let Ok(p) = v.parse::<f64>() {
+                if p > 0.0 && p < 100.0 {
+                    cut = Some(1.0 - p / 100.0);
+                }
+            }
+        }
+        if let Some(v) = kv.strip_prefix("classes=") {
+            let has = |s: &str| v.split(',').any(|x| x == s);
+            classes = (has("planets"), has("continents"), has("countries"));
+        }
+    }
+    (cut, classes)
+}
+
+fn build_filter_query(q: &str, cut: Option<f64>, classes: (bool, bool, bool)) -> String {
+    let mut parts: Vec<String> = Vec::new();
+    if !q.is_empty() {
+        parts.push(format!("q={}", js_sys::encode_uri_component(q)));
+    }
+    if let Some(g) = cut {
+        parts.push(format!("top={:.0}", (1.0 - g) * 100.0));
+    }
+    if classes != (true, true, true) {
+        let mut on: Vec<&str> = Vec::new();
+        if classes.0 { on.push("planets"); }
+        if classes.1 { on.push("continents"); }
+        if classes.2 { on.push("countries"); }
+        parts.push(format!("classes={}", on.join(",")));
+    }
+    if parts.is_empty() {
+        String::new()
+    } else {
+        format!("?{}", parts.join("&"))
+    }
+}
+
 #[component]
 pub fn HomePage() -> impl IntoView {
     let countries = load_countries();
@@ -223,12 +266,18 @@ pub fn HomePage() -> impl IntoView {
     let (search, set_search) = signal(initial_q);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
+    // filters are URL, not ephemera: seed from the query string
+    let (init_cut, init_classes) = parse_filter_params(
+        &web_sys::window()
+            .and_then(|w| w.location().search().ok())
+            .unwrap_or_default(),
+    );
     // color-bar filter: keep only states at least this good (0..1)
-    let color_cut = RwSignal::new(None::<f64>);
+    let color_cut = RwSignal::new(init_cut);
     // class toggles: planets / continents / countries, each independent
-    let show_planets = RwSignal::new(true);
-    let show_continents = RwSignal::new(true);
-    let show_countries = RwSignal::new(true);
+    let show_planets = RwSignal::new(init_classes.0);
+    let show_continents = RwSignal::new(init_classes.1);
+    let show_countries = RwSignal::new(init_classes.2);
     let class_on = move |c: &Country| match c.class() {
         ListingClass::Planet => show_planets.get(),
         ListingClass::Continent => show_continents.get(),
@@ -263,6 +312,53 @@ pub fn HomePage() -> impl IntoView {
     });
 
     let nav = use_navigate();
+
+    // URL -> state: back/forward (and any navigation) re-reads the query,
+    // so history steps through filter states faithfully
+    Effect::new(move |_| {
+        let raw = location.search.get();
+        let (cut, classes) = parse_filter_params(&raw);
+        let q = raw
+            .trim_start_matches('?')
+            .split('&')
+            .find_map(|kv| kv.strip_prefix("q=").map(str::to_string))
+            .and_then(|v| js_sys::decode_uri_component(&v.replace('+', " ")).ok())
+            .map(String::from)
+            .unwrap_or_default();
+        if color_cut.get_untracked() != cut { color_cut.set(cut); }
+        if show_planets.get_untracked() != classes.0 { show_planets.set(classes.0); }
+        if show_continents.get_untracked() != classes.1 { show_continents.set(classes.1); }
+        if show_countries.get_untracked() != classes.2 { show_countries.set(classes.2); }
+        if search.get_untracked() != q { set_search.set(q); }
+    });
+
+    // state -> URL: toggles and the cut push history entries; typing in
+    // the search replaces in place (no entry per keystroke)
+    let last_written = StoredValue::new((String::new(), None::<f64>, (true, true, true), true));
+    Effect::new(move |_| {
+        let q = search.get();
+        let cut = color_cut.get();
+        let classes = (show_planets.get(), show_continents.get(), show_countries.get());
+        let desired = build_filter_query(&q, cut, classes);
+        let Some(w) = web_sys::window() else { return };
+        let current = w.location().search().unwrap_or_default();
+        let (last_q, last_cut, last_classes, first_run) = last_written.get_value();
+        last_written.set_value((q.clone(), cut, classes, false));
+        if first_run || desired == current {
+            return;
+        }
+        let path = w.location().pathname().unwrap_or_default();
+        let url = format!("{}{}", path, desired);
+        if let Ok(h) = w.history() {
+            use wasm_bindgen::JsValue;
+            // structural filters make history; text edits rewrite in place
+            if cut != last_cut || classes != last_classes {
+                let _ = h.push_state_with_url(&JsValue::NULL, "", Some(&url));
+            } else if q != last_q {
+                let _ = h.replace_state_with_url(&JsValue::NULL, "", Some(&url));
+            }
+        }
+    });
 
     // Landing title: "Cyberstates in Europe by movement freedom"
     Effect::new(move |_| {
