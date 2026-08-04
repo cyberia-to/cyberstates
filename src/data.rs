@@ -382,7 +382,6 @@ pub const REGIONS: &[&str] = &[
     "North America",
     "Oceania",
     "Antarctica",
-    "Oceans",
     "Terra Nullius",
     "Solar System",
 ];
