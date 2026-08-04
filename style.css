@@ -581,6 +581,12 @@ body {
     letter-spacing: 1.5px;
 }
 
+@media (max-width: 1500px) {
+    .solar-panel .solar-icon { font-size: 17px; }
+    .solar-panel .solar-big .solar-icon { font-size: 32px; }
+    .solar-panel { gap: 16px; }
+}
+
 @media (max-width: 1100px) {
     .map-pane { display: none; }
     .solar-panel { display: none; }
@@ -1298,19 +1304,18 @@ body {
 
 /* ---- solar panel: the celestial bodies that have no map polygon ------- */
 .solar-panel {
-    /* a fixed overlay across the map's empty lower band, above the dock —
-       the map keeps its full height behind it. big four LEFT, then the
-       small bodies in two even rows to their right */
+    /* a fixed overlay hugging the dock, in the map's empty ocean band —
+       right inset keeps it off Antarctica, the map stays full height.
+       big four LEFT, then the small bodies in two even rows */
     position: fixed;
-    left: 536px;
-    right: 0;
-    bottom: 100px;
+    left: 552px;
+    right: max(170px, 15vw);
+    bottom: 72px;
     z-index: 6;
-    padding: 0 16px;
     pointer-events: none;
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 26px;
 }
 
 .solar-panel .solar-body { pointer-events: auto; }
