@@ -372,6 +372,11 @@ pub fn SolarMapPage() -> impl IntoView {
                     </table>
                 </div>
 
+                <div class="stage-legend">
+                    <span class="legend-end">"LOW"</span>
+                    <div class="legend-bar" style="width: 140px; cursor: default;"></div>
+                    <span class="legend-end">"HIGH"</span>
+                </div>
                 </div>
 
                 // the world hero: the selected body at full height
@@ -429,6 +434,32 @@ pub fn SolarMapPage() -> impl IntoView {
                                     </div>
                                 }.into_any()
                             }}
+                            </div>
+                            <div class="world-derived">
+                                <div>
+                                    <label>"CITIZEN VALUE"</label>
+                                    <b style="color: var(--cyber-green);">{
+                                        let v = c.metric(SortField::Human);
+                                        move || crate::numeraires::fmt_value(v, numeraire.get())
+                                    }</b>
+                                </div>
+                                <div>
+                                    <label>"LAND VALUE"</label>
+                                    <b style="color: var(--cyber-cyan);">{
+                                        let v = c.metric(SortField::Land);
+                                        move || crate::numeraires::fmt_value(v, numeraire.get())
+                                    }</b>
+                                </div>
+                                <div>
+                                    <label>"DENSITY"</label>
+                                    <b style="color: var(--cyber-purple);">{
+                                        if c.land_area_km2 > 0 {
+                                            format!("{:.1}/km\u{b2}", c.population as f64 / c.land_area_km2 as f64)
+                                        } else {
+                                            "0/km\u{b2}".to_string()
+                                        }
+                                    }</b>
+                                </div>
                             </div>
                         }
                     })}

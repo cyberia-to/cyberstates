@@ -1445,7 +1445,7 @@ body {
 .cockpit-stage .solar-map {
     position: absolute;
     top: 50%;
-    height: 62%;
+    height: 76%;
     width: auto;
     aspect-ratio: 1 / 1;
     left: calc(252px + (100% - 252px) / 2);
@@ -1505,6 +1505,7 @@ body {
 }
 
 .cockpit-world {
+    position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -1606,6 +1607,44 @@ body {
     color: #444;
     text-transform: uppercase;
     margin-top: 10px;
+}
+
+/* corner instruments: the voids carry function */
+.stage-legend {
+    position: absolute;
+    left: 264px;
+    bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+}
+
+.world-derived {
+    position: absolute;
+    right: 14px;
+    bottom: 6px;
+    display: flex;
+    gap: 30px;
+    text-align: right;
+    pointer-events: none;
+}
+
+.world-derived label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #555;
+}
+
+.world-derived b,
+.world-derived label {
+    text-shadow: 0 0 6px #000, 0 0 14px #000, 0 1px 2px #000;
+}
+
+.world-derived b {
+    font-size: 22px;
+    font-weight: 700;
 }
 
 @media (max-width: 1250px) {
