@@ -45,9 +45,13 @@ pub fn SolarPanel() -> impl IntoView {
 
     view! {
         <div class="solar-panel">
-            {icon_row(featured, true)}
-            {icon_row(bodies, false)}
-            {icon_row(row2, false)}
+            <div class="solar-featured">
+                {icon_row(featured, true)}
+            </div>
+            <div class="solar-small">
+                {icon_row(bodies, false)}
+                {icon_row(row2, false)}
+            </div>
         </div>
     }
 }
