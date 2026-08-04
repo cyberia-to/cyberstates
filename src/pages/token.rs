@@ -17,7 +17,7 @@ pub fn TokenPage() -> impl IntoView {
             {move || match token() {
                 None => view! {
                     <div>
-                        <SiteHeader suffix="not found".to_string() />
+                        <SiteHeader />
                         <h1 style="color: var(--cyber-red); margin-top: 40px;">"TOKEN NOT FOUND"</h1>
                     </div>
                 }.into_any(),
@@ -30,11 +30,10 @@ pub fn TokenPage() -> impl IntoView {
                     let num_countries = t.countries.len();
                     let countries = t.countries.clone();
                     let total_supply = t.total_supply_b_usd;
-                    let suffix = format!("{} · {}", code.to_lowercase(), name.to_lowercase());
 
                     view! {
                         <div>
-                            <SiteHeader suffix=suffix />
+                            <SiteHeader />
 
                             // Hero: identity, mirroring the state page
                             <div class="state-hero">

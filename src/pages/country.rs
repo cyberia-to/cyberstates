@@ -21,7 +21,7 @@ pub fn CountryPage() -> impl IntoView {
             {move || match country() {
                 None => view! {
                     <div>
-                        <SiteHeader suffix="not found".to_string() />
+                        <SiteHeader />
                         <h1 style="color: var(--cyber-red); margin-top: 40px;">"STATE NOT FOUND"</h1>
                     </div>
                 }.into_any(),
@@ -104,10 +104,9 @@ pub fn CountryPage() -> impl IntoView {
                     let outgoing = get_visa_outgoing(&c.code);
                     let incoming = get_visa_incoming(&c.name);
 
-                    let suffix = name.to_lowercase();
                     view! {
                         <div>
-                            <SiteHeader suffix=suffix />
+                            <SiteHeader />
 
                             // Hero: identity left, the two scores right
                             <div class="state-hero">
@@ -231,13 +230,13 @@ pub fn CountryPage() -> impl IntoView {
 /// Standard site shell header for drill-down pages: logo + suffix, search
 /// that jumps to the states table on Enter, and the constant nav.
 #[component]
-pub fn SiteHeader(suffix: String) -> impl IntoView {
+pub fn SiteHeader() -> impl IntoView {
     view! {
         <div class="site-chrome">
         <div class="header-row1">
             <div class="logo-zone">
                 <BrandChooser />
-                <div class="logo-suffix">{suffix}</div>
+                <div class="logo-suffix"></div>
             </div>
             <SiteNav active="" />
         </div>
