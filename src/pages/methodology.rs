@@ -10,7 +10,12 @@ const METHODOLOGY_MD: &str = include_str!("../../doctrine.md");
 pub fn MethodologyPage() -> impl IntoView {
     let mut opts = Options::empty();
     opts.insert(Options::ENABLE_TABLES);
-    let parser = Parser::new_ext(METHODOLOGY_MD, opts);
+    // the logo already says Doctrine — the markdown H1 stays for GitHub readers
+    let body = METHODOLOGY_MD
+        .trim_start()
+        .strip_prefix("# Doctrine")
+        .unwrap_or(METHODOLOGY_MD);
+    let parser = Parser::new_ext(body, opts);
     let mut html_out = String::new();
     html::push_html(&mut html_out, parser);
 
