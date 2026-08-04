@@ -25,12 +25,14 @@ pub fn MethodologyPage() -> impl IntoView {
 
     view! {
         <div class="page-frame">
+            <div class="site-chrome">
             <div class="header-row1">
                 <div class="logo-zone">
                     <BrandChooser active="DOCTRINE" />
                     <div class="logo-suffix"></div>
                 </div>
                 <SiteNav active="DOCTRINE" />
+            </div>
             </div>
 
             <div class="prose-cyber" style="max-width: 860px; margin: 0 auto;" inner_html=html_out></div>

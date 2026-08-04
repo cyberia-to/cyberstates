@@ -210,6 +210,7 @@ pub fn TokensPage() -> impl IntoView {
 
     view! {
         <div class="page-shell">
+            <div class="site-chrome">
             <div style="max-width: 1400px; margin: 0 auto;">
             // Header row 1: logo — nav
             <div class="header-row1">
@@ -261,6 +262,7 @@ pub fn TokensPage() -> impl IntoView {
                 </div>
             </div>
 
+            </div>
             </div>
 
             // Table + desktop map, split — same stage as the states page

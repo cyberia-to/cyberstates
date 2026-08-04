@@ -29,7 +29,7 @@ html {
 }
 
 body {
-    overflow-x: hidden; /* inner regions own their h-scrolls; the page never does */
+    overflow-x: clip; /* clip, not hidden: hidden creates a scrollport and kills sticky */
     font-family: 'Play', sans-serif;
     background: var(--cyber-black);
     color: var(--cyber-text);
@@ -451,17 +451,33 @@ body {
 }
 
 .page-shell {
-    padding: 20px;
+    --pad-t: 20px;
+    --pad-x: 20px;
+    padding: var(--pad-t) var(--pad-x) 20px;
 }
 
 .page-frame {
+    --pad-t: 20px;
+    --pad-x: 20px;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 20px;
+    padding: var(--pad-t) var(--pad-x) 20px;
+}
+
+/* The site chrome sticks; everything sails under it. Full-bleed via the
+   shell's own padding vars; flow-root so child margins paint background. */
+.site-chrome {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flow-root;
+    background: var(--cyber-black);
+    margin: calc(-1 * var(--pad-t)) calc(-1 * var(--pad-x)) 0;
+    padding: var(--pad-t) var(--pad-x) 0;
 }
 
 .table-shell {
-    overflow-x: auto;
+    overflow-x: clip;
     border: 1px solid #111;
     border-radius: 4px;
 }
@@ -483,7 +499,7 @@ body {
     flex: 1 1 auto;
     min-width: 0;
     position: sticky;
-    top: 16px;
+    top: calc(var(--chrome-h, 0px) + 8px);
 }
 
 /* the map is the hero: as large as viewport height and pane width allow,
@@ -544,8 +560,8 @@ body {
 
 @media (max-width: 640px) {
     /* pixels are the budget: hairline gutters, no box around the table */
-    .page-shell { padding: 16px 2px 20px; }
-    .page-frame { padding: 16px 2px 20px; }
+    .page-shell { --pad-t: 16px; --pad-x: 2px; padding: 16px 2px 20px; }
+    .page-frame { --pad-t: 16px; --pad-x: 2px; padding: 16px 2px 20px; }
     .table-shell { border: none; border-radius: 0; }
 
     .cyber-table.slim { min-width: 0; }
@@ -724,7 +740,7 @@ body {
 
 .cyber-table th {
     position: sticky;
-    top: 0;
+    top: var(--chrome-h, 0px);
     z-index: 10;
     background: #050505;
     border-bottom: 1px solid var(--cyber-muted);

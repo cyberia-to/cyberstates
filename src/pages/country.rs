@@ -233,12 +233,14 @@ pub fn CountryPage() -> impl IntoView {
 #[component]
 pub fn SiteHeader(suffix: String) -> impl IntoView {
     view! {
+        <div class="site-chrome">
         <div class="header-row1">
             <div class="logo-zone">
                 <BrandChooser />
                 <div class="logo-suffix">{suffix}</div>
             </div>
             <SiteNav active="" />
+        </div>
         </div>
         <div class="search-dock">
             <input
