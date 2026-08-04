@@ -1,131 +1,73 @@
 use leptos::prelude::*;
+use std::collections::HashMap;
 use crate::data::{load_countries, Country};
+use crate::pages::map::navigate_client;
+use crate::pages::solar_map::{orbit_r, placed_bodies, ELEMENTS};
 
-/// Distance from Earth in AU (semi-major axes; moons keep their orbital
-/// order as tie-breakers). Sorting by this puts the inner system in the
-/// first row and the outer system in the second — and the Sun, honestly,
-/// at 1 AU between Mercury and the belt.
-fn earth_distance(code: &str) -> f64 {
-    match code {
-        "ERTH" => 0.0,
-        "LUNA" => 0.003,
-        "VENU" => 0.28,
-        "MARS" => 0.52,
-        "PHOB" => 0.521,
-        "DEIM" => 0.522,
-        "MERC" => 0.61,
-        "SUN" => 1.0,
-        "VEST" => 1.36,
-        "JUNO" => 1.67,
-        "CERE" => 1.77,
-        "PALL" => 1.78,
-        "HYGI" => 2.14,
-        "JUPI" => 4.19,
-        "IO" => 4.20,
-        "EUPA" => 4.21,
-        "GANY" => 4.22,
-        "CALL" => 4.23,
-        "SATN" => 8.53,
-        "MIMA" => 8.54,
-        "ENCE" => 8.55,
-        "TETH" => 8.56,
-        "DION" => 8.57,
-        "RHEA" => 8.58,
-        "TITN" => 8.59,
-        "IAPE" => 8.60,
-        "URAN" => 18.19,
-        "MIRA" => 18.20,
-        "ARIE" => 18.21,
-        "UMBR" => 18.22,
-        "TNIA" => 18.23,
-        "OBER" => 18.24,
-        "NEPT" => 29.09,
-        "TRIT" => 29.1,
-        "ORCU" => 38.3,
-        "PLUT" => 38.5,
-        "CHAR" => 38.51,
-        "IXIO" => 38.6,
-        "SALA" => 41.0,
-        "HAUM" => 42.2,
-        "QUAO" => 42.5,
-        "MAKE" => 44.6,
-        "VARD" => 44.8,
-        "GONG" => 66.1,
-        "ERIS" => 66.9,
-        "SEDN" => 505.0,
-        _ => 9999.0,
-    }
-}
-
-/// Symbolic size: dot diameter from the body's radius on a log scale —
-/// the Sun reads huge, Deimos reads as a grain, both stay visible.
-fn dot_diameter(area_km2: u64) -> f64 {
-    let r_km = ((area_km2 as f64) / (4.0 * std::f64::consts::PI)).sqrt().max(1.0);
-    (6.0 + 7.0 * (r_km / 50.0).log10()).clamp(4.0, 40.0)
-}
-
-/// The solar system as an instrument, not an icon strip: every body is a
-/// circle sized by its real radius, painted by the SAME rank colors as
-/// the world map (the home paint effect fills them by data-code), sorted
-/// by distance from Earth — row one is the inner system, row two the
-/// outer. Every dot links to its state page.
+/// The home page's solar catalog: the same live orbital disk as /solar
+/// (today's real longitudes, log orbits, bodies sized by their surfaces),
+/// but pure catalog logic — every dot is a LINK to its state page, no
+/// selection. The home paint effect colors the dots by data-code with the
+/// active rating, so the disk filters and morphs with the world map.
 #[component]
 pub fn SolarPanel() -> impl IntoView {
-    const FEATURED: [&str; 4] = ["SUN", "ERTH", "LUNA", "MARS"];
-
-    let mut bodies: Vec<Country> = load_countries()
+    let by_code: HashMap<String, Country> = load_countries()
         .into_iter()
         .filter(|c| c.region == "Solar System")
+        .map(|c| (c.code.clone(), c))
         .collect();
-    let featured: Vec<Country> = FEATURED
-        .iter()
-        .filter_map(|code| bodies.iter().find(|c| c.code == *code).cloned())
-        .collect();
-    bodies.retain(|c| !FEATURED.contains(&c.code.as_str()));
-    bodies.sort_by(|a, b| {
-        earth_distance(&a.code)
-            .partial_cmp(&earth_distance(&b.code))
-            .unwrap_or(std::cmp::Ordering::Equal)
-    });
-    let half = bodies.len().div_ceil(2);
-    let outer = bodies.split_off(half);
 
-    let dot = |c: Country, scale: f64| {
-        let href = format!("/state/{}", c.code.to_lowercase());
-        let d = (dot_diameter(c.land_area_km2) * scale).clamp(4.0, 46.0);
-        let title = format!("{} — {}", c.name, c.land_area_fmt());
-        view! {
-            <a href=href class="solar-body" title=title>
-                <svg
-                    class="solar-dot"
-                    width=format!("{:.0}", d)
-                    height=format!("{:.0}", d)
-                    viewBox="0 0 10 10"
-                >
-                    <circle cx="5" cy="5" r="5" fill="#1a1a1a" data-code=c.code.clone()></circle>
-                </svg>
-            </a>
-        }
-    };
+    let placed = placed_bodies(&by_code);
 
-    let row = move |bodies: Vec<Country>| {
-        view! {
-            <div class="solar-row">
-                {bodies.into_iter().map(|c| dot(c, 1.0)).collect_view()}
-            </div>
-        }
-    };
+    let mut ring_as: Vec<f64> = ELEMENTS.iter().map(|&(_, a, _, _)| a).collect();
+    ring_as.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    ring_as.dedup_by(|a, b| (*a - *b).abs() < 0.2);
 
     view! {
         <div class="solar-panel">
-            // the big four lead from the left, half again their log size
-            <div class="solar-featured">
-                {featured.into_iter().map(|c| dot(c, 1.5)).collect_view()}
-            </div>
-            <div class="solar-small">
-                {row(bodies)}
-                {row(outer)}
-            </div>
+            <svg viewBox="48 18 904 904">
+                <defs>
+                    <filter id="pglow" x="-100%" y="-100%" width="300%" height="300%">
+                        <feGaussianBlur stdDeviation="2.4" result="b"></feGaussianBlur>
+                        <feMerge>
+                            <feMergeNode in="b"></feMergeNode>
+                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                    </filter>
+                    <radialGradient id="psun">
+                        <stop offset="0%" stop-color="rgba(255,240,180,0.14)"></stop>
+                        <stop offset="100%" stop-color="rgba(255,220,140,0)"></stop>
+                    </radialGradient>
+                </defs>
+
+                <circle cx="500" cy="470" r="150" fill="url(#psun)"></circle>
+
+                {ring_as.into_iter().map(|a| view! {
+                    <circle
+                        cx="500" cy="470" r=orbit_r(a)
+                        fill="none" stroke="#161616" stroke-width="1.4"
+                    ></circle>
+                }).collect_view()}
+
+                {placed.into_iter().map(|(c, x, y, r)| {
+                    let href = format!("/state/{}", c.code.to_lowercase());
+                    let title = format!("{} — {}", c.name, c.land_area_fmt());
+                    // the panel is small: dots grow a size class to stay clickable
+                    let r = (r * 1.35).max(5.0);
+                    view! {
+                        <g class="solar-body" on:click=move |_| navigate_client(&href)>
+                            <circle
+                                cx=x cy=y r=r
+                                fill="#1a1a1a"
+                                data-code=c.code.clone()
+                                filter="url(#pglow)"
+                            >
+                                <title>{title}</title>
+                            </circle>
+                        </g>
+                    }
+                }).collect_view()}
+            </svg>
         </div>
     }
 }

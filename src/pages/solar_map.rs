@@ -12,7 +12,7 @@ use crate::pages::map::{painted_world, value_to_color};
 /// open it next year and the planets will have moved. Planets carry
 /// real J2000 elements; the estimated dwarfs are anchored to their
 /// 2026-08-04 longitudes and propagate on their true periods.
-const ELEMENTS: &[(&str, f64, f64, f64)] = &[
+pub const ELEMENTS: &[(&str, f64, f64, f64)] = &[
     ("MERC", 0.39, 252.2503, 4.09233445),
     ("VENU", 0.72, 181.9791, 1.60213034),
     ("ERTH", 1.0, 100.4664, 0.98560912),
@@ -41,7 +41,7 @@ const ELEMENTS: &[(&str, f64, f64, f64)] = &[
 
 /// Who orbits whom: moons take their host's computed position and ring
 /// around it in orbital order (their true offsets are sub-pixel here).
-const MOONS: &[(&str, &str)] = &[
+pub const MOONS: &[(&str, &str)] = &[
     ("LUNA", "ERTH"),
     ("PHOB", "MARS"), ("DEIM", "MARS"),
     ("IO", "JUPI"), ("EUPA", "JUPI"), ("GANY", "JUPI"), ("CALL", "JUPI"),
@@ -53,34 +53,34 @@ const MOONS: &[(&str, &str)] = &[
 ];
 
 /// Days since J2000 (2000-01-01T12:00 UTC), from the wall clock.
-fn days_since_j2000() -> f64 {
+pub fn days_since_j2000() -> f64 {
     js_sys::Date::now() / 86_400_000.0 - 10_957.5
 }
 
 /// Today's mean heliocentric longitude in degrees.
-fn longitude(l0: f64, n: f64, d: f64) -> f64 {
+pub fn longitude(l0: f64, n: f64, d: f64) -> f64 {
     (l0 + n * d).rem_euclid(360.0)
 }
 
-const CX: f64 = 500.0;
-const CY: f64 = 470.0;
+pub const CX: f64 = 500.0;
+pub const CY: f64 = 470.0;
 
 /// Log-radial distance: 0.39 AU..506 AU maps to 90..420 units.
-fn orbit_r(a: f64) -> f64 {
+pub fn orbit_r(a: f64) -> f64 {
     if a <= 0.0 {
         return 0.0;
     }
     90.0 + 330.0 * ((a / 0.3).ln() / (506.0_f64 / 0.3).ln())
 }
 
-fn polar(a: f64, deg: f64) -> (f64, f64) {
+pub fn polar(a: f64, deg: f64) -> (f64, f64) {
     let r = orbit_r(a);
     let th = deg.to_radians();
     (CX + r * th.cos(), CY - r * th.sin())
 }
 
 /// Dot radius in viewBox units from the body's surface (log of radius).
-fn dot_r(area_km2: u64) -> f64 {
+pub fn dot_r(area_km2: u64) -> f64 {
     let r_km = ((area_km2 as f64) / (4.0 * std::f64::consts::PI)).sqrt().max(1.0);
     (4.0 + 5.2 * (r_km / 50.0).log10()).clamp(2.6, 30.0)
 }
@@ -136,6 +136,34 @@ fn world_values(field: SortField) -> HashMap<String, f64> {
     values
 }
 
+/// Positions for TODAY, shared by the /solar stage and the home panel:
+/// hosts from their orbital elements, moons ringed in orbital order.
+pub fn placed_bodies(by_code: &HashMap<String, Country>) -> Vec<(Country, f64, f64, f64)> {
+    let d = days_since_j2000();
+    let mut host_pos: HashMap<&str, (f64, f64)> = HashMap::new();
+    host_pos.insert("SUN", (CX, CY));
+    for &(code, a, l0, n) in ELEMENTS {
+        host_pos.insert(code, polar(a, longitude(l0, n, d)));
+    }
+    let mut cluster_seen: HashMap<&str, usize> = HashMap::new();
+    let mut placed: Vec<(Country, f64, f64, f64)> = Vec::new();
+    for &(code, _, _, _) in std::iter::once(&("SUN", 0.0, 0.0, 0.0)).chain(ELEMENTS.iter()) {
+        let Some(c) = by_code.get(code) else { continue };
+        let (x, y) = host_pos[code];
+        placed.push((c.clone(), x, y, dot_r(c.land_area_km2)));
+    }
+    for &(moon, host) in MOONS {
+        let Some(c) = by_code.get(moon) else { continue };
+        let Some(&(hx, hy)) = host_pos.get(host) else { continue };
+        let idx = cluster_seen.entry(host).or_insert(0);
+        let th = (90.0 - 62.0 * (*idx as f64)).to_radians();
+        let orbit = 17.0 + 3.0 * (*idx as f64);
+        *idx += 1;
+        placed.push((c.clone(), hx + orbit * th.cos(), hy - orbit * th.sin(), dot_r(c.land_area_km2)));
+    }
+    placed
+}
+
 /// /solar — the experiment: the solar system as an orbital map. Real
 /// log-scaled orbits, bodies sized by their surfaces, colored by the
 /// active rating exactly like the world map. Ghost rings mark the gas
@@ -155,33 +183,7 @@ pub fn SolarMapPage() -> impl IntoView {
     let by_code: HashMap<String, Country> =
         bodies.iter().map(|c| (c.code.clone(), c.clone())).collect();
 
-    // positions computed for TODAY: hosts from their elements, moons
-    // ringed around the host in orbital order
-    let d = days_since_j2000();
-    let mut host_pos: HashMap<&str, (f64, f64)> = HashMap::new();
-    host_pos.insert("SUN", (CX, CY));
-    for &(code, a, l0, n) in ELEMENTS {
-        host_pos.insert(code, polar(a, longitude(l0, n, d)));
-    }
-
-    let mut cluster_seen: HashMap<&str, usize> = HashMap::new();
-    let mut placed: Vec<(Country, f64, f64, f64)> = Vec::new(); // body, x, y, r
-    let host_of = |code: &str| MOONS.iter().find(|(m, _)| *m == code).map(|(_, h)| *h);
-    for &(code, _, _, _) in std::iter::once(&("SUN", 0.0, 0.0, 0.0)).chain(ELEMENTS.iter()) {
-        let Some(c) = by_code.get(code) else { continue };
-        let (x, y) = host_pos[code];
-        placed.push((c.clone(), x, y, dot_r(c.land_area_km2)));
-    }
-    for &(moon, host) in MOONS {
-        let Some(c) = by_code.get(moon) else { continue };
-        let Some(&(hx, hy)) = host_pos.get(host) else { continue };
-        let idx = cluster_seen.entry(host).or_insert(0);
-        let th = (90.0 - 62.0 * (*idx as f64)).to_radians();
-        let orbit = 17.0 + 3.0 * (*idx as f64);
-        *idx += 1;
-        placed.push((c.clone(), hx + orbit * th.cos(), hy - orbit * th.sin(), dot_r(c.land_area_km2)));
-    }
-    let _ = host_of;
+    let placed = placed_bodies(&by_code);
 
     let bodies_for_colors = bodies.clone();
     let colors = Memo::new(move |_| colors_for(&bodies_for_colors, field.get()));

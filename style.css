@@ -1335,61 +1335,34 @@ body {
 
 /* ---- solar panel: the celestial bodies that have no map polygon ------- */
 .solar-panel {
-    /* a fixed overlay hugging the dock, in the map's empty ocean band —
-       right inset keeps it off Antarctica, the map stays full height.
-       big four LEFT, then the small bodies in two even rows */
+    /* the orbital catalog disk, floating in the map's lower-left ocean —
+       the same live sky as /solar, every dot a link */
     position: fixed;
-    left: 552px;
-    right: max(170px, 15vw);
-    bottom: 72px;
+    left: 55%;
+    bottom: 60px;
+    width: min(27vw, 400px);
+    aspect-ratio: 1 / 1;
     z-index: 6;
     pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 26px;
 }
 
-.solar-panel .solar-body { pointer-events: auto; }
-
-.solar-featured {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.solar-small {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-.solar-row {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.solar-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    transition: transform 0.15s, filter 0.15s;
-}
-
-.solar-body:hover {
-    transform: translateY(-2px) scale(1.4);
-    filter: drop-shadow(0 0 6px rgba(0, 255, 65, 0.6));
-}
-
-.solar-dot {
+.solar-panel svg {
     display: block;
+    width: 100%;
+    height: 100%;
 }
 
-.solar-dot circle {
+.solar-panel .solar-body {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.solar-panel .solar-body:hover circle {
+    stroke: var(--cyber-green);
+    stroke-width: 1.5;
+}
+
+.solar-panel circle[data-code] {
     transition: fill 450ms ease; /* morphs with the map */
 }
 
