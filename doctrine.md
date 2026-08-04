@@ -167,11 +167,15 @@ doctrine, not a doctrine of states.
 The threshold of statehood is exact: a community becomes a cyberstate
 the day its rules become the interface of a territory. Nothing else was
 ever required — the old states just had a head start. By this test the
-roll today counts 272: UN members, their autonomous territories,
+roll today counts 274: UN members, their autonomous territories,
 partially recognized and unrecognized states —
 [Abkhazia](/state/abk), [Transnistria](/state/pmr),
 [Somaliland](/state/sol), [Kosovo](/state/xk) and their kin —
-[Antarctica](/state/aq), and the solar system as a listing class:
+[Antarctica](/state/aq); the unaccounted Earth —
+[Bir Tawil](/state/btwl), the one piece of land both its neighbors
+refuse to claim, and the [High Seas](/state/hsea), two hundred
+nineteen million km² ruled by treaty and owned by no one; and the
+solar system as a listing class:
 [Earth](/state/erth) itself, quoted once more as a single body, the
 forty solid-surface worlds from the [Moon](/state/luna) to
 [Sedna](/state/sedn) — territory held the way Antarctica is held,

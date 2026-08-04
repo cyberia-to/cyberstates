@@ -238,10 +238,10 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
         // world totals are terrestrial: celestial listings (Earth the
         // body among them) must not dilute the visa index denominators
         let total_cap: f64 = countries.iter()
-            .filter(|c| c.region != "Solar System")
+            .filter(|c| c.region != "Solar System" && c.region != "Terra Nullius")
             .map(|c| c.money_supply_b_usd).sum();
         let total_pop: f64 = countries.iter()
-            .filter(|c| c.region != "Solar System")
+            .filter(|c| c.region != "Solar System" && c.region != "Terra Nullius")
             .map(|c| c.population as f64).sum();
 
         let by_name: HashMap<&str, &Country> =
@@ -372,6 +372,7 @@ pub const REGIONS: &[&str] = &[
     "Oceania",
     "Antarctica",
     "Solar System",
+    "Terra Nullius",
 ];
 
 #[derive(Clone, Copy, PartialEq)]

@@ -47,6 +47,7 @@ pub fn CountryPage() -> impl IntoView {
                         "North America" => "var(--cyber-cyan)",
                         "Oceania" => "var(--cyber-green)",
                         "Solar System" => "var(--cyber-red)",
+                        "Terra Nullius" => "#8a93a5",
                         _ => "#666",
                     };
 
