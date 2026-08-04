@@ -1049,7 +1049,13 @@ body {
    own group: identical between listings (invisible cross-fade), a soft
    fade-out in place when a card page has none — it never ghosts over
    the new page as part of a taller chrome snapshot */
-.header-row1 { view-transition-name: chrome; }
+.header-row1 {
+    view-transition-name: chrome;
+    /* the VT name makes both rows stacking contexts; row1 must sit above
+       row2 so its dropdown menus paint over the pills */
+    position: relative;
+    z-index: 5;
+}
 .header-row2 { view-transition-name: pills; }
 .map-pane { view-transition-name: map; }
 .search-dock { view-transition-name: dock; }
