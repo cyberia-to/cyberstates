@@ -48,7 +48,22 @@ pub fn value_to_color(val: f64, max: f64) -> String {
     format!("rgb({:.0},{:.0},{:.0})", r.min(255.0), g.min(255.0), b.min(255.0))
 }
 
+/// Client-side navigation from plain DOM handlers: push the URL, then
+/// wake the router with a synthetic popstate — no full page reload, so
+/// the wasm app, fonts and state all survive the hop.
+pub fn navigate_client(path: &str) {
+    if let Some(w) = web_sys::window() {
+        if let Ok(h) = w.history() {
+            let _ = h.push_state_with_url(&JsValue::NULL, "", Some(path));
+            if let Ok(ev) = web_sys::PopStateEvent::new("popstate") {
+                let _ = w.dispatch_event(&ev);
+            }
+        }
+    }
+}
+
 /// Wire every state path to navigate to its /state/ page on click.
+/// Idempotent: repaint effects call this often — each path is wired once.
 pub fn setup_click_handlers() {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
@@ -57,12 +72,14 @@ pub fn setup_click_handlers() {
     for i in 0..paths.length() {
         if let Some(node) = paths.item(i) {
             let el: web_sys::Element = node.unchecked_into();
+            if el.get_attribute("data-nav").is_some() {
+                continue;
+            }
+            let _ = el.set_attribute("data-nav", "1");
             if let Some(id) = el.get_attribute("id") {
                 let code = id.to_lowercase();
                 let closure = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
-                    if let Some(w) = web_sys::window() {
-                        let _ = w.location().set_href(&format!("/state/{}", code));
-                    }
+                    navigate_client(&format!("/state/{}", code));
                 }) as Box<dyn FnMut(web_sys::MouseEvent)>);
 
                 let _ = el.add_event_listener_with_callback(

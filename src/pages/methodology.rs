@@ -47,9 +47,7 @@ pub fn MethodologyPage() -> impl IntoView {
                             let target = ev.target().unwrap();
                             let input: web_sys::HtmlInputElement = target.unchecked_into();
                             let q = input.value();
-                            if let Some(w) = web_sys::window() {
-                                let _ = w.location().set_href(&format!("/?q={}", q));
-                            }
+                            crate::pages::map::navigate_client(&format!("/?q={}", q));
                         }
                     }
                 />

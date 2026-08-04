@@ -320,11 +320,7 @@ pub fn TokensPage() -> impl IntoView {
                                     let t_for_metric = t.clone();
                                     let scores = scores.clone();
                                     view! {
-                                        <tr on:click=move |_| {
-                                            if let Some(window) = web_sys::window() {
-                                                let _ = window.location().set_href(&href);
-                                            }
-                                        }>
+                                        <tr on:click=move |_| crate::pages::map::navigate_client(&href)>
                                             <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", rank_color(i + 1), rank_weight(i + 1))>{i + 1}</td>
                                             <td style="color: var(--cyber-yellow); font-weight: 700;">{code}</td>
                                             <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">

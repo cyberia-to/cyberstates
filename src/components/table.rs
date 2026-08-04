@@ -43,11 +43,7 @@ pub fn CountryRow(
     let c_for_metric = country.clone();
 
     view! {
-        <tr on:click=move |_| {
-            if let Some(window) = web_sys::window() {
-                let _ = window.location().set_href(&href);
-            }
-        }>
+        <tr on:click=move |_| crate::pages::map::navigate_client(&href)>
             <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", crate::data::rank_color(rank), crate::data::rank_weight(rank))>{rank}</td>
             <td>
                 <span style="margin-right: 8px; font-size: 16px;">{flag.clone()}</span>

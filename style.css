@@ -977,3 +977,40 @@ body {
     stroke: var(--cyber-green);
     stroke-width: 1;
 }
+
+/* ---- motion: soft, brief, never in the way ---------------------------- */
+
+/* pages fade in on navigation — opacity only, so sticky chrome and the
+   fixed dock keep their positioning during the entry */
+@keyframes page-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.page-shell,
+.page-frame {
+    animation: page-in 180ms ease-out;
+}
+
+/* the map morphs between ratings instead of snapping */
+.world-map-container path {
+    transition: fill 450ms ease;
+}
+
+/* dropdowns breathe in */
+@keyframes menu-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.brand-menu,
+.rating-menu,
+.num-menu,
+.search-panel {
+    animation: menu-in 140ms ease-out;
+}
+
+/* row highlight eases instead of flashing */
+.cyber-table tbody tr {
+    transition: background 120ms ease;
+}

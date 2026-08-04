@@ -251,9 +251,7 @@ pub fn SiteHeader(suffix: String) -> impl IntoView {
                     if ev.key() == "Enter" {
                         let target = ev.target().unwrap();
                         let input: web_sys::HtmlInputElement = target.unchecked_into();
-                        if let Some(w) = web_sys::window() {
-                            let _ = w.location().set_href(&format!("/?q={}", input.value()));
-                        }
+                        crate::pages::map::navigate_client(&format!("/?q={}", input.value()));
                     }
                 }
             />
