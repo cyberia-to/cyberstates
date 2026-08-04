@@ -165,7 +165,7 @@ pub fn CountryPage() -> impl IntoView {
                             <div class="section-label" style="margin-top: 20px;">"DERIVED"</div>
                             <div class="stat-grid">
                                 <div class="stat-card">
-                                    <div class="stat-label">"HUMAN VALUE"<span class="rank-badge" style:color=r_human.1 style:opacity=r_human.2>{r_human.0}</span></div>
+                                    <div class="stat-label">"CITIZEN VALUE"<span class="rank-badge" style:color=r_human.1 style:opacity=r_human.2>{r_human.0}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-green);">{human_value}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per person"</div>
                                 </div>

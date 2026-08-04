@@ -398,7 +398,7 @@ impl SortField {
     pub fn short(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            Self::Human => "HUMAN",
+            Self::Human => "CITIZEN",
             Self::Land => "LAND",
             Self::Freedom => "FREEDOM",
             Self::Hospitality => "HOSPITALITY",
@@ -411,7 +411,7 @@ impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            Self::Human => "HUMAN VALUE",
+            Self::Human => "CITIZEN VALUE",
             Self::Land => "LAND VALUE",
             Self::Freedom => "TRAVEL FREEDOM",
             Self::Hospitality => "HOSPITALITY",
@@ -424,7 +424,7 @@ impl SortField {
     pub fn slug(&self) -> &'static str {
         match self {
             Self::Capital => "capital",
-            Self::Human => "human-value",
+            Self::Human => "citizen-value",
             Self::Land => "land-value",
             Self::Freedom => "travel-freedom",
             Self::Hospitality => "hospitality",
@@ -437,7 +437,7 @@ impl SortField {
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
             "capital" | "cap" => Self::Capital,
-            "human-value" | "human" => Self::Human,
+            "citizen-value" | "citizen" | "human-value" | "human" => Self::Human,
             "land-value" | "land" => Self::Land,
             "travel-freedom" | "freedom" => Self::Freedom,
             "hospitality" | "openness" => Self::Hospitality,

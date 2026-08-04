@@ -117,7 +117,7 @@ everything disputable and these three remain, and they admit exactly
 three exchange rates:
 
 ```
-HUMAN VALUE = CAPITAL / POPULATION    what stands behind each life
+CITIZEN VALUE = CAPITAL / POPULATION   what stands behind each life
 LAND VALUE  = CAPITAL / TERRITORY     how monetized each km² is
 DENSITY     = POPULATION / TERRITORY  how crowded the land is
 ```
@@ -125,7 +125,7 @@ DENSITY     = POPULATION / TERRITORY  how crowded the land is
 Two identities close the system:
 
 ```
-HUMAN VALUE × DENSITY = LAND VALUE
+CITIZEN VALUE × DENSITY = LAND VALUE
 CAPITAL = PRICE × SUPPLY
 ```
 
@@ -245,7 +245,7 @@ its honesty clause in the same breath.
 [America](/state/us), converted at live FX; script-refreshed, guarded
 against redenominations. *Its limit:* states report money on slightly
 different aggregate definitions and dates — CAPITAL is the best single
-figure per state, not a synchronized global snapshot, and human value
+figure per state, not a synchronized global snapshot, and citizen value
 and land value are exactly as good as capital is.
 
 **The visa matrix** — scraped from public passport-index data: every
