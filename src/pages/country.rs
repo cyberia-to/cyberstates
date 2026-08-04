@@ -74,8 +74,8 @@ pub fn CountryPage() -> impl IntoView {
                     // rank in each rating = position in that landing's table
                     let all_states = load_countries();
 
-                    // an ocean aggregates the states on its shores: list them,
-                    // richest first, so the page shows what the number is made of
+                    // an ocean aggregates the island nations that sit IN it —
+                    // continental states merely border it and don't count
                     let is_ocean = c.region == "Oceans";
                     let mut members: Vec<Country> = if is_ocean {
                         all_states.iter()
@@ -250,7 +250,7 @@ pub fn CountryPage() -> impl IntoView {
                             {is_ocean.then(|| view! {
                                 <div style="margin-top: 32px;">
                                     <div class="section-label">
-                                        {format!("{} STATES ON THIS SHORE", member_count)}
+                                        {format!("{} ISLAND STATES IN THIS OCEAN", member_count)}
                                     </div>
                                     <div class="pending-grid">
                                         {members.into_iter().map(|m| {
