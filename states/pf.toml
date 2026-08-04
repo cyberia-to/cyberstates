@@ -2,6 +2,7 @@ name = "Tahiti"
 code = "PF"
 flag = "🇵🇫"
 region = "Oceania"
+oceans = "PAC"
 population = 280000
 land_area_km2 = 4167
 currency_code = "XPF"

@@ -2,6 +2,7 @@ name = "Denmark"
 code = "DK"
 flag = "🇩🇰"
 region = "Europe"
+oceans = "ATL"
 population = 5910913
 land_area_km2 = 43094
 currency_code = "DKK"

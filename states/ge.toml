@@ -2,6 +2,7 @@ name = "Georgia"
 code = "GE"
 flag = "🇬🇪"
 region = "Eurasia"
+oceans = "ATL"
 population = 3728573
 land_area_km2 = 69700
 currency_code = "GEL"

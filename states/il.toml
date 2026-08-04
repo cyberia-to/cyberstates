@@ -2,6 +2,7 @@ name = "Israel"
 code = "IL"
 flag = "🇮🇱"
 region = "Middle East"
+oceans = "ATL,IND"
 population = 9174520
 land_area_km2 = 22072
 currency_code = "ILS"

@@ -2,6 +2,7 @@ name = "Belarus"
 code = "BY"
 flag = "🇧🇾"
 region = "Eurasia"
+oceans = ""
 population = 9200617
 land_area_km2 = 207600
 currency_code = "BYN"

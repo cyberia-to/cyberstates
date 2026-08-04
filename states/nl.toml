@@ -2,6 +2,7 @@ name = "Netherlands"
 code = "NL"
 flag = "🇳🇱"
 region = "Europe"
+oceans = "ATL"
 population = 17618299
 land_area_km2 = 41543
 currency_code = "EUR"

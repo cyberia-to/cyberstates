@@ -2,6 +2,7 @@ name = "Bulgaria"
 code = "BG"
 flag = "🇧🇬"
 region = "Europe"
+oceans = "ATL"
 population = 6687717
 land_area_km2 = 110879
 currency_code = "BGN"

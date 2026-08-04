@@ -2,6 +2,7 @@ name = "Martinique"
 code = "MQ"
 flag = "🇲🇶"
 region = "Latin America"
+oceans = ""
 population = 375000
 land_area_km2 = 1128
 currency_code = "EUR"

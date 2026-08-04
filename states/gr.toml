@@ -2,6 +2,7 @@ name = "Greece"
 code = "GR"
 flag = "🇬🇷"
 region = "Europe"
+oceans = "ATL"
 population = 10341277
 land_area_km2 = 131957
 currency_code = "EUR"

@@ -2,6 +2,7 @@ name = "Fiji"
 code = "FJ"
 flag = "🇫🇯"
 region = "Oceania"
+oceans = "PAC"
 population = 936375
 land_area_km2 = 18274
 currency_code = "FJD"

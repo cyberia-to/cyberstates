@@ -2,6 +2,7 @@ name = "Tanzania"
 code = "TZ"
 flag = "🇹🇿"
 region = "Africa"
+oceans = "IND"
 population = 65497748
 land_area_km2 = 945087
 currency_code = "TZS"

@@ -2,6 +2,7 @@ name = "Salvador"
 code = "SV"
 flag = "🇸🇻"
 region = "Latin America"
+oceans = "PAC"
 population = 6364943
 land_area_km2 = 21041
 currency_code = "USD"

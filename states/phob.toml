@@ -2,6 +2,7 @@ name = "Phobos"
 code = "PHOB"
 flag = "😱"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 1548
 currency_code = "PHOB"

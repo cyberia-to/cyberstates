@@ -2,6 +2,7 @@ name = "Singapore"
 code = "SG"
 flag = "🇸🇬"
 region = "Asia"
+oceans = "PAC"
 population = 5917648
 land_area_km2 = 733
 currency_code = "SGD"

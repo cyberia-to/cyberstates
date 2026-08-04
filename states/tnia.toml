@@ -2,6 +2,7 @@ name = "Titania"
 code = "TNIA"
 flag = "👑"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 7815000
 currency_code = "TNIA"

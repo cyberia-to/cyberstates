@@ -2,6 +2,7 @@ name = "Tajikistan"
 code = "TJ"
 flag = "🇹🇯"
 region = "Eurasia"
+oceans = ""
 population = 10143543
 land_area_km2 = 143100
 currency_code = "TJS"

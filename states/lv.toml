@@ -2,6 +2,7 @@ name = "Latvia"
 code = "LV"
 flag = "🇱🇻"
 region = "Europe"
+oceans = "ATL"
 population = 1842226
 land_area_km2 = 64559
 currency_code = "EUR"

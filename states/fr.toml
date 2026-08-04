@@ -2,6 +2,7 @@ name = "France"
 code = "FR"
 flag = "🇫🇷"
 region = "Europe"
+oceans = "ATL"
 population = 67749632
 land_area_km2 = 643801
 currency_code = "EUR"

@@ -2,6 +2,7 @@ name = "Bvi"
 code = "VG"
 flag = "🇻🇬"
 region = "Latin America"
+oceans = "ATL"
 population = 31000
 land_area_km2 = 151
 currency_code = "USD"

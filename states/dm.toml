@@ -2,6 +2,7 @@ name = "Dominica"
 code = "DM"
 flag = "🇩🇲"
 region = "Latin America"
+oceans = "ATL"
 population = 72737
 land_area_km2 = 751
 currency_code = "XCD"

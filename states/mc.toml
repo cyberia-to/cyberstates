@@ -2,6 +2,7 @@ name = "Monaco"
 code = "MC"
 flag = "🇲🇨"
 region = "Europe"
+oceans = "ATL"
 population = 36297
 land_area_km2 = 2
 currency_code = "EUR"

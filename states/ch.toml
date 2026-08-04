@@ -2,6 +2,7 @@ name = "Switzerland"
 code = "CH"
 flag = "🇨🇭"
 region = "Europe"
+oceans = ""
 population = 8796669
 land_area_km2 = 41285
 currency_code = "CHF"

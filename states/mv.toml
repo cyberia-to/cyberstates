@@ -2,6 +2,7 @@ name = "Maldives"
 code = "MV"
 flag = "🇲🇻"
 region = "Asia"
+oceans = "IND"
 population = 521021
 land_area_km2 = 300
 currency_code = "MVR"

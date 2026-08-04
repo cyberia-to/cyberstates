@@ -2,6 +2,7 @@ name = "Nigeria"
 code = "NG"
 flag = "🇳🇬"
 region = "Africa"
+oceans = "ATL"
 population = 223804632
 land_area_km2 = 923768
 currency_code = "NGN"

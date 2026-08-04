@@ -2,6 +2,7 @@ name = "Oman"
 code = "OM"
 flag = "🇴🇲"
 region = "Middle East"
+oceans = "IND"
 population = 4644384
 land_area_km2 = 309500
 currency_code = "OMR"

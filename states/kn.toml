@@ -2,6 +2,7 @@ name = "Kitts"
 code = "KN"
 flag = "🇰🇳"
 region = "Latin America"
+oceans = "ATL"
 population = 47755
 land_area_km2 = 261
 currency_code = "XCD"

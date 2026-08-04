@@ -2,6 +2,7 @@ name = "Uzbekistan"
 code = "UZ"
 flag = "🇺🇿"
 region = "Eurasia"
+oceans = ""
 population = 35648100
 land_area_km2 = 447400
 currency_code = "UZS"

@@ -2,6 +2,7 @@ name = "Bolivia"
 code = "BO"
 flag = "🇧🇴"
 region = "Latin America"
+oceans = ""
 population = 12388571
 land_area_km2 = 1098581
 currency_code = "BOB"

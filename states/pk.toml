@@ -2,6 +2,7 @@ name = "Pakistan"
 code = "PK"
 flag = "🇵🇰"
 region = "Asia"
+oceans = "IND"
 population = 235824862
 land_area_km2 = 881912
 currency_code = "PKR"

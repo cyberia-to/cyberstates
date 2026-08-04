@@ -2,6 +2,7 @@ name = "Croatia"
 code = "HR"
 flag = "🇭🇷"
 region = "Europe"
+oceans = "ATL"
 population = 3871833
 land_area_km2 = 56594
 currency_code = "EUR"

@@ -2,6 +2,7 @@ name = "Botswana"
 code = "BW"
 flag = "🇧🇼"
 region = "Africa"
+oceans = ""
 population = 2630296
 land_area_km2 = 581730
 currency_code = "BWP"

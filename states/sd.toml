@@ -2,6 +2,7 @@ name = "Sudan"
 code = "SD"
 flag = "🇸🇩"
 region = "Africa"
+oceans = "IND"
 population = 48109006
 land_area_km2 = 1861484
 currency_code = "SDG"

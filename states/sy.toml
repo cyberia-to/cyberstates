@@ -2,6 +2,7 @@ name = "Syria"
 code = "SY"
 flag = "🇸🇾"
 region = "Middle East"
+oceans = "ATL"
 population = 22125249
 land_area_km2 = 185180
 currency_code = "SYP"

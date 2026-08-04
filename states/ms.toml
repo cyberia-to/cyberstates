@@ -2,6 +2,7 @@ name = "Montserrat"
 code = "MS"
 flag = "🇲🇸"
 region = "Latin America"
+oceans = "ATL"
 population = 5000
 land_area_km2 = 102
 currency_code = "XCD"

@@ -2,6 +2,7 @@ name = "Nepal"
 code = "NP"
 flag = "🇳🇵"
 region = "Asia"
+oceans = ""
 population = 30896590
 land_area_km2 = 147516
 currency_code = "NPR"

@@ -2,6 +2,7 @@ name = "Salacia"
 code = "SALA"
 flag = "🧜‍♀️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 2248000
 currency_code = "SALA"

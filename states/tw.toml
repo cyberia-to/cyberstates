@@ -2,6 +2,7 @@ name = "Taiwan"
 code = "TW"
 flag = "🇹🇼"
 region = "Asia"
+oceans = "PAC"
 population = 23894394
 land_area_km2 = 36193
 currency_code = "TWD"

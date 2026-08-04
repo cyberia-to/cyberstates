@@ -24,6 +24,7 @@ pub struct Country {
     pub token_price_usd: f64,
     pub visa_free_destinations: u32,
     pub visa_free_inbound: u32,
+    pub oceans: String,
 }
 
 #[derive(Clone, Copy, Debug, Default)]

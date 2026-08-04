@@ -2,6 +2,7 @@ name = "Anguilla"
 code = "AI"
 flag = "🇦🇮"
 region = "Latin America"
+oceans = "ATL"
 population = 16000
 land_area_km2 = 91
 currency_code = "XCD"

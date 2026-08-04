@@ -2,6 +2,7 @@ name = "Germany"
 code = "DE"
 flag = "🇩🇪"
 region = "Europe"
+oceans = "ATL"
 population = 84482267
 land_area_km2 = 357022
 currency_code = "EUR"

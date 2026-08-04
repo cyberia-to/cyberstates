@@ -2,6 +2,7 @@ name = "Brazzaville"
 code = "CG"
 flag = "🇨🇬"
 region = "Africa"
+oceans = "ATL"
 population = 6106869
 land_area_km2 = 342000
 currency_code = "XAF"

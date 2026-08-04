@@ -2,6 +2,7 @@ name = "Tonga"
 code = "TO"
 flag = "🇹🇴"
 region = "Oceania"
+oceans = "PAC"
 population = 106858
 land_area_km2 = 747
 currency_code = "TOP"

@@ -2,6 +2,7 @@ name = "Cuba"
 code = "CU"
 flag = "🇨🇺"
 region = "Latin America"
+oceans = "ATL"
 population = 11194449
 land_area_km2 = 109884
 currency_code = "CUP"

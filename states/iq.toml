@@ -2,6 +2,7 @@ name = "Iraq"
 code = "IQ"
 flag = "🇮🇶"
 region = "Middle East"
+oceans = "IND"
 population = 43533592
 land_area_km2 = 438317
 currency_code = "IQD"

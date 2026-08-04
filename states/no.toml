@@ -2,6 +2,7 @@ name = "Norway"
 code = "NO"
 flag = "🇳🇴"
 region = "Europe"
+oceans = "ATL,ARCO"
 population = 5474360
 land_area_km2 = 323802
 currency_code = "NOK"

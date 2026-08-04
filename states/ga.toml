@@ -2,6 +2,7 @@ name = "Gabon"
 code = "GA"
 flag = "🇬🇦"
 region = "Africa"
+oceans = "ATL"
 population = 2436566
 land_area_km2 = 267668
 currency_code = "XAF"

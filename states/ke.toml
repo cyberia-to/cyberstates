@@ -2,6 +2,7 @@ name = "Kenya"
 code = "KE"
 flag = "🇰🇪"
 region = "Africa"
+oceans = "IND"
 population = 55100586
 land_area_km2 = 580367
 currency_code = "KES"

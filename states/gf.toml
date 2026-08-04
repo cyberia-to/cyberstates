@@ -2,6 +2,7 @@ name = "Guyane"
 code = "GF"
 flag = "🇬🇫"
 region = "Latin America"
+oceans = "ATL"
 population = 310000
 land_area_km2 = 83534
 currency_code = "EUR"

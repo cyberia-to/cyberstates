@@ -2,6 +2,7 @@ name = "Varda"
 code = "VARD"
 flag = "⭐"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 1720000
 currency_code = "VARD"

@@ -2,6 +2,7 @@ name = "Brazil"
 code = "BR"
 flag = "🇧🇷"
 region = "Latin America"
+oceans = "ATL"
 population = 216422446
 land_area_km2 = 8515767
 currency_code = "BRL"

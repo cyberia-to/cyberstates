@@ -2,6 +2,7 @@ name = "Hungary"
 code = "HU"
 flag = "🇭🇺"
 region = "Europe"
+oceans = ""
 population = 9597085
 land_area_km2 = 93028
 currency_code = "HUF"

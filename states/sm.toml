@@ -2,6 +2,7 @@ name = "San Marino"
 code = "SM"
 flag = "🇸🇲"
 region = "Europe"
+oceans = ""
 population = 33581
 land_area_km2 = 61
 currency_code = "EUR"

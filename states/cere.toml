@@ -2,6 +2,7 @@ name = "Ceres"
 code = "CERE"
 flag = "🌾"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 2772000
 currency_code = "CERE"

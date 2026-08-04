@@ -2,6 +2,7 @@ name = "Trinidad"
 code = "TT"
 flag = "🇹🇹"
 region = "Latin America"
+oceans = "ATL"
 population = 1534937
 land_area_km2 = 5130
 currency_code = "TTD"

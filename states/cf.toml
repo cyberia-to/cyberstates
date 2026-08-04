@@ -2,6 +2,7 @@ name = "Centrafrique"
 code = "CF"
 flag = "🇨🇫"
 region = "Africa"
+oceans = ""
 population = 5742315
 land_area_km2 = 622984
 currency_code = "XAF"

@@ -2,6 +2,7 @@ name = "Bahrain"
 code = "BH"
 flag = "🇧🇭"
 region = "Middle East"
+oceans = "IND"
 population = 1501635
 land_area_km2 = 778
 currency_code = "BHD"

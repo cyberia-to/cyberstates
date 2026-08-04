@@ -2,6 +2,7 @@ name = "Greenland"
 code = "GL"
 flag = "🇬🇱"
 region = "Europe"
+oceans = "ATL,ARCO"
 population = 57000
 land_area_km2 = 2166086
 currency_code = "DKK"

@@ -2,6 +2,7 @@ name = "Congo"
 code = "CD"
 flag = "🇨🇩"
 region = "Africa"
+oceans = "ATL"
 population = 102262808
 land_area_km2 = 2344858
 currency_code = "CDF"

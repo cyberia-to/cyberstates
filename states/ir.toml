@@ -2,6 +2,7 @@ name = "Iran"
 code = "IR"
 flag = "🇮🇷"
 region = "Middle East"
+oceans = "IND"
 population = 89172767
 land_area_km2 = 1648195
 currency_code = "IRR"

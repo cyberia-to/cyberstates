@@ -2,6 +2,7 @@ name = "Abkhazia"
 code = "ABK"
 flag = "✋"
 region = "Eurasia"
+oceans = "ATL"
 population = 245000
 land_area_km2 = 8665
 currency_code = "RUB"

@@ -2,6 +2,7 @@ name = "Mozambique"
 code = "MZ"
 flag = "🇲🇿"
 region = "Africa"
+oceans = "IND"
 population = 33897354
 land_area_km2 = 801590
 currency_code = "MZN"

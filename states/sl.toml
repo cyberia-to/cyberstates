@@ -2,6 +2,7 @@ name = "Sierra Leone"
 code = "SL"
 flag = "🇸🇱"
 region = "Africa"
+oceans = "ATL"
 population = 8791092
 land_area_km2 = 71740
 currency_code = "SLE"

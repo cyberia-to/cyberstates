@@ -2,6 +2,7 @@ name = "Oberon"
 code = "OBER"
 flag = "🧝"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 7285000
 currency_code = "OBER"

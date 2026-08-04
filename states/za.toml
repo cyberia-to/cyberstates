@@ -2,6 +2,7 @@ name = "South Africa"
 code = "ZA"
 flag = "🇿🇦"
 region = "Africa"
+oceans = "ATL,IND"
 population = 60414495
 land_area_km2 = 1221037
 currency_code = "ZAR"

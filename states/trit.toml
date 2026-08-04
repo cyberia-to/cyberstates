@@ -2,6 +2,7 @@ name = "Triton"
 code = "TRIT"
 flag = "🔱"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 23018000
 currency_code = "TRIT"

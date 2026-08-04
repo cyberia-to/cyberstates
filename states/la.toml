@@ -2,6 +2,7 @@ name = "Laos"
 code = "LA"
 flag = "🇱🇦"
 region = "Asia"
+oceans = ""
 population = 7633779
 land_area_km2 = 236800
 currency_code = "LAK"

@@ -2,6 +2,7 @@ name = "Morocco"
 code = "MA"
 flag = "🇲🇦"
 region = "Africa"
+oceans = "ATL"
 population = 37840044
 land_area_km2 = 446550
 currency_code = "MAD"

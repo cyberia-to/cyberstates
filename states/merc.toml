@@ -2,6 +2,7 @@ name = "Mercury"
 code = "MERC"
 flag = "🪽"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 74797000
 currency_code = "MERC"

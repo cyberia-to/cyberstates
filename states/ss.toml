@@ -2,6 +2,7 @@ name = "South Sudan"
 code = "SS"
 flag = "🇸🇸"
 region = "Africa"
+oceans = ""
 population = 11088796
 land_area_km2 = 619745
 currency_code = "SSP"

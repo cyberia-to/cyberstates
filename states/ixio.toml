@@ -2,6 +2,7 @@ name = "Ixion"
 code = "IXIO"
 flag = "🎡"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 1582000
 currency_code = "IXIO"

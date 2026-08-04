@@ -2,6 +2,7 @@ name = "Namibia"
 code = "NA"
 flag = "🇳🇦"
 region = "Africa"
+oceans = "ATL"
 population = 2604172
 land_area_km2 = 824292
 currency_code = "NAD"

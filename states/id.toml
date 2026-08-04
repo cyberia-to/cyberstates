@@ -2,6 +2,7 @@ name = "Indonesia"
 code = "ID"
 flag = "🇮🇩"
 region = "Asia"
+oceans = "PAC,IND"
 population = 277534122
 land_area_km2 = 1904569
 currency_code = "IDR"

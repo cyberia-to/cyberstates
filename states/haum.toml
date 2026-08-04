@@ -2,6 +2,7 @@ name = "Haumea"
 code = "HAUM"
 flag = "🌺"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 8000000
 currency_code = "HAUM"

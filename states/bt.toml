@@ -2,6 +2,7 @@ name = "Bhutan"
 code = "BT"
 flag = "🇧🇹"
 region = "Asia"
+oceans = ""
 population = 787941
 land_area_km2 = 38394
 currency_code = "BTN"

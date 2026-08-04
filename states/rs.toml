@@ -2,6 +2,7 @@ name = "Serbia"
 code = "RS"
 flag = "🇷🇸"
 region = "Europe"
+oceans = ""
 population = 6647003
 land_area_km2 = 77474
 currency_code = "RSD"

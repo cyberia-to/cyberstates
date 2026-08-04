@@ -2,6 +2,7 @@ name = "Timor"
 code = "TL"
 flag = "🇹🇱"
 region = "Asia"
+oceans = "PAC,IND"
 population = 1360596
 land_area_km2 = 14874
 currency_code = "USD"

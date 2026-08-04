@@ -2,6 +2,7 @@ name = "Togo"
 code = "TG"
 flag = "🇹🇬"
 region = "Africa"
+oceans = "ATL"
 population = 8848699
 land_area_km2 = 56785
 currency_code = "XOF"

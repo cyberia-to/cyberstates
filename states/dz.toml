@@ -2,6 +2,7 @@ name = "Algeria"
 code = "DZ"
 flag = "🇩🇿"
 region = "Africa"
+oceans = "ATL"
 population = 45606480
 land_area_km2 = 2381741
 currency_code = "DZD"

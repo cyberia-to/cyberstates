@@ -2,6 +2,7 @@ name = "Jamaica"
 code = "JM"
 flag = "🇯🇲"
 region = "Latin America"
+oceans = "ATL"
 population = 2820436
 land_area_km2 = 10991
 currency_code = "JMD"

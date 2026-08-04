@@ -2,6 +2,7 @@ name = "Earth"
 code = "ERTH"
 flag = "🌍"
 region = "Solar System"
+oceans = ""
 population = 8030440208
 land_area_km2 = 510072000
 currency_code = "ERTH"

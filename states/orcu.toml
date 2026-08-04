@@ -2,6 +2,7 @@ name = "Orcus"
 code = "ORCU"
 flag = "⚱️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 2641000
 currency_code = "ORCU"

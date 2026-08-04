@@ -2,6 +2,7 @@ name = "Deimos"
 code = "DEIM"
 flag = "😨"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 495
 currency_code = "DEIM"

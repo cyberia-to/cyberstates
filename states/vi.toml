@@ -2,6 +2,7 @@ name = "Thomas"
 code = "VI"
 flag = "🇻🇮"
 region = "Latin America"
+oceans = "ATL"
 population = 87000
 land_area_km2 = 347
 currency_code = "USD"

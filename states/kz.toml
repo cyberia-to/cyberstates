@@ -2,6 +2,7 @@ name = "Kazakhstan"
 code = "KZ"
 flag = "🇰🇿"
 region = "Eurasia"
+oceans = ""
 population = 19606633
 land_area_km2 = 2724900
 currency_code = "KZT"

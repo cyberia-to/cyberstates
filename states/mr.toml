@@ -2,6 +2,7 @@ name = "Mauritania"
 code = "MR"
 flag = "🇲🇷"
 region = "Africa"
+oceans = "ATL"
 population = 4862989
 land_area_km2 = 1030700
 currency_code = "MRU"

@@ -2,6 +2,7 @@ name = "Lucia"
 code = "LC"
 flag = "🇱🇨"
 region = "Latin America"
+oceans = "ATL"
 population = 184100
 land_area_km2 = 616
 currency_code = "XCD"

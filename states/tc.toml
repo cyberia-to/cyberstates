@@ -2,6 +2,7 @@ name = "Turks"
 code = "TC"
 flag = "🇹🇨"
 region = "Latin America"
+oceans = "ATL"
 population = 46000
 land_area_km2 = 948
 currency_code = "USD"

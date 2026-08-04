@@ -20,6 +20,8 @@ struct CountryToml {
     visa_free_destinations: u32,
     visa_free_inbound: u32,
     #[serde(default)]
+    oceans: String,
+    #[serde(default)]
     visa_access: Vec<VisaAccessToml>,
 }
 
@@ -98,6 +100,7 @@ fn main() {
              \x20           token_price_usd: {:.6}_f64,\n\
              \x20           visa_free_destinations: {},\n\
              \x20           visa_free_inbound: {},\n\
+             \x20           oceans: \"{}\".to_string(),\n\
              \x20       }},\n",
             escape(&c.name),
             escape(&c.code),
@@ -111,6 +114,7 @@ fn main() {
             c.token_price_usd,
             c.visa_free_destinations,
             c.visa_free_inbound,
+            escape(&c.oceans),
         ));
     }
 

@@ -2,6 +2,7 @@ name = "Falklands"
 code = "FK"
 flag = "🇫🇰"
 region = "Latin America"
+oceans = "ATL"
 population = 3800
 land_area_km2 = 12173
 currency_code = "FKP"

@@ -2,6 +2,7 @@ name = "Myanmar"
 code = "MM"
 flag = "🇲🇲"
 region = "Asia"
+oceans = "IND"
 population = 54179306
 land_area_km2 = 676578
 currency_code = "MMK"

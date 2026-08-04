@@ -2,6 +2,7 @@ name = "Yemen"
 code = "YE"
 flag = "🇾🇪"
 region = "Middle East"
+oceans = "IND"
 population = 34449825
 land_area_km2 = 527968
 currency_code = "YER"

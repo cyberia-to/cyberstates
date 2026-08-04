@@ -2,6 +2,7 @@ name = "Chad"
 code = "TD"
 flag = "🇹🇩"
 region = "Africa"
+oceans = ""
 population = 18278568
 land_area_km2 = 1284000
 currency_code = "XAF"

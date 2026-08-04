@@ -2,6 +2,7 @@ name = "Cyprus"
 code = "CY"
 flag = "🇨🇾"
 region = "Europe"
+oceans = "ATL"
 population = 1260138
 land_area_km2 = 9251
 currency_code = "EUR"

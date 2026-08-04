@@ -2,6 +2,7 @@ name = "Pluto"
 code = "PLUT"
 flag = "❤️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 17790000
 currency_code = "PLUT"

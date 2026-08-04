@@ -2,6 +2,7 @@ name = "Sweden"
 code = "SE"
 flag = "🇸🇪"
 region = "Europe"
+oceans = "ATL"
 population = 10612086
 land_area_km2 = 450295
 currency_code = "SEK"

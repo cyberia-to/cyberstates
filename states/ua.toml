@@ -2,6 +2,7 @@ name = "Ukraine"
 code = "UA"
 flag = "🇺🇦"
 region = "Eurasia"
+oceans = "ATL"
 population = 37000000
 land_area_km2 = 603500
 currency_code = "UAH"

@@ -2,6 +2,7 @@ name = "Peru"
 code = "PE"
 flag = "🇵🇪"
 region = "Latin America"
+oceans = "PAC"
 population = 34352719
 land_area_km2 = 1285216
 currency_code = "PEN"

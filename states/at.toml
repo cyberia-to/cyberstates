@@ -2,6 +2,7 @@ name = "Austria"
 code = "AT"
 flag = "🇦🇹"
 region = "Europe"
+oceans = ""
 population = 9104772
 land_area_km2 = 83871
 currency_code = "EUR"

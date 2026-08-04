@@ -2,6 +2,7 @@ name = "Angola"
 code = "AO"
 flag = "🇦🇴"
 region = "Africa"
+oceans = "ATL"
 population = 36684202
 land_area_km2 = 1246700
 currency_code = "AOA"

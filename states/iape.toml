@@ -2,6 +2,7 @@ name = "Iapetus"
 code = "IAPE"
 flag = "🌗"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 6780000
 currency_code = "IAPE"

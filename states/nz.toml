@@ -2,6 +2,7 @@ name = "New Zealand"
 code = "NZ"
 flag = "🇳🇿"
 region = "Oceania"
+oceans = "PAC"
 population = 5228100
 land_area_km2 = 270467
 currency_code = "NZD"

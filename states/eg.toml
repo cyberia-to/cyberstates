@@ -2,6 +2,7 @@ name = "Egypt"
 code = "EG"
 flag = "🇪🇬"
 region = "Africa"
+oceans = "ATL,IND"
 population = 109262178
 land_area_km2 = 1001450
 currency_code = "EGP"

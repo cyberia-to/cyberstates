@@ -2,6 +2,7 @@ name = "Honduras"
 code = "HN"
 flag = "🇭🇳"
 region = "Latin America"
+oceans = "PAC,ATL"
 population = 10432860
 land_area_km2 = 112492
 currency_code = "HNL"

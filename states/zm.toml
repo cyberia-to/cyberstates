@@ -2,6 +2,7 @@ name = "Zambia"
 code = "ZM"
 flag = "🇿🇲"
 region = "Africa"
+oceans = ""
 population = 20569737
 land_area_km2 = 752618
 currency_code = "ZMW"

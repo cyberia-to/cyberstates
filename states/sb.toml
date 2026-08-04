@@ -2,6 +2,7 @@ name = "Solomons"
 code = "SB"
 flag = "🇸🇧"
 region = "Oceania"
+oceans = "PAC"
 population = 740424
 land_area_km2 = 28896
 currency_code = "SBD"

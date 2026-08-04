@@ -2,6 +2,7 @@ name = "Costa Rica"
 code = "CR"
 flag = "🇨🇷"
 region = "Latin America"
+oceans = "PAC,ATL"
 population = 5212173
 land_area_km2 = 51100
 currency_code = "CRC"

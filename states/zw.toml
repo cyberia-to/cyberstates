@@ -2,6 +2,7 @@ name = "Zimbabwe"
 code = "ZW"
 flag = "🇿🇼"
 region = "Africa"
+oceans = ""
 population = 16665409
 land_area_km2 = 390757
 currency_code = "ZWL"

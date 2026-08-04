@@ -2,6 +2,7 @@ name = "Grenada"
 code = "GD"
 flag = "🇬🇩"
 region = "Latin America"
+oceans = "ATL"
 population = 125438
 land_area_km2 = 344
 currency_code = "XCD"

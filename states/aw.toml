@@ -2,6 +2,7 @@ name = "Aruba"
 code = "AW"
 flag = "🇦🇼"
 region = "Latin America"
+oceans = "ATL"
 population = 108000
 land_area_km2 = 180
 currency_code = "AWG"

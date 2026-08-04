@@ -2,6 +2,7 @@ name = "Ethiopia"
 code = "ET"
 flag = "🇪🇹"
 region = "Africa"
+oceans = ""
 population = 126527060
 land_area_km2 = 1104300
 currency_code = "ETB"

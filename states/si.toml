@@ -2,6 +2,7 @@ name = "Slovenia"
 code = "SI"
 flag = "🇸🇮"
 region = "Europe"
+oceans = "ATL"
 population = 2116972
 land_area_km2 = 20273
 currency_code = "EUR"

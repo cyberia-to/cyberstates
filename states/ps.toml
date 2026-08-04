@@ -2,6 +2,7 @@ name = "Palestine"
 code = "PS"
 flag = "🇵🇸"
 region = "Middle East"
+oceans = "ATL"
 population = 5483450
 land_area_km2 = 6020
 currency_code = "ILS"

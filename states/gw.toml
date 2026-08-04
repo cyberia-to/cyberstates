@@ -2,6 +2,7 @@ name = "Bissau"
 code = "GW"
 flag = "🇬🇼"
 region = "Africa"
+oceans = "ATL"
 population = 2150842
 land_area_km2 = 36125
 currency_code = "XOF"

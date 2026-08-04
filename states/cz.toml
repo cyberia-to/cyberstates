@@ -2,6 +2,7 @@ name = "Czechia"
 code = "CZ"
 flag = "🇨🇿"
 region = "Europe"
+oceans = ""
 population = 10827529
 land_area_km2 = 78867
 currency_code = "CZK"

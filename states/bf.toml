@@ -2,6 +2,7 @@ name = "Burkina"
 code = "BF"
 flag = "🇧🇫"
 region = "Africa"
+oceans = ""
 population = 22673762
 land_area_km2 = 274200
 currency_code = "XOF"

@@ -2,6 +2,7 @@ name = "Cameroon"
 code = "CM"
 flag = "🇨🇲"
 region = "Africa"
+oceans = "ATL"
 population = 28647293
 land_area_km2 = 475442
 currency_code = "XAF"

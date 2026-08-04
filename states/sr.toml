@@ -2,6 +2,7 @@ name = "Suriname"
 code = "SR"
 flag = "🇸🇷"
 region = "Latin America"
+oceans = "ATL"
 population = 618040
 land_area_km2 = 163820
 currency_code = "SRD"

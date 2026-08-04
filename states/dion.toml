@@ -2,6 +2,7 @@ name = "Dione"
 code = "DION"
 flag = "🏛️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 3960000
 currency_code = "DION"

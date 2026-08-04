@@ -2,6 +2,7 @@ name = "Libya"
 code = "LY"
 flag = "🇱🇾"
 region = "Africa"
+oceans = "ATL"
 population = 7137931
 land_area_km2 = 1759540
 currency_code = "LYD"

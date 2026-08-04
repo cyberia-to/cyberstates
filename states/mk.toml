@@ -2,6 +2,7 @@ name = "Macedonia"
 code = "MK"
 flag = "🇲🇰"
 region = "Europe"
+oceans = ""
 population = 1836713
 land_area_km2 = 25713
 currency_code = "MKD"

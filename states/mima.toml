@@ -2,6 +2,7 @@ name = "Mimas"
 code = "MIMA"
 flag = "🎯"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 493000
 currency_code = "MIMA"

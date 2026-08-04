@@ -2,6 +2,7 @@ name = "Burundi"
 code = "BI"
 flag = "🇧🇮"
 region = "Africa"
+oceans = ""
 population = 13238559
 land_area_km2 = 27834
 currency_code = "BIF"

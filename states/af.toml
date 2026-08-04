@@ -2,6 +2,7 @@ name = "Afghanistan"
 code = "AF"
 flag = "🇦🇫"
 region = "Asia"
+oceans = ""
 population = 41128771
 land_area_km2 = 652230
 currency_code = "AFN"

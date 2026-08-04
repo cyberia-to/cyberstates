@@ -2,6 +2,7 @@ name = "Gibraltar"
 code = "GI"
 flag = "🇬🇮"
 region = "Europe"
+oceans = "ATL"
 population = 34000
 land_area_km2 = 7
 currency_code = "GIP"

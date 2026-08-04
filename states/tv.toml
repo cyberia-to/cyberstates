@@ -2,6 +2,7 @@ name = "Tuvalu"
 code = "TV"
 flag = "🇹🇻"
 region = "Oceania"
+oceans = "PAC"
 population = 11312
 land_area_km2 = 26
 currency_code = "AUD"

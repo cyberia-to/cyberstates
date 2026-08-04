@@ -2,6 +2,7 @@ name = "Bahamas"
 code = "BS"
 flag = "🇧🇸"
 region = "Latin America"
+oceans = "ATL"
 population = 412623
 land_area_km2 = 13943
 currency_code = "BSD"

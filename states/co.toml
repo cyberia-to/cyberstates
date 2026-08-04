@@ -2,6 +2,7 @@ name = "Colombia"
 code = "CO"
 flag = "🇨🇴"
 region = "Latin America"
+oceans = "PAC,ATL"
 population = 52085168
 land_area_km2 = 1141748
 currency_code = "COP"

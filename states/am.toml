@@ -2,6 +2,7 @@ name = "Armenia"
 code = "AM"
 flag = "🇦🇲"
 region = "Eurasia"
+oceans = ""
 population = 2777970
 land_area_km2 = 29743
 currency_code = "AMD"

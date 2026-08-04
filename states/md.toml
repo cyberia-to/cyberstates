@@ -2,6 +2,7 @@ name = "Moldova"
 code = "MD"
 flag = "🇲🇩"
 region = "Eurasia"
+oceans = ""
 population = 2512758
 land_area_km2 = 33846
 currency_code = "MDL"

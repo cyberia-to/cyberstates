@@ -2,6 +2,7 @@ name = "Niger"
 code = "NE"
 flag = "🇳🇪"
 region = "Africa"
+oceans = ""
 population = 27202843
 land_area_km2 = 1267000
 currency_code = "XOF"

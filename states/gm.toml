@@ -2,6 +2,7 @@ name = "Gambia"
 code = "GM"
 flag = "🇬🇲"
 region = "Africa"
+oceans = "ATL"
 population = 2486945
 land_area_km2 = 11300
 currency_code = "GMD"

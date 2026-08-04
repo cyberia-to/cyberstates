@@ -2,6 +2,7 @@ name = "Kyrgyzstan"
 code = "KG"
 flag = "🇰🇬"
 region = "Eurasia"
+oceans = ""
 population = 7100800
 land_area_km2 = 199951
 currency_code = "KGS"

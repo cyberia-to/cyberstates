@@ -2,6 +2,7 @@ name = "Guam"
 code = "GU"
 flag = "🇬🇺"
 region = "Oceania"
+oceans = "PAC"
 population = 172000
 land_area_km2 = 549
 currency_code = "USD"

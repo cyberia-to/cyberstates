@@ -2,6 +2,7 @@ name = "Papua"
 code = "PG"
 flag = "🇵🇬"
 region = "Oceania"
+oceans = "PAC"
 population = 10329931
 land_area_km2 = 462840
 currency_code = "PGK"

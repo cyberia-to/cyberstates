@@ -2,6 +2,7 @@ name = "Bermuda"
 code = "BM"
 flag = "🇧🇲"
 region = "North America"
+oceans = "ATL"
 population = 64000
 land_area_km2 = 54
 currency_code = "BMD"

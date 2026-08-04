@@ -2,6 +2,7 @@ name = "Mauritius"
 code = "MU"
 flag = "🇲🇺"
 region = "Africa"
+oceans = "IND"
 population = 1300557
 land_area_km2 = 2040
 currency_code = "MUR"

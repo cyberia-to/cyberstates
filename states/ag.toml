@@ -2,6 +2,7 @@ name = "Antigua"
 code = "AG"
 flag = "🇦🇬"
 region = "Latin America"
+oceans = "ATL"
 population = 93219
 land_area_km2 = 442
 currency_code = "XCD"

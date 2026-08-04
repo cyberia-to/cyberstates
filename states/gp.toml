@@ -2,6 +2,7 @@ name = "Guadeloupe"
 code = "GP"
 flag = "🇬🇵"
 region = "Latin America"
+oceans = ""
 population = 400000
 land_area_km2 = 1628
 currency_code = "EUR"

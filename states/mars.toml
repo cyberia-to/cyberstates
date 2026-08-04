@@ -2,6 +2,7 @@ name = "Mars"
 code = "MARS"
 flag = "♂️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 144370000
 currency_code = "MARS"

@@ -2,6 +2,7 @@ name = "Callisto"
 code = "CALL"
 flag = "🕳️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 73000000
 currency_code = "CALL"

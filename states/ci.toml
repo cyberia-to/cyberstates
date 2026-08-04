@@ -2,6 +2,7 @@ name = "Ivory Coast"
 code = "CI"
 flag = "🇨🇮"
 region = "Africa"
+oceans = "ATL"
 population = 28873034
 land_area_km2 = 322463
 currency_code = "XOF"

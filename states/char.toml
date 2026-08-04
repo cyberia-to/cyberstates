@@ -2,6 +2,7 @@ name = "Charon"
 code = "CHAR"
 flag = "⛴️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 4610000
 currency_code = "CHAR"

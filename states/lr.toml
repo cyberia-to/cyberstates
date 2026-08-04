@@ -2,6 +2,7 @@ name = "Liberia"
 code = "LR"
 flag = "🇱🇷"
 region = "Africa"
+oceans = "ATL"
 population = 5418377
 land_area_km2 = 111369
 currency_code = "LRD"

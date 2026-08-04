@@ -2,6 +2,7 @@ name = "Montenegro"
 code = "ME"
 flag = "🇲🇪"
 region = "Europe"
+oceans = "ATL"
 population = 616177
 land_area_km2 = 13812
 currency_code = "EUR"

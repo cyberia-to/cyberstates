@@ -2,6 +2,7 @@ name = "Finland"
 code = "FI"
 flag = "🇫🇮"
 region = "Europe"
+oceans = "ATL"
 population = 5587442
 land_area_km2 = 338424
 currency_code = "EUR"

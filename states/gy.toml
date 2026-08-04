@@ -2,6 +2,7 @@ name = "Guyana"
 code = "GY"
 flag = "🇬🇾"
 region = "Latin America"
+oceans = "ATL"
 population = 808726
 land_area_km2 = 214969
 currency_code = "GYD"

@@ -2,6 +2,7 @@ name = "Turkmenistan"
 code = "TM"
 flag = "🇹🇲"
 region = "Eurasia"
+oceans = ""
 population = 6430770
 land_area_km2 = 488100
 currency_code = "TMT"

@@ -2,6 +2,7 @@ name = "Uganda"
 code = "UG"
 flag = "🇺🇬"
 region = "Africa"
+oceans = ""
 population = 48582334
 land_area_km2 = 241038
 currency_code = "UGX"

@@ -2,6 +2,7 @@ name = "Comoros"
 code = "KM"
 flag = "🇰🇲"
 region = "Africa"
+oceans = "IND"
 population = 836774
 land_area_km2 = 1862
 currency_code = "KMF"

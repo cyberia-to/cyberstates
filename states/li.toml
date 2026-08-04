@@ -2,6 +2,7 @@ name = "Liechtenstein"
 code = "LI"
 flag = "🇱🇮"
 region = "Europe"
+oceans = ""
 population = 39584
 land_area_km2 = 160
 currency_code = "CHF"

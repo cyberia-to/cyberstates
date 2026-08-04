@@ -2,6 +2,7 @@ name = "Somalia"
 code = "SO"
 flag = "🇸🇴"
 region = "Africa"
+oceans = "IND"
 population = 18143378
 land_area_km2 = 637657
 currency_code = "SOS"

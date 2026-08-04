@@ -2,6 +2,7 @@ name = "South Ossetia"
 code = "OST"
 flag = "🏔️"
 region = "Eurasia"
+oceans = ""
 population = 53000
 land_area_km2 = 3900
 currency_code = "RUB"

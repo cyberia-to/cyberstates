@@ -2,6 +2,7 @@ name = "Ariel"
 code = "ARIE"
 flag = "🧚"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 4211000
 currency_code = "ARIE"

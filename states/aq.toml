@@ -2,6 +2,7 @@ name = "Antarctica"
 code = "AQ"
 flag = "🇦🇶"
 region = "Antarctica"
+oceans = "SOUO"
 population = 4400
 land_area_km2 = 14200000
 currency_code = "AQD"

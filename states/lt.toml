@@ -2,6 +2,7 @@ name = "Lithuania"
 code = "LT"
 flag = "🇱🇹"
 region = "Europe"
+oceans = "ATL"
 population = 2718352
 land_area_km2 = 65300
 currency_code = "EUR"

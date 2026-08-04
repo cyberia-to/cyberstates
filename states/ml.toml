@@ -2,6 +2,7 @@ name = "Mali"
 code = "ML"
 flag = "🇲🇱"
 region = "Africa"
+oceans = ""
 population = 22593590
 land_area_km2 = 1240192
 currency_code = "XOF"

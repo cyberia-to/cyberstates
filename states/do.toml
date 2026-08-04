@@ -2,6 +2,7 @@ name = "Dominicana"
 code = "DO"
 flag = "🇩🇴"
 region = "Latin America"
+oceans = "ATL"
 population = 11228821
 land_area_km2 = 48671
 currency_code = "DOP"

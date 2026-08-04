@@ -70,6 +70,20 @@ pub fn CountryPage() -> impl IntoView {
 
                     // rank in each rating = position in that landing's table
                     let all_states = load_countries();
+
+                    // an ocean aggregates the states on its shores: list them,
+                    // richest first, so the page shows what the number is made of
+                    let is_ocean = c.region == "Oceans";
+                    let mut members: Vec<Country> = if is_ocean {
+                        all_states.iter()
+                            .filter(|o| o.oceans.split(',').any(|t| t == c.code))
+                            .cloned()
+                            .collect()
+                    } else {
+                        Vec::new()
+                    };
+                    members.sort_by(|a, b| b.money_supply_b_usd.partial_cmp(&a.money_supply_b_usd).unwrap_or(std::cmp::Ordering::Equal));
+                    let member_count = members.len();
                     let rank_of = |f: SortField| -> (String, &'static str, &'static str) {
                         let mine = c.metric(f);
                         let rank = all_states.iter().filter(|o| o.metric(f) > mine).count() + 1;
@@ -209,8 +223,31 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                             </div>
 
+                            // An ocean's aggregate is the sum of its shores —
+                            // show the states, richest first, each a link
+                            {is_ocean.then(|| view! {
+                                <div style="margin-top: 32px;">
+                                    <div class="section-label">
+                                        {format!("{} STATES ON THIS SHORE", member_count)}
+                                    </div>
+                                    <div class="pending-grid">
+                                        {members.into_iter().map(|m| {
+                                            let href = format!("/state/{}", m.code.to_lowercase());
+                                            let cap = m.cap_fmt();
+                                            view! {
+                                                <a href=href class="region-pill pending-pill">
+                                                    <span style="margin-right: 6px;">{m.flag.clone()}</span>
+                                                    {m.name.clone()}
+                                                    <span style="color: #555; margin-left: 6px; font-size: 11px;">{cap}</span>
+                                                </a>
+                                            }
+                                        }).collect_view()}
+                                    </div>
+                                </div>
+                            })}
 
-                            // Visa sections side by side
+                            // Visa sections side by side (terrestrial only)
+                            {(!is_ocean).then(|| view! {
                             <div class="visa-grid" style="margin-top: 40px;">
                                 <FilterableVisaSection
                                     title="OUTGOING — WHERE CITIZENS CAN TRAVEL"
@@ -223,6 +260,7 @@ pub fn CountryPage() -> impl IntoView {
                                     entries=incoming
                                 />
                             </div>
+                            })}
                         </div>
                     }.into_any()
                 }

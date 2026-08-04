@@ -2,6 +2,7 @@ name = "Kiribati"
 code = "KI"
 flag = "🇰🇮"
 region = "Oceania"
+oceans = "PAC"
 population = 131232
 land_area_km2 = 811
 currency_code = "AUD"

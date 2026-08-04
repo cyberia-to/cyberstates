@@ -2,6 +2,7 @@ name = "China"
 code = "CN"
 flag = "🇨🇳"
 region = "Asia"
+oceans = "PAC"
 population = 1425671352
 land_area_km2 = 9596961
 currency_code = "CNY"

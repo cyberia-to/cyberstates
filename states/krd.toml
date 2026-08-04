@@ -2,6 +2,7 @@ name = "Kurdistan"
 code = "KRD"
 flag = "☀️"
 region = "Middle East"
+oceans = ""
 population = 6000000
 land_area_km2 = 40643
 currency_code = "IQD"

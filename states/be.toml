@@ -2,6 +2,7 @@ name = "Belgium"
 code = "BE"
 flag = "🇧🇪"
 region = "Europe"
+oceans = "ATL"
 population = 11686140
 land_area_km2 = 30528
 currency_code = "EUR"

@@ -2,6 +2,7 @@ name = "Mongolia"
 code = "MN"
 flag = "🇲🇳"
 region = "Asia"
+oceans = ""
 population = 3447157
 land_area_km2 = 1564116
 currency_code = "MNT"

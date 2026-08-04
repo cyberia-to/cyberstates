@@ -2,6 +2,7 @@ name = "Hygiea"
 code = "HYGI"
 flag = "⚕️"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 592000
 currency_code = "HYGI"

@@ -2,6 +2,7 @@ name = "Umbriel"
 code = "UMBR"
 flag = "🌑"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 4296000
 currency_code = "UMBR"

@@ -2,6 +2,7 @@ name = "Vatican"
 code = "VA"
 flag = "🇻🇦"
 region = "Europe"
+oceans = ""
 population = 800
 land_area_km2 = 0
 currency_code = "EUR"

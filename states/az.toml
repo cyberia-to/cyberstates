@@ -2,6 +2,7 @@ name = "Azerbaijan"
 code = "AZ"
 flag = "🇦🇿"
 region = "Eurasia"
+oceans = ""
 population = 10412651
 land_area_km2 = 86600
 currency_code = "AZN"

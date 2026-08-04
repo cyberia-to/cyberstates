@@ -2,6 +2,7 @@ name = "Andorra"
 code = "AD"
 flag = "🇦🇩"
 region = "Europe"
+oceans = ""
 population = 80088
 land_area_km2 = 468
 currency_code = "EUR"

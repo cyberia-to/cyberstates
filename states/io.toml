@@ -2,6 +2,7 @@ name = "Io"
 code = "IO"
 flag = "🌋"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 41910000
 currency_code = "IOC"

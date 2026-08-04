@@ -2,6 +2,7 @@ name = "Luxembourg"
 code = "LU"
 flag = "🇱🇺"
 region = "Europe"
+oceans = ""
 population = 660809
 land_area_km2 = 2586
 currency_code = "EUR"

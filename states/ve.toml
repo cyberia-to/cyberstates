@@ -2,6 +2,7 @@ name = "Venezuela"
 code = "VE"
 flag = "🇻🇪"
 region = "Latin America"
+oceans = "ATL"
 population = 28838499
 land_area_km2 = 912050
 currency_code = "VES"

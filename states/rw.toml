@@ -2,6 +2,7 @@ name = "Rwanda"
 code = "RW"
 flag = "🇷🇼"
 region = "Africa"
+oceans = ""
 population = 14094683
 land_area_km2 = 26338
 currency_code = "RWF"

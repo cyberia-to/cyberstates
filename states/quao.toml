@@ -2,6 +2,7 @@ name = "Quaoar"
 code = "QUAO"
 flag = "🪶"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 3730000
 currency_code = "QUAO"

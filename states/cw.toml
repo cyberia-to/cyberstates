@@ -2,6 +2,7 @@ name = "Curacao"
 code = "CW"
 flag = "🇨🇼"
 region = "Latin America"
+oceans = "ATL"
 population = 155000
 land_area_km2 = 444
 currency_code = "ANG"

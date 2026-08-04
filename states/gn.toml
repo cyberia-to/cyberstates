@@ -2,6 +2,7 @@ name = "Guinea"
 code = "GN"
 flag = "🇬🇳"
 region = "Africa"
+oceans = "ATL"
 population = 14190612
 land_area_km2 = 245857
 currency_code = "GNF"

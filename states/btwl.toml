@@ -2,6 +2,7 @@ name = "Bir Tawil"
 code = "BTWL"
 flag = "🏜️"
 region = "Terra Nullius"
+oceans = ""
 population = 0
 land_area_km2 = 2060
 currency_code = "BTWL"

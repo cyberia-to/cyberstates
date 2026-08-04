@@ -2,6 +2,7 @@ name = "Slovakia"
 code = "SK"
 flag = "🇸🇰"
 region = "Europe"
+oceans = ""
 population = 5460721
 land_area_km2 = 49035
 currency_code = "EUR"

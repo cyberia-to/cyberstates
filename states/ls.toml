@@ -2,6 +2,7 @@ name = "Lesotho"
 code = "LS"
 flag = "🇱🇸"
 region = "Africa"
+oceans = ""
 population = 2330318
 land_area_km2 = 30355
 currency_code = "LSL"

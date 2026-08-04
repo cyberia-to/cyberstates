@@ -2,6 +2,7 @@ name = "Ecuador"
 code = "EC"
 flag = "🇪🇨"
 region = "Latin America"
+oceans = "PAC"
 population = 18190484
 land_area_km2 = 256369
 currency_code = "USD"

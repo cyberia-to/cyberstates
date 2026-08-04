@@ -2,6 +2,7 @@ name = "Russia"
 code = "RU"
 flag = "🇷🇺"
 region = "Eurasia"
+oceans = "PAC,ATL,ARCO"
 population = 144236933
 land_area_km2 = 17098242
 currency_code = "RUB"

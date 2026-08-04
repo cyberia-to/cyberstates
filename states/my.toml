@@ -2,6 +2,7 @@ name = "Malaysia"
 code = "MY"
 flag = "🇲🇾"
 region = "Asia"
+oceans = "PAC,IND"
 population = 33938221
 land_area_km2 = 330803
 currency_code = "MYR"

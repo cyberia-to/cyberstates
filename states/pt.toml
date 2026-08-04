@@ -2,6 +2,7 @@ name = "Portugal"
 code = "PT"
 flag = "🇵🇹"
 region = "Europe"
+oceans = "ATL"
 population = 10247605
 land_area_km2 = 92212
 currency_code = "EUR"

@@ -2,6 +2,7 @@ name = "Pridnestrovie"
 code = "PMR"
 flag = "☭"
 region = "Europe"
+oceans = ""
 population = 350000
 land_area_km2 = 4163
 currency_code = "PRB"

@@ -2,6 +2,7 @@ name = "Moon"
 code = "LUNA"
 flag = "🌕"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 37930000
 currency_code = "LUNA"

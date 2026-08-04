@@ -2,6 +2,7 @@ name = "Kosovo"
 code = "XK"
 flag = "🇽🇰"
 region = "Europe"
+oceans = ""
 population = 1795666
 land_area_km2 = 10887
 currency_code = "EUR"

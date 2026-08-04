@@ -2,6 +2,7 @@ name = "Cape Verde"
 code = "CV"
 flag = "🇨🇻"
 region = "Africa"
+oceans = "ATL"
 population = 598682
 land_area_km2 = 4033
 currency_code = "CVE"

@@ -2,6 +2,7 @@ name = "Ghana"
 code = "GH"
 flag = "🇬🇭"
 region = "Africa"
+oceans = "ATL"
 population = 34121985
 land_area_km2 = 238535
 currency_code = "GHS"

@@ -2,6 +2,7 @@ name = "Turkey"
 code = "TR"
 flag = "🇹🇷"
 region = "Eurasia"
+oceans = "ATL"
 population = 85372377
 land_area_km2 = 783562
 currency_code = "TRY"

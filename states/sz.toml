@@ -2,6 +2,7 @@ name = "Swaziland"
 code = "SZ"
 flag = "🇸🇿"
 region = "Africa"
+oceans = ""
 population = 1210822
 land_area_km2 = 17364
 currency_code = "SZL"

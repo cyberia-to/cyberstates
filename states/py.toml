@@ -2,6 +2,7 @@ name = "Paraguay"
 code = "PY"
 flag = "🇵🇾"
 region = "Latin America"
+oceans = ""
 population = 6861524
 land_area_km2 = 406752
 currency_code = "PYG"

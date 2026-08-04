@@ -2,6 +2,7 @@ name = "Caymans"
 code = "KY"
 flag = "🇰🇾"
 region = "Latin America"
+oceans = "ATL"
 population = 69000
 land_area_km2 = 264
 currency_code = "KYD"

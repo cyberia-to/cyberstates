@@ -2,6 +2,7 @@ name = "Ganymede"
 code = "GANY"
 flag = "🧲"
 region = "Solar System"
+oceans = ""
 population = 0
 land_area_km2 = 87000000
 currency_code = "GANY"
