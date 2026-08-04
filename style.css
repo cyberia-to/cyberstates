@@ -1009,26 +1009,44 @@ body {
     to   { opacity: 1; }
 }
 
-/* browsers with view transitions cross-fade whole navigations; the
-   mount fade below is the fallback for the rest */
-::view-transition-old(root),
-::view-transition-new(root) {
-    animation-duration: 300ms;
-    animation-timing-function: ease-in-out;
+/* page navigation is a breath, not a dissolve: the old content fades
+   fully OUT, then the new content fades IN — no frame ever shows both.
+   the chrome and the dock sit in their own groups and never move */
+@keyframes vt-out {
+    to { opacity: 0; }
 }
 
-/* stable regions get their own transition groups: identical between
-   pages, they render rock-solid during the cross-fade instead of
-   dipping with the root — only what actually changed dissolves */
+@keyframes vt-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+::view-transition-old(root) {
+    animation: vt-out 150ms ease-in both;
+}
+
+::view-transition-new(root) {
+    animation: vt-in 200ms ease-out 160ms both;
+}
+
 .site-chrome { view-transition-name: chrome; }
 .map-pane { view-transition-name: map; }
 .search-dock { view-transition-name: dock; }
 
+/* the map breathes with the content — same beat as root */
+::view-transition-old(map) {
+    animation: vt-out 150ms ease-in both;
+}
+
+::view-transition-new(map) {
+    animation: vt-in 200ms ease-out 160ms both;
+}
+
+/* chrome and dock: identical across pages — a plain quick cross-fade
+   renders them motionless */
 ::view-transition-old(chrome), ::view-transition-new(chrome),
-::view-transition-old(map), ::view-transition-new(map),
 ::view-transition-old(dock), ::view-transition-new(dock) {
-    animation-duration: 300ms;
-    animation-timing-function: ease-in-out;
+    animation-duration: 200ms;
 }
 
 /* the brand word swaps SEQUENTIALLY — the old one is fully gone before
