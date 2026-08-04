@@ -66,10 +66,14 @@ pub fn CountryPage() -> impl IntoView {
 
                     // rank in each rating = position in that landing's table
                     let all_states = load_countries();
-                    let rank_of = |f: SortField| -> String {
+                    let rank_of = |f: SortField| -> (String, &'static str, &'static str) {
                         let mine = c.metric(f);
-                        let ahead = all_states.iter().filter(|o| o.metric(f) > mine).count();
-                        format!("#{}", ahead + 1)
+                        let rank = all_states.iter().filter(|o| o.metric(f) > mine).count() + 1;
+                        // podium badges wear their metal at full brightness
+                        match rank_medal(rank) {
+                            Some(m) => (format!("#{}", rank), m, "1"),
+                            None => (format!("#{}", rank), "var(--cyber-green)", "0.75"),
+                        }
                     };
                     let r_capital = rank_of(SortField::Capital);
                     let r_human = rank_of(SortField::Human);
@@ -143,16 +147,16 @@ pub fn CountryPage() -> impl IntoView {
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"CAPITAL"<span class="rank-badge">{r_capital}</span></div>
+                                    <div class="stat-label">"CAPITAL"<span class="rank-badge" style:color=r_capital.1 style:opacity=r_capital.2>{r_capital.0}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">{cap}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"POPULATION"<span class="rank-badge">{r_pop}</span></div>
+                                    <div class="stat-label">"POPULATION"<span class="rank-badge" style:color=r_pop.1 style:opacity=r_pop.2>{r_pop.0}</span></div>
                                     <div class="stat-value">{pop}</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"TERRITORY"<span class="rank-badge">{r_area}</span></div>
+                                    <div class="stat-label">"TERRITORY"<span class="rank-badge" style:color=r_area.1 style:opacity=r_area.2>{r_area.0}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-blue);">{area}</div>
                                 </div>
                             </div>
@@ -161,17 +165,17 @@ pub fn CountryPage() -> impl IntoView {
                             <div class="section-label" style="margin-top: 20px;">"DERIVED"</div>
                             <div class="stat-grid">
                                 <div class="stat-card">
-                                    <div class="stat-label">"HUMAN VALUE"<span class="rank-badge">{r_human}</span></div>
+                                    <div class="stat-label">"HUMAN VALUE"<span class="rank-badge" style:color=r_human.1 style:opacity=r_human.2>{r_human.0}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-green);">{human_value}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per person"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"LAND VALUE"<span class="rank-badge">{r_land}</span></div>
+                                    <div class="stat-label">"LAND VALUE"<span class="rank-badge" style:color=r_land.1 style:opacity=r_land.2>{r_land.0}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-cyan);">{land_value}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per km²"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"DENSITY"<span class="rank-badge">{r_density}</span></div>
+                                    <div class="stat-label">"DENSITY"<span class="rank-badge" style:color=r_density.1 style:opacity=r_density.2>{r_density.0}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-purple);">{density}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"population per km²"</div>
                                 </div>
@@ -181,7 +185,7 @@ pub fn CountryPage() -> impl IntoView {
                             // formula with its live components
                             <div class="score-grid" style="margin-top: 12px;">
                                 <div class="stat-card">
-                                    <div class="stat-label">"TRAVEL FREEDOM"<span class="rank-badge">{r_freedom}</span></div>
+                                    <div class="stat-label">"TRAVEL FREEDOM"<span class="rank-badge" style:color=r_freedom.1 style:opacity=r_freedom.2>{r_freedom.0}</span></div>
                                     <div class="stat-value tabular-nums" style:color=freedom_color>{freedom_str}</div>
                                     <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden; margin-top: 8px;">
                                         <div class="openness-bar" style:width=freedom_bar style:background=freedom_color></div>
@@ -191,7 +195,7 @@ pub fn CountryPage() -> impl IntoView {
                                     </div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"HOSPITALITY"<span class="rank-badge">{r_hosp}</span></div>
+                                    <div class="stat-label">"HOSPITALITY"<span class="rank-badge" style:color=r_hosp.1 style:opacity=r_hosp.2>{r_hosp.0}</span></div>
                                     <div class="stat-value tabular-nums" style:color=openness_color>{openness_str}</div>
                                     <div style="height: 5px; background: #111; border-radius: 3px; overflow: hidden; margin-top: 8px;">
                                         <div class="openness-bar" style:width=openness_bar style:background=openness_color></div>

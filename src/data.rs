@@ -355,6 +355,26 @@ pub enum SortField {
     Density,
 }
 
+/// Podium metal for a rank — gold, silver, bronze — None below the podium.
+pub fn rank_medal(rank: usize) -> Option<&'static str> {
+    match rank {
+        1 => Some("#ffd700"),
+        2 => Some("#c0c4cc"),
+        3 => Some("#cd7f32"),
+        _ => None,
+    }
+}
+
+/// Rank column presentation, shared by every table: the podium wears its
+/// metal, the top ten stays readable, the field stays quiet.
+pub fn rank_color(rank: usize) -> &'static str {
+    rank_medal(rank).unwrap_or(if rank <= 10 { "#777" } else { "#3d3d3d" })
+}
+
+pub fn rank_weight(rank: usize) -> &'static str {
+    if rank <= 3 { "700" } else { "400" }
+}
+
 impl SortField {
     /// Ratings where a LOWER value is the good end — map colors invert
     /// so green always means "better".

@@ -48,7 +48,7 @@ pub fn CountryRow(
                 let _ = window.location().set_href(&href);
             }
         }>
-            <td style="color: #333; text-align: right;">{rank}</td>
+            <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", crate::data::rank_color(rank), crate::data::rank_weight(rank))>{rank}</td>
             <td>
                 <span style="margin-right: 8px; font-size: 16px;">{flag.clone()}</span>
                 <span style="color: #ccc;">{name.clone()}</span>

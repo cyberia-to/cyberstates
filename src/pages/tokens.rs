@@ -306,7 +306,7 @@ pub fn TokensPage() -> impl IntoView {
                                                 let _ = window.location().set_href(&href);
                                             }
                                         }>
-                                            <td style="color: #333; text-align: right;">{i + 1}</td>
+                                            <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", rank_color(i + 1), rank_weight(i + 1))>{i + 1}</td>
                                             <td style="color: var(--cyber-yellow); font-weight: 700;">{code}</td>
                                             <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                 <span style="font-size: 14px;">{flags}</span>
