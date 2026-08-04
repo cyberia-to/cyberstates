@@ -1052,14 +1052,46 @@ body {
     letter-spacing: 1px;
 }
 
+.legend-barwrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
 .legend-bar {
     position: relative;
     width: 220px;
     height: 10px;
     border-radius: 5px;
     background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);
-    cursor: crosshair;
+    cursor: pointer;
     overflow: hidden;
+}
+
+/* hover preview: ghost mark in the bar, the would-be filter above it */
+.legend-ghost {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: rgba(255, 255, 255, 0.55);
+    pointer-events: none;
+}
+
+.legend-hint {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    transform: translateX(-50%);
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #ddd;
+    background: rgba(5, 8, 6, 0.95);
+    border: 1px solid #1c2a1e;
+    border-radius: 2px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 .legend-dim {
