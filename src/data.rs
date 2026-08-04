@@ -238,10 +238,10 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
         // world totals are terrestrial: celestial listings (Earth the
         // body among them) must not dilute the visa index denominators
         let total_cap: f64 = countries.iter()
-            .filter(|c| c.region != "Solar System" && c.region != "Terra Nullius")
+            .filter(|c| is_terrestrial(&c.region))
             .map(|c| c.money_supply_b_usd).sum();
         let total_pop: f64 = countries.iter()
-            .filter(|c| c.region != "Solar System" && c.region != "Terra Nullius")
+            .filter(|c| is_terrestrial(&c.region))
             .map(|c| c.population as f64).sum();
 
         let by_name: HashMap<&str, &Country> =
@@ -360,6 +360,13 @@ fn format_number(n: u64) -> String {
     result.chars().rev().collect()
 }
 
+/// Terrestrial = carries real population and capital; the visa index
+/// denominators sum over these only, so celestial and oceanic listings
+/// never dilute the scores.
+pub fn is_terrestrial(region: &str) -> bool {
+    !matches!(region, "Oceans" | "Terra Nullius" | "Solar System")
+}
+
 pub const REGIONS: &[&str] = &[
     "All",
     "Africa",
@@ -371,8 +378,9 @@ pub const REGIONS: &[&str] = &[
     "North America",
     "Oceania",
     "Antarctica",
-    "Solar System",
+    "Oceans",
     "Terra Nullius",
+    "Solar System",
 ];
 
 #[derive(Clone, Copy, PartialEq)]
