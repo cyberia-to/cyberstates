@@ -183,7 +183,7 @@ body {
     .map-zone { flex: 0 0 auto; flex-wrap: nowrap; gap: 6px; }
 
     .nav-btn { padding: 6px 10px; font-size: 11px; letter-spacing: 1px; }
-    .num-btn { padding: 5px 8px; font-size: 11px; }
+    .region-pill.num-btn { padding: 5px 8px; font-size: 11px; letter-spacing: 1px; }
     .search-input { padding: 8px 12px; font-size: 12px; }
     .region-pill { padding: 5px 10px; font-size: 11px; }
 
@@ -231,9 +231,12 @@ body {
     position: relative;
 }
 
-.num-btn {
-    padding: 7px 12px;
+/* parity with .nav-btn: same box, same type — a control in the same family */
+.region-pill.num-btn {
+    padding: 8px 14px;
     font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
     white-space: nowrap;
 }
 
@@ -331,7 +334,7 @@ body {
     .header-row2 { display: none; }
     .rating-btn { font-size: 10px; letter-spacing: 0; padding: 6px 6px; white-space: nowrap; }
     .nav-btn { padding: 5px 6px; font-size: 10px; letter-spacing: 0.5px; }
-    .num-btn { padding: 4px 5px; }
+    .region-pill.num-btn { padding: 4px 5px; letter-spacing: 0.5px; }
     .header-row1 { gap: 4px; }
     .logo { font-size: 15px; }
 }
