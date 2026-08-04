@@ -507,6 +507,15 @@ body {
     padding-right: 10px;
 }
 
+/* one fixed row height on every listing — the box owns the height, the
+   content centers inside it, switching states/tokens never jumps */
+.cyber-table.slim tbody td {
+    height: 45px;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: middle;
+}
+
 .cyber-table th.metric-th {
     white-space: nowrap; /* one-word headers — never two lines */
     letter-spacing: 1px;

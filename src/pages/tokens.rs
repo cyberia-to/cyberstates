@@ -311,7 +311,7 @@ pub fn TokensPage() -> impl IntoView {
                                             <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", rank_color(i + 1), rank_weight(i + 1))>{i + 1}</td>
                                             <td style="color: var(--cyber-yellow); font-weight: 700;">{code}</td>
                                             <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                <span style="font-size: 14px;">{flags}</span>
+                                                <span style="font-size: 16px;">{flags}</span>
                                                 {(more > 0).then(|| view! { <span style="color: #444;">{format!(" +{}", more)}</span> })}
                                             </td>
                                             <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
