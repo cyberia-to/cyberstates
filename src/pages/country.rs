@@ -76,8 +76,9 @@ pub fn CountryPage() -> impl IntoView {
                     // an aggregate lists its member states, richest first,
                     // so the page shows what the sum is made of
                     let mut members: Vec<Country> = if is_aggregate(&c.code) {
+                        let regions = aggregate_regions(&c.code);
                         all_states.iter()
-                            .filter(|o| o.region == c.region && !is_aggregate(&o.code))
+                            .filter(|o| regions.contains(&o.region.as_str()) && !is_aggregate(&o.code))
                             .cloned()
                             .collect()
                     } else {

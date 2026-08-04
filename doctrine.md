@@ -167,7 +167,7 @@ doctrine, not a doctrine of states.
 The threshold of statehood is exact: a community becomes a cyberstate
 the day its rules become the interface of a territory. Nothing else was
 ever required — the old states just had a head start. By this test the
-roll today counts 281: UN members, their autonomous territories,
+roll today counts 278: UN members, their autonomous territories,
 partially recognized and unrecognized states —
 [Abkhazia](/state/abk), [Transnistria](/state/pmr),
 [Somaliland](/state/sol), [Kosovo](/state/xk) and their kin —

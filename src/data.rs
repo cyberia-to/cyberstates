@@ -376,7 +376,21 @@ pub enum ListingClass {
 
 /// The macro-region aggregates: one listing per continent-scale sum.
 /// Antarctica is continent-class too, but a single body, not an aggregate.
-pub const AGGREGATES: &[&str] = &["OCNA", "AFRI", "ASIA", "EURP", "EURA", "LATM", "MEST", "NAMR"];
+pub const AGGREGATES: &[&str] = &["OCNA", "AFRI", "EURA", "LATM", "NAMR"];
+
+/// Which market-regions an aggregate sums over. Eurasia is one ground:
+/// Europe, Asia and the Middle East share the landmass, so they share
+/// the listing.
+pub fn aggregate_regions(code: &str) -> &'static [&'static str] {
+    match code {
+        "OCNA" => &["Oceania"],
+        "AFRI" => &["Africa"],
+        "EURA" => &["Asia", "Europe", "Eurasia", "Middle East"],
+        "LATM" => &["Latin America"],
+        "NAMR" => &["North America"],
+        _ => &[],
+    }
+}
 
 pub fn is_aggregate(code: &str) -> bool {
     AGGREGATES.contains(&code)
