@@ -324,9 +324,9 @@ pub fn SolarMapPage() -> impl IntoView {
                 <div class="cockpit-table">
                     <table class="cyber-table slim">
                         <colgroup>
-                            <col style="width: 44px;" />
+                            <col style="width: 30px;" />
                             <col />
-                            <col style="width: 96px;" />
+                            <col style="width: 82px;" />
                         </colgroup>
                         <thead>
                             <tr>

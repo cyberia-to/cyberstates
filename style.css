@@ -1430,7 +1430,7 @@ body {
    tucks under the neighboring panels; nothing is symbolic-small */
 .solar-cockpit {
     display: grid;
-    grid-template-columns: 1fr minmax(560px, 46%);
+    grid-template-columns: 1fr minmax(720px, 61%);
     height: calc(100vh - var(--chrome-h, 0px) - 146px);
     min-height: 620px;
     margin: 2px calc(-1 * var(--pad-x, 20px)) 0;
@@ -1440,16 +1440,16 @@ body {
     position: relative;
 }
 
-/* the disk: full height, square, centered on the free band between the
-   glass table and the world — its edges sweep under both */
+/* the disk is the chooser now: moderate size, centered on the band
+   right of the table, edges tucking slightly under both neighbors */
 .cockpit-stage .solar-map {
     position: absolute;
-    top: 0;
-    height: 100%;
+    top: 50%;
+    height: 62%;
     width: auto;
     aspect-ratio: 1 / 1;
-    left: calc(322px + (100% - 322px) / 2);
-    transform: translateX(-50%);
+    left: calc(252px + (100% - 252px) / 2);
+    transform: translate(-50%, -50%);
 }
 
 .cockpit-table {
@@ -1457,7 +1457,7 @@ body {
     left: 0;
     top: 0;
     bottom: 0;
-    width: 322px;
+    width: 252px;
     overflow-y: auto;
     border: 1px solid #16211a;
     border-radius: 6px;
@@ -1466,19 +1466,20 @@ body {
     scrollbar-width: thin;
 }
 
-/* the floating table is compact: it lists, the stage shows */
+/* the floating table is an index: it lists, the panes show */
 .cockpit-table .cyber-table th,
 .cockpit-table .cyber-table td {
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 12px;
 }
 
 .cockpit-table .cyber-table.slim tbody td {
-    height: 34px;
+    height: 31px;
 }
 
 .cockpit-table .cyber-table.slim thead th {
-    height: 34px;
+    height: 30px;
     font-size: 9px;
 }
 
@@ -1507,7 +1508,7 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    padding: 4px 18px 4px 26px;
+    padding: 4px 10px 4px 16px;
     /* the disk sweeps under this pane: empty areas let clicks through
        to the dots beneath; real content re-enables itself */
     pointer-events: none;
