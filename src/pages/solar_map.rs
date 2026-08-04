@@ -205,6 +205,14 @@ pub fn SolarMapPage() -> impl IntoView {
         v
     };
 
+    // starfield: plastic-constant scatter — even, deterministic, no RNG
+    let stars: Vec<(f64, f64, f64, f64)> = (0..170)
+        .map(|i| {
+            let f = |k: f64| (i as f64 * k).fract();
+            (f(0.7548776662) * 1000.0, f(0.5698402909) * 940.0, 0.4 + f(0.318) * 1.0, 0.05 + f(0.61) * 0.22)
+        })
+        .collect();
+
     let by_code_for_pane = by_code.clone();
     let sel_body = move || by_code_for_pane.get(&selected.get()).cloned();
 
@@ -230,6 +238,87 @@ pub fn SolarMapPage() -> impl IntoView {
             </div>
 
             <div class="solar-cockpit">
+                // the stage: the system fills the whole band; panels float over it
+                <svg class="solar-map" viewBox="0 0 1000 940" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="dotglow" x="-100%" y="-100%" width="300%" height="300%">
+                            <feGaussianBlur stdDeviation="2.4" result="b"></feGaussianBlur>
+                            <feMerge>
+                                <feMergeNode in="b"></feMergeNode>
+                                <feMergeNode in="SourceGraphic"></feMergeNode>
+                            </feMerge>
+                        </filter>
+                        <radialGradient id="sunglow">
+                            <stop offset="0%" stop-color="rgba(255,240,180,0.16)"></stop>
+                            <stop offset="55%" stop-color="rgba(255,220,140,0.05)"></stop>
+                            <stop offset="100%" stop-color="rgba(255,220,140,0)"></stop>
+                        </radialGradient>
+                    </defs>
+
+                    {stars.into_iter().map(|(x, y, r, o)| view! {
+                        <circle cx=x cy=y r=r fill="#fff" opacity=o></circle>
+                    }).collect_view()}
+
+                    <circle cx=CX cy=CY r="150" fill="url(#sunglow)"></circle>
+
+                    {ring_as.clone().into_iter().map(|a| view! {
+                        <circle
+                            cx=CX cy=CY r=orbit_r(a)
+                            fill="none" stroke="#191919" stroke-width="1"
+                        ></circle>
+                    }).collect_view()}
+
+                    // distance labels on the rings, southwest
+                    {[(1.0, "1 AU"), (9.54, "10 AU"), (39.5, "40 AU"), (506.0, "500 AU")].map(|(a, t)| {
+                        let r = orbit_r(a);
+                        let th = (225.0_f64).to_radians();
+                        view! {
+                            <text
+                                x=CX + r * th.cos() y=CY - r * th.sin()
+                                class="solar-au-label" text-anchor="middle"
+                            >{t}</text>
+                        }
+                    })}
+
+                    {placed.into_iter().map(|(c, x, y, r)| {
+                        let code = c.code.clone();
+                        let code_sel = c.code.clone();
+                        let code_ring = c.code.clone();
+                        let title = format!("{} — {}", c.name, c.land_area_fmt());
+                        let label = matches!(c.code.as_str(),
+                            "SUN" | "MERC" | "VENU" | "ERTH" | "MARS" | "CERE" | "JUPI" | "SATN" | "URAN" | "NEPT" | "PLUT" | "ERIS" | "SEDN")
+                            .then(|| c.name.clone());
+                        view! {
+                            <g
+                                class="solar-map-a"
+                                on:click=move |_| selected.set(code_sel.clone())
+                            >
+                                <circle
+                                    cx=x cy=y r=r + 4.0
+                                    fill="none"
+                                    stroke=move || if selected.get() == code_ring { "var(--cyber-green)" } else { "transparent" }
+                                    stroke-width="1.5"
+                                ></circle>
+                                <circle
+                                    cx=x cy=y r=r
+                                    fill=move || colors.get().get(&code).cloned().unwrap_or_else(|| "#1a1a1a".into())
+                                    class="solar-map-dot"
+                                    filter="url(#dotglow)"
+                                >
+                                    <title>{title}</title>
+                                </circle>
+                                {label.map(|name| view! {
+                                    <text
+                                        x=x y=y + r + 13.0
+                                        text-anchor="middle"
+                                        class="solar-map-label"
+                                    >{name}</text>
+                                })}
+                            </g>
+                        }
+                    }).collect_view()}
+                </svg>
+
                 // pane 1: the table of the system
                 <div class="cockpit-table">
                     <table class="cyber-table slim">
@@ -281,53 +370,6 @@ pub fn SolarMapPage() -> impl IntoView {
                         </tbody>
                     </table>
                 </div>
-
-                // pane 2: the system map — click selects
-                <svg class="solar-map" viewBox="0 0 1000 940">
-                    {ring_as.into_iter().map(|a| view! {
-                        <circle
-                            cx=CX cy=CY r=orbit_r(a)
-                            fill="none" stroke="#131313" stroke-width="1"
-                        ></circle>
-                    }).collect_view()}
-
-                    {placed.into_iter().map(|(c, x, y, r)| {
-                        let code = c.code.clone();
-                        let code_sel = c.code.clone();
-                        let code_ring = c.code.clone();
-                        let title = format!("{} — {}", c.name, c.land_area_fmt());
-                        let label = matches!(c.code.as_str(),
-                            "SUN" | "MERC" | "VENU" | "ERTH" | "MARS" | "CERE" | "JUPI" | "SATN" | "URAN" | "NEPT" | "PLUT" | "ERIS" | "SEDN")
-                            .then(|| c.name.clone());
-                        view! {
-                            <g
-                                class="solar-map-a"
-                                on:click=move |_| selected.set(code_sel.clone())
-                            >
-                                <circle
-                                    cx=x cy=y r=r + 4.0
-                                    fill="none"
-                                    stroke=move || if selected.get() == code_ring { "var(--cyber-green)" } else { "transparent" }
-                                    stroke-width="1.5"
-                                ></circle>
-                                <circle
-                                    cx=x cy=y r=r
-                                    fill=move || colors.get().get(&code).cloned().unwrap_or_else(|| "#1a1a1a".into())
-                                    class="solar-map-dot"
-                                >
-                                    <title>{title}</title>
-                                </circle>
-                                {label.map(|name| view! {
-                                    <text
-                                        x=x y=y + r + 13.0
-                                        text-anchor="middle"
-                                        class="solar-map-label"
-                                    >{name}</text>
-                                })}
-                            </g>
-                        }
-                    }).collect_view()}
-                </svg>
 
                 // pane 3: the selected world
                 <div class="cockpit-planet">

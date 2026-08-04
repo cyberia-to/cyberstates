@@ -1426,20 +1426,42 @@ body {
 }
 
 /* ---- /solar cockpit: table · system · world --------------------------- */
+/* the cockpit is a stage: the system fills the band edge to edge,
+   the table and the world float over it as glass panels */
 .solar-cockpit {
-    display: grid;
-    grid-template-columns: 470px 1fr 400px;
-    gap: 18px;
-    align-items: start;
+    position: relative;
+    height: calc(100vh - var(--chrome-h, 0px) - 150px);
+    min-height: 560px;
     margin-top: 4px;
 }
 
+.solar-cockpit .solar-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .cockpit-table {
-    max-height: calc(100vh - 240px);
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 470px;
     overflow-y: auto;
-    border: 1px solid #111;
-    border-radius: 4px;
+    border: 1px solid #16211a;
+    border-radius: 6px;
+    background: rgba(4, 7, 5, 0.72);
+    backdrop-filter: blur(5px);
     scrollbar-width: thin;
+}
+
+.cockpit-table .cyber-table th {
+    background: rgba(5, 8, 6, 0.9);
+}
+
+.cockpit-table tbody td {
+    background: transparent;
 }
 
 /* inside its own scroll container the thead sticks to ITS top,
@@ -1456,11 +1478,21 @@ body {
 }
 
 .cockpit-planet {
-    border: 1px solid #111;
-    border-radius: 4px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 400px;
+    border: 1px solid #16211a;
+    border-radius: 6px;
     padding: 14px 16px;
-    position: sticky;
-    top: calc(var(--chrome-h, 0px) + 8px);
+    background: rgba(4, 7, 5, 0.72);
+    backdrop-filter: blur(5px);
+}
+
+.solar-au-label {
+    fill: #333;
+    font-size: 10px;
+    letter-spacing: 1.5px;
 }
 
 .planet-head {
@@ -1518,6 +1550,8 @@ body {
 }
 
 @media (max-width: 1250px) {
-    .solar-cockpit { grid-template-columns: 1fr; }
-    .cockpit-planet { position: static; }
+    .solar-cockpit { height: auto; min-height: 0; }
+    .solar-cockpit .solar-map { position: static; height: 480px; }
+    .cockpit-table { position: static; width: auto; max-height: 420px; margin-top: 12px; }
+    .cockpit-planet { position: static; width: auto; margin-top: 12px; }
 }
