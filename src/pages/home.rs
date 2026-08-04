@@ -7,6 +7,7 @@ use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
 use std::collections::HashMap;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
+use crate::components::legend::{goodness_keep, RatingLegend};
 use crate::numeraires::Numeraire;
 
 fn region_slug(r: &str) -> String {
@@ -69,6 +70,7 @@ fn map_values(
     field: SortField,
     query: &str,
     filters: &[NumFilter],
+    cut: Option<f64>,
 ) -> std::collections::HashMap<String, f64> {
     let mut ranked: Vec<(String, f64)> = countries.iter()
         .filter(|c| {
@@ -105,6 +107,13 @@ fn map_values(
             1.0
         };
         let t = if field.lower_is_better() { 1.0 - t } else { t };
+        // ranked ascending: flip the index so goodness_keep sees the
+        // same descending order the table uses
+        if let Some(g) = cut {
+            if !goodness_keep(n - 1 - i, n, field.lower_is_better(), g) {
+                continue;
+            }
+        }
         values.insert(code, 0.02 + 0.98 * t);
     }
     values
@@ -201,11 +210,13 @@ pub fn HomePage() -> impl IntoView {
     let initial_svg = {
         let (region, field) = parse_path(&location.pathname.get_untracked());
         let (q, filters) = parse_query(&initial_q.to_lowercase());
-        painted_world(&map_values(&countries, &region, field, &q, &filters))
+        painted_world(&map_values(&countries, &region, field, &q, &filters, None))
     };
     let (search, set_search) = signal(initial_q);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
+    // color-bar filter: keep only states at least this good (0..1)
+    let color_cut = RwSignal::new(None::<f64>);
     let (panel_open, set_panel_open) = signal(false);
     let (rating_open, set_rating_open) = signal(false);
     let input_ref = NodeRef::<leptos::html::Input>::new();
@@ -254,7 +265,7 @@ pub fn HomePage() -> impl IntoView {
     Effect::new(move |_| {
         let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
-        let values = map_values(&countries_for_map, &region, field, &query, &filters);
+        let values = map_values(&countries_for_map, &region, field, &query, &filters, color_cut.get());
         let max_val = 1.0;
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
@@ -304,6 +315,16 @@ pub fn HomePage() -> impl IntoView {
         list.sort_by(|a, b| {
             b.metric(field).partial_cmp(&a.metric(field)).unwrap_or(std::cmp::Ordering::Equal)
         });
+
+        if let Some(g) = color_cut.get() {
+            let n = list.len();
+            let mut i = 0;
+            list.retain(|_| {
+                let keep = goodness_keep(i, n, field.lower_is_better(), g);
+                i += 1;
+                keep
+            });
+        }
 
         list
     };
@@ -366,6 +387,7 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
+                <RatingLegend field=sort_field cut=color_cut />
             </div>
 
             </div>
@@ -411,18 +433,6 @@ pub fn HomePage() -> impl IntoView {
                 </div>
                 <div class="map-pane">
                     <div class="world-map-container" inner_html=initial_svg></div>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
-                        // red is always the bad end; the end labels follow the
-                        // rating's polarity (density: red = HIGH)
-                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
-                            {move || if sort_field.get().lower_is_better() { "HIGH" } else { "LOW" }}
-                        </span>
-                        <div style="width: 240px; height: 8px; border-radius: 4px; background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);"></div>
-                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
-                            {move || if sort_field.get().lower_is_better() { "LOW" } else { "HIGH" }}
-                        </span>
-                        <span style="font-size: 10px; color: #444; letter-spacing: 2px; margin-left: 12px;">{move || sort_field.get().label()}</span>
-                    </div>
                 </div>
             </div>
 
@@ -438,6 +448,12 @@ pub fn HomePage() -> impl IntoView {
                             && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
                             && filters.iter().all(|f| passes(c, f))
                         }).count();
+                        let count = match color_cut.get() {
+                            Some(g) => (0..count)
+                                .filter(|&i| goodness_keep(i, count, state.get().1.lower_is_better(), g))
+                                .count(),
+                            None => count,
+                        };
                         if count == total { format!("{} cyberstates", total) } else { format!("{}/{} cyberstates", count, total) }
                     }}
                 </span>

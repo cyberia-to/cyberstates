@@ -1028,6 +1028,77 @@ body {
     animation: menu-in 140ms ease-out;
 }
 
+/* the legend is an instrument: the bar filters on click */
+.legend-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.legend-end {
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 1px;
+}
+
+.legend-bar {
+    position: relative;
+    width: 220px;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);
+    cursor: crosshair;
+    overflow: hidden;
+}
+
+.legend-dim {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.78);
+    pointer-events: none;
+}
+
+.legend-mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    pointer-events: none;
+}
+
+.legend-name {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+.legend-clear {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--cyber-green);
+    background: transparent;
+    border: 1px solid #1c2a1e;
+    border-radius: 2px;
+    padding: 3px 8px;
+    cursor: pointer;
+    font-family: 'Play', sans-serif;
+    white-space: nowrap;
+}
+
+.legend-clear:hover { border-color: var(--cyber-green); }
+
+/* below this the pills need the whole row — the bar yields */
+@media (max-width: 1360px) {
+    .legend-zone { display: none; }
+}
+
 /* row highlight eases instead of flashing */
 .cyber-table tbody tr {
     transition: background 120ms ease;

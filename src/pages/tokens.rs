@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use crate::data::*;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
+use crate::components::legend::{goodness_keep, RatingLegend};
 use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 
@@ -62,6 +63,7 @@ fn token_map_values(
     scores: &HashMap<String, (f64, f64, f64)>,
     field: SortField,
     query: &str,
+    cut: Option<f64>,
 ) -> HashMap<String, f64> {
     let mut ranked: Vec<(Vec<String>, f64)> = tokens.iter()
         .filter(|t| {
@@ -96,6 +98,12 @@ fn token_map_values(
             1.0
         };
         let t = if field.lower_is_better() { 1.0 - t } else { t };
+        // ranked ascending: flip the index for the descending-order predicate
+        if let Some(g) = cut {
+            if !goodness_keep(n - 1 - i, n, field.lower_is_better(), g) {
+                continue;
+            }
+        }
         for code in members {
             values.insert(code, 0.02 + 0.98 * t);
         }
@@ -157,7 +165,10 @@ pub fn TokensPage() -> impl IntoView {
         &scores,
         parse_path(&location.pathname.get_untracked()),
         "",
+        None,
     ));
+    // color-bar filter: keep only tokens at least this good (0..1)
+    let color_cut = RwSignal::new(None::<f64>);
     let (search, set_search) = signal(String::new());
     let (rating_open, set_rating_open) = signal(false);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
@@ -176,7 +187,7 @@ pub fn TokensPage() -> impl IntoView {
     Effect::new(move |_| {
         let f = field.get();
         let query = search.get().to_lowercase();
-        let values = token_map_values(&tokens_for_map, &scores_for_map, f, &query);
+        let values = token_map_values(&tokens_for_map, &scores_for_map, f, &query, color_cut.get());
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
             let cb = Closure::wrap(Box::new(move || {
@@ -218,6 +229,15 @@ pub fn TokensPage() -> impl IntoView {
             })
             .collect();
         list.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        if let Some(g) = color_cut.get() {
+            let n = list.len();
+            let mut i = 0;
+            list.retain(|_| {
+                let keep = goodness_keep(i, n, f.lower_is_better(), g);
+                i += 1;
+                keep
+            });
+        }
         list
     };
 
@@ -275,6 +295,7 @@ pub fn TokensPage() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
+                <RatingLegend field=field cut=color_cut />
             </div>
 
             </div>
@@ -354,16 +375,6 @@ pub fn TokensPage() -> impl IntoView {
                 </div>
                 <div class="map-pane">
                     <div class="world-map-container" inner_html=initial_svg></div>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
-                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
-                            {move || if field.get().lower_is_better() { "HIGH" } else { "LOW" }}
-                        </span>
-                        <div style="width: 240px; height: 8px; border-radius: 4px; background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);"></div>
-                        <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
-                            {move || if field.get().lower_is_better() { "LOW" } else { "HIGH" }}
-                        </span>
-                        <span style="font-size: 10px; color: #444; letter-spacing: 2px; margin-left: 12px;">{move || format!("TOKEN {}", field.get().label())}</span>
-                    </div>
                 </div>
             </div>
 
@@ -375,6 +386,12 @@ pub fn TokensPage() -> impl IntoView {
                         let count = tokens_for_count.iter().filter(|t| {
                             query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
                         }).count();
+                        let count = match color_cut.get() {
+                            Some(g) => (0..count)
+                                .filter(|&i| goodness_keep(i, count, field.get().lower_is_better(), g))
+                                .count(),
+                            None => count,
+                        };
                         if count == total { format!("{} tokens", total) } else { format!("{}/{} tokens", count, total) }
                     }}
                 </span>
