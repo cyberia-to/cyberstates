@@ -12,7 +12,8 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
     view! {
         <div class="brand-chooser">
             <h1 class="logo" on:click=move |_| set_open.update(|o| *o = !*o) style="cursor: pointer;">
-                <span class="brand-flag" inner_html=FLAG_SVG></span>
+                // the wheel is the home button — the wordmark opens the menu
+                <a href="/" class="brand-flag" title="home" inner_html=FLAG_SVG></a>
                 <span style="color: var(--cyber-green);">"cyber"</span>
                 <span style="color: var(--cyber-green); margin: 0 1px;">"•"</span>
                 <span class="brand-word" style="color: #fff;">{match active {
