@@ -1,10 +1,10 @@
-name = "New World"
-code = "NWLD"
-flag = "🌎"
+name = "Turtle Island"
+code = "TRTL"
+flag = "🐢"
 region = "North America"
 population = 992823193
 land_area_km2 = 40099122
-currency_code = "NWLD"
+currency_code = "TRTL"
 currency_name = "El Dorado"
 money_supply_b_usd = 29909
 token_price_usd = 0
