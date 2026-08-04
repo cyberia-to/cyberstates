@@ -519,13 +519,8 @@ pub fn HomePage() -> impl IntoView {
                         <div class="panel-hint">"mix text and filters: europe cap>1t · / focuses · esc closes"</div>
                     </div>
                 </div>
-            </div>
-
-            // Footer: the maker's mark, nothing else
-            <div style="max-width: 1400px; margin: 24px auto 0; text-align: center;">
-                <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" style="color: #555; text-decoration: none; font-size: 11px; letter-spacing: 1px;">
-                    <span style="margin-right: 6px;">"🏴"</span>
-                    "a "<span style="color: var(--cyber-green);">"cyberia"</span>" project · @cyberiacap"
+                <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" class="dock-credit">
+                    "🏴 a "<span style="color: var(--cyber-green);">"cyberia"</span>" project"
                 </a>
             </div>
         </div>

@@ -388,6 +388,9 @@ pub fn TokensPage() -> impl IntoView {
                         set_search.set(input.value());
                     }
                 />
+                            <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" class="dock-credit">
+                    "🏴 a "<span style="color: var(--cyber-green);">"cyberia"</span>" project"
+                </a>
             </div>
         </div>
     }

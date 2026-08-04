@@ -255,6 +255,9 @@ pub fn SiteHeader(suffix: String) -> impl IntoView {
                     }
                 }
             />
+                        <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" class="dock-credit">
+                    "🏴 a "<span style="color: var(--cyber-green);">"cyberia"</span>" project"
+                </a>
         </div>
     }
 }

@@ -206,6 +206,7 @@ body {
         padding-bottom: 2px;
     }
     .region-pills::-webkit-scrollbar { display: none; }
+    .dock-credit { display: none; }
     .region-pills .region-pill { flex: 0 0 auto; }
     .state-count { font-size: 11px; white-space: nowrap; }
 }
@@ -377,6 +378,20 @@ body {
     border-top: 1px solid #111;
 }
 
+/* the maker's mark lives in the dock, starboard of the search */
+.dock-credit {
+    align-self: center;
+    margin-left: 14px;
+    color: #555;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s;
+}
+
+.dock-credit:hover { color: #999; }
+
 .search-dock .search-wrap,
 .search-dock .search-input {
     flex: 1 1 640px;
@@ -511,10 +526,13 @@ body {
 }
 
 .map-pane {
-    flex: 1 1 auto;
-    min-width: 0;
-    position: sticky;
+    /* fixed, not sticky: the map is an instrument panel, it never scrolls.
+       left = shell pad 20 + table pane 500 + gap 16 */
+    position: fixed;
     top: calc(var(--chrome-h, 0px) + 8px);
+    left: 536px;
+    right: 0;
+    z-index: 5;
 }
 
 /* the map is the hero: as large as viewport height and pane width allow,
