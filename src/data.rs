@@ -212,7 +212,7 @@ impl Country {
             SortField::Freedom => self.index().freedom,
             SortField::Hospitality => self.index().openness,
             SortField::Population => self.population as f64,
-            SortField::Area => self.land_area_km2 as f64,
+            SortField::Territory => self.land_area_km2 as f64,
             SortField::Density => {
                 if self.land_area_km2 > 0 { self.population as f64 / self.land_area_km2 as f64 } else { 0.0 }
             }
@@ -351,7 +351,7 @@ pub enum SortField {
     Freedom,
     Hospitality,
     Population,
-    Area,
+    Territory,
     Density,
 }
 
@@ -371,7 +371,7 @@ impl SortField {
             Self::Freedom => "FREEDOM",
             Self::Hospitality => "HOSPITALITY",
             Self::Population => "POPULATION",
-            Self::Area => "AREA",
+            Self::Territory => "TERRITORY",
             Self::Density => "DENSITY",
         }
     }
@@ -384,7 +384,7 @@ impl SortField {
             Self::Freedom => "TRAVEL FREEDOM",
             Self::Hospitality => "HOSPITALITY",
             Self::Population => "POPULATION",
-            Self::Area => "AREA",
+            Self::Territory => "TERRITORY",
             Self::Density => "DENSITY",
         }
     }
@@ -397,7 +397,7 @@ impl SortField {
             Self::Freedom => "travel-freedom",
             Self::Hospitality => "hospitality",
             Self::Population => "population",
-            Self::Area => "area",
+            Self::Territory => "territory",
             Self::Density => "density",
         }
     }
@@ -410,7 +410,7 @@ impl SortField {
             "travel-freedom" | "freedom" => Self::Freedom,
             "hospitality" | "openness" => Self::Hospitality,
             "population" => Self::Population,
-            "area" => Self::Area,
+            "territory" | "area" => Self::Territory,
             "density" => Self::Density,
             _ => return None,
         })
@@ -419,6 +419,6 @@ impl SortField {
     /// The eight ratings, in display order.
     pub const ALL: [SortField; 8] = [
         Self::Capital, Self::Human, Self::Land, Self::Freedom,
-        Self::Hospitality, Self::Population, Self::Area, Self::Density,
+        Self::Hospitality, Self::Population, Self::Territory, Self::Density,
     ];
 }

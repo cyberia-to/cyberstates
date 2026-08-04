@@ -88,7 +88,7 @@ fn parse_filter_token(tok: &str) -> Option<NumFilter> {
     let field = match &t[..idx] {
         "pop" | "population" => NumField::Pop,
         "cap" => NumField::Cap,
-        "land" | "area" => NumField::Land,
+        "land" | "area" | "territory" => NumField::Land,
         "freedom" | "free" => NumField::Freedom,
         "openness" | "open" => NumField::Openness,
         _ => return None,
@@ -127,7 +127,7 @@ fn passes(c: &Country, f: &NumFilter) -> bool {
     if f.gt { v > f.val } else { v < f.val }
 }
 
-const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "area>1m"];
+const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "territory>1m"];
 
 #[component]
 pub fn HomePage() -> impl IntoView {
@@ -218,12 +218,12 @@ pub fn HomePage() -> impl IntoView {
         ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
         let n = ranked.len();
         let mut values: HashMap<String, f64> = HashMap::new();
-        // POPULATION and AREA are already visually encoded by polygon size:
+        // POPULATION and TERRITORY are already visually encoded by polygon size:
         // rank paints every visible state green, linear drowns everything
         // but the top-2 in red. Log min-max spreads the palette across
         // orders of magnitude — micro-states red, mid-size yellow-cyan,
         // giants green. Everything else colors by rank.
-        let log_scale = matches!(field, SortField::Population | SortField::Area);
+        let log_scale = matches!(field, SortField::Population | SortField::Territory);
         // anchor the low end at the 10th percentile, not the absolute min:
         // otherwise invisible micro-states eat the bottom half of the palette
         let (vmin, vmax) = if log_scale && n > 0 {

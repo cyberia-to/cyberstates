@@ -20,7 +20,7 @@ pub fn metric_cell(c: &Country, f: SortField, n: Numeraire) -> (String, &'static
             (format!("{:.1}", v), score_color(v))
         }
         SortField::Population => (c.population_fmt(), "#e0e0e0"),
-        SortField::Area => (c.land_area_fmt(), "#e0e0e0"),
+        SortField::Territory => (c.land_area_fmt(), "#e0e0e0"),
         SortField::Density => (format!("{:.1}/km²", c.metric(f)), "#e0e0e0"),
     }
 }

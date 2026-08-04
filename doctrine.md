@@ -83,14 +83,14 @@ August 2026, [China](/state/cn) holds almost twice the wealth
 ## 5. Three stocks exhaust the countable state
 
 Capital — the wealth held in the state's token. Population — the humans
-under its rules. Area — the territory its rules cover. Strip away
+under its rules. Territory — the land its rules cover. Strip away
 everything disputable and these three remain, and they admit exactly
 three exchange rates:
 
 ```
 HUMAN VALUE = CAPITAL / POPULATION    what stands behind each person
-LAND VALUE  = CAPITAL / AREA          how monetized each km² is
-DENSITY     = POPULATION / AREA       how crowded the land is
+LAND VALUE  = CAPITAL / TERRITORY     how monetized each km² is
+DENSITY     = POPULATION / TERRITORY  how crowded the land is
 ```
 
 Two identities close the system:
@@ -228,10 +228,10 @@ is flattened — a 30-day and a 180-day visa-free both count 1.0, work
 rights and refusal rates are not modeled; partially recognized states
 have sparser matrices and correspondingly conservative scores.
 
-**Population, area, token prices** — one TOML file per state in
+**Population, territory, token prices** — one TOML file per state in
 [`states/`](https://github.com/cyberia-to/cyberstates/tree/main/states),
 assembled from public statistics. *Their limit:* census quality varies
-by state; area counts ice and orchard alike.
+by state; territory counts ice and orchard alike.
 
 **Numeraires** — BTC, ETH and gold (via PAXG = 1 troy oz) at refresh
 time. *Their limit:* a snapshot, like everything here — the table is

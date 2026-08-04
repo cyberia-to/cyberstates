@@ -39,7 +39,7 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
             if t.total_area_km2 > 0 { t.total_population as f64 / t.total_area_km2 as f64 } else { 0.0 }
         }
         SortField::Population => t.total_population as f64,
-        SortField::Area => t.total_area_km2 as f64,
+        SortField::Territory => t.total_area_km2 as f64,
         SortField::Freedom | SortField::Hospitality => {
             let (mut wsum, mut psum) = (0.0, 0.0);
             for (code, _, _) in &t.countries {
@@ -79,7 +79,7 @@ fn metric_cell(t: &Token, f: SortField, n: Numeraire, scores: &HashMap<String, (
         SortField::Human | SortField::Land => (fmt_value(v, n), "#e0e0e0"),
         SortField::Freedom | SortField::Hospitality => (format!("{:.1}", v), score_color(v)),
         SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
-        SortField::Area => (format!("{} km²", fmt_int(v as u64)), "#e0e0e0"),
+        SortField::Territory => (format!("{} km²", fmt_int(v as u64)), "#e0e0e0"),
         SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
     }
 }

@@ -77,7 +77,7 @@ pub fn CountryPage() -> impl IntoView {
                     let r_freedom = rank_of(SortField::Freedom);
                     let r_hosp = rank_of(SortField::Hospitality);
                     let r_pop = rank_of(SortField::Population);
-                    let r_area = rank_of(SortField::Area);
+                    let r_area = rank_of(SortField::Territory);
                     let r_density = rank_of(SortField::Density);
                     let freedom_str = format!("{:.1}", idx.freedom);
                     let freedom_bar = format!("{}%", idx.freedom.min(100.0));
@@ -152,7 +152,7 @@ pub fn CountryPage() -> impl IntoView {
                                     <div class="stat-value">{pop}</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"AREA"<span class="rank-badge">{r_area}</span></div>
+                                    <div class="stat-label">"TERRITORY"<span class="rank-badge">{r_area}</span></div>
                                     <div class="stat-value" style="color: var(--cyber-blue);">{area}</div>
                                 </div>
                             </div>
