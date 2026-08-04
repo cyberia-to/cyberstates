@@ -8,8 +8,9 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
     view! {
         <div class="brand-chooser">
             <h1 class="logo" on:click=move |_| set_open.update(|o| *o = !*o) style="cursor: pointer;">
-                <span style="color: var(--cyber-green);">"CYBER"</span>
-                <span style="color: #fff;">{if active == "TOKENS" { "TOKENS" } else { "STATES" }}</span>
+                <span style="color: var(--cyber-green);">"cyber"</span>
+                <span style="color: var(--cyber-green); margin: 0 1px;">"•"</span>
+                <span style="color: #fff;">{if active == "TOKENS" { "Tokens" } else { "States" }}</span>
                 <span class="brand-caret">" ▾"</span>
             </h1>
             <div class="brand-menu" style:display=move || if open.get() { "flex" } else { "none" }>
