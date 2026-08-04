@@ -312,13 +312,8 @@ pub fn HomePage() -> impl IntoView {
                     <BrandChooser active="STATES" />
                     <div class="logo-suffix">
                         {move || {
-                            let (region, field) = state.get();
-                            let mut s = String::new();
-                            if region != "All" {
-                                s.push_str(&format!("in {} · ", region.to_lowercase()));
-                            }
-                            s.push_str(&format!("by {}", field.label().to_lowercase()));
-                            s
+                            let (region, _) = state.get();
+                            if region != "All" { format!("in {}", region.to_lowercase()) } else { String::new() }
                         }}
                     </div>
                 </div>
@@ -350,6 +345,7 @@ pub fn HomePage() -> impl IntoView {
             // Header row 2: rating landings — pills on desktop, a dropdown
             // at thumb scale
             <div class="header-row2">
+                <span class="by-label">"by"</span>
                 <div class="region-pills">
                     {SortField::ALL.map(|f| {
                         view! {

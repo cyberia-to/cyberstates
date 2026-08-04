@@ -64,8 +64,18 @@ body {
     white-space: nowrap;
 }
 
+.by-label {
+    align-self: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #555;
+    margin-right: 8px;
+}
+
 /* current landing: "in europe · by freedom" */
 .logo-suffix {
+    min-height: 16px;
+    line-height: 16px;
     font-size: 11px;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -129,7 +139,7 @@ body {
 .header-row2 {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 12px;
     margin-bottom: 24px;
 }

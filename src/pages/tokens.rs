@@ -140,9 +140,7 @@ pub fn TokensPage() -> impl IntoView {
             <div class="header-row1">
                 <div class="logo-zone">
                     <BrandChooser active="TOKENS" />
-                    <div class="logo-suffix" style="color: rgba(255, 215, 0, 0.55);">
-                        {move || format!("tokens · by {}", field.get().label().to_lowercase())}
-                    </div>
+                    <div class="logo-suffix"></div>
                 </div>
                 <div class="rating-chooser">
                     <button
@@ -171,6 +169,7 @@ pub fn TokensPage() -> impl IntoView {
 
             // Header row 2: the same eight ratings, for token zones
             <div class="header-row2">
+                <span class="by-label">"by"</span>
                 <div class="region-pills">
                     {SortField::ALL.map(|f| {
                         view! {
