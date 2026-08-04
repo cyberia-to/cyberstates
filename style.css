@@ -540,8 +540,8 @@ body {
 .map-pane .world-map-container svg {
     display: block;
     margin-left: auto;
-    aspect-ratio: 782 / 514;
-    height: min(calc(100vh - 220px), calc((100vw - 552px) * 0.6573));
+    aspect-ratio: 847 / 689;
+    height: min(calc(100vh - 172px), calc((100vw - 552px) * 0.8133));
     width: auto;
     max-width: 100%;
 }
@@ -1339,9 +1339,9 @@ body {
        the same live sky as /solar, every dot a link */
     position: fixed;
     left: auto;
-    right: max(180px, 13vw);
-    bottom: 80px;
-    width: min(20vw, 310px);
+    right: 48px;
+    bottom: 84px;
+    width: min(23vw, 360px);
     aspect-ratio: 1 / 1;
     z-index: 6;
     pointer-events: none;
