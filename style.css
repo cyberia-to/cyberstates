@@ -1636,9 +1636,17 @@ body {
     right: 14px;
     bottom: 6px;
     display: flex;
+    align-items: flex-end;
     gap: 30px;
     text-align: right;
     pointer-events: none;
+}
+
+.world-derived .planet-open {
+    pointer-events: auto;
+    align-self: center;
+    color: #9ab;
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .world-derived label {

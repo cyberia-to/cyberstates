@@ -408,16 +408,6 @@ pub fn SolarMapPage() -> impl IntoView {
                         let is_earth = c.code == "ERTH";
                         let color = colors.get().get(&c.code).cloned().unwrap_or_else(|| "#1a1a1a".into());
                         view! {
-                            <div class="planet-head">
-                                <span style="font-size: 30px; margin-right: 10px;">{c.flag.clone()}</span>
-                                <span class="planet-name">{c.name.clone()}</span>
-                                <a href=href class="region-pill planet-open">"open →"</a>
-                            </div>
-                            <div class="planet-stats">
-                                <span>"CAPITAL "<b>{value_or_soon(c.cap_fmt())}</b></span>
-                                <span>"POPULATION "<b>{c.population_fmt()}</b></span>
-                                <span>"TERRITORY "<b>{c.land_area_fmt()}</b></span>
-                            </div>
                             <div class="world-canvas">
                             {if is_earth {
                                 view! {
@@ -458,6 +448,9 @@ pub fn SolarMapPage() -> impl IntoView {
                             }}
                             </div>
                             <div class="world-derived">
+                                <a href=href class="region-pill planet-open">
+                                    {c.flag.clone()}" "{c.name.clone()}" →"
+                                </a>
                                 <div>
                                     <label>"CITIZEN VALUE"</label>
                                     <b style="color: var(--cyber-green);">{
