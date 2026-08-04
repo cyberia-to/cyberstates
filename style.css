@@ -784,6 +784,21 @@ body {
 .sort-desc::after { content: " ▼"; font-size: 9px; }
 
 /* Region filter pills */
+/* the kernel ratings end here; the derived freedom scores follow the dot */
+.pill-dot {
+    color: #444;
+    font-size: 16px;
+    align-self: center;
+    margin: 0 2px;
+    user-select: none;
+}
+
+.menu-divider {
+    height: 1px;
+    background: #1c2a1e;
+    margin: 4px 2px;
+}
+
 .region-pill {
     display: inline-block;
     text-decoration: none;

@@ -328,6 +328,7 @@ pub fn HomePage() -> impl IntoView {
                     <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
                         {SortField::ALL.map(|f| {
                             view! {
+                                {f.derived_break().then(|| view! { <div class="menu-divider"></div> })}
                                 <a
                                     class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
                                     href=move || landing_path(&state.get().0, f)
@@ -349,6 +350,7 @@ pub fn HomePage() -> impl IntoView {
                 <div class="region-pills">
                     {SortField::ALL.map(|f| {
                         view! {
+                            {f.derived_break().then(|| view! { <span class="pill-dot">"\u{b7}"</span> })}
                             <a
                                 class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
                                 href=move || landing_path(&state.get().0, f)

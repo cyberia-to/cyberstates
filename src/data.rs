@@ -437,8 +437,15 @@ impl SortField {
     }
 
     /// The eight ratings, in display order.
+    // Kernel ratings first; the freedom scores close the list — they are
+    // derived through the Appendix A weights, and the order says so.
     pub const ALL: [SortField; 8] = [
-        Self::Capital, Self::Human, Self::Land, Self::Freedom,
-        Self::Hospitality, Self::Population, Self::Territory, Self::Density,
+        Self::Capital, Self::Human, Self::Land, Self::Population,
+        Self::Territory, Self::Density, Self::Freedom, Self::Hospitality,
     ];
+
+    /// True where the derived tail begins — the pill rows draw a dot here.
+    pub fn derived_break(&self) -> bool {
+        matches!(self, Self::Freedom)
+    }
 }
