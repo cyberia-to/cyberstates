@@ -50,15 +50,32 @@ pub fn value_to_color(val: f64, max: f64) -> String {
 
 /// Client-side navigation from plain DOM handlers: push the URL, then
 /// wake the router with a synthetic popstate — no full page reload, so
-/// the wasm app, fonts and state all survive the hop.
+/// the wasm app, fonts and state all survive the hop. Wrapped in a view
+/// transition where the browser has one: old page cross-fades into new.
 pub fn navigate_client(path: &str) {
-    if let Some(w) = web_sys::window() {
-        if let Ok(h) = w.history() {
-            let _ = h.push_state_with_url(&JsValue::NULL, "", Some(path));
-            if let Ok(ev) = web_sys::PopStateEvent::new("popstate") {
-                let _ = w.dispatch_event(&ev);
+    let path = path.to_string();
+    let go = move || {
+        if let Some(w) = web_sys::window() {
+            if let Ok(h) = w.history() {
+                let _ = h.push_state_with_url(&JsValue::NULL, "", Some(&path));
+                if let Ok(ev) = web_sys::PopStateEvent::new("popstate") {
+                    let _ = w.dispatch_event(&ev);
+                }
             }
         }
+    };
+    let doc = web_sys::window().and_then(|w| w.document());
+    let svt = doc.as_ref().and_then(|d| {
+        js_sys::Reflect::get(d.as_ref(), &JsValue::from_str("startViewTransition"))
+            .ok()
+            .and_then(|v| v.dyn_into::<js_sys::Function>().ok())
+    });
+    match (svt, doc) {
+        (Some(f), Some(d)) => {
+            let cb = Closure::once_into_js(go);
+            let _ = f.call1(d.as_ref(), &cb);
+        }
+        _ => go(),
     }
 }
 

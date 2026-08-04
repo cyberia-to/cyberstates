@@ -26,7 +26,7 @@ pub struct Country {
     pub visa_free_inbound: u32,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct CountryIndex {
     pub eco_out_pct: f64,  // weighted % of world economy accessible
     pub eco_in_pct: f64,   // weighted % of world economy that can visit
@@ -221,50 +221,62 @@ impl Country {
 
     /// Weights: visa-free=1.0, VoA=0.8, eta/e-visa=0.5, visa-required=0.1, no-admission=0.0
     pub fn index(&self) -> CountryIndex {
+        index_cache().get(self.code.as_str()).copied().unwrap_or_default()
+    }
+}
+
+static INDEX_CACHE: OnceLock<HashMap<String, CountryIndex>> = OnceLock::new();
+
+/// All freedom/hospitality scores in ONE pass over the visa matrix.
+/// The naive per-state walk was O(states x matrix) with linear lookups,
+/// and sorting called it per comparison — seconds of lag per click.
+fn index_cache() -> &'static HashMap<String, CountryIndex> {
+    INDEX_CACHE.get_or_init(|| {
         let countries = load_countries();
         let data = get_visa_data();
 
         let total_cap: f64 = countries.iter().map(|c| c.money_supply_b_usd).sum();
         let total_pop: f64 = countries.iter().map(|c| c.population as f64).sum();
 
-        let by_name: std::collections::HashMap<&str, &Country> =
+        let by_name: HashMap<&str, &Country> =
             countries.iter().map(|c| (c.name.as_str(), c)).collect();
+        let by_code: HashMap<String, &Country> =
+            countries.iter().map(|c| (c.code.to_uppercase(), c)).collect();
 
-        // Outgoing — weighted sum of destinations
-        let outgoing = get_visa_outgoing(&self.code);
-        let mut eco_out: f64 = 0.0;
-        let mut pop_out: f64 = 0.0;
-        for e in &outgoing {
-            let w = access_type_weight(&e.access_type);
-            if let Some(dest) = by_name.get(e.country.as_str()) {
-                eco_out += w * dest.money_supply_b_usd;
-                pop_out += w * dest.population as f64;
-            }
-        }
-
-        // Incoming — weighted sum of visitors
-        let mut eco_in: f64 = 0.0;
-        let mut pop_in: f64 = 0.0;
+        // (eco_out, pop_out, eco_in, pop_in) accumulated per state code
+        let mut acc: HashMap<String, (f64, f64, f64, f64)> = HashMap::new();
         for (code, entries) in data.iter() {
-            if let Some(entry) = entries.iter().find(|e| e.country == self.name) {
-                let w = access_type_weight(&entry.access_type);
-                if let Some(holder) = countries.iter().find(|c| c.code == code.to_uppercase()) {
-                    eco_in += w * holder.money_supply_b_usd;
-                    pop_in += w * holder.population as f64;
+            let Some(holder) = by_code.get(&code.to_uppercase()) else { continue };
+            for e in entries {
+                let w = access_type_weight(&e.access_type);
+                if let Some(dest) = by_name.get(e.country.as_str()) {
+                    let out = acc.entry(holder.code.clone()).or_default();
+                    out.0 += w * dest.money_supply_b_usd;
+                    out.1 += w * dest.population as f64;
+                    let inn = acc.entry(dest.code.clone()).or_default();
+                    inn.2 += w * holder.money_supply_b_usd;
+                    inn.3 += w * holder.population as f64;
                 }
             }
         }
 
-        let eco_out_pct = if total_cap > 0.0 { eco_out / total_cap * 100.0 } else { 0.0 };
-        let eco_in_pct = if total_cap > 0.0 { eco_in / total_cap * 100.0 } else { 0.0 };
-        let pop_out_pct = if total_pop > 0.0 { pop_out / total_pop * 100.0 } else { 0.0 };
-        let pop_in_pct = if total_pop > 0.0 { pop_in / total_pop * 100.0 } else { 0.0 };
-
-        let freedom = (eco_out_pct * pop_out_pct).sqrt();
-        let openness = (eco_in_pct * pop_in_pct).sqrt();
-
-        CountryIndex { eco_out_pct, eco_in_pct, pop_out_pct, pop_in_pct, freedom, openness }
-    }
+        countries.iter().map(|c| {
+            let (eco_out, pop_out, eco_in, pop_in) =
+                acc.get(&c.code).copied().unwrap_or_default();
+            let eco_out_pct = if total_cap > 0.0 { eco_out / total_cap * 100.0 } else { 0.0 };
+            let eco_in_pct = if total_cap > 0.0 { eco_in / total_cap * 100.0 } else { 0.0 };
+            let pop_out_pct = if total_pop > 0.0 { pop_out / total_pop * 100.0 } else { 0.0 };
+            let pop_in_pct = if total_pop > 0.0 { pop_in / total_pop * 100.0 } else { 0.0 };
+            (c.code.clone(), CountryIndex {
+                eco_out_pct,
+                eco_in_pct,
+                pop_out_pct,
+                pop_in_pct,
+                freedom: (eco_out_pct * pop_out_pct).sqrt(),
+                openness: (eco_in_pct * pop_in_pct).sqrt(),
+            })
+        }).collect()
+    })
 }
 
 fn fmt_usd_billions(v: f64) -> String {

@@ -1005,9 +1005,19 @@ body {
     to   { opacity: 1; }
 }
 
-.page-shell,
-.page-frame {
-    animation: page-in 180ms ease-out;
+/* browsers with view transitions cross-fade whole navigations; the
+   mount fade below is the fallback for the rest */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 240ms;
+    animation-timing-function: ease;
+}
+
+@supports not (view-transition-name: root) {
+    .page-shell,
+    .page-frame {
+        animation: page-in 180ms ease-out;
+    }
 }
 
 /* the map morphs between ratings instead of snapping */

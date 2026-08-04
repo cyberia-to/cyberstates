@@ -37,6 +37,46 @@ fn ChromeMeter() -> impl IntoView {
         on_resize.forget();
     });
 
+    // once: intercept internal links at capture phase, so every navigation
+    // goes through navigate_client and its view-transition cross-fade —
+    // the router's own instant handler never sees the click
+    Effect::new(move |_| {
+        let handler = Closure::wrap(Box::new(move |ev: web_sys::MouseEvent| {
+            if ev.default_prevented()
+                || ev.button() != 0
+                || ev.meta_key() || ev.ctrl_key() || ev.shift_key() || ev.alt_key()
+            {
+                return;
+            }
+            let Some(el) = ev.target().and_then(|t| t.dyn_into::<web_sys::Element>().ok()) else { return };
+            let Ok(Some(a)) = el.closest("a[href]") else { return };
+            // internal links are root-relative; anything else is not ours
+            let href = a.get_attribute("href").unwrap_or_default();
+            if !href.starts_with('/') || a.get_attribute("target").is_some() {
+                return;
+            }
+            ev.prevent_default();
+            ev.stop_propagation();
+            let current = web_sys::window()
+                .map(|w| {
+                    let l = w.location();
+                    format!("{}{}", l.pathname().unwrap_or_default(), l.search().unwrap_or_default())
+                })
+                .unwrap_or_default();
+            if href != current {
+                crate::pages::map::navigate_client(&href);
+            }
+        }) as Box<dyn FnMut(web_sys::MouseEvent)>);
+        if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+            let _ = doc.add_event_listener_with_callback_and_bool(
+                "click",
+                handler.as_ref().unchecked_ref(),
+                true,
+            );
+        }
+        handler.forget();
+    });
+
     // per navigation: measure once the new page has rendered
     Effect::new(move |_| {
         let _ = location.pathname.get();
