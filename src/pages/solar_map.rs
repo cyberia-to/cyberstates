@@ -238,7 +238,8 @@ pub fn SolarMapPage() -> impl IntoView {
             </div>
 
             <div class="solar-cockpit">
-                // the stage: the system fills the whole band; panels float over it
+                <div class="cockpit-stage">
+                // the stage: the system fills the free band left of the world
                 <svg class="solar-map" viewBox="0 0 1000 940" preserveAspectRatio="xMidYMid meet">
                     <defs>
                         <filter id="dotglow" x="-100%" y="-100%" width="300%" height="300%">
@@ -371,15 +372,17 @@ pub fn SolarMapPage() -> impl IntoView {
                     </table>
                 </div>
 
-                // pane 3: the selected world
-                <div class="cockpit-planet">
+                </div>
+
+                // the world hero: the selected body at full height
+                <div class="cockpit-world">
                     {move || sel_body().map(|c| {
                         let href = format!("/state/{}", c.code.to_lowercase());
                         let is_earth = c.code == "ERTH";
                         let color = colors.get().get(&c.code).cloned().unwrap_or_else(|| "#1a1a1a".into());
                         view! {
                             <div class="planet-head">
-                                <span style="font-size: 26px; margin-right: 10px;">{c.flag.clone()}</span>
+                                <span style="font-size: 30px; margin-right: 10px;">{c.flag.clone()}</span>
                                 <span class="planet-name">{c.name.clone()}</span>
                                 <a href=href class="region-pill planet-open">"open →"</a>
                             </div>
@@ -388,25 +391,45 @@ pub fn SolarMapPage() -> impl IntoView {
                                 <span>"POPULATION "<b>{c.population_fmt()}</b></span>
                                 <span>"TERRITORY "<b>{c.land_area_fmt()}</b></span>
                             </div>
+                            <div class="world-canvas">
                             {if is_earth {
                                 view! {
                                     <div class="planet-world" inner_html=painted_world(&world_values(field.get()))></div>
                                 }.into_any()
                             } else {
                                 view! {
-                                    <div class="planet-disk">
-                                        <svg viewBox="0 0 200 200">
-                                            <circle cx="100" cy="100" r="88" fill=color.clone() opacity="0.92"></circle>
-                                            <ellipse cx="100" cy="100" rx="88" ry="30" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="1"></ellipse>
-                                            <ellipse cx="100" cy="100" rx="88" ry="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1"></ellipse>
-                                            <ellipse cx="100" cy="100" rx="30" ry="88" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="1"></ellipse>
-                                            <ellipse cx="100" cy="100" rx="60" ry="88" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1"></ellipse>
-                                            <line x1="12" y1="100" x2="188" y2="100" stroke="rgba(0,0,0,0.25)" stroke-width="1"></line>
+                                    <div class="planet-portrait">
+                                        <svg viewBox="0 0 400 400">
+                                            <defs>
+                                                <radialGradient id="limb" cx="38%" cy="34%" r="75%">
+                                                    <stop offset="0%" stop-color="rgba(255,255,255,0.32)"></stop>
+                                                    <stop offset="45%" stop-color="rgba(255,255,255,0.06)"></stop>
+                                                    <stop offset="80%" stop-color="rgba(0,0,0,0.25)"></stop>
+                                                    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"></stop>
+                                                </radialGradient>
+                                                <filter id="planetglow" x="-40%" y="-40%" width="180%" height="180%">
+                                                    <feGaussianBlur stdDeviation="10" result="b"></feGaussianBlur>
+                                                    <feMerge>
+                                                        <feMergeNode in="b"></feMergeNode>
+                                                        <feMergeNode in="SourceGraphic"></feMergeNode>
+                                                    </feMerge>
+                                                </filter>
+                                            </defs>
+                                            <g filter="url(#planetglow)">
+                                                <circle cx="200" cy="200" r="150" fill=color.clone()></circle>
+                                            </g>
+                                            <circle cx="200" cy="200" r="150" fill="url(#limb)"></circle>
+                                            <ellipse cx="200" cy="200" rx="150" ry="52" fill="none" stroke="rgba(0,0,0,0.30)" stroke-width="1"></ellipse>
+                                            <ellipse cx="200" cy="200" rx="150" ry="102" fill="none" stroke="rgba(0,0,0,0.20)" stroke-width="1"></ellipse>
+                                            <ellipse cx="200" cy="200" rx="52" ry="150" fill="none" stroke="rgba(0,0,0,0.30)" stroke-width="1"></ellipse>
+                                            <ellipse cx="200" cy="200" rx="102" ry="150" fill="none" stroke="rgba(0,0,0,0.20)" stroke-width="1"></ellipse>
+                                            <line x1="50" y1="200" x2="350" y2="200" stroke="rgba(0,0,0,0.30)" stroke-width="1"></line>
                                         </svg>
                                         <div class="planet-note">"unsurveyed world — no map yet"</div>
                                     </div>
                                 }.into_any()
                             }}
+                            </div>
                         }
                     })}
                 </div>

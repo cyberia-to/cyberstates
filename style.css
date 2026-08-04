@@ -1426,19 +1426,26 @@ body {
 }
 
 /* ---- /solar cockpit: table · system · world --------------------------- */
-/* the cockpit is a stage: the system fills the band edge to edge,
-   the table and the world float over it as glass panels */
+/* observatory: system stage left (table floats over it as glass),
+   the selected world as a full-height hero on the right */
 .solar-cockpit {
-    position: relative;
+    display: grid;
+    grid-template-columns: 1fr minmax(520px, 44%);
     height: calc(100vh - var(--chrome-h, 0px) - 150px);
-    min-height: 560px;
+    min-height: 600px;
     margin-top: 4px;
 }
 
-.solar-cockpit .solar-map {
+.cockpit-stage {
+    position: relative;
+}
+
+.cockpit-stage .solar-map {
     position: absolute;
-    inset: 0;
-    width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 330px;
+    width: calc(100% - 330px);
     height: 100%;
 }
 
@@ -1447,13 +1454,29 @@ body {
     left: 0;
     top: 0;
     bottom: 0;
-    width: 470px;
+    width: 322px;
     overflow-y: auto;
     border: 1px solid #16211a;
     border-radius: 6px;
     background: rgba(4, 7, 5, 0.72);
     backdrop-filter: blur(5px);
     scrollbar-width: thin;
+}
+
+/* the floating table is compact: it lists, the stage shows */
+.cockpit-table .cyber-table th,
+.cockpit-table .cyber-table td {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.cockpit-table .cyber-table.slim tbody td {
+    height: 34px;
+}
+
+.cockpit-table .cyber-table.slim thead th {
+    height: 34px;
+    font-size: 9px;
 }
 
 .cockpit-table .cyber-table th {
@@ -1477,16 +1500,28 @@ body {
     box-shadow: inset 2px 0 0 var(--cyber-green);
 }
 
-.cockpit-planet {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 400px;
-    border: 1px solid #16211a;
-    border-radius: 6px;
-    padding: 14px 16px;
-    background: rgba(4, 7, 5, 0.72);
-    backdrop-filter: blur(5px);
+.cockpit-world {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 4px 0 4px 26px;
+    border-left: 1px solid #10160f;
+}
+
+.world-canvas {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.planet-world {
+    width: 100%;
+}
+
+.planet-portrait {
+    width: min(74%, 480px);
 }
 
 .solar-au-label {
