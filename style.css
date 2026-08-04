@@ -1521,19 +1521,41 @@ body {
 }
 
 .world-canvas {
+    position: relative;
     flex: 1 1 auto;
     min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
+/* the world fills the pane's full HEIGHT, anchored right — its left
+   edge sweeps over the stage band (transparent sky between continents),
+   and it passes clicks through to the dots beneath */
 .planet-world {
-    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.planet-world svg {
+    display: block;
+    height: 100%;
+    width: auto;
 }
 
 .planet-portrait {
-    width: min(74%, 480px);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.planet-portrait svg {
+    height: min(86%, 640px);
+    width: auto;
 }
 
 .solar-au-label {
@@ -1576,16 +1598,6 @@ body {
     margin-left: 4px;
 }
 
-.planet-world svg {
-    width: 100%;
-    height: auto;
-}
-
-.planet-disk svg {
-    display: block;
-    width: 78%;
-    margin: 6px auto 0;
-}
 
 .planet-note {
     text-align: center;
