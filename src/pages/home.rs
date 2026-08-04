@@ -76,6 +76,7 @@ fn map_values(
     let mut ranked: Vec<(String, f64)> = countries.iter()
         .filter(|c| {
             (region == "All" || c.region == region)
+                && !(region == "Oceania" && c.code == "OCNA")
                 && (query.is_empty()
                     || c.name.to_lowercase().contains(query)
                     || c.code.to_lowercase().contains(query)
@@ -301,6 +302,10 @@ pub fn HomePage() -> impl IntoView {
 
         if region != "All" {
             list.retain(|c| c.region == region);
+            // the Oceania aggregate ranks globally, not among its own islands
+            if region == "Oceania" {
+                list.retain(|c| c.code != "OCNA");
+            }
         }
         if !query.is_empty() {
             list.retain(|c| {
@@ -447,6 +452,7 @@ pub fn HomePage() -> impl IntoView {
                         let (query, filters) = parse_query(&search.get().to_lowercase());
                         let count = countries_for_count.iter().filter(|c| {
                             (region == "All" || c.region == region)
+                            && !(region == "Oceania" && c.code == "OCNA")
                             && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
                             && filters.iter().all(|f| passes(c, f))
                         }).count();

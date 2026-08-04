@@ -74,12 +74,12 @@ pub fn CountryPage() -> impl IntoView {
                     // rank in each rating = position in that landing's table
                     let all_states = load_countries();
 
-                    // an ocean aggregates the island nations that sit IN it —
-                    // continental states merely border it and don't count
-                    let is_ocean = c.region == "Oceans";
-                    let mut members: Vec<Country> = if is_ocean {
+                    // Oceania is the aggregate of every island state — list
+                    // them, richest first, so the page shows its parts
+                    let is_aggregate = c.code == "OCNA";
+                    let mut members: Vec<Country> = if is_aggregate {
                         all_states.iter()
-                            .filter(|o| o.oceans.split(',').any(|t| t == c.code))
+                            .filter(|o| o.region == "Oceania" && o.code != "OCNA")
                             .cloned()
                             .collect()
                     } else {
@@ -247,10 +247,10 @@ pub fn CountryPage() -> impl IntoView {
 
                             // An ocean's aggregate is the sum of its shores —
                             // show the states, richest first, each a link
-                            {(is_ocean && member_count > 0).then(|| view! {
+                            {(member_count > 0).then(|| view! {
                                 <div style="margin-top: 32px;">
                                     <div class="section-label">
-                                        {format!("{} ISLAND STATES IN THIS OCEAN", member_count)}
+                                        {format!("{} ISLAND STATES", member_count)}
                                     </div>
                                     <div class="pending-grid">
                                         {members.into_iter().map(|m| {
@@ -268,8 +268,8 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                             })}
 
-                            // Visa sections side by side (terrestrial only)
-                            {(!is_ocean).then(|| view! {
+                            // Visa sections side by side (single states only)
+                            {(member_count == 0).then(|| view! {
                             <div class="visa-grid" style="margin-top: 40px;">
                                 <FilterableVisaSection
                                     title="OUTGOING — WHERE CITIZENS CAN TRAVEL"
