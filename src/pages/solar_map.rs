@@ -217,7 +217,7 @@ pub fn SolarMapPage() -> impl IntoView {
     let sel_body = move || by_code_for_pane.get(&selected.get()).cloned();
 
     view! {
-        <div class="page-frame">
+        <div class="page-shell">
             <SiteHeader />
 
             <div class="solar-map-head">
