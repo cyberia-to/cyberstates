@@ -305,6 +305,23 @@ pub fn HomePage() -> impl IntoView {
                         }
                     }
                 }
+                // the solar dots are painted from the SAME values map, so
+                // every filter that darkens the world darkens the system
+                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                    if let Ok(dots) = doc.query_selector_all(".solar-panel circle[data-code]") {
+                        for i in 0..dots.length() {
+                            if let Some(node) = dots.item(i) {
+                                let el: web_sys::Element = node.unchecked_into();
+                                if let Some(code) = el.get_attribute("data-code") {
+                                    let color = values.get(&code)
+                                        .map(|&v| value_to_color(v, 1.0))
+                                        .unwrap_or_else(|| "#1a1a1a".to_string());
+                                    let _ = el.set_attribute("fill", &color);
+                                }
+                            }
+                        }
+                    }
+                }
                 setup_click_handlers();
             }) as Box<dyn FnMut()>);
             let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 200);
