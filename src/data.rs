@@ -156,7 +156,7 @@ pub fn get_token(code: &str) -> Option<Token> {
 
 impl Country {
     pub fn population_fmt(&self) -> String {
-        format_number(self.population)
+        compact_count(self.population as f64)
     }
 
     pub fn land_area_fmt(&self) -> String {
@@ -340,28 +340,28 @@ impl Token {
     }
 }
 
-/// Areas carry a unit, so they compact sooner than bare counts:
-/// planets read 460.2M km², the Dyson shell reads 281.2Q km².
-pub fn format_area(v: u64) -> String {
-    if v >= 1_000_000_000_000_000 {
-        format!("{:.1}Q", v as f64 / 1e15)
-    } else if v >= 100_000_000 {
-        format!("{:.1}M", v as f64 / 1e6)
-    } else {
-        format_number(v)
+/// One compact scale for every count on the site — population and
+/// territory alike read in k/M/B/T/Q: 8.03B people, 87.0M km², 11.3k.
+/// Precision tapers with magnitude (2 / 1 / 0 decimals) so figures stay
+/// comparable down a column; anything under 1,000 prints whole.
+pub fn compact_count(v: f64) -> String {
+    if v <= 0.0 {
+        return "0".to_string();
     }
+    let (val, suffix) = if v >= 1e15 { (v / 1e15, "Q") }
+        else if v >= 1e12 { (v / 1e12, "T") }
+        else if v >= 1e9 { (v / 1e9, "B") }
+        else if v >= 1e6 { (v / 1e6, "M") }
+        else if v >= 1e3 { (v / 1e3, "k") }
+        else { return format!("{}", v.round() as u64); };
+    let sig = if val >= 100.0 { format!("{:.0}", val) }
+        else if val >= 10.0 { format!("{:.1}", val) }
+        else { format!("{:.2}", val) };
+    format!("{}{}", sig, suffix)
 }
 
-fn format_number(n: u64) -> String {
-    let s = n.to_string();
-    let mut result = String::new();
-    for (i, c) in s.chars().rev().enumerate() {
-        if i > 0 && i % 3 == 0 {
-            result.push(',');
-        }
-        result.push(c);
-    }
-    result.chars().rev().collect()
+pub fn format_area(v: u64) -> String {
+    compact_count(v as f64)
 }
 
 /// Terrestrial = carries real population and capital; the visa index

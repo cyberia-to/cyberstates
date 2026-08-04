@@ -113,13 +113,7 @@ fn token_map_values(
 }
 
 fn fmt_int(v: u64) -> String {
-    let s = v.to_string();
-    let mut out = String::new();
-    for (i, c) in s.chars().enumerate() {
-        if i > 0 && (s.len() - i) % 3 == 0 { out.push(','); }
-        out.push(c);
-    }
-    out
+    compact_count(v as f64)
 }
 
 fn score_color(v: f64) -> &'static str {
