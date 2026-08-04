@@ -22,8 +22,8 @@ pub fn MethodologyPage() -> impl IntoView {
         <div class="page-frame">
             <div class="header-row1">
                 <div class="logo-zone">
-                    <BrandChooser />
-                    <div class="logo-suffix">"doctrine"</div>
+                    <BrandChooser active="DOCTRINE" />
+                    <div class="logo-suffix"></div>
                 </div>
                 <SiteNav active="DOCTRINE" />
             </div>
