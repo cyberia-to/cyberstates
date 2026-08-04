@@ -68,7 +68,15 @@ pub fn CountryRow(
             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                 {move || {
                     let (text, color) = metric_cell(&c_for_metric, field.get(), numeraire.get());
-                    view! { <span style:color=color>{text}</span> }
+                    // big units ride small and dim, like the price's sat
+                    let (num, unit) = match text.strip_suffix(" km\u{b2}") {
+                        Some(n) => (n.to_string(), " km\u{b2}"),
+                        None => (text, ""),
+                    };
+                    view! {
+                        <span style:color=color>{num}</span>
+                        {(!unit.is_empty()).then(|| view! { <span class="price-unit">{unit}</span> })}
+                    }
                 }}
             </td>
         </tr>
