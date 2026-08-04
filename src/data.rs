@@ -168,21 +168,24 @@ impl Country {
         fmt_usd_billions(self.money_supply_b_usd)
     }
 
-    /// Supply in native tokens = cap / price, scaled B/T/Q.
+    /// Supply in native tokens = cap / price, scaled k/M/B/T/Q — a
+    /// 143-million-token supply must read 143M, never round to 0B.
     pub fn supply_fmt(&self) -> String {
         if self.token_price_usd <= 0.0 {
             return "N/A".to_string();
         }
-        let s = self.money_supply_b_usd / self.token_price_usd;
-        if s <= 0.0 {
-            "N/A".to_string()
-        } else if s >= 1_000_000.0 {
-            format!("{:.1}Q", s / 1_000_000.0)
-        } else if s >= 1000.0 {
-            format!("{:.0}T", s / 1000.0)
-        } else {
-            format!("{:.0}B", s)
+        let tokens = self.money_supply_b_usd * 1e9 / self.token_price_usd;
+        if tokens <= 0.0 {
+            return "N/A".to_string();
         }
+        let sig = |v: f64| if v >= 100.0 { format!("{:.0}", v) } else if v >= 10.0 { format!("{:.1}", v) } else { format!("{:.2}", v) };
+        let (v, s) = if tokens >= 1e15 { (tokens / 1e15, "Q") }
+            else if tokens >= 1e12 { (tokens / 1e12, "T") }
+            else if tokens >= 1e9 { (tokens / 1e9, "B") }
+            else if tokens >= 1e6 { (tokens / 1e6, "M") }
+            else if tokens >= 1e3 { (tokens / 1e3, "k") }
+            else { (tokens, "") };
+        format!("{}{}", sig(v), s)
     }
 
 

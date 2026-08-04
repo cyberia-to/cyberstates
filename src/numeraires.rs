@@ -98,14 +98,15 @@ pub fn fmt_cap(b_usd: f64, n: Numeraire) -> String {
     }
     let usd = b_usd * 1e9;
     match n {
+        // full k/M/B/T scaling, not bare billions — a $1.6M state must not
+        // round to $0B; the table and the state card share this formatter
         Numeraire::Usd => {
-            if b_usd >= 1000.0 { format!("${:.1}T", b_usd / 1000.0) }
-            else { format!("${:.0}B", b_usd) }
+            let (v, s) = scaled(usd);
+            format!("${}{}", sig(v), s)
         }
         Numeraire::Cny => {
-            let cny_b = b_usd / CNY_USD;
-            if cny_b >= 1000.0 { format!("¥{:.1}T", cny_b / 1000.0) }
-            else { format!("¥{:.0}B", cny_b) }
+            let (v, s) = scaled(usd / CNY_USD);
+            format!("¥{}{}", sig(v), s)
         }
         Numeraire::Btc => {
             let (v, s) = scaled(usd / BTC_USD);

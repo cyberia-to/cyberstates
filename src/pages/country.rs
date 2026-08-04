@@ -1,13 +1,14 @@
 use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::data::*;
-use crate::numeraires::{fmt_value, Numeraire};
+use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
 use crate::components::notyet::value_or_notyet;
 
 #[component]
 pub fn CountryPage() -> impl IntoView {
+    let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
     let params = leptos_router::hooks::use_params_map();
     let countries = load_countries();
 
@@ -62,11 +63,13 @@ pub fn CountryPage() -> impl IntoView {
                     let token_code = c.currency_code.clone();
                     let token_slug = token_code.to_lowercase();
                     let token_name = c.currency_name.clone();
-                    let price = c.price_fmt();
-                    let cap = c.cap_fmt();
                     let supply = c.supply_fmt();
-                    let human_value = fmt_value(c.metric(SortField::Human), Numeraire::Usd);
-                    let land_value = fmt_value(c.metric(SortField::Land), Numeraire::Usd);
+                    // the card follows the global numeraire, exactly like the
+                    // table — capital and derived values reprice on the chooser
+                    let cap_b = c.money_supply_b_usd;
+                    let price_usd = c.token_price_usd;
+                    let human_usd = c.metric(SortField::Human);
+                    let land_usd = c.metric(SortField::Land);
 
                     // rank in each rating = position in that landing's table
                     let all_states = load_countries();
@@ -156,7 +159,20 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"PRICE"</div>
-                                    <div class="stat-value" style="color: var(--cyber-orange);">{value_or_notyet(price)}</div>
+                                    <div class="stat-value tabular-nums" style="color: var(--cyber-orange);">
+                                        {move || {
+                                            let (head, frac, unit) = price_parts(price_usd, numeraire.get());
+                                            if head == "N/A" {
+                                                view! { <crate::components::notyet::NotYet /> }.into_any()
+                                            } else {
+                                                view! {
+                                                    <span>{head}</span>
+                                                    <span class="price-frac">{frac}</span>
+                                                    <span class="price-unit">{unit}</span>
+                                                }.into_any()
+                                            }
+                                        }}
+                                    </div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"SUPPLY"</div>
@@ -165,8 +181,10 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"CAPITAL"<span class="rank-badge" style:color=r_capital.1 style:opacity=r_capital.2>{r_capital.0}</span></div>
-                                    <div class="stat-value" style="color: var(--cyber-yellow);">{value_or_notyet(cap)}</div>
-                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
+                                    <div class="stat-value" style="color: var(--cyber-yellow);">
+                                        {move || value_or_notyet(fmt_cap(cap_b, numeraire.get()))}
+                                    </div>
+                                    <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply"</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"POPULATION"<span class="rank-badge" style:color=r_pop.1 style:opacity=r_pop.2>{r_pop.0}</span></div>
@@ -183,12 +201,16 @@ pub fn CountryPage() -> impl IntoView {
                             <div class="stat-grid">
                                 <div class="stat-card">
                                     <div class="stat-label">"CITIZEN VALUE"<span class="rank-badge" style:color=r_human.1 style:opacity=r_human.2>{r_human.0}</span></div>
-                                    <div class="stat-value" style="color: var(--cyber-green);">{human_value}</div>
+                                    <div class="stat-value" style="color: var(--cyber-green);">
+                                        {move || value_or_notyet(fmt_value(human_usd, numeraire.get()))}
+                                    </div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per person"</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"LAND VALUE"<span class="rank-badge" style:color=r_land.1 style:opacity=r_land.2>{r_land.0}</span></div>
-                                    <div class="stat-value" style="color: var(--cyber-cyan);">{land_value}</div>
+                                    <div class="stat-value" style="color: var(--cyber-cyan);">
+                                        {move || value_or_notyet(fmt_value(land_usd, numeraire.get()))}
+                                    </div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"capital per km²"</div>
                                 </div>
                                 <div class="stat-card">
