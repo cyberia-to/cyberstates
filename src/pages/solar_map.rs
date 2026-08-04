@@ -1,8 +1,10 @@
 use leptos::prelude::*;
 use std::collections::HashMap;
 use crate::data::*;
+use crate::components::table::metric_cell;
+use crate::numeraires::Numeraire;
 use crate::pages::country::SiteHeader;
-use crate::pages::map::value_to_color;
+use crate::pages::map::{painted_world, value_to_color};
 
 /// Orbital elements, not frozen angles: (code, semi-major axis in AU,
 /// mean longitude at J2000 in degrees, mean motion in degrees/day).
@@ -103,6 +105,37 @@ fn colors_for(bodies: &[Country], field: SortField) -> HashMap<String, String> {
         .collect()
 }
 
+/// Rank-percentile values for the world map pane (terrestrial states,
+/// no filters — the experiment keeps it simple).
+fn world_values(field: SortField) -> HashMap<String, f64> {
+    let mut ranked: Vec<(String, f64)> = load_countries()
+        .iter()
+        .filter(|c| is_terrestrial(&c.region) && !is_aggregate(&c.code))
+        .map(|c| (c.code.clone(), c.metric(field)))
+        .collect();
+    ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+    let n = ranked.len();
+    let log_scale = matches!(field, SortField::Population | SortField::Territory);
+    let (vmin, vmax) = if log_scale && n > 0 {
+        let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
+        let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+        (p10, top)
+    } else {
+        (0.0, 1.0)
+    };
+    let mut values = HashMap::new();
+    for (i, (code, v)) in ranked.into_iter().enumerate() {
+        let t = if log_scale {
+            if vmax > vmin { ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0) } else { 1.0 }
+        } else if n > 1 {
+            i as f64 / (n - 1) as f64
+        } else { 1.0 };
+        let t = if field.lower_is_better() { 1.0 - t } else { t };
+        values.insert(code, 0.02 + 0.98 * t);
+    }
+    values
+}
+
 /// /solar — the experiment: the solar system as an orbital map. Real
 /// log-scaled orbits, bodies sized by their surfaces, colored by the
 /// active rating exactly like the world map. Ghost rings mark the gas
@@ -153,10 +186,27 @@ pub fn SolarMapPage() -> impl IntoView {
     let bodies_for_colors = bodies.clone();
     let colors = Memo::new(move |_| colors_for(&bodies_for_colors, field.get()));
 
+    // the cockpit selection: a body chosen on either the table or the
+    // system map; Earth by default — the only surveyed world
+    let selected = RwSignal::new("ERTH".to_string());
+    let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
+
     // orbit rings for every distinct heliocentric distance
     let mut ring_as: Vec<f64> = ELEMENTS.iter().map(|&(_, a, _, _)| a).collect();
     ring_as.sort_by(|a, b| a.partial_cmp(b).unwrap());
     ring_as.dedup_by(|a, b| (*a - *b).abs() < 0.2);
+
+    // table: the system ranked under the active rating
+    let bodies_for_table = bodies.clone();
+    let table_rows = move || {
+        let f = field.get();
+        let mut v = bodies_for_table.clone();
+        v.sort_by(|a, b| b.metric(f).partial_cmp(&a.metric(f)).unwrap_or(std::cmp::Ordering::Equal));
+        v
+    };
+
+    let by_code_for_pane = by_code.clone();
+    let sel_body = move || by_code_for_pane.get(&selected.get()).cloned();
 
     view! {
         <div class="page-frame">
@@ -179,46 +229,155 @@ pub fn SolarMapPage() -> impl IntoView {
                 </div>
             </div>
 
-            <svg class="solar-map" viewBox="0 0 1000 940">
-                // orbits: faint truth under the listings
-                {ring_as.into_iter().map(|a| view! {
-                    <circle
-                        cx=CX cy=CY r=orbit_r(a)
-                        fill="none" stroke="#131313" stroke-width="1"
-                    ></circle>
-                }).collect_view()}
+            <div class="solar-cockpit">
+                // pane 1: the table of the system
+                <div class="cockpit-table">
+                    <table class="cyber-table slim">
+                        <colgroup>
+                            <col style="width: 44px;" />
+                            <col />
+                            <col style="width: 96px;" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th style="cursor: default; text-align: right;">"#"</th>
+                                <th class="th-static">"BODY"</th>
+                                <th class="th-static metric-th" style="text-align: right;">
+                                    {move || field.get().short()}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {move || table_rows().into_iter().enumerate().map(|(i, c)| {
+                                let code = c.code.clone();
+                                let code_cls = c.code.clone();
+                                let c_metric = c.clone();
+                                view! {
+                                    <tr
+                                        class=move || if selected.get() == code_cls { "cockpit-row sel" } else { "cockpit-row" }
+                                        on:click=move |_| selected.set(code.clone())
+                                    >
+                                        <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", rank_color(i + 1), rank_weight(i + 1))>{i + 1}</td>
+                                        <td>
+                                            <span style="margin-right: 7px;">{c.flag.clone()}</span>
+                                            <span style="color: #ccc;">{c.name.clone()}</span>
+                                        </td>
+                                        <td class="tabular-nums" style="text-align: right; font-weight: 700;">
+                                            {move || {
+                                                let (text, color) = metric_cell(&c_metric, field.get(), numeraire.get());
+                                                let (num, unit) = match text.strip_suffix(" km\u{b2}") {
+                                                    Some(n) => (n.to_string(), " km\u{b2}"),
+                                                    None => (text, ""),
+                                                };
+                                                view! {
+                                                    <span style:color=color>{num}</span>
+                                                    {(!unit.is_empty()).then(|| view! { <span class="price-unit">{unit}</span> })}
+                                                }
+                                            }}
+                                        </td>
+                                    </tr>
+                                }
+                            }).collect_view()}
+                        </tbody>
+                    </table>
+                </div>
 
-                // the listed bodies
-                {placed.into_iter().map(|(c, x, y, r)| {
-                    let code = c.code.clone();
-                    let href = format!("/state/{}", code.to_lowercase());
-                    let title = format!("{} — {}", c.name, c.land_area_fmt());
-                    let label = matches!(c.code.as_str(),
-                        "SUN" | "MERC" | "VENU" | "ERTH" | "MARS" | "CERE" | "JUPI" | "SATN" | "URAN" | "NEPT" | "PLUT" | "ERIS" | "SEDN")
-                        .then(|| c.name.clone());
-                    view! {
-                        <g
-                            class="solar-map-a"
-                            on:click=move |_| crate::pages::map::navigate_client(&href)
-                        >
-                            <circle
-                                cx=x cy=y r=r
-                                fill=move || colors.get().get(&code).cloned().unwrap_or_else(|| "#1a1a1a".into())
-                                class="solar-map-dot"
+                // pane 2: the system map — click selects
+                <svg class="solar-map" viewBox="0 0 1000 940">
+                    {ring_as.into_iter().map(|a| view! {
+                        <circle
+                            cx=CX cy=CY r=orbit_r(a)
+                            fill="none" stroke="#131313" stroke-width="1"
+                        ></circle>
+                    }).collect_view()}
+
+                    {placed.into_iter().map(|(c, x, y, r)| {
+                        let code = c.code.clone();
+                        let code_sel = c.code.clone();
+                        let code_ring = c.code.clone();
+                        let title = format!("{} — {}", c.name, c.land_area_fmt());
+                        let label = matches!(c.code.as_str(),
+                            "SUN" | "MERC" | "VENU" | "ERTH" | "MARS" | "CERE" | "JUPI" | "SATN" | "URAN" | "NEPT" | "PLUT" | "ERIS" | "SEDN")
+                            .then(|| c.name.clone());
+                        view! {
+                            <g
+                                class="solar-map-a"
+                                on:click=move |_| selected.set(code_sel.clone())
                             >
-                                <title>{title}</title>
-                            </circle>
-                            {label.map(|name| view! {
-                                <text
-                                    x=x y=y + r + 13.0
-                                    text-anchor="middle"
-                                    class="solar-map-label"
-                                >{name}</text>
-                            })}
-                        </g>
-                    }
-                }).collect_view()}
-            </svg>
+                                <circle
+                                    cx=x cy=y r=r + 4.0
+                                    fill="none"
+                                    stroke=move || if selected.get() == code_ring { "var(--cyber-green)" } else { "transparent" }
+                                    stroke-width="1.5"
+                                ></circle>
+                                <circle
+                                    cx=x cy=y r=r
+                                    fill=move || colors.get().get(&code).cloned().unwrap_or_else(|| "#1a1a1a".into())
+                                    class="solar-map-dot"
+                                >
+                                    <title>{title}</title>
+                                </circle>
+                                {label.map(|name| view! {
+                                    <text
+                                        x=x y=y + r + 13.0
+                                        text-anchor="middle"
+                                        class="solar-map-label"
+                                    >{name}</text>
+                                })}
+                            </g>
+                        }
+                    }).collect_view()}
+                </svg>
+
+                // pane 3: the selected world
+                <div class="cockpit-planet">
+                    {move || sel_body().map(|c| {
+                        let href = format!("/state/{}", c.code.to_lowercase());
+                        let is_earth = c.code == "ERTH";
+                        let color = colors.get().get(&c.code).cloned().unwrap_or_else(|| "#1a1a1a".into());
+                        view! {
+                            <div class="planet-head">
+                                <span style="font-size: 26px; margin-right: 10px;">{c.flag.clone()}</span>
+                                <span class="planet-name">{c.name.clone()}</span>
+                                <a href=href class="region-pill planet-open">"open →"</a>
+                            </div>
+                            <div class="planet-stats">
+                                <span>"CAPITAL "<b>{value_or_soon(c.cap_fmt())}</b></span>
+                                <span>"POPULATION "<b>{c.population_fmt()}</b></span>
+                                <span>"TERRITORY "<b>{c.land_area_fmt()}</b></span>
+                            </div>
+                            {if is_earth {
+                                view! {
+                                    <div class="planet-world" inner_html=painted_world(&world_values(field.get()))></div>
+                                }.into_any()
+                            } else {
+                                view! {
+                                    <div class="planet-disk">
+                                        <svg viewBox="0 0 200 200">
+                                            <circle cx="100" cy="100" r="88" fill=color.clone() opacity="0.92"></circle>
+                                            <ellipse cx="100" cy="100" rx="88" ry="30" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="1"></ellipse>
+                                            <ellipse cx="100" cy="100" rx="88" ry="60" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1"></ellipse>
+                                            <ellipse cx="100" cy="100" rx="30" ry="88" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="1"></ellipse>
+                                            <ellipse cx="100" cy="100" rx="60" ry="88" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1"></ellipse>
+                                            <line x1="12" y1="100" x2="188" y2="100" stroke="rgba(0,0,0,0.25)" stroke-width="1"></line>
+                                        </svg>
+                                        <div class="planet-note">"unsurveyed world — no map yet"</div>
+                                    </div>
+                                }.into_any()
+                            }}
+                        }
+                    })}
+                </div>
+            </div>
         </div>
+    }
+}
+
+/// cap_fmt says N/A for unmonetized worlds; the cockpit says soon.
+fn value_or_soon(text: String) -> AnyView {
+    if text == "N/A" {
+        view! { <crate::components::notyet::NotYet /> }.into_any()
+    } else {
+        view! { <span>{text}</span> }.into_any()
     }
 }
