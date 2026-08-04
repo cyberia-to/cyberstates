@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use crate::data::{Country, SortField};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
+use crate::components::notyet::NotYet;
 
 fn score_color(v: f64) -> &'static str {
     if v > 60.0 { "var(--cyber-green)" }
@@ -58,16 +59,23 @@ pub fn CountryRow(
             <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
                 {move || {
                     let (head, frac, unit) = price_parts(price_usd, numeraire.get());
-                    view! {
-                        <span>{head}</span>
-                        <span class="price-frac">{frac}</span>
-                        <span class="price-unit">{unit}</span>
+                    if head == "N/A" {
+                        view! { <NotYet /> }.into_any()
+                    } else {
+                        view! {
+                            <span>{head}</span>
+                            <span class="price-frac">{frac}</span>
+                            <span class="price-unit">{unit}</span>
+                        }.into_any()
                     }
                 }}
             </td>
             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                 {move || {
                     let (text, color) = metric_cell(&c_for_metric, field.get(), numeraire.get());
+                    if text == "N/A" {
+                        return view! { <NotYet /> }.into_any();
+                    }
                     // big units ride small and dim, like the price's sat
                     let (num, unit) = match text.strip_suffix(" km\u{b2}") {
                         Some(n) => (n.to_string(), " km\u{b2}"),
@@ -76,7 +84,7 @@ pub fn CountryRow(
                     view! {
                         <span style:color=color>{num}</span>
                         {(!unit.is_empty()).then(|| view! { <span class="price-unit">{unit}</span> })}
-                    }
+                    }.into_any()
                 }}
             </td>
         </tr>

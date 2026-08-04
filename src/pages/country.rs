@@ -4,6 +4,7 @@ use crate::data::*;
 use crate::numeraires::{fmt_value, Numeraire};
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
+use crate::components::notyet::value_or_notyet;
 
 #[component]
 pub fn CountryPage() -> impl IntoView {
@@ -140,16 +141,16 @@ pub fn CountryPage() -> impl IntoView {
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"PRICE"</div>
-                                    <div class="stat-value" style="color: var(--cyber-orange);">{price}</div>
+                                    <div class="stat-value" style="color: var(--cyber-orange);">{value_or_notyet(price)}</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"SUPPLY"</div>
-                                    <div class="stat-value" style="color: #888;">{supply}</div>
+                                    <div class="stat-value" style="color: #888;">{value_or_notyet(supply)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"CAPITAL"<span class="rank-badge" style:color=r_capital.1 style:opacity=r_capital.2>{r_capital.0}</span></div>
-                                    <div class="stat-value" style="color: var(--cyber-yellow);">{cap}</div>
+                                    <div class="stat-value" style="color: var(--cyber-yellow);">{value_or_notyet(cap)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
                                 </div>
                                 <div class="stat-card">

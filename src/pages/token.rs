@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use crate::data::*;
 use crate::pages::country::SiteHeader;
+use crate::components::notyet::value_or_notyet;
 
 #[component]
 pub fn TokenPage() -> impl IntoView {
@@ -57,17 +58,17 @@ pub fn TokenPage() -> impl IntoView {
                             <div class="stat-grid">
                                 <div class="stat-card">
                                     <div class="stat-label">"PRICE"</div>
-                                    <div class="stat-value" style="color: var(--cyber-orange);">{price}</div>
+                                    <div class="stat-value" style="color: var(--cyber-orange);">{value_or_notyet(price)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"USD per token"</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"SUPPLY"</div>
-                                    <div class="stat-value" style="color: #888;">{supply}</div>
+                                    <div class="stat-value" style="color: #888;">{value_or_notyet(supply)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
                                 </div>
                                 <div class="stat-card">
                                     <div class="stat-label">"CAPITAL"</div>
-                                    <div class="stat-value" style="color: var(--cyber-yellow);">{cap}</div>
+                                    <div class="stat-value" style="color: var(--cyber-yellow);">{value_or_notyet(cap)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
                                 </div>
                                 <div class="stat-card">

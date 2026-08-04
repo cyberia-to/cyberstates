@@ -6,6 +6,7 @@ use crate::data::*;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
 use crate::components::legend::{goodness_keep, RatingLegend};
+use crate::components::notyet::NotYet;
 use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 
@@ -351,16 +352,23 @@ pub fn TokensPage() -> impl IntoView {
                                             <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
                                                 {move || {
                                                     let (head, frac, unit) = price_parts(price_usd, numeraire.get());
-                                                    view! {
-                                                        <span>{head}</span>
-                                                        <span class="price-frac">{frac}</span>
-                                                        <span class="price-unit">{unit}</span>
+                                                    if head == "N/A" {
+                                                        view! { <NotYet /> }.into_any()
+                                                    } else {
+                                                        view! {
+                                                            <span>{head}</span>
+                                                            <span class="price-frac">{frac}</span>
+                                                            <span class="price-unit">{unit}</span>
+                                                        }.into_any()
                                                     }
                                                 }}
                                             </td>
                                             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                                                 {move || {
                                                     let (text, color) = metric_cell(&t_for_metric, field.get(), numeraire.get(), &scores);
+                                                    if text == "N/A" {
+                                                        return view! { <NotYet /> }.into_any();
+                                                    }
                                                     let (num, unit) = match text.strip_suffix(" km\u{b2}") {
                                                         Some(n) => (n.to_string(), " km\u{b2}"),
                                                         None => (text, ""),
@@ -368,7 +376,7 @@ pub fn TokensPage() -> impl IntoView {
                                                     view! {
                                                         <span style:color=color>{num}</span>
                                                         {(!unit.is_empty()).then(|| view! { <span class="price-unit">{unit}</span> })}
-                                                    }
+                                                    }.into_any()
                                                 }}
                                             </td>
                                         </tr>
