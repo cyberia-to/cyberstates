@@ -64,6 +64,12 @@ pub fn navigate_client(path: &str) {
             }
         }
     };
+    // jump to the top BEFORE the old page is snapshotted: both sides of
+    // the cross-fade are then top-anchored, so scrolled rows and a stuck
+    // thead never ghost through the dissolve at mismatched positions
+    if let Some(w) = web_sys::window() {
+        w.scroll_to_with_x_and_y(0.0, 0.0);
+    }
     let doc = web_sys::window().and_then(|w| w.document());
     let svt = doc.as_ref().and_then(|d| {
         js_sys::Reflect::get(d.as_ref(), &JsValue::from_str("startViewTransition"))

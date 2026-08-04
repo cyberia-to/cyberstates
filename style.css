@@ -570,12 +570,15 @@ body {
     letter-spacing: 1px;
 }
 
-/* constant header height: one-line and two-line labels occupy the same
-   box, so switching ratings never shifts the table */
+/* constant header height: every label occupies the same slim box, so
+   switching ratings never shifts the table — and the stuck header reads
+   as a rail, not a slab */
 .cyber-table.slim thead th {
-    height: 56px;
+    height: 40px;
     vertical-align: middle;
     box-sizing: border-box;
+    font-size: 10px;
+    letter-spacing: 1.5px;
 }
 
 @media (max-width: 1100px) {
@@ -773,7 +776,8 @@ body {
 
 .cyber-table th {
     position: sticky;
-    top: var(--chrome-h, 0px);
+    /* -1px: offsetHeight rounds down, the overlap seals the seam */
+    top: calc(var(--chrome-h, 0px) - 1px);
     z-index: 10;
     background: #050505;
     border-bottom: 1px solid var(--cyber-muted);
