@@ -136,7 +136,7 @@ fn metric_cell(t: &Token, f: SortField, n: Numeraire, scores: &HashMap<String, (
         SortField::Human | SortField::Land => (fmt_value(v, n), "#e0e0e0"),
         SortField::Freedom | SortField::Hospitality => (format!("{:.1}", v), score_color(v)),
         SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
-        SortField::Territory => (format!("{} km²", fmt_int(v as u64)), "#e0e0e0"),
+        SortField::Territory => (format!("{} km²", format_area(v as u64)), "#e0e0e0"),
         SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
     }
 }

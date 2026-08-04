@@ -159,7 +159,7 @@ impl Country {
     }
 
     pub fn land_area_fmt(&self) -> String {
-        format!("{} km²", format_number(self.land_area_km2))
+        format!("{} km²", format_area(self.land_area_km2))
     }
 
     /// Cap in USD (money_supply_b_usd)
@@ -327,6 +327,18 @@ impl Token {
         } else {
             format!("${:.6}", self.price_usd)
         }
+    }
+}
+
+/// Areas carry a unit, so they compact sooner than bare counts:
+/// planets read 460.2M km², the Dyson shell reads 281.2Q km².
+pub fn format_area(v: u64) -> String {
+    if v >= 1_000_000_000_000_000 {
+        format!("{:.1}Q", v as f64 / 1e15)
+    } else if v >= 100_000_000 {
+        format!("{:.1}M", v as f64 / 1e6)
+    } else {
+        format_number(v)
     }
 }
 
