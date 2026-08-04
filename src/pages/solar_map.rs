@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use std::collections::HashMap;
 use crate::data::*;
 use crate::components::table::metric_cell;
-use crate::numeraires::Numeraire;
+use crate::numeraires::{price_parts, Numeraire};
 use crate::pages::country::SiteHeader;
 use crate::pages::map::{painted_world, value_to_color};
 
@@ -326,12 +326,16 @@ pub fn SolarMapPage() -> impl IntoView {
                         <colgroup>
                             <col style="width: 30px;" />
                             <col />
+                            <col style="width: 48px;" />
+                            <col style="width: 82px;" />
                             <col style="width: 82px;" />
                         </colgroup>
                         <thead>
                             <tr>
                                 <th style="cursor: default; text-align: right;">"#"</th>
                                 <th class="th-static">"BODY"</th>
+                                <th class="th-static">"TOKEN"</th>
+                                <th class="th-static" style="text-align: right;">"PRICE"</th>
                                 <th class="th-static metric-th" style="text-align: right;">
                                     {move || field.get().short()}
                                 </th>
@@ -351,6 +355,24 @@ pub fn SolarMapPage() -> impl IntoView {
                                         <td>
                                             <span style="margin-right: 7px;">{c.flag.clone()}</span>
                                             <span style="color: #ccc;">{c.name.clone()}</span>
+                                        </td>
+                                        <td style="color: var(--cyber-yellow); font-weight: 700;">{c.currency_code.clone()}</td>
+                                        <td class="tabular-nums" style="text-align: right; color: var(--cyber-orange);">
+                                            {
+                                                let price_usd = c.token_price_usd;
+                                                move || {
+                                                    let (head, frac, unit) = price_parts(price_usd, numeraire.get());
+                                                    if head == "N/A" {
+                                                        view! { <crate::components::notyet::NotYet /> }.into_any()
+                                                    } else {
+                                                        view! {
+                                                            <span>{head}</span>
+                                                            <span class="price-frac">{frac}</span>
+                                                            <span class="price-unit">{unit}</span>
+                                                        }.into_any()
+                                                    }
+                                                }
+                                            }
                                         </td>
                                         <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                                             {move || {

@@ -1448,7 +1448,7 @@ body {
     height: 88%;
     width: auto;
     aspect-ratio: 1 / 1;
-    left: calc(252px + (100% - 252px) / 2);
+    left: calc(446px + (100% - 446px) / 2);
     transform: translate(-50%, -50%);
 }
 
@@ -1457,7 +1457,7 @@ body {
     left: 0;
     top: 0;
     bottom: 0;
-    width: 252px;
+    width: 446px;
     overflow-y: auto;
     border: 1px solid #16211a;
     border-radius: 6px;
@@ -1623,7 +1623,7 @@ body {
 /* corner instruments: the voids carry function */
 .stage-legend {
     position: absolute;
-    left: 264px;
+    left: 458px;
     bottom: 8px;
     display: flex;
     align-items: center;
