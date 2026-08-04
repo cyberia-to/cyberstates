@@ -437,15 +437,16 @@ impl SortField {
     }
 
     /// The eight ratings, in display order.
-    // Kernel ratings first; the freedom scores close the list — they are
-    // derived through the Appendix A weights, and the order says so.
+    // The doctrine's kernel order: three primary stocks · three derived
+    // exchange rates · two freedom scores from the Appendix A weights.
     pub const ALL: [SortField; 8] = [
-        Self::Capital, Self::Human, Self::Land, Self::Population,
-        Self::Territory, Self::Density, Self::Freedom, Self::Hospitality,
+        Self::Capital, Self::Population, Self::Territory,
+        Self::Human, Self::Land, Self::Density,
+        Self::Freedom, Self::Hospitality,
     ];
 
-    /// True where the derived tail begins — the pill rows draw a dot here.
+    /// True where a derived group begins — the pill rows draw a dot here.
     pub fn derived_break(&self) -> bool {
-        matches!(self, Self::Freedom)
+        matches!(self, Self::Human | Self::Freedom)
     }
 }
