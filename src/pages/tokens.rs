@@ -5,10 +5,8 @@ use std::collections::HashMap;
 use crate::data::*;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
-use crate::pages::map::{setup_click_handlers, value_to_color};
+use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
-
-const WORLD_SVG: &str = include_str!("../../assets/world.svg");
 
 /// Canonical landing path for a token rating. Root = by capital.
 fn landing_path(field: SortField) -> String {
@@ -55,6 +53,54 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
             if psum > 0.0 { wsum / psum } else { 0.0 }
         }
     }
+}
+
+/// Map values for the token landing: every member state wears its
+/// token's rank percentile — currency zones read as solid blocks.
+fn token_map_values(
+    tokens: &[Token],
+    scores: &HashMap<String, (f64, f64, f64)>,
+    field: SortField,
+    query: &str,
+) -> HashMap<String, f64> {
+    let mut ranked: Vec<(Vec<String>, f64)> = tokens.iter()
+        .filter(|t| {
+            query.is_empty() || t.code.to_lowercase().contains(query) || t.name.to_lowercase().contains(query)
+        })
+        .map(|t| {
+            let members = t.countries.iter().map(|(c, _, _)| c.clone()).collect();
+            (members, token_metric(t, field, scores))
+        })
+        .collect();
+    ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+    let n = ranked.len();
+    let log_scale = matches!(field, SortField::Population | SortField::Territory);
+    let (vmin, vmax) = if log_scale && n > 0 {
+        let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
+        let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+        (p10, top)
+    } else {
+        (0.0, 1.0)
+    };
+    let mut values = HashMap::new();
+    for (i, (members, v)) in ranked.into_iter().enumerate() {
+        let t = if log_scale {
+            if vmax > vmin {
+                ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+            } else {
+                1.0
+            }
+        } else if n > 1 {
+            i as f64 / (n - 1) as f64
+        } else {
+            1.0
+        };
+        let t = if field.lower_is_better() { 1.0 - t } else { t };
+        for code in members {
+            values.insert(code, 0.02 + 0.98 * t);
+        }
+    }
+    values
 }
 
 fn fmt_int(v: u64) -> String {
@@ -105,6 +151,13 @@ pub fn TokensPage() -> impl IntoView {
     let location = use_location();
     let field = Signal::derive(move || parse_path(&location.pathname.get()));
 
+    // the map mounts already painted — page switches never flash
+    let initial_svg = painted_world(&token_map_values(
+        &tokens,
+        &scores,
+        parse_path(&location.pathname.get_untracked()),
+        "",
+    ));
     let (search, set_search) = signal(String::new());
     let (rating_open, set_rating_open) = signal(false);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
@@ -123,45 +176,7 @@ pub fn TokensPage() -> impl IntoView {
     Effect::new(move |_| {
         let f = field.get();
         let query = search.get().to_lowercase();
-        let mut ranked: Vec<(Vec<String>, f64)> = tokens_for_map.iter()
-            .filter(|t| {
-                query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
-            })
-            .map(|t| {
-                let members = t.countries.iter().map(|(c, _, _)| c.clone()).collect();
-                (members, token_metric(t, f, &scores_for_map))
-            })
-            .collect();
-        ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
-        let n = ranked.len();
-        // same palette rules as the states map: log min-max where polygon
-        // size already encodes the axis, rank percentile everywhere else
-        let log_scale = matches!(f, SortField::Population | SortField::Territory);
-        let (vmin, vmax) = if log_scale && n > 0 {
-            let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
-            let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
-            (p10, top)
-        } else {
-            (0.0, 1.0)
-        };
-        let mut values: HashMap<String, f64> = HashMap::new();
-        for (i, (members, v)) in ranked.into_iter().enumerate() {
-            let t = if log_scale {
-                if vmax > vmin {
-                    ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-                } else {
-                    1.0
-                }
-            } else if n > 1 {
-                i as f64 / (n - 1) as f64
-            } else {
-                1.0
-            };
-            let t = if f.lower_is_better() { 1.0 - t } else { t };
-            for code in members {
-                values.insert(code, 0.02 + 0.98 * t);
-            }
-        }
+        let values = token_map_values(&tokens_for_map, &scores_for_map, f, &query);
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
             let cb = Closure::wrap(Box::new(move || {
@@ -342,7 +357,7 @@ pub fn TokensPage() -> impl IntoView {
                     </div>
                 </div>
                 <div class="map-pane">
-                    <div class="world-map-container" inner_html=WORLD_SVG></div>
+                    <div class="world-map-container" inner_html=initial_svg></div>
                     <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
                         <span style="font-size: 10px; color: #555; letter-spacing: 1px;">
                             {move || if field.get().lower_is_better() { "HIGH" } else { "LOW" }}

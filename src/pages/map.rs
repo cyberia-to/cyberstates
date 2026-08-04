@@ -1,5 +1,29 @@
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use std::collections::HashMap;
+
+pub const WORLD_SVG: &str = include_str!("../../assets/world.svg");
+
+/// The world with its fills already inlined: mounting this string shows
+/// the map in final colors on its very first frame — switching pages
+/// never flashes an unpainted world. Later changes patch the live DOM.
+pub fn painted_world(values: &HashMap<String, f64>) -> String {
+    let mut parts = WORLD_SVG.split("<path ");
+    let mut out = String::with_capacity(WORLD_SVG.len() + values.len() * 48);
+    out.push_str(parts.next().unwrap_or(""));
+    for chunk in parts {
+        let color = chunk
+            .split("id=\"")
+            .nth(1)
+            .and_then(|r| r.split('"').next())
+            .and_then(|id| values.get(id))
+            .map(|&v| value_to_color(v, 1.0))
+            .unwrap_or_else(|| "#1a1a1a".to_string());
+        out.push_str(&format!("<path style=\"fill: {}; cursor: pointer;\" ", color));
+        out.push_str(chunk);
+    }
+    out
+}
 
 /// Cyber palette ramp: red → orange → yellow → cyan → green.
 pub fn value_to_color(val: f64, max: f64) -> String {

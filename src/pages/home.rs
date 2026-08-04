@@ -3,7 +3,7 @@ use leptos_router::hooks::{use_location, use_navigate};
 use wasm_bindgen::JsCast;
 use crate::data::*;
 use crate::components::table::*;
-use crate::pages::map::{setup_click_handlers, value_to_color};
+use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
 use std::collections::HashMap;
 use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
@@ -60,7 +60,55 @@ fn parse_path(path: &str) -> (String, SortField) {
 }
 
 
-const WORLD_SVG: &str = include_str!("../../assets/world.svg");
+/// Percentile-painted map values for a landing: rank coloring, log
+/// min-max where polygon size already encodes the axis, inverted where
+/// lower is better. Shared by the pre-painted mount and the live patch.
+fn map_values(
+    countries: &[Country],
+    region: &str,
+    field: SortField,
+    query: &str,
+    filters: &[NumFilter],
+) -> std::collections::HashMap<String, f64> {
+    let mut ranked: Vec<(String, f64)> = countries.iter()
+        .filter(|c| {
+            (region == "All" || c.region == region)
+                && (query.is_empty()
+                    || c.name.to_lowercase().contains(query)
+                    || c.code.to_lowercase().contains(query)
+                    || c.currency_code.to_lowercase().contains(query))
+                && filters.iter().all(|f| passes(c, f))
+        })
+        .map(|c| (c.code.clone(), c.metric(field)))
+        .collect();
+    ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+    let n = ranked.len();
+    let log_scale = matches!(field, SortField::Population | SortField::Territory);
+    let (vmin, vmax) = if log_scale && n > 0 {
+        let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
+        let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+        (p10, top)
+    } else {
+        (0.0, 1.0)
+    };
+    let mut values = std::collections::HashMap::new();
+    for (i, (code, v)) in ranked.into_iter().enumerate() {
+        let t = if log_scale {
+            if vmax > vmin {
+                ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+            } else {
+                1.0
+            }
+        } else if n > 1 {
+            i as f64 / (n - 1) as f64
+        } else {
+            1.0
+        };
+        let t = if field.lower_is_better() { 1.0 - t } else { t };
+        values.insert(code, 0.02 + 0.98 * t);
+    }
+    values
+}
 
 #[derive(Clone, Copy, PartialEq)]
 enum NumField { Pop, Cap, Land, Freedom, Openness }
@@ -149,6 +197,12 @@ pub fn HomePage() -> impl IntoView {
         .and_then(|v| js_sys::decode_uri_component(&v.replace('+', " ")).ok())
         .map(String::from)
         .unwrap_or_default();
+    // the map mounts already painted — page switches never flash
+    let initial_svg = {
+        let (region, field) = parse_path(&location.pathname.get_untracked());
+        let (q, filters) = parse_query(&initial_q.to_lowercase());
+        painted_world(&map_values(&countries, &region, field, &q, &filters))
+    };
     let (search, set_search) = signal(initial_q);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
@@ -200,56 +254,7 @@ pub fn HomePage() -> impl IntoView {
     Effect::new(move |_| {
         let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
-        // Rank coloring: the map is the table painted — each visible state's
-        // color is its percentile under the active rating, so the full
-        // palette is always in play and the worst state burns red no matter
-        // how the raw axis is distributed.
-        let mut ranked: Vec<(String, f64)> = countries_for_map.iter()
-            .filter(|c| {
-                (region == "All" || c.region == region)
-                    && (query.is_empty()
-                        || c.name.to_lowercase().contains(&query)
-                        || c.code.to_lowercase().contains(&query)
-                        || c.currency_code.to_lowercase().contains(&query))
-                    && filters.iter().all(|f| passes(c, f))
-            })
-            .map(|c| (c.code.clone(), c.metric(field)))
-            .collect();
-        ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
-        let n = ranked.len();
-        let mut values: HashMap<String, f64> = HashMap::new();
-        // POPULATION and TERRITORY are already visually encoded by polygon size:
-        // rank paints every visible state green, linear drowns everything
-        // but the top-2 in red. Log min-max spreads the palette across
-        // orders of magnitude — micro-states red, mid-size yellow-cyan,
-        // giants green. Everything else colors by rank.
-        let log_scale = matches!(field, SortField::Population | SortField::Territory);
-        // anchor the low end at the 10th percentile, not the absolute min:
-        // otherwise invisible micro-states eat the bottom half of the palette
-        let (vmin, vmax) = if log_scale && n > 0 {
-            let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
-            let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
-            (p10, top)
-        } else {
-            (0.0, 1.0)
-        };
-        for (i, (code, v)) in ranked.into_iter().enumerate() {
-            let t = if log_scale {
-                if vmax > vmin {
-                    ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-                } else {
-                    1.0
-                }
-            } else if n > 1 {
-                i as f64 / (n - 1) as f64
-            } else {
-                1.0
-            };
-            // green always means better: invert for lower-is-better ratings
-            let t = if field.lower_is_better() { 1.0 - t } else { t };
-            // keep the floor above the "unpainted" dark threshold
-            values.insert(code, 0.02 + 0.98 * t);
-        }
+        let values = map_values(&countries_for_map, &region, field, &query, &filters);
         let max_val = 1.0;
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
@@ -405,7 +410,7 @@ pub fn HomePage() -> impl IntoView {
                     </div>
                 </div>
                 <div class="map-pane">
-                    <div class="world-map-container" inner_html=WORLD_SVG></div>
+                    <div class="world-map-container" inner_html=initial_svg></div>
                     <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; justify-content: center;">
                         // red is always the bad end; the end labels follow the
                         // rating's polarity (density: red = HIGH)
