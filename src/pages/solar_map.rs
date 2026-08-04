@@ -4,62 +4,61 @@ use crate::data::*;
 use crate::pages::country::SiteHeader;
 use crate::pages::map::value_to_color;
 
-/// Heliocentric layout: (code, semi-major axis in AU, angle in degrees,
-/// host code if the body is a moon). BOTH axes are real now: the radius
-/// is the log-scaled semi-major axis, the angle is the heliocentric
-/// ecliptic longitude as of 2026-08-04 (planets from J2000 mean
-/// elements; distant dwarfs approximate from their current
-/// constellations — they move degrees per decade). Moons cluster
-/// around their host in orbital order: at this scale their true
-/// positions are sub-pixel.
-const LAYOUT: &[(&str, f64, f64, Option<&str>)] = &[
-    ("SUN", 0.0, 0.0, None),
-    ("MERC", 0.39, 35.0, None),
-    ("VENU", 0.72, 261.1, None),
-    ("ERTH", 1.0, 312.2, None),
-    ("LUNA", 1.0, 312.2, Some("ERTH")),
-    ("MARS", 1.52, 44.5, None),
-    ("PHOB", 1.52, 44.5, Some("MARS")),
-    ("DEIM", 1.52, 44.5, Some("MARS")),
-    ("VEST", 2.36, 108.0, None),
-    ("JUNO", 2.67, 210.0, None),
-    ("CERE", 2.77, 70.0, None),
-    ("PALL", 2.77, 125.0, None),
-    ("HYGI", 3.14, 309.0, None),
-    ("JUPI", 5.2, 121.2, None),
-    ("IO", 5.2, 121.2, Some("JUP")),
-    ("EUPA", 5.2, 121.2, Some("JUP")),
-    ("GANY", 5.2, 121.2, Some("JUP")),
-    ("CALL", 5.2, 121.2, Some("JUP")),
-    ("SATN", 9.54, 14.9, None),
-    ("MIMA", 9.54, 14.9, Some("SAT")),
-    ("ENCE", 9.54, 14.9, Some("SAT")),
-    ("TETH", 9.54, 14.9, Some("SAT")),
-    ("DION", 9.54, 14.9, Some("SAT")),
-    ("RHEA", 9.54, 14.9, Some("SAT")),
-    ("TITN", 9.54, 14.9, Some("SAT")),
-    ("IAPE", 9.54, 14.9, Some("SAT")),
-    ("URAN", 19.2, 68.0, None),
-    ("MIRA", 19.2, 68.0, Some("URA")),
-    ("ARIE", 19.2, 68.0, Some("URA")),
-    ("UMBR", 19.2, 68.0, Some("URA")),
-    ("TNIA", 19.2, 68.0, Some("URA")),
-    ("OBER", 19.2, 68.0, Some("URA")),
-    ("NEPT", 30.1, 2.4, None),
-    ("TRIT", 30.1, 2.4, Some("NEP")),
-    ("PLUT", 39.5, 303.0, None),
-    ("CHAR", 39.5, 303.0, Some("PLUT")),
-    ("ORCU", 39.4, 185.0, None),
-    ("IXIO", 39.6, 250.0, None),
-    ("SALA", 42.0, 8.0, None),
-    ("HAUM", 43.0, 212.0, None),
-    ("QUAO", 43.7, 259.0, None),
-    ("MAKE", 45.8, 192.0, None),
-    ("VARD", 45.9, 225.0, None),
-    ("GONG", 67.3, 332.0, None),
-    ("ERIS", 67.7, 26.0, None),
-    ("SEDN", 506.0, 57.0, None),
+/// Orbital elements, not frozen angles: (code, semi-major axis in AU,
+/// mean longitude at J2000 in degrees, mean motion in degrees/day).
+/// The map computes today's heliocentric longitude at render time —
+/// open it next year and the planets will have moved. Planets carry
+/// real J2000 elements; the estimated dwarfs are anchored to their
+/// 2026-08-04 longitudes and propagate on their true periods.
+const ELEMENTS: &[(&str, f64, f64, f64)] = &[
+    ("MERC", 0.39, 252.2503, 4.09233445),
+    ("VENU", 0.72, 181.9791, 1.60213034),
+    ("ERTH", 1.0, 100.4664, 0.98560912),
+    ("MARS", 1.52, 355.4533, 0.52402068),
+    ("JUPI", 5.2, 34.3515, 0.08308529),
+    ("SATN", 9.54, 50.0774, 0.03344414),
+    ("URAN", 19.2, 314.0550, 0.01172834),
+    ("NEPT", 30.1, 304.3487, 0.00598103),
+    ("VEST", 2.36, 350.8965, 0.27154441),
+    ("JUNO", 2.67, 176.6876, 0.22584693),
+    ("CERE", 2.77, 152.8589, 0.21388468),
+    ("PALL", 2.77, 211.3701, 0.21352313),
+    ("HYGI", 3.14, 26.7635, 0.17733990),
+    ("PLUT", 39.5, 264.4036, 0.00397430),
+    ("ORCU", 39.4, 145.9628, 0.00401968),
+    ("IXIO", 39.6, 211.7124, 0.00394251),
+    ("SALA", 42.0, 333.0635, 0.00359744),
+    ("HAUM", 43.0, 178.2723, 0.00347296),
+    ("QUAO", 43.7, 225.8563, 0.00341283),
+    ("MAKE", 45.8, 160.7397, 0.00321890),
+    ("VARD", 45.9, 194.4188, 0.00314897),
+    ("GONG", 67.3, 314.7347, 0.00177783),
+    ("ERIS", 67.7, 8.8767, 0.00176320),
+    ("SEDN", 506.0, 56.1604, 0.00008646),
 ];
+
+/// Who orbits whom: moons take their host's computed position and ring
+/// around it in orbital order (their true offsets are sub-pixel here).
+const MOONS: &[(&str, &str)] = &[
+    ("LUNA", "ERTH"),
+    ("PHOB", "MARS"), ("DEIM", "MARS"),
+    ("IO", "JUPI"), ("EUPA", "JUPI"), ("GANY", "JUPI"), ("CALL", "JUPI"),
+    ("MIMA", "SATN"), ("ENCE", "SATN"), ("TETH", "SATN"), ("DION", "SATN"),
+    ("RHEA", "SATN"), ("TITN", "SATN"), ("IAPE", "SATN"),
+    ("MIRA", "URAN"), ("ARIE", "URAN"), ("UMBR", "URAN"), ("TNIA", "URAN"), ("OBER", "URAN"),
+    ("TRIT", "NEPT"),
+    ("CHAR", "PLUT"),
+];
+
+/// Days since J2000 (2000-01-01T12:00 UTC), from the wall clock.
+fn days_since_j2000() -> f64 {
+    js_sys::Date::now() / 86_400_000.0 - 10_957.5
+}
+
+/// Today's mean heliocentric longitude in degrees.
+fn longitude(l0: f64, n: f64, d: f64) -> f64 {
+    (l0 + n * d).rem_euclid(360.0)
+}
 
 const CX: f64 = 500.0;
 const CY: f64 = 470.0;
@@ -123,44 +122,39 @@ pub fn SolarMapPage() -> impl IntoView {
     let by_code: HashMap<String, Country> =
         bodies.iter().map(|c| (c.code.clone(), c.clone())).collect();
 
-    // moons gather around their host: index within the cluster sets the angle
-    let mut cluster_seen: HashMap<&str, usize> = HashMap::new();
-
-    let mut placed: Vec<(Country, f64, f64, f64)> = Vec::new(); // body, x, y, r
-    for &(code, a, deg, host) in LAYOUT {
-        let Some(c) = by_code.get(code) else { continue };
-        let r = dot_r(c.land_area_km2);
-        let (x, y) = match host {
-            None => {
-                if code == "SUN" {
-                    (CX, CY)
-                } else {
-                    polar(a, deg)
-                }
-            }
-            Some(h) => {
-                let idx = cluster_seen.entry(h).or_insert(0);
-                let (hx, hy) = polar(a, deg);
-                // moons ring their host counterclockwise from the top
-                let th = (90.0 - 62.0 * (*idx as f64)).to_radians();
-                let orbit = 17.0 + 3.0 * (*idx as f64);
-                *idx += 1;
-                (hx + orbit * th.cos(), hy - orbit * th.sin())
-            }
-        };
-        placed.push((c.clone(), x, y, r));
+    // positions computed for TODAY: hosts from their elements, moons
+    // ringed around the host in orbital order
+    let d = days_since_j2000();
+    let mut host_pos: HashMap<&str, (f64, f64)> = HashMap::new();
+    host_pos.insert("SUN", (CX, CY));
+    for &(code, a, l0, n) in ELEMENTS {
+        host_pos.insert(code, polar(a, longitude(l0, n, d)));
     }
+
+    let mut cluster_seen: HashMap<&str, usize> = HashMap::new();
+    let mut placed: Vec<(Country, f64, f64, f64)> = Vec::new(); // body, x, y, r
+    let host_of = |code: &str| MOONS.iter().find(|(m, _)| *m == code).map(|(_, h)| *h);
+    for &(code, _, _, _) in std::iter::once(&("SUN", 0.0, 0.0, 0.0)).chain(ELEMENTS.iter()) {
+        let Some(c) = by_code.get(code) else { continue };
+        let (x, y) = host_pos[code];
+        placed.push((c.clone(), x, y, dot_r(c.land_area_km2)));
+    }
+    for &(moon, host) in MOONS {
+        let Some(c) = by_code.get(moon) else { continue };
+        let Some(&(hx, hy)) = host_pos.get(host) else { continue };
+        let idx = cluster_seen.entry(host).or_insert(0);
+        let th = (90.0 - 62.0 * (*idx as f64)).to_radians();
+        let orbit = 17.0 + 3.0 * (*idx as f64);
+        *idx += 1;
+        placed.push((c.clone(), hx + orbit * th.cos(), hy - orbit * th.sin(), dot_r(c.land_area_km2)));
+    }
+    let _ = host_of;
 
     let bodies_for_colors = bodies.clone();
     let colors = Memo::new(move |_| colors_for(&bodies_for_colors, field.get()));
 
-    // orbit rings for every distinct planetary distance
-    let mut ring_as: Vec<f64> = LAYOUT
-        .iter()
-        .filter(|(_, _, _, host)| host.is_none())
-        .map(|&(_, a, _, _)| a)
-        .filter(|&a| a > 0.0)
-        .collect();
+    // orbit rings for every distinct heliocentric distance
+    let mut ring_as: Vec<f64> = ELEMENTS.iter().map(|&(_, a, _, _)| a).collect();
     ring_as.sort_by(|a, b| a.partial_cmp(b).unwrap());
     ring_as.dedup_by(|a, b| (*a - *b).abs() < 0.2);
 
