@@ -242,10 +242,10 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
         // world totals are terrestrial: celestial listings (Earth the
         // body among them) must not dilute the visa index denominators
         let total_cap: f64 = countries.iter()
-            .filter(|c| is_terrestrial(&c.region))
+            .filter(|c| is_terrestrial(&c.region) && !is_aggregate(&c.code))
             .map(|c| c.money_supply_b_usd).sum();
         let total_pop: f64 = countries.iter()
-            .filter(|c| is_terrestrial(&c.region))
+            .filter(|c| is_terrestrial(&c.region) && !is_aggregate(&c.code))
             .map(|c| c.population as f64).sum();
 
         let by_name: HashMap<&str, &Country> =
@@ -374,11 +374,19 @@ pub enum ListingClass {
     Country,
 }
 
+/// The macro-region aggregates: one listing per continent-scale sum.
+/// Antarctica is continent-class too, but a single body, not an aggregate.
+pub const AGGREGATES: &[&str] = &["OCNA", "AFRI", "ASIA", "EURP", "EURA", "LATM", "MEST", "NAMR"];
+
+pub fn is_aggregate(code: &str) -> bool {
+    AGGREGATES.contains(&code)
+}
+
 impl Country {
     pub fn class(&self) -> ListingClass {
         if self.region == "Solar System" {
             ListingClass::Planet
-        } else if self.code == "AQ" || self.code == "OCNA" {
+        } else if self.code == "AQ" || is_aggregate(&self.code) {
             ListingClass::Continent
         } else {
             ListingClass::Country

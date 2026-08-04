@@ -1,0 +1,13 @@
+name = "Eurasia"
+code = "EURA"
+flag = "🐎"
+region = "Eurasia"
+population = 374469725
+land_area_km2 = 22928809
+currency_code = "EURA"
+currency_name = "Steppe"
+money_supply_b_usd = 1861
+token_price_usd = 0
+visa_free_destinations = 0
+visa_free_inbound = 0
+oceans = ""

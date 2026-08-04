@@ -73,12 +73,11 @@ pub fn CountryPage() -> impl IntoView {
                     // rank in each rating = position in that landing's table
                     let all_states = load_countries();
 
-                    // Oceania is the aggregate of every island state — list
-                    // them, richest first, so the page shows its parts
-                    let is_aggregate = c.code == "OCNA";
-                    let mut members: Vec<Country> = if is_aggregate {
+                    // an aggregate lists its member states, richest first,
+                    // so the page shows what the sum is made of
+                    let mut members: Vec<Country> = if is_aggregate(&c.code) {
                         all_states.iter()
-                            .filter(|o| o.region == "Oceania" && o.code != "OCNA")
+                            .filter(|o| o.region == c.region && !is_aggregate(&o.code))
                             .cloned()
                             .collect()
                     } else {
@@ -249,7 +248,7 @@ pub fn CountryPage() -> impl IntoView {
                             {(member_count > 0).then(|| view! {
                                 <div style="margin-top: 32px;">
                                     <div class="section-label">
-                                        {format!("{} ISLAND STATES", member_count)}
+                                        {format!("{} MEMBER STATES", member_count)}
                                     </div>
                                     <div class="pending-grid">
                                         {members.into_iter().map(|m| {

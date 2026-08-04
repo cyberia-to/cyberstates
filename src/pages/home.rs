@@ -82,7 +82,7 @@ fn map_values(
                 ListingClass::Country => classes.2,
             })
                 && (region == "All" || c.region == region)
-                && !(region == "Oceania" && c.code == "OCNA")
+                && !(region != "All" && is_aggregate(&c.code))
                 && (query.is_empty()
                     || c.name.to_lowercase().contains(query)
                     || c.code.to_lowercase().contains(query)
@@ -320,11 +320,8 @@ pub fn HomePage() -> impl IntoView {
 
         list.retain(|c| class_on(c));
         if region != "All" {
-            list.retain(|c| c.region == region);
-            // the Oceania aggregate ranks globally, not among its own islands
-            if region == "Oceania" {
-                list.retain(|c| c.code != "OCNA");
-            }
+            // aggregates rank globally, never among their own members
+            list.retain(|c| c.region == region && !is_aggregate(&c.code));
         }
         if !query.is_empty() {
             list.retain(|c| {
@@ -485,7 +482,7 @@ pub fn HomePage() -> impl IntoView {
                         let count = countries_for_count.iter().filter(|c| {
                             class_on(c)
                             && (region == "All" || c.region == region)
-                            && !(region == "Oceania" && c.code == "OCNA")
+                            && !(region != "All" && is_aggregate(&c.code))
                             && (query.is_empty() || c.name.to_lowercase().contains(&query) || c.code.to_lowercase().contains(&query))
                             && filters.iter().all(|f| passes(c, f))
                         }).count();
