@@ -1376,3 +1376,35 @@ body {
 .solar-dot circle {
     transition: fill 450ms ease; /* morphs with the map */
 }
+
+/* ---- /solar: the orbital map experiment ------------------------------- */
+.solar-map-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 6px 0 4px;
+}
+
+.solar-map {
+    display: block;
+    width: min(100%, 900px);
+    margin: 0 auto;
+}
+
+.solar-map-dot {
+    transition: fill 450ms ease;
+    cursor: pointer;
+}
+
+.solar-map .solar-map-a:hover .solar-map-dot {
+    stroke: var(--cyber-green);
+    stroke-width: 1.5;
+}
+
+.solar-map-label {
+    fill: #555;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    pointer-events: none;
+}
