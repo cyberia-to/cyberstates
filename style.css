@@ -551,8 +551,8 @@ body {
     height: auto;
     max-width: none;
     margin-top: -34px;
-    transform: scale(1.4);
-    transform-origin: 72% 40%;
+    transform: translateX(-3%) scale(1.4);
+    transform-origin: 70% 40%;
 }
 
 .cyber-table.slim {
@@ -1348,9 +1348,9 @@ body {
        the same live sky as /solar, every dot a link */
     position: fixed;
     left: auto;
-    right: 48px;
-    bottom: 84px;
-    width: min(23vw, 360px);
+    right: 34px;
+    bottom: 74px;
+    width: min(24vw, 385px);
     aspect-ratio: 1 / 1;
     z-index: 6;
     pointer-events: none;
