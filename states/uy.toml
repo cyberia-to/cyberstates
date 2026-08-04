@@ -790,7 +790,7 @@ country = "Algeria"
 type = "visa-required"
 
 [[visa_access]]
-country = "USA"
+country = "Usa"
 type = "visa-required"
 
 [[visa_access]]

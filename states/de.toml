@@ -728,7 +728,7 @@ country = "Zimbabwe"
 type = "visa-on-arrival"
 
 [[visa_access]]
-country = "USA"
+country = "Usa"
 type = "eta"
 
 [[visa_access]]

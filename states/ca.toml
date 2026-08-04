@@ -18,7 +18,7 @@ type = "visa-free"
 days = 90
 
 [[visa_access]]
-country = "USA"
+country = "Usa"
 type = "visa-free"
 days = 180
 
