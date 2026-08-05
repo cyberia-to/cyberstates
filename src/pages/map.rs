@@ -61,19 +61,14 @@ pub fn value_to_color(val: f64, max: f64) -> String {
 /// Client-side navigation from plain DOM handlers: push the URL, then
 /// wake the router with a synthetic popstate — no full page reload, so
 /// the wasm app, fonts and state all survive the hop. Wrapped in a view
-/// transition where the browser has one: frozen chrome, body dissolves.
+/// transition where the browser has one: frozen chrome/map, body fades.
+///
+/// Keep the update callback *synchronous* — waiting on rAF/Promise before
+/// the new snapshot made every hop feel laggy (click → stall → fade).
+/// Map position stability comes from `--map-chrome-h` (listing-only,
+/// never inherits short state/token chrome), not from delaying the hop.
 pub fn navigate_client(path: &str) {
     let path = path.to_string();
-    let go = move || {
-        if let Some(w) = web_sys::window() {
-            if let Ok(h) = w.history() {
-                let _ = h.push_state_with_url(&JsValue::NULL, "", Some(&path));
-                if let Ok(ev) = web_sys::PopStateEvent::new("popstate") {
-                    let _ = w.dispatch_event(&ev);
-                }
-            }
-        }
-    };
 
     // collapse open dropdowns BEFORE the VT old snapshot
     if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
@@ -89,14 +84,22 @@ pub fn navigate_client(path: &str) {
         }
     }
 
-    // top-anchor both sides of the dissolve so sticky thead / scrolled
-    // rows never ghost at mismatched Y. only jump when actually scrolled.
-    if let Some(w) = web_sys::window() {
-        let y = w.scroll_y().unwrap_or(0.0);
-        if y > 1.0 {
-            w.scroll_to_with_x_and_y(0.0, 0.0);
+    let go = move || {
+        if let Some(w) = web_sys::window() {
+            let y = w.scroll_y().unwrap_or(0.0);
+            if y > 1.0 {
+                w.scroll_to_with_x_and_y(0.0, 0.0);
+            }
+            if let Ok(h) = w.history() {
+                let _ = h.push_state_with_url(&JsValue::NULL, "", Some(&path));
+                if let Ok(ev) = web_sys::PopStateEvent::new("popstate") {
+                    let _ = w.dispatch_event(&ev);
+                }
+            }
         }
-    }
+        // pin chrome height for the fixed map ASAP (no extra frames)
+        measure_chrome_height();
+    };
 
     let doc = web_sys::window().and_then(|w| w.document());
     let svt = doc.as_ref().and_then(|d| {
@@ -106,38 +109,79 @@ pub fn navigate_client(path: &str) {
     });
     match (svt, doc) {
         (Some(f), Some(d)) => {
-            // mark the hop so CSS can freeze sticky geometry if needed
             if let Some(root) = d.document_element() {
                 let _ = root.class_list().add_1("vt-active");
             }
             let cb = Closure::once_into_js(go);
-            let _ = f.call1(d.as_ref(), &cb);
-            // remeasure after the dissolve (CSS ~320ms) — mid-transition
-            // --chrome-h reflow was a major source of header twitch
-            if let Some(w) = web_sys::window() {
-                let cleanup = Closure::once(Box::new(move |_: JsValue| {
+            let transition = f.call1(d.as_ref(), &cb).ok();
+
+            let cleaned = std::rc::Rc::new(std::cell::Cell::new(false));
+            let do_cleanup: std::rc::Rc<dyn Fn()> = {
+                let cleaned = cleaned.clone();
+                std::rc::Rc::new(move || {
+                    if cleaned.replace(true) {
+                        return;
+                    }
                     if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
                         if let Some(root) = doc.document_element() {
                             let _ = root.class_list().remove_1("vt-active");
                         }
                     }
                     measure_chrome_height();
-                }) as Box<dyn FnMut(JsValue)>);
+                })
+            };
+
+            let mut used_finished = false;
+            if let Some(t) = transition.as_ref() {
+                if let Ok(finished) = js_sys::Reflect::get(t, &JsValue::from_str("finished")) {
+                    if let Ok(promise) = finished.dyn_into::<js_sys::Promise>() {
+                        let do_cleanup = do_cleanup.clone();
+                        let cleanup = Closure::once(
+                            Box::new(move |_: JsValue| do_cleanup()) as Box<dyn FnMut(JsValue)>
+                        );
+                        let _ = promise.then(&cleanup);
+                        cleanup.forget();
+                        used_finished = true;
+                    }
+                }
+            }
+            if !used_finished {
+                if let Some(w) = web_sys::window() {
+                    let do_cleanup = do_cleanup.clone();
+                    let cleanup = Closure::once(
+                        Box::new(move |_: JsValue| do_cleanup()) as Box<dyn FnMut(JsValue)>
+                    );
+                    // matched to ~120ms CSS fade
+                    let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
+                        cleanup.as_ref().unchecked_ref(),
+                        160,
+                    );
+                    cleanup.forget();
+                }
+            }
+            // safety net
+            if let Some(w) = web_sys::window() {
+                let cleanup = Closure::once(
+                    Box::new(move |_: JsValue| do_cleanup()) as Box<dyn FnMut(JsValue)>
+                );
                 let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
                     cleanup.as_ref().unchecked_ref(),
-                    380,
+                    400,
                 );
                 cleanup.forget();
             }
         }
-        _ => {
-            go();
-            measure_chrome_height();
-        }
+        _ => go(),
     }
 }
 
-/// Set --chrome-h without clobbering other inline styles on <html>.
+/// Publish chrome heights on <html> without clobbering other inline styles.
+///
+/// - `--chrome-h` — every page (sticky thead, etc.)
+/// - `--map-chrome-h` — **only** when `.map-pane` is in the DOM (home /
+///   tokens listing chrome with pills). State/token pages have a shorter
+///   chrome; writing that into the map variable made the map mount high
+///   on the next listing hop and then drop when remeasured.
 pub fn measure_chrome_height() {
     if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
         if let (Ok(Some(chrome)), Some(root)) =
@@ -146,10 +190,15 @@ pub fn measure_chrome_height() {
             let h = chrome
                 .unchecked_into::<web_sys::HtmlElement>()
                 .offset_height();
-            let _ = root
-                .unchecked_into::<web_sys::HtmlElement>()
-                .style()
-                .set_property("--chrome-h", &format!("{}px", h));
+            let root_el = root.unchecked_into::<web_sys::HtmlElement>();
+            let px = format!("{}px", h);
+            let _ = root_el.style().set_property("--chrome-h", &px);
+
+            // listing chrome only — keep the last good map offset across
+            // detail pages so the fixed map never inherits a short header
+            if doc.query_selector(".map-pane").ok().flatten().is_some() {
+                let _ = root_el.style().set_property("--map-chrome-h", &px);
+            }
         }
     }
 }

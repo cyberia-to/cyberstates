@@ -89,7 +89,7 @@ fn ChromeMeter() -> impl IntoView {
         handler.forget();
     });
 
-    // per navigation: measure after the dissolve has settled.
+    // per navigation: measure after the cross-fade has settled.
     // VT path also measures on transition.finished; this covers
     // back/forward and any hop that skipped startViewTransition.
     Effect::new(move |_| {
@@ -98,7 +98,7 @@ fn ChromeMeter() -> impl IntoView {
             let cb = Closure::wrap(Box::new(measure_chrome) as Box<dyn FnMut()>);
             let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
                 cb.as_ref().unchecked_ref(),
-                360,
+                130,
             );
             cb.forget();
         }

@@ -13,6 +13,12 @@
     --cyber-dim: #1a1a1a;
     --cyber-muted: #333333;
     --cyber-text: #e0e0e0;
+    /* sticky thead / general chrome — remeasured every page */
+    --chrome-h: 112px;
+    /* map top ONLY. Updated only while .map-pane is mounted (listing
+       chrome with pills). Never inherits short state/token chrome —
+       that was the "map falls from the top" after /state or /token. */
+    --map-chrome-h: 112px;
 }
 
 * {
@@ -30,7 +36,7 @@ html {
 
 body {
     overflow-x: clip; /* clip, not hidden: hidden creates a scrollport and kills sticky */
-    font-family: 'Play', sans-serif;
+    font-family: "Play", sans-serif;
     background: var(--cyber-black);
     color: var(--cyber-text);
     min-height: 100vh;
@@ -38,10 +44,19 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--cyber-black); }
-::-webkit-scrollbar-thumb { background: var(--cyber-muted); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--cyber-green); }
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--cyber-black);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--cyber-muted);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cyber-green);
+}
 
 /* Header */
 .header-row1 {
@@ -94,7 +109,7 @@ body {
     border: 1px solid #222;
     border-radius: 2px;
     color: var(--cyber-green);
-    font-family: 'Play', sans-serif;
+    font-family: "Play", sans-serif;
     font-size: 13px;
     outline: none;
 }
@@ -126,9 +141,15 @@ body {
     white-space: nowrap;
 }
 
-.nav-states { --btn-c: var(--cyber-green); }
-.nav-tokens { --btn-c: var(--cyber-yellow); }
-.nav-method { --btn-c: var(--cyber-cyan); }
+.nav-states {
+    --btn-c: var(--cyber-green);
+}
+.nav-tokens {
+    --btn-c: var(--cyber-yellow);
+}
+.nav-method {
+    --btn-c: var(--cyber-cyan);
+}
 
 .nav-btn.nav-here {
     background: transparent;
@@ -174,20 +195,48 @@ body {
         gap: 8px;
         margin-bottom: 10px;
     }
-    .logo-zone { flex: 0 0 auto; }
-    .logo { font-size: 20px; }
+    .logo-zone {
+        flex: 0 0 auto;
+    }
+    .logo {
+        font-size: 20px;
+    }
     /* the suffix duplicates the highlighted rating pill; the active nav
        button duplicates the page itself — neither earns its pixels here */
-    .logo-suffix { display: none; }
-    .map-zone .nav-here { display: none; }
-    .map-zone { flex: 0 0 auto; flex-wrap: nowrap; gap: 6px; }
+    .logo-suffix {
+        display: none;
+    }
+    .map-zone .nav-here {
+        display: none;
+    }
+    .map-zone {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
 
-    .nav-btn { padding: 6px 10px; font-size: 11px; letter-spacing: 1px; }
-    .region-pill.num-btn { padding: 5px 8px; font-size: 11px; letter-spacing: 1px; }
-    .search-input { padding: 8px 12px; font-size: 12px; }
-    .region-pill { padding: 5px 10px; font-size: 11px; }
+    .nav-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+    .region-pill.num-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+    .search-input {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    .region-pill {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
 
-    .region-pills { display: none; }
+    .region-pills {
+        display: none;
+    }
 
     /* pills and count share one line */
     .header-row2 {
@@ -205,10 +254,19 @@ body {
         -webkit-overflow-scrolling: touch;
         padding-bottom: 2px;
     }
-    .region-pills::-webkit-scrollbar { display: none; }
-    .dock-credit { display: none; }
-    .region-pills .region-pill { flex: 0 0 auto; }
-    .state-count { font-size: 11px; white-space: nowrap; }
+    .region-pills::-webkit-scrollbar {
+        display: none;
+    }
+    .dock-credit {
+        display: none;
+    }
+    .region-pills .region-pill {
+        flex: 0 0 auto;
+    }
+    .state-count {
+        font-size: 11px;
+        white-space: nowrap;
+    }
 }
 
 .count-zone {
@@ -343,18 +401,44 @@ body {
 }
 
 @media (max-width: 640px) {
-    .rating-chooser { display: block; }
-    .brand-caret { display: inline; }
+    .rating-chooser {
+        display: block;
+    }
+    .brand-caret {
+        display: inline;
+    }
     /* list views live in the brand menu; only doctrine keeps a button */
     .map-zone .nav-states,
-    .map-zone .nav-tokens { display: none; }
-    .map-zone { margin-left: auto; }
-    .header-row2 { display: none; }
-    .rating-btn { font-size: 10px; letter-spacing: 0; padding: 6px 6px; white-space: nowrap; }
-    .nav-btn { padding: 5px 6px; font-size: 10px; letter-spacing: 0.5px; }
-    .region-pill.num-btn { padding: 4px 5px; letter-spacing: 0.5px; }
-    .header-row1 { gap: 4px; }
-    .logo { font-size: 15px; }
+    .map-zone .nav-tokens {
+        display: none;
+    }
+    .map-zone {
+        margin-left: auto;
+    }
+    .header-row2 {
+        display: none;
+    }
+    .rating-btn {
+        font-size: 10px;
+        letter-spacing: 0;
+        padding: 6px 6px;
+        white-space: nowrap;
+    }
+    .nav-btn {
+        padding: 5px 6px;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+    .region-pill.num-btn {
+        padding: 4px 5px;
+        letter-spacing: 0.5px;
+    }
+    .header-row1 {
+        gap: 4px;
+    }
+    .logo {
+        font-size: 15px;
+    }
 }
 
 .dock-count {
@@ -392,7 +476,9 @@ body {
     transition: color 0.15s;
 }
 
-.dock-credit:hover { color: #999; }
+.dock-credit:hover {
+    color: #999;
+}
 
 .search-dock .search-wrap,
 .search-dock .search-input {
@@ -408,7 +494,9 @@ body {
 .search-dock .search-panel {
     top: auto;
     bottom: calc(100% + 8px);
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 255, 65, 0.06);
+    box-shadow:
+        0 -8px 32px rgba(0, 0, 0, 0.7),
+        0 0 20px rgba(0, 255, 65, 0.06);
 }
 
 /* content must never hide behind the dock */
@@ -439,7 +527,9 @@ body {
     border: 1px solid #1c2a1e;
     border-radius: 4px;
     padding: 14px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 255, 65, 0.06);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.7),
+        0 0 20px rgba(0, 255, 65, 0.06);
 }
 
 .panel-row {
@@ -476,10 +566,20 @@ body {
 }
 
 @media (max-width: 640px) {
-    .search-wrap { order: 3; flex: 1 1 100%; }
-    .search-panel { width: 100%; }
-    .panel-row { flex-direction: column; gap: 4px; }
-    .panel-label { padding-top: 0; }
+    .search-wrap {
+        order: 3;
+        flex: 1 1 100%;
+    }
+    .search-panel {
+        width: 100%;
+    }
+    .panel-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .panel-label {
+        padding-top: 0;
+    }
 }
 
 .page-shell {
@@ -533,12 +633,17 @@ body {
 
 .map-pane {
     /* fixed, not sticky: the map is an instrument panel, it never scrolls.
-       left = shell pad 20 + table pane 500 + gap 16 */
+       left = shell pad 20 + table pane 500 + gap 16.
+       top uses --map-chrome-h (listing-only), NOT --chrome-h: leaving a
+       state/token page leaves a short --chrome-h and the map would mount
+       too high, then drop when listing chrome is measured. */
     position: fixed;
-    top: calc(var(--chrome-h, 0px) + 8px);
+    top: calc(var(--map-chrome-h, 112px) + 8px);
     left: 536px;
     right: 0;
     z-index: 5;
+    /* never interpolate top — variable updates must snap, not slide */
+    transition: none !important;
 }
 
 /* the map is the hero: as large as viewport height and pane width allow,
@@ -592,36 +697,81 @@ body {
 }
 
 @media (max-width: 1100px) {
-    .map-pane { display: none; }
-    .solar-panel { display: none; }
-    .table-pane { flex: 1 1 auto; }
-    .home-split { margin-right: 0; } /* no map, no bleed — symmetric margins */
+    .map-pane {
+        display: none;
+    }
+    .solar-panel {
+        display: none;
+    }
+    .table-pane {
+        flex: 1 1 auto;
+    }
+    .home-split {
+        margin-right: 0;
+    } /* no map, no bleed — symmetric margins */
 }
 
 /* slim table columns — widths live here so viewports can reshape them */
-.cyber-table.slim col.c-rank { width: 9%; }
-.cyber-table.slim col.c-state { width: 34%; }
-.cyber-table.slim col.c-token { width: 13%; }
-.cyber-table.slim col.c-price { width: 22%; }
-.cyber-table.slim col.c-metric { width: 22%; }
+.cyber-table.slim col.c-rank {
+    width: 9%;
+}
+.cyber-table.slim col.c-state {
+    width: 34%;
+}
+.cyber-table.slim col.c-token {
+    width: 13%;
+}
+.cyber-table.slim col.c-price {
+    width: 22%;
+}
+.cyber-table.slim col.c-metric {
+    width: 22%;
+}
 
 @media (max-width: 640px) {
     /* pixels are the budget: hairline gutters, no box around the table */
-    .page-shell { --pad-t: 16px; --pad-x: 2px; padding: 16px 2px 20px; }
-    .page-frame { --pad-t: 16px; --pad-x: 2px; padding: 16px 2px 20px; }
-    .table-shell { border: none; border-radius: 0; }
+    .page-shell {
+        --pad-t: 16px;
+        --pad-x: 2px;
+        padding: 16px 2px 20px;
+    }
+    .page-frame {
+        --pad-t: 16px;
+        --pad-x: 2px;
+        padding: 16px 2px 20px;
+    }
+    .table-shell {
+        border: none;
+        border-radius: 0;
+    }
 
-    .cyber-table.slim { min-width: 0; }
+    .cyber-table.slim {
+        min-width: 0;
+    }
     .cyber-table.slim th,
-    .cyber-table.slim td { padding-left: 6px; padding-right: 6px; }
+    .cyber-table.slim td {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
     /* fixed-px gutters for the narrow columns; every spare pixel
        flows to state names and values */
-    .cyber-table.slim col.c-rank { width: 28px; }
-    .cyber-table.slim col.c-token { width: 44px; }
-    .cyber-table.slim td:nth-child(2) span:first-child { margin-right: 6px !important; }
+    .cyber-table.slim col.c-rank {
+        width: 28px;
+    }
+    .cyber-table.slim col.c-token {
+        width: 44px;
+    }
+    .cyber-table.slim td:nth-child(2) span:first-child {
+        margin-right: 6px !important;
+    }
     .cyber-table.slim th:first-child,
-    .cyber-table.slim td:first-child { padding-left: 2px; padding-right: 4px; }
-    .cyber-table.slim th { letter-spacing: 1px; } /* TOKEN must not clip to TOKE */
+    .cyber-table.slim td:first-child {
+        padding-left: 2px;
+        padding-right: 4px;
+    }
+    .cyber-table.slim th {
+        letter-spacing: 1px;
+    } /* TOKEN must not clip to TOKE */
     /* fractions stay — dim and small, same beauty as desktop */
 }
 
@@ -645,7 +795,6 @@ body {
     opacity: 0.75;
     letter-spacing: 1px;
 }
-
 
 .state-hero {
     display: flex;
@@ -683,15 +832,27 @@ body {
 }
 
 @media (max-width: 900px) {
-    .visa-grid { grid-template-columns: 1fr; }
-    .state-hero { align-items: stretch; }
-    .state-scores { flex: 1 1 100%; }
+    .visa-grid {
+        grid-template-columns: 1fr;
+    }
+    .state-hero {
+        align-items: stretch;
+    }
+    .state-scores {
+        flex: 1 1 100%;
+    }
 }
 
 @media (max-width: 640px) {
-    .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .stat-card { min-width: 0; }
-    .stat-value { font-size: 18px; }
+    .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stat-card {
+        min-width: 0;
+    }
+    .stat-value {
+        font-size: 18px;
+    }
 }
 
 /* Rendered markdown — methodology and future prose pages */
@@ -717,16 +878,27 @@ body {
     margin: 32px 0 10px;
 }
 
-.prose-cyber p { margin: 10px 0; }
+.prose-cyber p {
+    margin: 10px 0;
+}
 
-.prose-cyber a { color: var(--cyber-cyan); text-decoration: none; }
-.prose-cyber a:hover { color: var(--cyber-green); }
+.prose-cyber a {
+    color: var(--cyber-cyan);
+    text-decoration: none;
+}
+.prose-cyber a:hover {
+    color: var(--cyber-green);
+}
 
-.prose-cyber strong { color: #e8eef4; }
-.prose-cyber em { color: #d0d8e0; }
+.prose-cyber strong {
+    color: #e8eef4;
+}
+.prose-cyber em {
+    color: #d0d8e0;
+}
 
 .prose-cyber code {
-    font-family: 'Play', monospace;
+    font-family: "Play", monospace;
     background: #0a0f0a;
     border: 1px solid #1a241a;
     border-radius: 2px;
@@ -773,8 +945,13 @@ body {
     padding: 8px 12px;
 }
 
-.prose-cyber ul, .prose-cyber ol { margin: 10px 0 10px 24px; }
-.prose-cyber li { margin: 6px 0; }
+.prose-cyber ul,
+.prose-cyber ol {
+    margin: 10px 0 10px 24px;
+}
+.prose-cyber li {
+    margin: 6px 0;
+}
 
 /* Cyber table */
 .cyber-table {
@@ -788,7 +965,7 @@ body {
 .cyber-table th {
     position: sticky;
     /* -1px: offsetHeight rounds down, the overlap seals the seam */
-    top: calc(var(--chrome-h, 0px) - 1px);
+    top: calc(var(--chrome-h, 112px) - 1px);
     z-index: 10;
     background: #050505;
     border-bottom: 1px solid var(--cyber-muted);
@@ -853,8 +1030,14 @@ body {
 }
 
 /* Sort indicators */
-.sort-asc::after { content: " ▲"; font-size: 9px; }
-.sort-desc::after { content: " ▼"; font-size: 9px; }
+.sort-asc::after {
+    content: " ▲";
+    font-size: 9px;
+}
+.sort-desc::after {
+    content: " ▼";
+    font-size: 9px;
+}
 
 /* Region filter pills */
 /* the kernel ratings end here; the derived freedom scores follow the dot */
@@ -879,7 +1062,7 @@ body {
     border: 1px solid var(--cyber-muted);
     border-radius: 2px;
     font-size: 12px;
-    font-family: 'Play', sans-serif;
+    font-family: "Play", sans-serif;
     cursor: pointer;
     transition: all 0.15s;
     background: transparent;
@@ -907,10 +1090,17 @@ body {
 }
 
 .country-hero::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(0,255,65,0.05) 0%, transparent 70%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse at 50% 0%,
+        rgba(0, 255, 65, 0.05) 0%,
+        transparent 70%
+    );
     pointer-events: none;
 }
 
@@ -941,23 +1131,53 @@ body {
 }
 
 /* Color utilities for the full palette */
-.text-cyber-green { color: var(--cyber-green); }
-.text-cyber-cyan { color: var(--cyber-cyan); }
-.text-cyber-magenta { color: var(--cyber-magenta); }
-.text-cyber-yellow { color: var(--cyber-yellow); }
-.text-cyber-orange { color: var(--cyber-orange); }
-.text-cyber-red { color: var(--cyber-red); }
-.text-cyber-blue { color: var(--cyber-blue); }
-.text-cyber-purple { color: var(--cyber-purple); }
-.text-cyber-pink { color: var(--cyber-pink); }
+.text-cyber-green {
+    color: var(--cyber-green);
+}
+.text-cyber-cyan {
+    color: var(--cyber-cyan);
+}
+.text-cyber-magenta {
+    color: var(--cyber-magenta);
+}
+.text-cyber-yellow {
+    color: var(--cyber-yellow);
+}
+.text-cyber-orange {
+    color: var(--cyber-orange);
+}
+.text-cyber-red {
+    color: var(--cyber-red);
+}
+.text-cyber-blue {
+    color: var(--cyber-blue);
+}
+.text-cyber-purple {
+    color: var(--cyber-purple);
+}
+.text-cyber-pink {
+    color: var(--cyber-pink);
+}
 
-.bg-cyber-black { background: var(--cyber-black); }
-.bg-cyber-dark { background: var(--cyber-dark); }
-.bg-cyber-dim { background: var(--cyber-dim); }
+.bg-cyber-black {
+    background: var(--cyber-black);
+}
+.bg-cyber-dark {
+    background: var(--cyber-dark);
+}
+.bg-cyber-dim {
+    background: var(--cyber-dim);
+}
 
-.border-cyber-green { border-color: var(--cyber-green); }
-.border-cyber-cyan { border-color: var(--cyber-cyan); }
-.border-cyber-muted { border-color: var(--cyber-muted); }
+.border-cyber-green {
+    border-color: var(--cyber-green);
+}
+.border-cyber-cyan {
+    border-color: var(--cyber-cyan);
+}
+.border-cyber-muted {
+    border-color: var(--cyber-muted);
+}
 
 /* Bar visualization */
 .openness-bar {
@@ -967,8 +1187,12 @@ body {
 }
 
 /* Glow effects */
-.glow-green { text-shadow: 0 0 10px rgba(0,255,65,0.5); }
-.glow-cyan { text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+.glow-green {
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+.glow-cyan {
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
 
 /* Back link */
 .back-link {
@@ -1002,7 +1226,9 @@ body {
     stroke: #111;
     stroke-width: 0.3;
     cursor: pointer;
-    transition: opacity 0.15s, stroke 0.15s;
+    transition:
+        opacity 0.15s,
+        stroke 0.15s;
 }
 
 .world-map-container path:hover {
@@ -1011,95 +1237,105 @@ body {
     stroke-width: 1;
 }
 
-/* ---- motion: cinematic dissolve, frozen chrome ---------------------------- */
+/* ---- motion: pure cross-fade, frozen chrome -------------------------------
+   Previous iterations used blur + translateY + named map/pills layers.
+   Blur is GPU-heavy on large WASM snapshots (stutter), Y-motion fights the
+   sticky header, and map/pills only exist on some routes so they entered/exited
+   as separate layers on top of root — double-dissolve, not smooth.
+   This pass: single opacity cross-fade on root only; chrome + dock stay put. */
 
 /* Fallback when View Transitions API is missing */
 @keyframes page-in {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: none; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-/* Groups never morph size/position — only opacity (and a hair of lift
-   on the page body). Geometry morph is what made the header twitch. */
+/* Kill UA size/position morph on every named group — geometry morph is
+   what made the header twitch between pages of different chrome height. */
 ::view-transition-group(*) {
     animation: none;
 }
 
-/* ---- root = page body only (chrome/dock/pills are named out) ---------- */
-
-@keyframes vt-page-out {
-    0%   { opacity: 1; transform: none; filter: blur(0); }
-    100% { opacity: 0; transform: translateY(-4px); filter: blur(1.5px); }
+/* Soft simultaneous cross-fade. No blur, no translate — just opacity.
+   Equal duration so old and new trade places without a hollow gap. */
+@keyframes vt-cross-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
-@keyframes vt-page-in {
-    0%   { opacity: 0; transform: translateY(10px); filter: blur(1.5px); }
-    100% { opacity: 1; transform: none; filter: blur(0); }
+@keyframes vt-cross-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-::view-transition-image-pair(root),
-::view-transition-image-pair(map) {
+::view-transition-image-pair(root) {
     isolation: auto;
 }
 
 ::view-transition-old(root),
-::view-transition-new(root),
-::view-transition-old(map),
-::view-transition-new(map) {
+::view-transition-new(root) {
     mix-blend-mode: normal;
-    /* contain paint cost of blur */
-    will-change: opacity, transform, filter;
+    /* height: 100% keeps the snapshot clipped to the viewport so long
+       pages don't paint a full-document pseudo while fading */
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    /* snappy: 120ms reads as instant-with-polish, not sluggish */
+    animation-duration: 120ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    animation-fill-mode: both;
 }
 
 ::view-transition-old(root) {
-    animation: vt-page-out 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation-name: vt-cross-out;
 }
 ::view-transition-new(root) {
-    animation: vt-page-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-name: vt-cross-in;
 }
 
-/* map keeps the same dissolve language as the page body */
-::view-transition-old(map) {
-    animation: vt-page-out 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-::view-transition-new(map) {
-    animation: vt-page-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+/* ---- named layers: only always-present chrome ---------------------------- */
 
-/* ---- named layers ---------------------------------------------------- */
-
-/* chrome = logo + nav row. FROZEN: old drops out, new is already there.
-   No cross-fade, no brand-word blink, no double-expose. The sticky
-   header feels bolted to the viewport while the body dissolves under it. */
+/* logo + primary nav — bolted to the viewport; instant handoff so the
+   brand never blinks or double-exposes during the body fade. */
 .header-row1 {
     view-transition-name: chrome;
     position: relative;
     z-index: 5;
 }
-.rating-chooser {
-    view-transition-name: rating-chooser;
-}
-.header-row2 {
-    view-transition-name: pills;
-}
-.map-pane {
-    view-transition-name: map;
-}
+
+/* floating search — same freeze treatment as chrome */
 .search-dock {
     view-transition-name: dock;
 }
 
-/* while a hop is running, freeze sticky offsets so the map/thead don't
-   reflow under the dissolving body when chrome height changes */
+/* Map intentionally UNNAMED in view transitions: a named enter from a
+   page without map still risks a group box at the wrong Y. It rides in
+   root (opacity-only) at the stable --map-chrome-h position instead. */
+
+/* while a hop is running, kill sticky transitions that reflow mid-fade */
+html.vt-active {
+    /* avoid scrollbar / sticky thrash during the snapshot window */
+    scroll-behavior: auto !important;
+}
 html.vt-active .map-pane,
-html.vt-active .cyber-table th {
+html.vt-active .cyber-table th,
+html.vt-active .world-map-container path {
     transition: none !important;
 }
 
-/* brand-word rides with chrome — no separate sequential out/in (that
-   gap was the header twitch) */
 .brand-word {
     display: inline-block;
-    /* view-transition-name intentionally unset */
 }
 
 ::view-transition-group(chrome),
@@ -1109,7 +1345,6 @@ html.vt-active .cyber-table th {
 }
 ::view-transition-old(chrome),
 ::view-transition-old(dock) {
-    /* instant handoff — no fade, no morph */
     animation: none;
     opacity: 0;
 }
@@ -1119,33 +1354,10 @@ html.vt-active .cyber-table th {
     opacity: 1;
 }
 
-/* listing-only strips: soft dissolve matching the body beat */
-@keyframes vt-fade-out {
-    from { opacity: 1; }
-    to   { opacity: 0; }
-}
-@keyframes vt-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-::view-transition-group(pills),
-::view-transition-group(rating-chooser) {
-    animation: none;
-    z-index: 900;
-}
-::view-transition-old(pills),
-::view-transition-old(rating-chooser) {
-    animation: vt-fade-out 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-::view-transition-new(pills),
-::view-transition-new(rating-chooser) {
-    animation: vt-fade-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 @supports not (view-transition-name: root) {
     .page-shell,
     .page-frame {
-        animation: page-in 220ms cubic-bezier(0.22, 1, 0.36, 1);
+        animation: page-in 120ms cubic-bezier(0.2, 0, 0, 1);
     }
 }
 
@@ -1156,8 +1368,14 @@ html.vt-active .cyber-table th {
 
 /* dropdowns breathe in */
 @keyframes menu-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: none; }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 /* breathe-in only when a menu is opened, never on page mount/nav.
@@ -1213,7 +1431,9 @@ html.vt-active .cyber-table th {
 }
 
 @media (max-width: 1360px) {
-    .class-filter { display: none; }
+    .class-filter {
+        display: none;
+    }
 }
 
 /* the legend is an instrument: the bar filters on click */
@@ -1241,7 +1461,14 @@ html.vt-active .cyber-table th {
     width: 220px;
     height: 10px;
     border-radius: 5px;
-    background: linear-gradient(to right, #ff0040, #ff6600, #ffd700, #00e5ff, #00ff41);
+    background: linear-gradient(
+        to right,
+        #ff0040,
+        #ff6600,
+        #ffd700,
+        #00e5ff,
+        #00ff41
+    );
     cursor: pointer;
     overflow: hidden;
 }
@@ -1308,30 +1535,58 @@ html.vt-active .cyber-table th {
     border-radius: 2px;
     padding: 3px 8px;
     cursor: pointer;
-    font-family: 'Play', sans-serif;
+    font-family: "Play", sans-serif;
     white-space: nowrap;
 }
 
-.legend-clear:hover { border-color: var(--cyber-green); }
+.legend-clear:hover {
+    border-color: var(--cyber-green);
+}
 
 /* the header inner box caps at 1400px, so the slim row is the rule at
    EVERY width — full-fat pills + toggles + bar never fit 1400 */
 @media (min-width: 0px) {
-    .header-row2 { gap: 8px; }
-    .region-pills { gap: 4px; }
-    .region-pills .region-pill { padding: 6px 9px; letter-spacing: 0.5px; font-size: 11px; }
-    .legend-bar { width: 150px; }
-    .legend-zone { gap: 7px; }
-    .class-filter { gap: 4px; }
-    .class-toggle { padding: 6px 18px; font-size: 14px; min-width: 2.4em; }
-    .class-filter + .legend-zone { margin-left: 8px; }
-    .by-label { margin-right: 2px; }
+    .header-row2 {
+        gap: 8px;
+    }
+    .region-pills {
+        gap: 4px;
+    }
+    .region-pills .region-pill {
+        padding: 6px 9px;
+        letter-spacing: 0.5px;
+        font-size: 11px;
+    }
+    .legend-bar {
+        width: 150px;
+    }
+    .legend-zone {
+        gap: 7px;
+    }
+    .class-filter {
+        gap: 4px;
+    }
+    .class-toggle {
+        padding: 6px 18px;
+        font-size: 14px;
+        min-width: 2.4em;
+    }
+    .class-filter + .legend-zone {
+        margin-left: 8px;
+    }
+    .by-label {
+        margin-right: 2px;
+    }
 }
 
 /* below this the pills need the whole row — the bar yields */
 @media (max-width: 1360px) {
-    .legend-zone { display: none; }
-    .class-filter { display: none; }
+    .legend-zone {
+        display: none;
+    }
+    .class-filter {
+        display: none;
+    }
 }
 
 /* row highlight eases instead of flashing */
@@ -1445,7 +1700,7 @@ html.vt-active .cyber-table th {
 .solar-cockpit {
     display: grid;
     grid-template-columns: 1fr minmax(720px, 61%);
-    height: calc(100vh - var(--chrome-h, 0px) - 118px);
+    height: calc(100vh - var(--chrome-h, 112px) - 118px);
     min-height: 520px;
     margin: 2px calc(-1 * var(--pad-x, 20px)) 0;
 }
@@ -1507,11 +1762,17 @@ html.vt-active .cyber-table th {
 
 /* inside its own scroll container the thead sticks to ITS top,
    not below the page chrome */
-.cockpit-table .cyber-table th { top: 0; }
+.cockpit-table .cyber-table th {
+    top: 0;
+}
 
-.cockpit-table .cyber-table.slim { min-width: 0; }
+.cockpit-table .cyber-table.slim {
+    min-width: 0;
+}
 
-.cockpit-row { cursor: pointer; }
+.cockpit-row {
+    cursor: pointer;
+}
 
 .cockpit-row.sel {
     background: rgba(0, 255, 65, 0.07);
@@ -1549,7 +1810,9 @@ html.vt-active .cyber-table th {
     border-radius: 4px;
     background: rgba(0, 0, 0, 0.62);
     backdrop-filter: blur(3px);
-    text-shadow: 0 0 8px #000, 0 1px 3px #000;
+    text-shadow:
+        0 0 8px #000,
+        0 1px 3px #000;
 }
 
 /* the world fills the pane's full HEIGHT, anchored right — its left
@@ -1624,7 +1887,6 @@ html.vt-active .cyber-table th {
     margin-left: 4px;
 }
 
-
 .planet-note {
     text-align: center;
     font-size: 10px;
@@ -1672,7 +1934,10 @@ html.vt-active .cyber-table th {
 
 .world-derived b,
 .world-derived label {
-    text-shadow: 0 0 6px #000, 0 0 14px #000, 0 1px 2px #000;
+    text-shadow:
+        0 0 6px #000,
+        0 0 14px #000,
+        0 1px 2px #000;
 }
 
 .world-derived b {
@@ -1681,8 +1946,23 @@ html.vt-active .cyber-table th {
 }
 
 @media (max-width: 1250px) {
-    .solar-cockpit { height: auto; min-height: 0; }
-    .solar-cockpit .solar-map { position: static; height: 480px; }
-    .cockpit-table { position: static; width: auto; max-height: 420px; margin-top: 12px; }
-    .cockpit-planet { position: static; width: auto; margin-top: 12px; }
+    .solar-cockpit {
+        height: auto;
+        min-height: 0;
+    }
+    .solar-cockpit .solar-map {
+        position: static;
+        height: 480px;
+    }
+    .cockpit-table {
+        position: static;
+        width: auto;
+        max-height: 420px;
+        margin-top: 12px;
+    }
+    .cockpit-planet {
+        position: static;
+        width: auto;
+        margin-top: 12px;
+    }
 }
