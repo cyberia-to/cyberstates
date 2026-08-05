@@ -1160,7 +1160,8 @@ body {
     justify-content: center;
     font-size: 14px;
     line-height: 1;
-    padding: 6px 9px;
+    padding: 6px 18px;
+    min-width: 2.4em;
     box-sizing: border-box;
     background: transparent;
     border: 1px solid #222;
@@ -1297,7 +1298,7 @@ body {
     .legend-bar { width: 150px; }
     .legend-zone { gap: 7px; }
     .class-filter { gap: 4px; }
-    .class-toggle { padding: 6px 9px; font-size: 14px; }
+    .class-toggle { padding: 6px 18px; font-size: 14px; min-width: 2.4em; }
     .class-filter + .legend-zone { margin-left: 8px; }
     .by-label { margin-right: 2px; }
 }
