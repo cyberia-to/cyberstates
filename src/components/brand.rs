@@ -21,7 +21,7 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
                     "DOCTRINE" => "Doctrine",
                     _ => "States",
                 }}</span>
-                <span class="brand-caret">" ▾"</span>
+                <span class="brand-caret" aria-hidden="true"></span>
             </h1>
             <div class="brand-menu" style:display=move || if open.get() { "flex" } else { "none" }>
                 <a class=if active == "STATES" { "region-pill active" } else { "region-pill" } href="/">"STATES"</a>

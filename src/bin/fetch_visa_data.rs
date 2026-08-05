@@ -93,8 +93,8 @@ fn reverse_name_mapping() -> HashMap<&'static str, &'static str> {
 
 #[derive(Debug, Clone)]
 struct VisaEntry {
-    destination: String,  // our TOML name
-    access_type: String,  // "visa-free", "visa-on-arrival", "eta", "e-visa", "visa-required", "no-admission"
+    destination: String, // our TOML name
+    access_type: String, // "visa-free", "visa-on-arrival", "eta", "e-visa", "visa-required", "no-admission"
     days: Option<u32>,
 }
 
@@ -147,7 +147,10 @@ fn main() {
         let raw_req = parts[2].trim();
 
         // Map names to our TOML names
-        let passport = name_map.get(raw_passport).unwrap_or(&raw_passport).to_string();
+        let passport = name_map
+            .get(raw_passport)
+            .unwrap_or(&raw_passport)
+            .to_string();
         let dest = name_map.get(raw_dest).unwrap_or(&raw_dest).to_string();
 
         let (access_type, days) = parse_requirement(raw_req);
@@ -266,10 +269,7 @@ fn main() {
     eprintln!("\nDone!");
     eprintln!("  Updated: {} countries", updated);
     if !not_found.is_empty() {
-        eprintln!(
-            "  Not found in passport-index data ({}):",
-            not_found.len()
-        );
+        eprintln!("  Not found in passport-index data ({}):", not_found.len());
         for n in &not_found {
             eprintln!("    - {}", n);
         }

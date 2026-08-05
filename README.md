@@ -15,15 +15,21 @@ PATH="$HOME/.cargo/bin:$PATH" trunk serve        # 127.0.0.1:8080
 ## deploy
 
 ```
+nu scripts/deploy.nu                 # build + rsync
+nu scripts/deploy.nu --release       # + IndexNow (cut a crawl release)
+# or step by step:
 nu scripts/build.nu
-rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
+nu scripts/deploy.nu --skip-build
+nu scripts/indexnow.nu               # only when cutting a release
 ```
 
 `build.nu` runs:
 
 1. `trunk build --release` (WASM app)
 2. `scripts/seo.nu` → robots + sitemaps
-3. `cargo run --features prerender --bin prerender` → crawlable HTML
+3. `cargo run --features prerender --bin prerender` → crawlable HTML + IndexNow key
+
+`deploy.nu` rsyncs; **IndexNow only with `--release`** (full sitemap, batched).
 
 | file | content |
 |------|---------|
@@ -36,6 +42,7 @@ rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
 | `state/{slug}/index.html` | prerendered state pages |
 | `token/{ticker}/index.html` | prerendered token pages |
 | `from/{a}/to/{b}/index.html` | prerendered corridors (~53k) |
+| `cyberstates-indexnow-*.txt` | IndexNow key file |
 
 nginx: use `scripts/nginx-cyberstates.net.conf` (entity paths 404 when
 missing, no forced trailing slash, includes generated `nginx-redirects.conf`
@@ -43,9 +50,9 @@ for `/state/{code}` → `/state/{slug}`, `/country/*` → `/state/*`,
 `/methodology` → `/doctrine`).
 
 ```
-rsync … && sudo cp scripts/nginx-cyberstates.net.conf /etc/nginx/sites-available/cyberstates.net
+# first-time / nginx changes only:
+sudo cp scripts/nginx-cyberstates.net.conf /etc/nginx/sites-available/cyberstates.net
 sudo nginx -t && sudo systemctl reload nginx
-nu scripts/indexnow.nu   # optional Bing/Yandex ping
 ```
 
 ### Search Console / IndexNow
@@ -53,17 +60,23 @@ nu scripts/indexnow.nu   # optional Bing/Yandex ping
 1. [Google Search Console](https://search.google.com/search-console) — add
    `cyberstates.net`, DNS or HTML file verify, submit
    `https://cyberstates.net/sitemap.xml`.
-2. IndexNow key is deployed as
-   `https://cyberstates.net/cyberstates-indexnow-8f3a2c1e9b7d4a60.txt`
-   — run `nu scripts/indexnow.nu` after major deploys.
+2. **IndexNow is optional** — run when cutting a release
+   (`nu scripts/deploy.nu --release` or `nu scripts/indexnow.nu` after
+   rsync). Key: `https://cyberstates.net/cyberstates-indexnow-8f3a2c1e9b7d4a60.txt`.
+   Full sitemap (~53k URLs) goes in ≤10k batches to IndexNow + Bing.
 3. Default share image: `https://cyberstates.net/og.png`
 
 ## SEO surface
 
 - **P0 (done):** crawl foundation — meta shell, robots, full sitemap
   including bilateral corridors (~53k URLs).
-- **P1 (next):** prerender HTML bodies for states, tokens, corridors
+- **P1 (done):** prerender HTML bodies for states, tokens, corridors
   so crawlers see text without WASM.
+- **P2 (done):** JSON-LD `@graph` (WebSite, Organization, WebPage,
+  BreadcrumbList, Place / ExchangeRateSpecification), visible breadcrumbs,
+  related rankings / corridors internal links.
+- **P3 (done):** IndexNow on release cuts (`--release`); enriched entity
+  copy + ranking landings; fonts `display=swap`; OG/Twitter on every page.
 - State URLs use content `slug`: `/state/japan`, `/state/united-states`.
   Authored in `states/*.toml` (`slug = "…"`). Legacy `/state/jp` still
   resolves and rewrites to the content slug. Tokens stay tickers: `/token/jpy`.

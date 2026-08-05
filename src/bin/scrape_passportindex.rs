@@ -30,11 +30,17 @@ fn pi_to_toml_name() -> HashMap<String, String> {
         ("Türkiye", "Turkey"),
         ("Viet Nam", "Vietnam"),
         ("Palestinian Territories", "Palestine"),
-        ("St. Vincent and the Grenadines", "Saint Vincent and the Grenadines"),
+        (
+            "St. Vincent and the Grenadines",
+            "Saint Vincent and the Grenadines",
+        ),
         ("Hong Kong", "Hong Kong"),
         ("Macao", "Macao"),
     ];
-    pairs.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect()
+    pairs
+        .iter()
+        .map(|(k, v)| (k.to_string(), v.to_string()))
+        .collect()
 }
 
 fn escape_toml_string(s: &str) -> String {
@@ -46,8 +52,10 @@ fn wait_for_content(tab: &Arc<headless_chrome::Tab>, timeout_secs: u64) -> bool 
         std::thread::sleep(Duration::from_millis(250));
         if let Ok(result) = tab.evaluate("document.title", false) {
             if let Some(title) = result.value.as_ref().and_then(|v| v.as_str()) {
-                if !title.contains("moment") && !title.contains("Checking")
-                    && !title.contains("Verifying") && !title.is_empty()
+                if !title.contains("moment")
+                    && !title.contains("Checking")
+                    && !title.contains("Verifying")
+                    && !title.is_empty()
                 {
                     return true;
                 }
@@ -136,7 +144,8 @@ fn scrape_index(tab: &Arc<headless_chrome::Tab>) -> Vec<(String, String)> {
         return JSON.stringify(unique);
     })()"#;
 
-    let raw = tab.evaluate(js, false)
+    let raw = tab
+        .evaluate(js, false)
         .ok()
         .and_then(|r| r.value)
         .and_then(|v| v.as_str().map(|s| s.to_string()))
@@ -250,7 +259,10 @@ fn match_to_toml(
         ("palestinian territories", "palestine"),
         ("congo (dem. rep.)", "democratic republic of the congo"),
         ("cote d'ivoire", "cote d'ivoire"),
-        ("st. vincent and the grenadines", "saint vincent and the grenadines"),
+        (
+            "st. vincent and the grenadines",
+            "saint vincent and the grenadines",
+        ),
     ];
 
     for (from, to) in aliases {
@@ -276,12 +288,14 @@ fn match_to_toml(
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let single_country = args.iter()
+    let single_country = args
+        .iter()
         .find(|a| a.starts_with("--country="))
         .map(|a| a.strip_prefix("--country=").unwrap().to_uppercase());
     let debug = args.iter().any(|a| a == "--debug");
     let dump_only = args.iter().any(|a| a == "--dump");
-    let port: u16 = args.iter()
+    let port: u16 = args
+        .iter()
         .find(|a| a.starts_with("--port="))
         .and_then(|a| a.strip_prefix("--port="))
         .and_then(|p| p.parse().ok())
@@ -302,7 +316,10 @@ fn main() {
         .and_then(|v| v["webSocketDebuggerUrl"].as_str().map(|s| s.to_string()));
 
     let ws_url = match ws_url {
-        Some(url) => { eprintln!("Connected: {}", url); url }
+        Some(url) => {
+            eprintln!("Connected: {}", url);
+            url
+        }
         None => {
             eprintln!("ERROR: Cannot connect to Chrome on port {}.", port);
             eprintln!("Start Chrome with --remote-debugging-port={}", port);
@@ -312,11 +329,15 @@ fn main() {
 
     let browser = Browser::connect(ws_url).expect("WebSocket connection failed");
     let tabs = browser.get_tabs().lock().unwrap().clone();
-    let tab = tabs.first().cloned().unwrap_or_else(|| browser.new_tab().unwrap());
+    let tab = tabs
+        .first()
+        .cloned()
+        .unwrap_or_else(|| browser.new_tab().unwrap());
 
     // Step 1: Navigate to byRank.php to discover all passport slugs
     eprintln!("\n1. Scraping index at byRank.php...");
-    tab.navigate_to("https://www.passportindex.org/byRank.php").unwrap();
+    tab.navigate_to("https://www.passportindex.org/byRank.php")
+        .unwrap();
     if !wait_for_content(&tab, 30) {
         eprintln!("Cloudflare didn't clear. Open byRank.php in Chrome first.");
         return;
@@ -328,11 +349,17 @@ fn main() {
 
     if index.is_empty() {
         // Dump page to diagnose
-        let title = tab.evaluate("document.title", false)
-            .ok().and_then(|r| r.value).and_then(|v| v.as_str().map(|s| s.to_string()))
+        let title = tab
+            .evaluate("document.title", false)
+            .ok()
+            .and_then(|r| r.value)
+            .and_then(|v| v.as_str().map(|s| s.to_string()))
             .unwrap_or_default();
-        let sample = tab.evaluate("document.body?.innerText?.substring(0, 1000) || ''", false)
-            .ok().and_then(|r| r.value).and_then(|v| v.as_str().map(|s| s.to_string()))
+        let sample = tab
+            .evaluate("document.body?.innerText?.substring(0, 1000) || ''", false)
+            .ok()
+            .and_then(|r| r.value)
+            .and_then(|v| v.as_str().map(|s| s.to_string()))
             .unwrap_or_default();
         eprintln!("   Page title: {}", title);
         eprintln!("   Body sample: {}", &sample[..sample.len().min(500)]);
@@ -345,24 +372,36 @@ fn main() {
             eprintln!("\n   Page loaded but no passport links found.");
             eprintln!("   The site structure may have changed.");
             // Try alternate selector
-            let alt = tab.evaluate(r#"
+            let alt = tab
+                .evaluate(
+                    r#"
                 JSON.stringify(Array.from(document.querySelectorAll('a')).filter(a =>
                     (a.href||'').includes('passport')).slice(0,5).map(a =>
                     ({href: a.href, text: a.textContent.trim().substring(0,50)})))
-            "#, false)
-                .ok().and_then(|r| r.value).and_then(|v| v.as_str().map(|s| s.to_string()))
+            "#,
+                    false,
+                )
+                .ok()
+                .and_then(|r| r.value)
+                .and_then(|v| v.as_str().map(|s| s.to_string()))
                 .unwrap_or_default();
             eprintln!("   Sample passport links: {}", alt);
 
             // Dump ALL links for analysis
-            let all_links = tab.evaluate(r#"
+            let all_links = tab
+                .evaluate(
+                    r#"
                 JSON.stringify(Array.from(new Set(
                     Array.from(document.querySelectorAll('a'))
                         .map(a => a.href)
                         .filter(h => h && !h.startsWith('javascript'))
                 )).slice(0, 50))
-            "#, false)
-                .ok().and_then(|r| r.value).and_then(|v| v.as_str().map(|s| s.to_string()))
+            "#,
+                    false,
+                )
+                .ok()
+                .and_then(|r| r.value)
+                .and_then(|v| v.as_str().map(|s| s.to_string()))
                 .unwrap_or_default();
             eprintln!("   All links: {}", all_links);
         }
@@ -388,16 +427,20 @@ fn main() {
 
     for entry in &dir_entries {
         let content = fs::read_to_string(entry.path()).unwrap();
-        let name = content.lines()
+        let name = content
+            .lines()
             .find(|l| l.starts_with("name = "))
             .and_then(|l| l.strip_prefix("name = \""))
             .and_then(|l| l.strip_suffix('"'))
-            .unwrap_or("").to_string();
-        let code = content.lines()
+            .unwrap_or("")
+            .to_string();
+        let code = content
+            .lines()
             .find(|l| l.starts_with("code = "))
             .and_then(|l| l.strip_prefix("code = \""))
             .and_then(|l| l.strip_suffix('"'))
-            .unwrap_or("").to_string();
+            .unwrap_or("")
+            .to_string();
         if !name.is_empty() && !code.is_empty() {
             toml_countries.push((code, name, entry.path().to_string_lossy().to_string()));
         }
@@ -415,7 +458,8 @@ fn main() {
             if matched {
                 let m = match_to_toml(pi_name, slug, &toml_countries);
                 if let Some((path, _)) = m {
-                    let target_path = toml_countries.iter()
+                    let target_path = toml_countries
+                        .iter()
                         .find(|(c, _, _)| c == target)
                         .map(|(_, _, p)| p.clone());
                     if Some(&path) == target_path.as_ref() {
@@ -426,7 +470,8 @@ fn main() {
             }
             // Also try matching by name
             if let Some((path, _)) = match_to_toml(pi_name, slug, &toml_countries) {
-                let is_target = toml_countries.iter()
+                let is_target = toml_countries
+                    .iter()
                     .any(|(c, _, p)| c == target && p == &path);
                 if is_target {
                     work.push((slug.clone(), pi_name.clone(), path));
@@ -444,7 +489,9 @@ fn main() {
     eprintln!("   Matched {} passports to TOML files", work.len());
     if !unmatched.is_empty() {
         eprintln!("   Unmatched ({}):", unmatched.len());
-        for u in &unmatched { eprintln!("     - {}", u); }
+        for u in &unmatched {
+            eprintln!("     - {}", u);
+        }
     }
 
     eprintln!("\n2. Scraping {} passport pages...\n", work.len());
@@ -470,23 +517,28 @@ fn main() {
         std::thread::sleep(Duration::from_millis(1500));
 
         let raw = extract_visa_data(&tab);
-        if debug { eprintln!("\n    raw: {}", &raw[..raw.len().min(300)]); }
+        if debug {
+            eprintln!("\n    raw: {}", &raw[..raw.len().min(300)]);
+        }
 
         match serde_json::from_str::<Vec<RawVisaEntry>>(&raw) {
             Ok(entries) if !entries.is_empty() => {
                 let content = fs::read_to_string(filepath).unwrap();
-                let base: String = content.lines()
+                let base: String = content
+                    .lines()
                     .take_while(|l| !l.starts_with("[[visa_access]]"))
                     .collect::<Vec<_>>()
                     .join("\n");
 
                 let mut visa_section = String::from("\n");
                 for ve in &entries {
-                    let dest = name_map.get(&ve.country)
+                    let dest = name_map
+                        .get(&ve.country)
                         .cloned()
                         .unwrap_or_else(|| ve.country.clone());
                     visa_section.push_str("[[visa_access]]\n");
-                    visa_section.push_str(&format!("country = \"{}\"\n", escape_toml_string(&dest)));
+                    visa_section
+                        .push_str(&format!("country = \"{}\"\n", escape_toml_string(&dest)));
                     visa_section.push_str(&format!("type = \"{}\"\n", ve.access_type));
                     if let Some(days) = ve.days {
                         visa_section.push_str(&format!("days = {}\n", days));
@@ -511,7 +563,9 @@ fn main() {
     eprintln!("Updated: {}", updated);
     if !failed.is_empty() {
         eprintln!("Failed ({}):", failed.len());
-        for f in &failed { eprintln!("  - {}", f); }
+        for f in &failed {
+            eprintln!("  - {}", f);
+        }
     }
 }
 

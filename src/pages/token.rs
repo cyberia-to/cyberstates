@@ -1,7 +1,7 @@
-use leptos::prelude::*;
+use crate::components::notyet::value_or_notyet;
 use crate::data::*;
 use crate::pages::country::SiteHeader;
-use crate::components::notyet::value_or_notyet;
+use leptos::prelude::*;
 
 #[component]
 pub fn TokenPage() -> impl IntoView {

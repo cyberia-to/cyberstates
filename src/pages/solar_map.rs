@@ -108,22 +108,32 @@ fn colors_for(bodies: &[Country], field: SortField) -> HashMap<String, String> {
     for is_planet in [true, false] {
         let band: Vec<&Country> = bodies
             .iter()
-            .filter(|c| matches!(c.class(), ListingClass::Planet) == is_planet)
+            .filter(|c| c.belongs_to(ListingClass::Planet) == is_planet)
             .collect();
         if band.is_empty() {
             continue;
         }
         let mut vals: Vec<f64> = band.iter().map(|c| c.metric(field)).collect();
         vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-        let n = vals.len().max(2);
+        let n = vals.len();
         let first_idx = |v: f64| vals.iter().position(|&x| x == v).unwrap_or(0);
         for c in band {
             let v = c.metric(field);
-            let mut t = first_idx(v) as f64 / (n - 1) as f64;
+            let mut t = if n > 1 {
+                first_idx(v) as f64 / (n - 1) as f64
+            } else if v > 0.0 {
+                1.0
+            } else {
+                0.0
+            };
             if field.lower_is_better() {
                 t = 1.0 - t;
             }
-            out.insert(c.code.clone(), value_to_color(0.02 + 0.98 * t, 1.0));
+            // Floor: bottom rank stays on-ramp (visible red), not missing grey.
+            // Ties share t — zero-capital bodies stay one color, not a rainbow.
+            const FLOOR: f64 = 0.12;
+            let paint = FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0);
+            out.insert(c.code.clone(), value_to_color(paint, 1.0));
         }
     }
     out
@@ -147,21 +157,27 @@ fn world_values(field: SortField) -> HashMap<String, f64> {
     } else {
         (0.0, 1.0)
     };
+    let first_rank = |v: f64| -> usize { ranked.iter().position(|(_, x)| *x == v).unwrap_or(0) };
     let mut values = HashMap::new();
-    for (i, (code, v)) in ranked.into_iter().enumerate() {
+    for (code, v) in ranked.iter() {
         let t = if log_scale {
             if vmax > vmin {
                 ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-            } else {
+            } else if *v > 0.0 {
                 1.0
+            } else {
+                0.0
             }
         } else if n > 1 {
-            i as f64 / (n - 1) as f64
-        } else {
+            first_rank(*v) as f64 / (n - 1) as f64
+        } else if *v > 0.0 {
             1.0
+        } else {
+            0.0
         };
         let t = if field.lower_is_better() { 1.0 - t } else { t };
-        values.insert(code, 0.02 + 0.98 * t);
+        const FLOOR: f64 = 0.12;
+        values.insert(code.clone(), FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0));
     }
     values
 }

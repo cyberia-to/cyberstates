@@ -1,8 +1,8 @@
+use crate::components::brand::BrandChooser;
+use crate::components::nav::SiteNav;
 use leptos::prelude::*;
 use pulldown_cmark::{html, Options, Parser};
 use wasm_bindgen::JsCast;
-use crate::components::nav::SiteNav;
-use crate::components::brand::BrandChooser;
 
 const METHODOLOGY_MD: &str = include_str!("../../doctrine.md");
 

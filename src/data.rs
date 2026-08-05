@@ -474,9 +474,9 @@ pub fn format_area(v: u64) -> String {
     compact_count(v as f64)
 }
 
-/// Listing class for the header toggles: every row is exactly one of
-/// planets (celestial bodies), continents (land aggregates) or
-/// countries (the terrestrial roll).
+/// Listing class for the header toggles. Most rows are exactly one class;
+/// Antarctica is dual — both continent and country — so either toggle
+/// keeps it on the board.
 #[derive(Clone, Copy, PartialEq)]
 pub enum ListingClass {
     Planet,
@@ -485,7 +485,8 @@ pub enum ListingClass {
 }
 
 /// The macro-region aggregates: one listing per continent-scale sum.
-/// Antarctica is continent-class too, but a single body, not an aggregate.
+/// Antarctica (AQ) is continent-class too, but a single body, not a sum
+/// of member states — and it is also a country (dual membership).
 pub const AGGREGATES: &[&str] = &["OCNA", "AFRI", "EURA", "AMER"];
 
 /// Which market-regions an aggregate sums over. Eurasia is one ground:
@@ -506,10 +507,33 @@ pub fn is_aggregate(code: &str) -> bool {
 }
 
 impl Country {
+    /// True if this row belongs to the given listing class. Antarctica
+    /// belongs to both Continent and Country; everything else is exclusive.
+    pub fn belongs_to(&self, class: ListingClass) -> bool {
+        match class {
+            ListingClass::Planet => self.region == "Solar System",
+            ListingClass::Continent => self.code == "AQ" || is_aggregate(&self.code),
+            // countries + Antarctica; not planets, not macro-aggregates
+            ListingClass::Country => self.region != "Solar System" && !is_aggregate(&self.code),
+        }
+    }
+
+    /// Visible under the header toggles if it matches *any* enabled class.
+    /// AQ shows when countries are on, when continents are on, or both —
+    /// never duplicated (one row either way).
+    pub fn class_visible(&self, planets: bool, continents: bool, countries: bool) -> bool {
+        (planets && self.belongs_to(ListingClass::Planet))
+            || (continents && self.belongs_to(ListingClass::Continent))
+            || (countries && self.belongs_to(ListingClass::Country))
+    }
+
+    /// Primary class for single-band callers (map planet spectrum, etc.).
+    /// Dual-class Antarctica prefers Country — it ranks with the terrestrial
+    /// roll; continent toggle still catches it via `belongs_to`.
     pub fn class(&self) -> ListingClass {
-        if self.region == "Solar System" {
+        if self.belongs_to(ListingClass::Planet) {
             ListingClass::Planet
-        } else if self.code == "AQ" || is_aggregate(&self.code) {
+        } else if is_aggregate(&self.code) {
             ListingClass::Continent
         } else {
             ListingClass::Country

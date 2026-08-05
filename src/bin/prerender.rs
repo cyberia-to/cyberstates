@@ -250,9 +250,18 @@ fn main() {
     );
     n_pages += 1;
 
-    // Enrich root index body with a crawlable state directory (keep trunk head)
+    // Enrich root index: crawlable directory + WebSite/Organization JSON-LD
     let root_body = home_body(&states);
-    let root_html = inject_body_into_shell(&shell, &root_body);
+    let root_ld = ld_graph(&[
+        website_node(),
+        org_node(),
+        webpage_node(
+            "Cyberstates — the sovereignty terminal",
+            "/",
+            "Global rankings of states by capital stock, travel freedom and hospitality.",
+        ),
+    ]);
+    let root_html = inject_body_into_shell(&shell, &root_body, &root_ld);
     fs::write(dist.join("index.html"), root_html).expect("write root index");
 
     eprintln!(
@@ -553,6 +562,78 @@ fn jesc(s: &str) -> String {
         .replace('\n', " ")
 }
 
+/// JSON-LD @graph wrapper.
+fn ld_graph(nodes: &[String]) -> String {
+    format!(
+        r#"{{"@context":"https://schema.org","@graph":[{}]}}"#,
+        nodes.join(",")
+    )
+}
+
+/// BreadcrumbList node. `trail` is (name, absolute path) including current page.
+fn ld_breadcrumb(trail: &[(&str, &str)]) -> String {
+    let items: Vec<String> = trail
+        .iter()
+        .enumerate()
+        .map(|(i, (name, path))| {
+            format!(
+                r#"{{"@type":"ListItem","position":{},"name":"{}","item":"{}{}"}}"#,
+                i + 1,
+                jesc(name),
+                BASE,
+                path
+            )
+        })
+        .collect();
+    format!(
+        r#"{{"@type":"BreadcrumbList","itemListElement":[{}]}}"#,
+        items.join(",")
+    )
+}
+
+/// Visible breadcrumb nav for internal linking + UX.
+fn html_breadcrumb(trail: &[(&str, &str)]) -> String {
+    let parts: Vec<String> = trail
+        .iter()
+        .enumerate()
+        .map(|(i, (name, path))| {
+            if i + 1 == trail.len() {
+                format!(r#"<span aria-current="page">{}</span>"#, esc(name))
+            } else {
+                format!(r#"<a href="{}">{}</a>"#, path, esc(name))
+            }
+        })
+        .collect();
+    format!(
+        r#"<nav class="crumbs" aria-label="Breadcrumb">{}</nav>"#,
+        parts.join(" <span class=\"sep\">/</span> ")
+    )
+}
+
+fn website_node() -> String {
+    format!(
+        r#"{{"@type":"WebSite","@id":"{base}/#website","url":"{base}/","name":"Cyberstates","description":"Sovereignty terminal — states ranked by capital, travel freedom and hospitality.","publisher":{{"@id":"{base}/#org"}},"inLanguage":"en"}}"#,
+        base = BASE
+    )
+}
+
+fn org_node() -> String {
+    format!(
+        r#"{{"@type":"Organization","@id":"{base}/#org","name":"Cyberstates","url":"{base}/","logo":"{base}/og.png","sameAs":["https://x.com/cyberiacap"]}}"#,
+        base = BASE
+    )
+}
+
+fn webpage_node(name: &str, path: &str, desc: &str) -> String {
+    format!(
+        r#"{{"@type":"WebPage","@id":"{base}{path}#webpage","url":"{base}{path}","name":"{name}","description":"{desc}","isPartOf":{{"@id":"{base}/#website"}},"inLanguage":"en"}}"#,
+        base = BASE,
+        path = path,
+        name = jesc(name),
+        desc = jesc(desc)
+    )
+}
+
 fn extract_head_assets(shell: &str) -> String {
     // Continuous slice: fonts/preconnect through hashed css + wasm bootstrap.
     let start_markers = [
@@ -663,14 +744,32 @@ fn page_404(assets: &str) -> String {
 }
 
 fn page_simple(title: &str, desc: &str, path: &str, body: &str, assets: &str) -> String {
-    let ld = format!(
-        r#"{{"@context":"https://schema.org","@type":"WebPage","name":"{}","url":"{}{}","description":"{}"}}"#,
-        jesc(title),
-        BASE,
-        path,
-        jesc(desc)
-    );
-    shell_page(title, desc, path, &ld, body, assets)
+    let trail: Vec<(&str, &str)> = if path == "/" {
+        vec![("Cyberstates", "/")]
+    } else {
+        let label = title.split(" — ").next().unwrap_or(title);
+        // short label without rank noise for crumbs
+        let short = label.split(" | ").next().unwrap_or(label);
+        vec![("Cyberstates", "/"), (short, path)]
+    };
+    // For trail with owned strings on ranking pages:
+    let crumb_name = title
+        .split(" | ")
+        .next()
+        .unwrap_or(title)
+        .split(" — ")
+        .next()
+        .unwrap_or(title);
+    let trail_owned = [("Cyberstates", "/"), (crumb_name, path)];
+    let trail_use: &[(&str, &str)] = if path == "/" { &trail } else { &trail_owned };
+    let ld = ld_graph(&[
+        website_node(),
+        org_node(),
+        webpage_node(title, path, desc),
+        ld_breadcrumb(trail_use),
+    ]);
+    let body = format!("{}{}", html_breadcrumb(trail_use), body);
+    shell_page(title, desc, path, &ld, &body, assets)
 }
 
 fn page_state(s: &State, all: &[State], assets: &str) -> String {
@@ -692,16 +791,32 @@ fn page_state(s: &State, all: &[State], assets: &str) -> String {
         s.t.currency_code,
         s.t.population
     );
-    let ld = format!(
-        r#"{{"@context":"https://schema.org","@type":"Place","name":"{}","identifier":"{}","url":"{}{}","additionalProperty":[{{"@type":"PropertyValue","name":"capital_b_usd","value":{}}},{{"@type":"PropertyValue","name":"population","value":{}}},{{"@type":"PropertyValue","name":"currency","value":"{}"}}]}}"#,
-        jesc(&s.t.name),
-        jesc(&s.t.code),
-        BASE,
-        path,
-        s.t.money_supply_b_usd,
-        s.t.population,
-        jesc(&s.t.currency_code)
+    let place = format!(
+        r#"{{"@type":"Place","@id":"{base}{path}#place","name":"{name}","identifier":"{code}","url":"{base}{path}","image":"{base}/og.png","containedInPlace":"{region}","additionalProperty":[{{"@type":"PropertyValue","name":"capital_b_usd","value":{cap}}},{{"@type":"PropertyValue","name":"population","value":{pop}}},{{"@type":"PropertyValue","name":"land_area_km2","value":{area}}},{{"@type":"PropertyValue","name":"currency","value":"{cur}"}},{{"@type":"PropertyValue","name":"travel_freedom","value":{fs}}},{{"@type":"PropertyValue","name":"hospitality","value":{os}}}]}}"#,
+        base = BASE,
+        path = path,
+        name = jesc(&s.t.name),
+        code = jesc(&s.t.code),
+        region = jesc(&s.t.region),
+        cap = s.t.money_supply_b_usd,
+        pop = s.t.population,
+        area = s.t.land_area_km2,
+        cur = jesc(&s.t.currency_code),
+        fs = s.freedom,
+        os = s.openness
     );
+    let trail = [
+        ("Cyberstates", "/"),
+        ("States", "/by/capital"),
+        (s.t.name.as_str(), path.as_str()),
+    ];
+    let ld = ld_graph(&[
+        website_node(),
+        org_node(),
+        webpage_node(&title, &path, &desc),
+        ld_breadcrumb(&trail),
+        place,
+    ]);
 
     // Top outbound visa-free destinations (link when we know the slug)
     let name_to_slug: HashMap<&str, &str> = all
@@ -753,8 +868,14 @@ fn page_state(s: &State, all: &[State], assets: &str) -> String {
         .collect::<Vec<_>>()
         .join("\n");
 
+    let trail_html = html_breadcrumb(&[
+        ("Cyberstates", "/"),
+        ("States", "/by/capital"),
+        (s.t.name.as_str(), path.as_str()),
+    ]);
     let body = format!(
-        r##"<nav class="nav"><a href="/">Cyberstates</a><a href="/tokens">Tokens</a><a href="/by/travel-freedom">Freedom</a><a href="/doctrine">Doctrine</a></nav>
+        r##"{crumbs}
+<nav class="nav"><a href="/">Cyberstates</a><a href="/tokens">Tokens</a><a href="/by/travel-freedom">Freedom</a><a href="/by/capital">Capital</a><a href="/doctrine">Doctrine</a></nav>
 <p class="muted">{flag} {region} · {code}</p>
 <h1>{name}</h1>
 <p>{name} is listed as a cyberstate — territory, population and rules measured on the sovereignty terminal. Token <a href="/token/{tok}">{tok}</a> ({tokn}).</p>
@@ -767,13 +888,21 @@ fn page_state(s: &State, all: &[State], assets: &str) -> String {
 <tr><th>Travel freedom</th><td>{fs:.1} (√ eco×pop reach) · rank #{rf} · {vf} visa-free destinations</td></tr>
 <tr><th>Hospitality</th><td>{os:.1} · rank #{rh} · {vi} visa-free inbound</td></tr>
 </table>
+<h2>Related rankings</h2>
+<ul>
+<li><a href="/by/capital">All states by capital</a></li>
+<li><a href="/by/travel-freedom">All states by travel freedom</a></li>
+<li><a href="/by/hospitality">All states by hospitality</a></li>
+<li><a href="/token/{tok}">All states on {tok}</a></li>
+</ul>
 <h2>Visa-free destinations</h2>
 <ul>{free}</ul>
 {more_free}
 <h2>Corridors from {name}</h2>
 <ul>{corr}</ul>
-<p class="muted">Every ordered pair is listed under /from/{slug}/to/…</p>
+<p class="muted">Every ordered pair is listed under /from/{slug}/to/… · <a href="/sitemap.xml">Sitemap</a></p>
 "##,
+        crumbs = trail_html,
         flag = s.t.flag,
         region = esc(&s.t.region),
         code = esc(&s.t.code),
@@ -827,13 +956,32 @@ fn page_token(t: &TokenAgg, assets: &str) -> String {
         t.states.len(),
         t.price_usd
     );
-    let ld = format!(
-        r#"{{"@context":"https://schema.org","@type":"ExchangeRateSpecification","currency":"{}","url":"{}{}","name":"{}"}}"#,
-        jesc(&t.code),
-        BASE,
-        path,
-        jesc(&t.name)
+    let fin = format!(
+        r#"{{"@type":"ExchangeRateSpecification","@id":"{base}{path}#token","currency":"{code}","url":"{base}{path}","name":"{name}","description":"{desc}","currentExchangeRate":{{"@type":"UnitPriceSpecification","price":{price},"priceCurrency":"USD"}}}}"#,
+        base = BASE,
+        path = path,
+        code = jesc(&t.code),
+        name = jesc(&t.name),
+        desc = jesc(&desc),
+        price = if t.price_usd > 0.0 {
+            format!("{:.8}", t.price_usd)
+        } else {
+            "0".into()
+        },
     );
+    // Note: outer object closes with }} — one for currentExchangeRate, one for ExchangeRateSpecification
+    let trail = [
+        ("Cyberstates", "/"),
+        ("Tokens", "/tokens"),
+        (t.code.as_str(), path.as_str()),
+    ];
+    let ld = ld_graph(&[
+        website_node(),
+        org_node(),
+        webpage_node(&title, &path, &desc),
+        ld_breadcrumb(&trail),
+        fin,
+    ]);
     let rows: String = t
         .states
         .iter()
@@ -848,12 +996,15 @@ fn page_token(t: &TokenAgg, assets: &str) -> String {
         .collect::<Vec<_>>()
         .join("\n");
     let body = format!(
-        r##"<nav class="nav"><a href="/">Cyberstates</a><a href="/tokens">All tokens</a><a href="/doctrine">Doctrine</a></nav>
+        r##"{crumbs}
+<nav class="nav"><a href="/">Cyberstates</a><a href="/tokens">All tokens</a><a href="/by/capital">Capital</a><a href="/doctrine">Doctrine</a></nav>
 <h1>{code} — {name}</h1>
 <p>Token of record for {n} cyberstates. Aggregate capital ${cap:.1}B. Price {price}.</p>
 <h2>States on {code}</h2>
 <ul>{rows}</ul>
+<p class="muted"><a href="/tokens">All tokens</a> · <a href="/sitemap.xml">Sitemap</a></p>
 "##,
+        crumbs = html_breadcrumb(&trail),
         code = esc(&t.code),
         name = esc(&t.name),
         n = t.states.len(),
@@ -882,17 +1033,29 @@ fn page_corridor(a: &State, b: &State, all: &[State], assets: &str) -> String {
         "Can {} passport holders enter {}? {}. Reverse: {}. Freedom {:.1} → hospitality {:.1}. Capital #{} → #{}.",
         a.t.name, b.t.name, out_l, in_l, a.freedom, b.openness, a.rank_capital, b.rank_capital
     );
-    let ld = format!(
-        r#"{{"@context":"https://schema.org","@type":"WebPage","name":"{}","url":"{}{}","about":["{}","{}"]}}"#,
-        jesc(&title),
-        BASE,
-        path,
-        jesc(&a.t.name),
-        jesc(&b.t.name)
+    let a_path = format!("/state/{}", a.t.slug);
+    let b_path = format!("/state/{}", b.t.slug);
+    let corr_label = format!("{} → {}", a.t.name, b.t.name);
+    let trail = [
+        ("Cyberstates", "/"),
+        (a.t.name.as_str(), a_path.as_str()),
+        (corr_label.as_str(), path.as_str()),
+    ];
+    let about = format!(
+        r#"{{"@type":"WebPage","@id":"{base}{path}#webpage","url":"{base}{path}","name":"{title}","description":"{desc}","about":[{{"@type":"Place","name":"{an}","url":"{base}{ap}"}},{{"@type":"Place","name":"{bn}","url":"{base}{bp}"}}],"isPartOf":{{"@id":"{base}/#website"}},"inLanguage":"en"}}"#,
+        base = BASE,
+        path = path,
+        title = jesc(&title),
+        desc = jesc(&desc),
+        an = jesc(&a.t.name),
+        bn = jesc(&b.t.name),
+        ap = a_path,
+        bp = b_path,
     );
+    let ld = ld_graph(&[website_node(), org_node(), about, ld_breadcrumb(&trail)]);
     let days = |d: Option<u32>| d.map(|x| format!(" · {x} days")).unwrap_or_default();
 
-    // Related: reverse, same-region peers from A, same-token peers from B
+    // Related: reverse, same-region peers, same-token peers
     let mut related = Vec::new();
     related.push(format!(
         r#"<li><a href="/from/{}/to/{}">Reverse: {} → {}</a></li>"#,
@@ -941,7 +1104,8 @@ fn page_corridor(a: &State, b: &State, all: &[State], assets: &str) -> String {
     }
 
     let body = format!(
-        r##"<nav class="nav"><a href="/">Cyberstates</a><a href="/state/{as}">{an}</a><a href="/state/{bs}">{bn}</a><a href="/from/{bs}/to/{as}">Flip</a><a href="/token/{tok}">Token</a></nav>
+        r##"{crumbs}
+<nav class="nav"><a href="/">Cyberstates</a><a href="/state/{as}">{an}</a><a href="/state/{bs}">{bn}</a><a href="/from/{bs}/to/{as}">Flip</a><a href="/token/{tok}">Token</a></nav>
 <p class="muted">Visa corridor</p>
 <h1>{af} {an} → {bf} {bn}</h1>
 <p>Outbound access for a <strong>{an}</strong> passport into <strong>{bn}</strong>: <strong>{out}</strong>{outd}.</p>
@@ -953,8 +1117,9 @@ fn page_corridor(a: &State, b: &State, all: &[State], assets: &str) -> String {
 </table>
 <h2>Related corridors</h2>
 <ul>{related}</ul>
-<p class="muted">Data from the cyberstates visa matrix.</p>
+<p class="muted">Data from the cyberstates visa matrix · <a href="/sitemap.xml">Sitemap</a></p>
 "##,
+        crumbs = html_breadcrumb(&trail),
         as = a.t.slug,
         bs = b.t.slug,
         an = esc(&a.t.name),
@@ -1089,8 +1254,19 @@ fn home_body(states: &[State]) -> String {
     )
 }
 
-fn inject_body_into_shell(shell: &str, body_inner: &str) -> String {
+fn inject_body_into_shell(shell: &str, body_inner: &str, json_ld: &str) -> String {
     // Hidden crawlable directory + noscript. Never paint under the SPA.
+    // Inject JSON-LD before </head> for the home shell.
+    let shell = if let Some(i) = shell.rfind("</head>") {
+        format!(
+            "{}<script type=\"application/ld+json\">{}</script>\n{}",
+            &shell[..i],
+            json_ld,
+            &shell[i..]
+        )
+    } else {
+        shell.to_string()
+    };
     let main = format!(
         r#"<body>
 <div id="seo-static" hidden>

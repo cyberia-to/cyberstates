@@ -1,0 +1,56 @@
+name: Build and deploy cyberstates.net
+
+# Runs the FULL site build (trunk/wasm + SEO surface + prerender) on
+# GitHub's runners — not on the small production box — for every push
+# to main, including the daily automated commits made by the
+# cyberstates-refresh systemd timer on the server. This is what makes
+# the live site's freshness independent of any single machine: the
+# server fetches new numbers and pushes; GitHub rebuilds and deploys.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (stable + wasm32)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install trunk
+        uses: taiki-e/install-action@v2
+        with:
+          tool: trunk
+
+      - name: Install nushell
+        uses: hustcer/setup-nu@v3
+        with:
+          version: "0.101"
+
+      - name: Build (trunk + SEO surface + prerender)
+        run: nu scripts/build.nu
+
+      - name: Deploy over restricted rsync
+        env:
+          SSH_KEY: ${{ secrets.CYBERPROXY_DEPLOY_KEY }}
+        run: |
+          install -m 600 /dev/null /tmp/deploy_key
+          printf '%s\n' "$SSH_KEY" > /tmp/deploy_key
+          mkdir -p ~/.ssh
+          # the server key is scoped by a forced `command=rrsync` in its
+          # authorized_keys — this identity can only write dist/ into the
+          # cyberstates webroot, nothing else
+          rsync -az --delete -e "ssh -i /tmp/deploy_key -p 8333 -o StrictHostKeyChecking=accept-new" \
+            dist/ cyber@167.235.28.94:/var/www/html/cyberstates/

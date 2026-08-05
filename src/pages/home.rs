@@ -79,11 +79,8 @@ fn map_values(
     let mut items: Vec<(String, f64, bool)> = countries
         .iter()
         .filter(|c| {
-            (match c.class() {
-                ListingClass::Planet => classes.0,
-                ListingClass::Continent => classes.1,
-                ListingClass::Country => classes.2,
-            }) && (region == "All" || c.region == region)
+            c.class_visible(classes.0, classes.1, classes.2)
+                && (region == "All" || c.region == region)
                 && !(region != "All" && is_aggregate(&c.code))
                 && (query.is_empty()
                     || c.name.to_lowercase().contains(query)
@@ -95,7 +92,7 @@ fn map_values(
             (
                 c.code.clone(),
                 c.metric(field),
-                matches!(c.class(), ListingClass::Planet),
+                c.belongs_to(ListingClass::Planet),
             )
         })
         .collect();
@@ -126,6 +123,8 @@ fn map_values(
         if n == 0 {
             continue;
         }
+        // first index of each distinct value — equal metrics share one color
+        // (all zero-capital solar bodies must not rainbow by sort order)
         let (vmin, vmax) = if log_scale {
             let p10 = band[(n as f64 * 0.10) as usize].1.max(1.0).ln();
             let top = band.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
@@ -133,23 +132,34 @@ fn map_values(
         } else {
             (0.0, 1.0)
         };
-        for (i, (code, v)) in band.into_iter().enumerate() {
-            if !pass_cut.contains(&code) {
+        for (code, v) in &band {
+            if !pass_cut.contains(code) {
                 continue;
             }
+            let first = band.iter().position(|(_, x)| x == v).unwrap_or(0);
             let t = if log_scale {
                 if vmax > vmin {
                     ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-                } else {
+                } else if *v > 0.0 {
                     1.0
+                } else {
+                    0.0
                 }
             } else if n > 1 {
-                i as f64 / (n - 1) as f64
-            } else {
+                first as f64 / (n - 1) as f64
+            } else if *v > 0.0 {
                 1.0
+            } else {
+                0.0
             };
             let t = if field.lower_is_better() { 1.0 - t } else { t };
-            values.insert(code, 0.02 + 0.98 * t);
+            // Always paint entities that are in the listing. Floor keeps the
+            // bottom rank (AQ capital=0, low-density GL, log-scale p10 clamp)
+            // on the red tip of the ramp — never the missing-data grey
+            // (#1a1a1a). Ties still share one t, so zero-capital solar bodies
+            // stay a single color instead of a fake rainbow.
+            const FLOOR: f64 = 0.12;
+            values.insert(code.clone(), FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0));
         }
     }
     values
@@ -251,11 +261,53 @@ const FILTER_EXAMPLES: [&str; 5] = [
     "territory>1m",
 ];
 
-/// Filters live in the URL: ?q= text, ?top=NN the legend cut (percent
-/// kept), ?classes= the enabled class toggles. Parse them back out.
-fn parse_filter_params(search: &str) -> (Option<f64>, (bool, bool, bool)) {
+/// Default class filter: countries only. Planets and continents start off —
+/// the table is a country ranking first; celestial / continental aggregates
+/// are opt-in.
+const DEFAULT_CLASSES: (bool, bool, bool) = (false, false, true); // planets, continents, countries
+
+const CLASS_FILTER_KEY: &str = "class_filter";
+
+fn encode_classes(c: (bool, bool, bool)) -> String {
+    let mut on: Vec<&str> = Vec::new();
+    if c.0 {
+        on.push("planets");
+    }
+    if c.1 {
+        on.push("continents");
+    }
+    if c.2 {
+        on.push("countries");
+    }
+    on.join(",")
+}
+
+fn decode_classes(v: &str) -> (bool, bool, bool) {
+    let has = |s: &str| v.split(',').filter(|x| !x.is_empty()).any(|x| x == s);
+    (has("planets"), has("continents"), has("countries"))
+}
+
+/// Global site setting — survives ranking hops and reloads (like numeraire).
+fn load_class_filter() -> (bool, bool, bool) {
+    web_sys::window()
+        .and_then(|w| w.local_storage().ok().flatten())
+        .and_then(|ls| ls.get_item(CLASS_FILTER_KEY).ok().flatten())
+        .map(|s| decode_classes(&s))
+        .unwrap_or(DEFAULT_CLASSES)
+}
+
+fn store_class_filter(c: (bool, bool, bool)) {
+    if let Some(ls) = web_sys::window().and_then(|w| w.local_storage().ok().flatten()) {
+        let _ = ls.set_item(CLASS_FILTER_KEY, &encode_classes(c));
+    }
+}
+
+/// Filters in the URL: ?q= text, ?top=NN legend cut, ?classes= toggles.
+/// `classes` is `None` when the param is absent — caller must not treat
+/// that as "all on" (would wipe the global setting on ranking hops).
+fn parse_filter_params(search: &str) -> (Option<f64>, Option<(bool, bool, bool)>) {
     let mut cut = None;
-    let mut classes = (true, true, true);
+    let mut classes = None;
     for kv in search.trim_start_matches('?').split('&') {
         if let Some(v) = kv.strip_prefix("top=") {
             if let Ok(p) = v.parse::<f64>() {
@@ -265,8 +317,7 @@ fn parse_filter_params(search: &str) -> (Option<f64>, (bool, bool, bool)) {
             }
         }
         if let Some(v) = kv.strip_prefix("classes=") {
-            let has = |s: &str| v.split(',').any(|x| x == s);
-            classes = (has("planets"), has("continents"), has("countries"));
+            classes = Some(decode_classes(v));
         }
     }
     (cut, classes)
@@ -280,24 +331,32 @@ fn build_filter_query(q: &str, cut: Option<f64>, classes: (bool, bool, bool)) ->
     if let Some(g) = cut {
         parts.push(format!("top={:.0}", (1.0 - g) * 100.0));
     }
-    if classes != (true, true, true) {
-        let mut on: Vec<&str> = Vec::new();
-        if classes.0 {
-            on.push("planets");
-        }
-        if classes.1 {
-            on.push("continents");
-        }
-        if classes.2 {
-            on.push("countries");
-        }
-        parts.push(format!("classes={}", on.join(",")));
+    // always stamp classes when not default so ranking links / shared URLs
+    // carry the global setting; default countries-only keeps the URL clean
+    if classes != DEFAULT_CLASSES {
+        parts.push(format!("classes={}", encode_classes(classes)));
     }
     if parts.is_empty() {
         String::new()
     } else {
         format!("?{}", parts.join("&"))
     }
+}
+
+/// Path + current filter query — ranking / region hops keep the global
+/// class filter (and search / top cut) instead of dropping the query.
+fn landing_href(
+    region: &str,
+    field: SortField,
+    q: &str,
+    cut: Option<f64>,
+    classes: (bool, bool, bool),
+) -> String {
+    format!(
+        "{}{}",
+        landing_path(region, field),
+        build_filter_query(q, cut, classes)
+    )
 }
 
 #[component]
@@ -320,6 +379,17 @@ pub fn HomePage() -> impl IntoView {
         .and_then(|v| js_sys::decode_uri_component(&v.replace('+', " ")).ok())
         .map(String::from)
         .unwrap_or_default();
+    // filters: URL classes= wins (shareable link), else localStorage global,
+    // else countries-only default. Cut still seeds from the query only.
+    let (init_cut, url_classes) = parse_filter_params(
+        &web_sys::window()
+            .and_then(|w| w.location().search().ok())
+            .unwrap_or_default(),
+    );
+    let init_classes = url_classes.unwrap_or_else(load_class_filter);
+    // persist URL override so the next ranking hop without ?classes= keeps it
+    store_class_filter(init_classes);
+
     // the map mounts already painted — page switches never flash
     let initial_svg = {
         let (region, field) = parse_path(&location.pathname.get_untracked());
@@ -331,28 +401,25 @@ pub fn HomePage() -> impl IntoView {
             &q,
             &filters,
             None,
-            (true, true, true),
+            init_classes,
         ))
     };
     let (search, set_search) = signal(initial_q);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
-    // filters are URL, not ephemera: seed from the query string
-    let (init_cut, init_classes) = parse_filter_params(
-        &web_sys::window()
-            .and_then(|w| w.location().search().ok())
-            .unwrap_or_default(),
-    );
     // color-bar filter: keep only states at least this good (0..1)
     let color_cut = RwSignal::new(init_cut);
-    // class toggles: planets / continents / countries, each independent
+    // class toggles: global site setting (planets / continents / countries)
     let show_planets = RwSignal::new(init_classes.0);
     let show_continents = RwSignal::new(init_classes.1);
     let show_countries = RwSignal::new(init_classes.2);
-    let class_on = move |c: &Country| match c.class() {
-        ListingClass::Planet => show_planets.get(),
-        ListingClass::Continent => show_continents.get(),
-        ListingClass::Country => show_countries.get(),
+    // any enabled class membership matches (AQ = continent ∪ country)
+    let class_on = move |c: &Country| {
+        c.class_visible(
+            show_planets.get(),
+            show_continents.get(),
+            show_countries.get(),
+        )
     };
     let (panel_open, set_panel_open) = signal(false);
     let (rating_open, set_rating_open) = signal(false);
@@ -385,8 +452,9 @@ pub fn HomePage() -> impl IntoView {
 
     let nav = use_navigate();
 
-    // URL -> state: back/forward (and any navigation) re-reads the query,
-    // so history steps through filter states faithfully
+    // URL -> state: back/forward re-reads the query. Missing ?classes=
+    // must NOT reset toggles — ranking hops drop the query; the global
+    // localStorage setting (and current signals) stay put.
     Effect::new(move |_| {
         let raw = location.search.get();
         let (cut, classes) = parse_filter_params(&raw);
@@ -400,23 +468,42 @@ pub fn HomePage() -> impl IntoView {
         if color_cut.get_untracked() != cut {
             color_cut.set(cut);
         }
-        if show_planets.get_untracked() != classes.0 {
-            show_planets.set(classes.0);
-        }
-        if show_continents.get_untracked() != classes.1 {
-            show_continents.set(classes.1);
-        }
-        if show_countries.get_untracked() != classes.2 {
-            show_countries.set(classes.2);
+        if let Some(c) = classes {
+            if show_planets.get_untracked() != c.0 {
+                show_planets.set(c.0);
+            }
+            if show_continents.get_untracked() != c.1 {
+                show_continents.set(c.1);
+            }
+            if show_countries.get_untracked() != c.2 {
+                show_countries.set(c.2);
+            }
+            store_class_filter(c);
         }
         if search.get_untracked() != q {
             set_search.set(q);
         }
     });
 
+    // class toggles → localStorage (global site setting)
+    Effect::new(move |_| {
+        store_class_filter((
+            show_planets.get(),
+            show_continents.get(),
+            show_countries.get(),
+        ));
+    });
+
     // state -> URL: toggles and the cut push history entries; typing in
-    // the search replaces in place (no entry per keystroke)
-    let last_written = StoredValue::new((String::new(), None::<f64>, (true, true, true), true));
+    // the search replaces in place (no entry per keystroke). Also re-stamps
+    // the query when the pathname changes (rating hop via plain path).
+    let last_written = StoredValue::new((
+        String::new(),
+        None::<f64>,
+        DEFAULT_CLASSES,
+        String::new(),
+        true,
+    ));
     Effect::new(move |_| {
         let q = search.get();
         let cut = color_cut.get();
@@ -425,22 +512,28 @@ pub fn HomePage() -> impl IntoView {
             show_continents.get(),
             show_countries.get(),
         );
+        let path_now = location.pathname.get();
         let desired = build_filter_query(&q, cut, classes);
         let Some(w) = web_sys::window() else { return };
         let current = w.location().search().unwrap_or_default();
-        let (last_q, last_cut, last_classes, first_run) = last_written.get_value();
-        last_written.set_value((q.clone(), cut, classes, false));
-        if first_run || desired == current {
+        let (last_q, last_cut, last_classes, last_path, first_run) = last_written.get_value();
+        last_written.set_value((q.clone(), cut, classes, path_now.clone(), false));
+        if first_run {
             return;
         }
-        let path = w.location().pathname().unwrap_or_default();
+        let path_changed = path_now != last_path;
+        if desired == current && !path_changed {
+            return;
+        }
+        // prefer live pathname (router may have just navigated)
+        let path = w.location().pathname().unwrap_or(path_now);
         let url = format!("{}{}", path, desired);
         if let Ok(h) = w.history() {
             use wasm_bindgen::JsValue;
-            // structural filters make history; text edits rewrite in place
+            // structural filters make history; text edits / path hops rewrite
             if cut != last_cut || classes != last_classes {
                 let _ = h.push_state_with_url(&JsValue::NULL, "", Some(&url));
-            } else if q != last_q {
+            } else if q != last_q || path_changed {
                 let _ = h.replace_state_with_url(&JsValue::NULL, "", Some(&url));
             }
         }
@@ -585,12 +678,13 @@ pub fn HomePage() -> impl IntoView {
                     </div>
                 </div>
                 <div class="rating-chooser">
+                    <span class="by-label">"by"</span>
                     <button
                         class="region-pill active rating-btn"
                         on:click=move |_| set_rating_open.update(|o| *o = !*o)
                     >
                         {move || state.get().1.short()}
-                        <span style="opacity: 0.7;">" ▾"</span>
+                        <span class="rating-caret" aria-hidden="true"></span>
                     </button>
                     <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
                         {SortField::ALL.map(|f| {
@@ -598,7 +692,13 @@ pub fn HomePage() -> impl IntoView {
                                 {f.derived_break().then(|| view! { <div class="menu-divider"></div> })}
                                 <a
                                     class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
-                                    href=move || landing_path(&state.get().0, f)
+                                    href=move || landing_href(
+                                        &state.get().0,
+                                        f,
+                                        &search.get(),
+                                        color_cut.get(),
+                                        (show_planets.get(), show_continents.get(), show_countries.get()),
+                                    )
                                     on:click=move |_| set_rating_open.set(false)
                                 >
                                     {f.label()}
@@ -620,7 +720,13 @@ pub fn HomePage() -> impl IntoView {
                             {f.derived_break().then(|| view! { <span class="pill-dot">"\u{b7}"</span> })}
                             <a
                                 class=move || if state.get().1 == f { "region-pill active" } else { "region-pill" }
-                                href=move || landing_path(&state.get().0, f)
+                                href=move || landing_href(
+                                    &state.get().0,
+                                    f,
+                                    &search.get(),
+                                    color_cut.get(),
+                                    (show_planets.get(), show_continents.get(), show_countries.get()),
+                                )
                             >
                                 {f.label()}
                             </a>
@@ -761,7 +867,18 @@ pub fn HomePage() -> impl IntoView {
                                             class=move || if state.get().0 == r_class { "region-pill active" } else { "region-pill" }
                                             on:click=move |_| {
                                                 let (_, field) = state.get();
-                                                nav_r(&landing_path(&r_click, field), Default::default());
+                                                let href = landing_href(
+                                                    &r_click,
+                                                    field,
+                                                    &search.get_untracked(),
+                                                    color_cut.get_untracked(),
+                                                    (
+                                                        show_planets.get_untracked(),
+                                                        show_continents.get_untracked(),
+                                                        show_countries.get_untracked(),
+                                                    ),
+                                                );
+                                                nav_r(&href, Default::default());
                                             }
                                         >{r}</button>
                                     }

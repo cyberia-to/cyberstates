@@ -1,5 +1,5 @@
-use leptos::prelude::*;
 use crate::components::numeraire_chooser::NumeraireChooser;
+use leptos::prelude::*;
 
 /// The three destinations, always present, always in this order and color.
 /// The current page's button renders as an outline — "you are here" —

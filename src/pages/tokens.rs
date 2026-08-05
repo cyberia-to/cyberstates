@@ -1,14 +1,14 @@
-use leptos::prelude::*;
-use leptos_router::hooks::use_location;
-use wasm_bindgen::JsCast;
-use std::collections::HashMap;
-use crate::data::*;
-use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
 use crate::components::legend::{goodness_keep, RatingLegend};
+use crate::components::nav::SiteNav;
 use crate::components::notyet::NotYet;
-use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
+use crate::data::*;
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
+use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
+use leptos::prelude::*;
+use leptos_router::hooks::use_location;
+use std::collections::HashMap;
+use wasm_bindgen::JsCast;
 
 /// Canonical landing path for a token rating. Root = by capital.
 fn landing_path(field: SortField) -> String {
@@ -33,13 +33,25 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
     match f {
         SortField::Capital => t.total_supply_b_usd,
         SortField::Human => {
-            if t.total_population > 0 { t.total_supply_b_usd * 1e9 / t.total_population as f64 } else { 0.0 }
+            if t.total_population > 0 {
+                t.total_supply_b_usd * 1e9 / t.total_population as f64
+            } else {
+                0.0
+            }
         }
         SortField::Land => {
-            if t.total_area_km2 > 0 { t.total_supply_b_usd * 1e9 / t.total_area_km2 as f64 } else { 0.0 }
+            if t.total_area_km2 > 0 {
+                t.total_supply_b_usd * 1e9 / t.total_area_km2 as f64
+            } else {
+                0.0
+            }
         }
         SortField::Density => {
-            if t.total_area_km2 > 0 { t.total_population as f64 / t.total_area_km2 as f64 } else { 0.0 }
+            if t.total_area_km2 > 0 {
+                t.total_population as f64 / t.total_area_km2 as f64
+            } else {
+                0.0
+            }
         }
         SortField::Population => t.total_population as f64,
         SortField::Territory => t.total_area_km2 as f64,
@@ -52,7 +64,11 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
                     psum += pop;
                 }
             }
-            if psum > 0.0 { wsum / psum } else { 0.0 }
+            if psum > 0.0 {
+                wsum / psum
+            } else {
+                0.0
+            }
         }
     }
 }
@@ -66,9 +82,12 @@ fn token_map_values(
     query: &str,
     cut: Option<f64>,
 ) -> HashMap<String, f64> {
-    let mut ranked: Vec<(Vec<String>, f64)> = tokens.iter()
+    let mut ranked: Vec<(Vec<String>, f64)> = tokens
+        .iter()
         .filter(|t| {
-            query.is_empty() || t.code.to_lowercase().contains(query) || t.name.to_lowercase().contains(query)
+            query.is_empty()
+                || t.code.to_lowercase().contains(query)
+                || t.name.to_lowercase().contains(query)
         })
         .map(|t| {
             let members = t.countries.iter().map(|(c, _, _)| c.clone()).collect();
@@ -117,14 +136,25 @@ fn fmt_int(v: u64) -> String {
 }
 
 fn score_color(v: f64) -> &'static str {
-    if v > 60.0 { "var(--cyber-green)" }
-    else if v > 40.0 { "var(--cyber-cyan)" }
-    else if v > 25.0 { "var(--cyber-yellow)" }
-    else if v > 10.0 { "var(--cyber-orange)" }
-    else { "var(--cyber-red)" }
+    if v > 60.0 {
+        "var(--cyber-green)"
+    } else if v > 40.0 {
+        "var(--cyber-cyan)"
+    } else if v > 25.0 {
+        "var(--cyber-yellow)"
+    } else if v > 10.0 {
+        "var(--cyber-orange)"
+    } else {
+        "var(--cyber-red)"
+    }
 }
 
-fn metric_cell(t: &Token, f: SortField, n: Numeraire, scores: &HashMap<String, (f64, f64, f64)>) -> (String, &'static str) {
+fn metric_cell(
+    t: &Token,
+    f: SortField,
+    n: Numeraire,
+    scores: &HashMap<String, (f64, f64, f64)>,
+) -> (String, &'static str) {
     let v = token_metric(t, f, scores);
     match f {
         SortField::Capital => (fmt_cap(v, n), "#e0e0e0"),
@@ -146,7 +176,10 @@ pub fn TokensPage() -> impl IntoView {
         .iter()
         .map(|c| {
             let idx = c.index();
-            (c.code.clone(), (c.population as f64, idx.freedom, idx.openness))
+            (
+                c.code.clone(),
+                (c.population as f64, idx.freedom, idx.openness),
+            )
         })
         .collect();
     let scores = std::sync::Arc::new(scores);
@@ -192,10 +225,14 @@ pub fn TokensPage() -> impl IntoView {
                             if let Some(node) = paths.item(i) {
                                 let el: web_sys::Element = node.unchecked_into();
                                 if let Some(id) = el.get_attribute("id") {
-                                    let color = values.get(&id)
+                                    let color = values
+                                        .get(&id)
                                         .map(|&v| value_to_color(v, 1.0))
                                         .unwrap_or_else(|| "#1a1a1a".to_string());
-                                    let _ = el.set_attribute("style", &format!("fill: {}; cursor: pointer;", color));
+                                    let _ = el.set_attribute(
+                                        "style",
+                                        &format!("fill: {}; cursor: pointer;", color),
+                                    );
                                 }
                             }
                         }
@@ -203,7 +240,10 @@ pub fn TokensPage() -> impl IntoView {
                 }
                 setup_click_handlers();
             }) as Box<dyn FnMut()>);
-            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 200);
+            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
+                cb.as_ref().unchecked_ref(),
+                200,
+            );
             cb.forget();
         }
     });
@@ -216,7 +256,9 @@ pub fn TokensPage() -> impl IntoView {
         let mut list: Vec<(Token, f64)> = tokens
             .iter()
             .filter(|t| {
-                query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
+                query.is_empty()
+                    || t.code.to_lowercase().contains(&query)
+                    || t.name.to_lowercase().contains(&query)
             })
             .map(|t| {
                 let m = token_metric(t, f, &scores_for_sort);
@@ -249,12 +291,13 @@ pub fn TokensPage() -> impl IntoView {
                     <div class="logo-suffix"></div>
                 </div>
                 <div class="rating-chooser">
+                    <span class="by-label">"by"</span>
                     <button
                         class="region-pill active rating-btn"
                         on:click=move |_| set_rating_open.update(|o| *o = !*o)
                     >
                         {move || field.get().short()}
-                        <span style="opacity: 0.7;">" ▾"</span>
+                        <span class="rating-caret" aria-hidden="true"></span>
                     </button>
                     <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
                         {SortField::ALL.map(|f| {

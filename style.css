@@ -21,6 +21,25 @@
     --map-chrome-h: 112px;
 }
 
+/* SEO breadcrumbs (prerender / noscript surface) */
+.crumbs {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 12px;
+    letter-spacing: 0.02em;
+}
+.crumbs a {
+    color: var(--cyber-cyan);
+    text-decoration: none;
+}
+.crumbs a:hover {
+    text-decoration: underline;
+}
+.crumbs .sep {
+    opacity: 0.4;
+    margin: 0 4px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -179,7 +198,9 @@ body {
     white-space: nowrap;
 }
 
-/* Mobile: compact chrome — it serves the table, not itself */
+/* Mobile: compact chrome — it serves the table, not itself.
+   Control box metrics live in the LATE @media block at the end of this
+   file so they win over base .nav-btn / .region-pill / .num-btn rules. */
 @media (max-width: 640px) {
     /* the table earns edge-to-edge; the header earns its margins */
     .header-row1,
@@ -187,19 +208,42 @@ body {
         padding-left: 10px;
         padding-right: 10px;
     }
-    /* two rows total: [logo | nav] and [ratings | count] */
+    /* [brand | by + rank centered | doctrine/num] */
     .header-row1 {
-        flex-wrap: nowrap;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
         align-items: center;
         gap: 8px;
         margin-bottom: 10px;
+        flex-wrap: nowrap;
     }
     .logo-zone {
-        flex: 0 0 auto;
+        flex: none;
+        justify-self: start;
+        min-width: 0;
+        grid-column: 1;
+        display: flex;
+        align-items: center;
     }
-    .logo {
-        font-size: 20px;
+    /* brand: flex row so the big flag doesn't drop the wordmark below the bar */
+    .logo,
+    .brand-chooser .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0;
+        font-size: 18px;
+        letter-spacing: normal;
+        line-height: 1;
+        white-space: nowrap;
+        margin: 0;
+    }
+    /* juicy flag only on phone — desktop stays modest */
+    .brand-chooser .brand-flag {
+        width: 1.78em;
+        height: 1.78em;
+        margin-right: 0.22em;
+        vertical-align: unset; /* flex parent owns alignment */
+        flex-shrink: 0;
     }
     /* the suffix duplicates the highlighted rating pill; the active nav
        button duplicates the page itself — neither earns its pixels here */
@@ -210,28 +254,19 @@ body {
         display: none;
     }
     .map-zone {
-        flex: 0 0 auto;
+        flex: none;
         flex-wrap: nowrap;
         gap: 6px;
+        justify-self: end;
+        justify-content: flex-end;
+        align-items: center;
+        grid-column: 3;
+        min-width: 0;
     }
 
-    .nav-btn {
-        padding: 6px 10px;
-        font-size: 11px;
-        letter-spacing: 1px;
-    }
-    .region-pill.num-btn {
-        padding: 5px 8px;
-        font-size: 11px;
-        letter-spacing: 1px;
-    }
     .search-input {
         padding: 8px 12px;
         font-size: 12px;
-    }
-    .region-pill {
-        padding: 5px 10px;
-        font-size: 11px;
     }
 
     .region-pills {
@@ -325,26 +360,45 @@ body {
     flex: 0 0 auto; /* the logo never shrinks — overflow must be seen, not hidden */
 }
 
-/* the flag scales with the wordmark — em-sized, baseline-tucked */
+/* desktop: modest flag (mobile bumps size below) */
 .brand-flag {
     display: inline-block;
-    width: 0.74em;
-    height: 0.74em;
-    margin-right: 0.16em;
-    vertical-align: -0.06em;
+    width: 0.9em;
+    height: 0.9em;
+    margin-right: 0.18em;
+    vertical-align: -0.1em;
 }
 
 .brand-flag svg {
     display: block;
     width: 100%;
     height: 100%;
+    shape-rendering: geometricPrecision;
 }
 
-.brand-caret {
+/* ONE CSS chevron only (no ::after — that doubled the triangle). */
+.brand-caret,
+.rating-caret {
     display: none;
-    color: var(--cyber-green);
-    font-size: 0.6em;
-    vertical-align: middle;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 0;
+    height: 0;
+    margin-left: 6px;
+    padding: 0;
+    border-style: solid;
+    border-width: 5px 4px 0 4px;
+    border-color: var(--cyber-green) transparent transparent transparent;
+    opacity: 0.9;
+    /* optical center next to caps text */
+    transform: translateY(1px);
+}
+
+/* active rank pill is green fill — green caret would be invisible */
+.region-pill.active .rating-caret,
+.rating-btn.active .rating-caret,
+.rating-btn.region-pill.active .rating-caret {
+    border-top-color: #000;
 }
 
 .brand-menu {
@@ -402,10 +456,37 @@ body {
 
 @media (max-width: 640px) {
     .rating-chooser {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        justify-self: center;
+        grid-column: 2;
+        height: 100%;
+    }
+    /* no room for "by" on the phone strip — rank short is enough */
+    .rating-chooser .by-label {
+        display: none;
+    }
+    .brand-caret,
+    .rating-caret {
+        display: inline-block !important;
+        align-self: center;
+        width: 0;
+        height: 0;
+        margin-left: 6px;
+        border-style: solid !important;
+        border-width: 5px 4px 0 4px !important;
+        opacity: 0.9;
+        transform: translateY(1px);
     }
     .brand-caret {
-        display: inline;
+        border-color: var(--cyber-green) transparent transparent transparent !important;
+    }
+    .rating-btn .rating-caret {
+        border-color: #000 transparent transparent transparent !important;
+    }
+    .num-btn .rating-caret {
+        border-color: var(--cyber-green) transparent transparent transparent !important;
     }
     /* list views live in the brand menu; only doctrine keeps a button */
     .map-zone .nav-states,
@@ -413,31 +494,10 @@ body {
         display: none;
     }
     .map-zone {
-        margin-left: auto;
+        margin-left: 0;
     }
     .header-row2 {
         display: none;
-    }
-    .rating-btn {
-        font-size: 10px;
-        letter-spacing: 0;
-        padding: 6px 6px;
-        white-space: nowrap;
-    }
-    .nav-btn {
-        padding: 5px 6px;
-        font-size: 10px;
-        letter-spacing: 0.5px;
-    }
-    .region-pill.num-btn {
-        padding: 4px 5px;
-        letter-spacing: 0.5px;
-    }
-    .header-row1 {
-        gap: 4px;
-    }
-    .logo {
-        font-size: 15px;
     }
 }
 
@@ -1964,5 +2024,87 @@ html.vt-active .world-map-container path {
         position: static;
         width: auto;
         margin-top: 12px;
+    }
+}
+
+/* ---- mobile header controls: LAST so we beat base .nav-btn / .region-pill /
+   .num-btn. Fixed height + identical type for rank / doctrine / numeraire.
+   STATES + TOKENS stay in the brand menu only — never in the right strip. */
+@media (max-width: 640px) {
+    /* hard hide — must beat the inline-flex rule below (same or higher specificity) */
+    .header-row1 .map-zone .nav-btn.nav-states,
+    .header-row1 .map-zone .nav-btn.nav-tokens,
+    .header-row1 .map-zone .nav-btn.nav-here {
+        display: none !important;
+    }
+
+    /* only doctrine + rank + numeraire share the control box */
+    .header-row1 .nav-btn.nav-method,
+    .header-row1 .rating-btn.region-pill,
+    .header-row1 .region-pill.num-btn,
+    .header-row1 .num-chooser .num-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        min-height: 30px;
+        max-height: 30px;
+        padding: 0 10px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        line-height: 1;
+        box-sizing: border-box;
+        white-space: nowrap;
+        flex-shrink: 0;
+        vertical-align: middle;
+    }
+    /* label text only — do NOT retarget .rating-caret (zero-size triangle) */
+    .header-row1 .num-chooser .num-btn > span:not(.rating-caret) {
+        font-size: 11px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+    }
+    .header-row1 .num-chooser {
+        display: inline-flex;
+        align-items: center;
+        height: 30px;
+    }
+    /* one triangle per chooser — no ::after, no second border set */
+    .header-row1 .brand-caret,
+    .header-row1 .rating-caret {
+        display: inline-block !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-width: 0;
+        min-height: 0;
+        margin-left: 6px;
+        border-style: solid !important;
+        border-width: 5px 4px 0 4px !important;
+        opacity: 0.9;
+        flex-shrink: 0;
+        align-self: center;
+        transform: translateY(1px);
+    }
+    .header-row1 .brand-caret {
+        border-color: var(--cyber-green) transparent transparent transparent !important;
+    }
+    .header-row1 .rating-btn .rating-caret {
+        border-color: #000 transparent transparent transparent !important;
+    }
+    .header-row1 .num-btn .rating-caret {
+        border-color: var(--cyber-green) transparent transparent transparent !important;
+    }
+    /* kill any leftover pseudo triangles */
+    .header-row1 .brand-caret::after,
+    .header-row1 .rating-caret::after,
+    .brand-caret::before,
+    .rating-caret::before,
+    .brand-caret::after,
+    .rating-caret::after {
+        content: none !important;
+        display: none !important;
+        border: none !important;
     }
 }

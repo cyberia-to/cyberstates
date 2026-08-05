@@ -1,5 +1,5 @@
-use leptos::prelude::*;
 use crate::data::SortField;
+use leptos::prelude::*;
 
 /// The color scale as an instrument, not a caption: click a color to keep
 /// only the states at least that good under the active rating — the culled

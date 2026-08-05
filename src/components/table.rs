@@ -1,14 +1,20 @@
-use leptos::prelude::*;
+use crate::components::notyet::NotYet;
 use crate::data::{Country, SortField};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
-use crate::components::notyet::NotYet;
+use leptos::prelude::*;
 
 fn score_color(v: f64) -> &'static str {
-    if v > 60.0 { "var(--cyber-green)" }
-    else if v > 40.0 { "var(--cyber-cyan)" }
-    else if v > 25.0 { "var(--cyber-yellow)" }
-    else if v > 10.0 { "var(--cyber-orange)" }
-    else { "var(--cyber-red)" }
+    if v > 60.0 {
+        "var(--cyber-green)"
+    } else if v > 40.0 {
+        "var(--cyber-cyan)"
+    } else if v > 25.0 {
+        "var(--cyber-yellow)"
+    } else if v > 10.0 {
+        "var(--cyber-orange)"
+    } else {
+        "var(--cyber-red)"
+    }
 }
 
 /// Render the rating-object cell: value formatted per field, scores colored.

@@ -1,5 +1,5 @@
-use leptos::prelude::*;
 use crate::numeraires::{store_numeraire, Numeraire};
+use leptos::prelude::*;
 
 /// Compact numeraire chooser: one button with the current token's symbol,
 /// click opens the list. Reads and writes the app-wide measure, so it can
@@ -17,7 +17,7 @@ pub fn NumeraireChooser() -> impl IntoView {
                 <span style:color=move || numeraire.get().color() style="font-weight: 700;">
                     {move || numeraire.get().label()}
                 </span>
-                " ▾"
+                <span class="rating-caret" aria-hidden="true"></span>
             </button>
             <div class="num-menu" style:display=move || if open.get() { "flex" } else { "none" }>
                 {Numeraire::ALL.map(|n| {

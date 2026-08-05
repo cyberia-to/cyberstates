@@ -1,8 +1,8 @@
-use leptos::prelude::*;
-use std::collections::HashMap;
 use crate::data::{load_countries, Country};
 use crate::pages::map::navigate_client;
 use crate::pages::solar_map::{orbit_r, placed_bodies, ELEMENTS};
+use leptos::prelude::*;
+use std::collections::HashMap;
 
 /// The home page's solar catalog: the same live orbital disk as /solar
 /// (today's real longitudes, log orbits, bodies sized by their surfaces),

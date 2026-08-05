@@ -1,7 +1,8 @@
-# Release build + SEO surface into dist/
+# Build SEO surface into dist/ (P0–P3 HTML + sitemaps + IndexNow key file).
 #
 #   nu scripts/build.nu
-#   rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
+#   nu scripts/deploy.nu              # rsync only
+#   nu scripts/deploy.nu --release    # rsync + IndexNow (cut a crawl release)
 
 def main [] {
   let root = (
@@ -27,8 +28,8 @@ def main [] {
   }
 
   print ""
-  print "dist/ ready. deploy:"
-  print "  rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/"
-  print "  # if nginx-redirects.conf changed: sudo nginx -t && sudo systemctl reload nginx"
-  print "  # optional: nu scripts/indexnow.nu"
+  print "dist/ ready."
+  print "  nu scripts/deploy.nu              # rsync"
+  print "  nu scripts/deploy.nu --release    # rsync + IndexNow"
+  print "  # nginx redirects: sudo nginx -t && sudo systemctl reload nginx"
 }
