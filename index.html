@@ -58,6 +58,13 @@
         <link data-trunk rel="rust" data-bin="cyberstates" data-wasm-opt="z" />
         <link data-trunk rel="copy-file" href="assets/favicon.svg" />
         <link data-trunk rel="copy-file" href="assets/og.png" />
+        <!-- lytics: pageviews + SPA routes + attention; endpoint under /lytics/ -->
+        <script
+            type="module"
+            src="/lytics/tracker/loader.js"
+            data-endpoint="/lytics"
+            data-domain="cyberstates.net"
+        ></script>
     </head>
     <body>
         <!-- Crawlable seed: full entity HTML lands via prerender (P1). -->
