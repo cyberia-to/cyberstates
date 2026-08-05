@@ -544,14 +544,15 @@ body {
 .map-pane .world-map-container svg {
     display: block;
     margin-left: auto;
-    aspect-ratio: 941 / 689;
-    /* width-driven, no transform games: the bbox now spans land to
-       Antarctica edge-to-edge, so the band fill IS the right size —
-       nothing hides under the table, nothing gapes on the right */
+    aspect-ratio: 831 / 689;
+    /* grow from the LEFT edge (at the table): continents get big, the
+       empty gap + Antarctica sweep toward the right edge and disk bay */
     width: calc(100vw - 542px);
     height: auto;
     max-width: none;
     margin-top: -18px;
+    transform: scale(1.12);
+    transform-origin: left center;
 }
 
 .cyber-table.slim {
@@ -1347,9 +1348,9 @@ body {
        the same live sky as /solar, every dot a link */
     position: fixed;
     left: auto;
-    right: 34px;
-    bottom: 74px;
-    width: min(24vw, 385px);
+    right: 30px;
+    bottom: 60px;
+    width: min(22vw, 350px);
     aspect-ratio: 1 / 1;
     z-index: 6;
     pointer-events: none;
