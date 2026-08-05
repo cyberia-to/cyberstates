@@ -179,7 +179,8 @@ forty solid-surface worlds from the [Moon](/state/moon) to
 [Sedna](/state/sedna) — territory held the way Antarctica is held,
 under a treaty instead of a throne, population zero and capital zero,
 the supply curve of unmonetized space — the [Sun](/state/sun), listed
-for its Dyson shell, and the four gas giants, listed for the harvest
+for its photosphere territory (layered swarm base, not a 1 AU shell myth),
+and the four gas giants, listed for the harvest
 shells around them: fuel to skim, a magnetosphere to tap, a hundred
 petawatts of inner heat to catch — no ground required. The same test admits what comes next: as
 sovereignty becomes engineerable, the market of states acquires free
