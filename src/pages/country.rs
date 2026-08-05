@@ -1,4 +1,5 @@
 use crate::components::brand::BrandChooser;
+use crate::components::delta::Delta;
 use crate::components::nav::SiteNav;
 use crate::components::notyet::value_or_notyet;
 use crate::data::*;
@@ -85,6 +86,8 @@ pub fn CountryPage() -> impl IntoView {
                     // table — capital and derived values reprice on the chooser
                     let cap_b = c.money_supply_b_usd;
                     let price_usd = c.token_price_usd;
+                    let cap_delta = c.cap_delta();
+                    let price_delta = c.price_delta();
                     let human_usd = c.metric(SortField::Human);
                     let land_usd = c.metric(SortField::Land);
 
@@ -175,7 +178,7 @@ pub fn CountryPage() -> impl IntoView {
                                     <div style="font-size: 12px; color: #444; margin-top: 4px;">{token_name}</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"PRICE"</div>
+                                    <div class="stat-label">"PRICE"<Delta pct=price_delta /></div>
                                     <div class="stat-value tabular-nums" style="color: var(--cyber-orange);">
                                         {move || {
                                             let (head, frac, unit) = price_parts(price_usd, numeraire.get());
@@ -197,7 +200,7 @@ pub fn CountryPage() -> impl IntoView {
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"CAPITAL"<span class="rank-badge" style:color=r_capital.1 style:opacity=r_capital.2>{r_capital.0}</span></div>
+                                    <div class="stat-label">"CAPITAL"<span class="rank-badge" style:color=r_capital.1 style:opacity=r_capital.2>{r_capital.0}</span><Delta pct=cap_delta /></div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">
                                         {move || value_or_notyet(fmt_cap(cap_b, numeraire.get()))}
                                     </div>

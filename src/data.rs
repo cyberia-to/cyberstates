@@ -24,6 +24,10 @@ pub struct Country {
     pub currency_name: String,
     pub money_supply_b_usd: f64,
     pub token_price_usd: f64,
+    /// Yesterday's snapshot — 0.0 for any state the daily updater hasn't
+    /// touched yet, in which case deltas render as flat/hidden.
+    pub money_supply_b_usd_prev: f64,
+    pub token_price_usd_prev: f64,
     pub visa_free_destinations: u32,
     pub visa_free_inbound: u32,
     pub oceans: String,
@@ -148,7 +152,9 @@ pub struct Token {
     pub code: String,
     pub name: String,
     pub price_usd: f64,
+    pub price_usd_prev: f64,
     pub total_supply_b_usd: f64,
+    pub total_supply_b_usd_prev: f64,
     pub total_population: u64,
     pub total_area_km2: u64,
     pub countries: Vec<(String, String, String)>, // (country_code, country_name, flag)
@@ -163,12 +169,15 @@ pub fn get_tokens() -> Vec<Token> {
             code: c.currency_code.clone(),
             name: c.currency_name.clone(),
             price_usd: c.token_price_usd,
+            price_usd_prev: c.token_price_usd_prev,
             total_supply_b_usd: 0.0,
+            total_supply_b_usd_prev: 0.0,
             total_population: 0,
             total_area_km2: 0,
             countries: Vec::new(),
         });
         entry.total_supply_b_usd += c.money_supply_b_usd;
+        entry.total_supply_b_usd_prev += c.money_supply_b_usd_prev;
         entry.total_population += c.population;
         entry.total_area_km2 += c.land_area_km2;
         entry
@@ -176,6 +185,7 @@ pub fn get_tokens() -> Vec<Token> {
             .push((c.code.clone(), c.name.clone(), c.flag.clone()));
         if entry.price_usd <= 0.0 && c.token_price_usd > 0.0 {
             entry.price_usd = c.token_price_usd;
+            entry.price_usd_prev = c.token_price_usd_prev;
         }
     }
 
@@ -253,6 +263,17 @@ impl Country {
         } else {
             format!("${:.6}", self.token_price_usd)
         }
+    }
+
+    /// Day-over-day change in CAPITAL, as a fraction (0.01 = +1%). `None`
+    /// until the daily updater has written a prior snapshot for this state.
+    pub fn cap_delta(&self) -> Option<f64> {
+        delta_pct(self.money_supply_b_usd, self.money_supply_b_usd_prev)
+    }
+
+    /// Day-over-day change in token PRICE, as a fraction.
+    pub fn price_delta(&self) -> Option<f64> {
+        delta_pct(self.token_price_usd, self.token_price_usd_prev)
     }
 
     /// Weighted index: economy and population reach, both directions
@@ -388,6 +409,29 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
     })
 }
 
+/// `None` when there's no usable prior value to compare against (0.0 =
+/// state not yet touched by the daily updater, or a redenomination guard
+/// kept the old figure — either way a delta would be meaningless noise).
+fn delta_pct(current: f64, prev: f64) -> Option<f64> {
+    if prev > 0.0 && current > 0.0 {
+        Some(current / prev - 1.0)
+    } else {
+        None
+    }
+}
+
+/// Small ▲/▼ delta badge shared by every stat card that shows one — the
+/// dead-zone (< 0.05%) reads as flat rather than a misleading sliver arrow.
+pub fn delta_badge(pct: f64) -> (&'static str, String, &'static str) {
+    if pct > 0.0005 {
+        ("▲", format!("{:.1}%", pct * 100.0), "var(--cyber-green)")
+    } else if pct < -0.0005 {
+        ("▼", format!("{:.1}%", -pct * 100.0), "var(--cyber-red)")
+    } else {
+        ("•", "0.0%".to_string(), "#777")
+    }
+}
+
 fn fmt_usd_billions(v: f64) -> String {
     if v <= 0.0 {
         "N/A".to_string()
@@ -401,6 +445,14 @@ fn fmt_usd_billions(v: f64) -> String {
 impl Token {
     pub fn cap_fmt(&self) -> String {
         fmt_usd_billions(self.total_supply_b_usd)
+    }
+
+    pub fn cap_delta(&self) -> Option<f64> {
+        delta_pct(self.total_supply_b_usd, self.total_supply_b_usd_prev)
+    }
+
+    pub fn price_delta(&self) -> Option<f64> {
+        delta_pct(self.price_usd, self.price_usd_prev)
     }
 
     pub fn supply(&self) -> f64 {

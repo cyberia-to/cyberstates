@@ -1,3 +1,4 @@
+use crate::components::delta::Delta;
 use crate::components::notyet::value_or_notyet;
 use crate::data::*;
 use crate::pages::country::SiteHeader;
@@ -27,6 +28,8 @@ pub fn TokenPage() -> impl IntoView {
                     let name = t.name.clone();
                     let price = t.price_fmt();
                     let cap = t.cap_fmt();
+                    let price_delta = t.price_delta();
+                    let cap_delta = t.cap_delta();
                     let supply = t.supply_fmt();
                     let num_countries = t.countries.len();
                     let countries = t.countries.clone();
@@ -57,7 +60,7 @@ pub fn TokenPage() -> impl IntoView {
                             <div class="section-label" style="margin-top: 28px;">"FUNDAMENTAL"</div>
                             <div class="stat-grid">
                                 <div class="stat-card">
-                                    <div class="stat-label">"PRICE"</div>
+                                    <div class="stat-label">"PRICE"<Delta pct=price_delta /></div>
                                     <div class="stat-value" style="color: var(--cyber-orange);">{value_or_notyet(price)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"USD per token"</div>
                                 </div>
@@ -67,7 +70,7 @@ pub fn TokenPage() -> impl IntoView {
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"native tokens in circulation"</div>
                                 </div>
                                 <div class="stat-card">
-                                    <div class="stat-label">"CAPITAL"</div>
+                                    <div class="stat-label">"CAPITAL"<Delta pct=cap_delta /></div>
                                     <div class="stat-value" style="color: var(--cyber-yellow);">{value_or_notyet(cap)}</div>
                                     <div style="font-size: 10px; color: #333; margin-top: 4px;">"money supply in USD"</div>
                                 </div>

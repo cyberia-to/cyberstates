@@ -19,6 +19,12 @@ struct CountryToml {
     money_supply_b_usd: f64,
     #[serde(default)]
     token_price_usd: f64,
+    /// Yesterday's snapshot, written by update-market-data before it
+    /// overwrites the fields above — lets the UI show a day-over-day delta.
+    #[serde(default)]
+    money_supply_b_usd_prev: f64,
+    #[serde(default)]
+    token_price_usd_prev: f64,
     visa_free_destinations: u32,
     visa_free_inbound: u32,
     #[serde(default)]
@@ -126,6 +132,8 @@ fn main() {
              \x20           currency_name: \"{}\".to_string(),\n\
              \x20           money_supply_b_usd: {:.1},\n\
              \x20           token_price_usd: {:.6}_f64,\n\
+             \x20           money_supply_b_usd_prev: {:.1},\n\
+             \x20           token_price_usd_prev: {:.6}_f64,\n\
              \x20           visa_free_destinations: {},\n\
              \x20           visa_free_inbound: {},\n\
              \x20           oceans: \"{}\".to_string(),\n\
@@ -141,6 +149,8 @@ fn main() {
             escape(&c.currency_name),
             c.money_supply_b_usd,
             c.token_price_usd,
+            c.money_supply_b_usd_prev,
+            c.token_price_usd_prev,
             c.visa_free_destinations,
             c.visa_free_inbound,
             escape(&c.oceans),

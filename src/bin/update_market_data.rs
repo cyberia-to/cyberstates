@@ -127,6 +127,27 @@ fn set_field(content: &str, key: &str, new_value: &str) -> String {
     out
 }
 
+/// Set `key`, inserting it right after `after_key`'s line if it doesn't
+/// exist yet. Lets a brand-new `_prev` field get added to all 233
+/// states/*.toml on its first run, then behave like `set_field` after.
+fn upsert_field(content: &str, key: &str, after_key: &str, new_value: &str) -> String {
+    let prefix = format!("{key} = ");
+    if content.lines().any(|l| l.starts_with(&prefix)) {
+        return set_field(content, key, new_value);
+    }
+    let after_prefix = format!("{after_key} = ");
+    let mut out = String::with_capacity(content.len() + 32);
+    for line in content.split_inclusive('\n') {
+        out.push_str(line);
+        if line.trim_end_matches('\n').starts_with(&after_prefix) {
+            out.push_str(&prefix);
+            out.push_str(new_value);
+            out.push('\n');
+        }
+    }
+    out
+}
+
 /// Replace the numeric literal in `pub const NAME: f64 = ...;`, keeping
 /// any trailing `// comment` byte-for-byte.
 fn set_const(content: &str, name: &str, formatted: &str) -> String {
@@ -179,6 +200,38 @@ struct Mover {
     old: f64,
     new: f64,
     src: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn upsert_inserts_when_missing() {
+        let toml = "money_supply_b_usd = 30682\ntoken_price_usd = 1.000000\nvisa_free_destinations = 186\n";
+        let out = upsert_field(toml, "money_supply_b_usd_prev", "money_supply_b_usd", "30500");
+        assert_eq!(
+            out,
+            "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30500\ntoken_price_usd = 1.000000\nvisa_free_destinations = 186\n"
+        );
+    }
+
+    #[test]
+    fn upsert_replaces_when_present() {
+        let toml = "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30000\n";
+        let out = upsert_field(toml, "money_supply_b_usd_prev", "money_supply_b_usd", "30500");
+        assert_eq!(out, "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30500\n");
+    }
+
+    #[test]
+    fn upsert_does_not_confuse_prefixed_key() {
+        // "token_price_usd_prev" must not be matched by the
+        // "token_price_usd = " prefix check used for the base field.
+        let toml = "token_price_usd = 1.000000\n";
+        let out = upsert_field(toml, "token_price_usd_prev", "token_price_usd", "0.999000");
+        let out2 = set_field(&out, "token_price_usd", "1.010000");
+        assert_eq!(out2, "token_price_usd = 1.010000\ntoken_price_usd_prev = 0.999000\n");
+    }
 }
 
 fn main() {
@@ -354,7 +407,21 @@ fn main() {
             });
         }
 
-        let updated = set_field(&content, "token_price_usd", &format!("{new_price:.6}"));
+        // snapshot today's (about-to-be-old) values as "prev" before
+        // overwriting, so the site can show a day-over-day delta
+        let updated = upsert_field(
+            &content,
+            "token_price_usd_prev",
+            "token_price_usd",
+            &format!("{old_price:.6}"),
+        );
+        let updated = upsert_field(
+            &updated,
+            "money_supply_b_usd_prev",
+            "money_supply_b_usd",
+            &fmt_cap(old_cap),
+        );
+        let updated = set_field(&updated, "token_price_usd", &format!("{new_price:.6}"));
         let updated = set_field(&updated, "money_supply_b_usd", &fmt_cap(new_cap));
         fs::write(path, updated).unwrap_or_else(|e| panic!("write {path:?}: {e}"));
     }
