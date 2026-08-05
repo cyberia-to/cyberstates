@@ -1011,99 +1011,115 @@ body {
     stroke-width: 1;
 }
 
-/* ---- motion: soft, brief, never in the way ---------------------------- */
+/* ---- motion: cinematic dissolve, frozen chrome ---------------------------- */
 
-/* pages fade in on navigation — opacity only, so sticky chrome and the
-   fixed dock keep their positioning during the entry */
+/* Fallback when View Transitions API is missing */
 @keyframes page-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
 }
 
-/* page navigation is a TRUE dissolve: the old frame holds still while
-   the new one fades in over it with normal alpha blending — the result
-   is a*new + (1-a)*old at every instant, so brightness can never dip
-   to black or spike additively. the old snapshot only fades in the
-   last third, which is invisible when covered and a clean exit when
-   the next page has no counterpart for it */
-
-/* NOTHING morphs position or size — the default group animation slides
-   and stretches whatever changed geometry (chrome height, word width),
-   which reads as flying in from the side. groups snap; only opacity
-   breathes */
+/* Groups never morph size/position — only opacity (and a hair of lift
+   on the page body). Geometry morph is what made the header twitch. */
 ::view-transition-group(*) {
     animation: none;
 }
-@keyframes vt-hold-out {
-    0% { opacity: 1; }
-    66% { opacity: 1; }
-    100% { opacity: 0; }
+
+/* ---- root = page body only (chrome/dock/pills are named out) ---------- */
+
+@keyframes vt-page-out {
+    0%   { opacity: 1; transform: none; filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-4px); filter: blur(1.5px); }
+}
+@keyframes vt-page-in {
+    0%   { opacity: 0; transform: translateY(10px); filter: blur(1.5px); }
+    100% { opacity: 1; transform: none; filter: blur(0); }
 }
 
-@keyframes vt-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* normal blending, not the UA's plus-lighter: fade-over must not add */
 ::view-transition-image-pair(root),
 ::view-transition-image-pair(map) {
     isolation: auto;
 }
 
-::view-transition-old(root), ::view-transition-new(root),
-::view-transition-old(map), ::view-transition-new(map) {
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-old(map),
+::view-transition-new(map) {
     mix-blend-mode: normal;
+    /* contain paint cost of blur */
+    will-change: opacity, transform, filter;
 }
 
 ::view-transition-old(root) {
-    animation: vt-hold-out 260ms ease both;
+    animation: vt-page-out 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
-
 ::view-transition-new(root) {
-    animation: vt-in 260ms ease both;
+    animation: vt-page-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* chrome = logo + nav only. rating-chooser is its OWN layer so it is
-   never baked into the chrome cross-fade (that bake-in was the flash
-   when leaving states/tokens for doctrine or a card page). pills row
-   is also its own layer and fades out in place when the next page
-   has no rating strip. */
+/* map keeps the same dissolve language as the page body */
+::view-transition-old(map) {
+    animation: vt-page-out 280ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+::view-transition-new(map) {
+    animation: vt-page-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---- named layers ---------------------------------------------------- */
+
+/* chrome = logo + nav row. FROZEN: old drops out, new is already there.
+   No cross-fade, no brand-word blink, no double-expose. The sticky
+   header feels bolted to the viewport while the body dissolves under it. */
 .header-row1 {
     view-transition-name: chrome;
-    /* the VT name makes both rows stacking contexts; row1 must sit above
-       row2 so its dropdown menus paint over the pills */
     position: relative;
     z-index: 5;
 }
 .rating-chooser {
     view-transition-name: rating-chooser;
 }
-.header-row2 { view-transition-name: pills; }
-.map-pane { view-transition-name: map; }
-.search-dock { view-transition-name: dock; }
-
-/* the map dissolves on the same beat as root */
-::view-transition-old(map) {
-    animation: vt-hold-out 260ms ease both;
+.header-row2 {
+    view-transition-name: pills;
+}
+.map-pane {
+    view-transition-name: map;
+}
+.search-dock {
+    view-transition-name: dock;
 }
 
-::view-transition-new(map) {
-    animation: vt-in 260ms ease both;
+/* while a hop is running, freeze sticky offsets so the map/thead don't
+   reflow under the dissolving body when chrome height changes */
+html.vt-active .map-pane,
+html.vt-active .cyber-table th {
+    transition: none !important;
 }
 
-/* chrome + dock: short opacity cross-fade only (no geometry morph —
-   group animation is already none above) */
+/* brand-word rides with chrome — no separate sequential out/in (that
+   gap was the header twitch) */
+.brand-word {
+    display: inline-block;
+    /* view-transition-name intentionally unset */
+}
+
+::view-transition-group(chrome),
+::view-transition-group(dock) {
+    animation: none;
+    z-index: 1000; /* above dissolving content */
+}
 ::view-transition-old(chrome),
 ::view-transition-old(dock) {
-    animation: vt-fade-out 160ms ease both;
+    /* instant handoff — no fade, no morph */
+    animation: none;
+    opacity: 0;
 }
 ::view-transition-new(chrome),
 ::view-transition-new(dock) {
-    animation: vt-fade-in 160ms ease both;
+    animation: none;
+    opacity: 1;
 }
 
-/* listing-only UI: pure fade, never morph size/position into the void */
+/* listing-only strips: soft dissolve matching the body beat */
 @keyframes vt-fade-out {
     from { opacity: 1; }
     to   { opacity: 0; }
@@ -1115,46 +1131,21 @@ body {
 ::view-transition-group(pills),
 ::view-transition-group(rating-chooser) {
     animation: none;
-    z-index: 0;
+    z-index: 900;
 }
 ::view-transition-old(pills),
 ::view-transition-old(rating-chooser) {
-    animation: vt-fade-out 140ms ease-out both;
+    animation: vt-fade-out 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 ::view-transition-new(pills),
 ::view-transition-new(rating-chooser) {
-    animation: vt-fade-in 140ms ease-out both;
-}
-
-/* the brand word swaps SEQUENTIALLY — the old one is fully gone before
-   the new one appears, so the two words never double-expose like a CRT
-   ghost. cyber• and the flag sit outside this group and never move */
-.brand-word {
-    display: inline-block;
-    view-transition-name: brand-word;
-}
-
-@keyframes brand-word-out {
-    to { opacity: 0; }
-}
-
-@keyframes brand-word-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-::view-transition-old(brand-word) {
-    animation: brand-word-out 130ms ease-in both;
-}
-
-::view-transition-new(brand-word) {
-    animation: brand-word-in 150ms ease-out 140ms both;
+    animation: vt-fade-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @supports not (view-transition-name: root) {
     .page-shell,
     .page-frame {
-        animation: page-in 180ms ease-out;
+        animation: page-in 220ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 }
 

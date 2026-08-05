@@ -51,7 +51,7 @@ pub fn value_to_color(val: f64, max: f64) -> String {
 /// Client-side navigation from plain DOM handlers: push the URL, then
 /// wake the router with a synthetic popstate — no full page reload, so
 /// the wasm app, fonts and state all survive the hop. Wrapped in a view
-/// transition where the browser has one: old page cross-fades into new.
+/// transition where the browser has one: frozen chrome, body dissolves.
 pub fn navigate_client(path: &str) {
     let path = path.to_string();
     let go = move || {
@@ -64,14 +64,8 @@ pub fn navigate_client(path: &str) {
             }
         }
     };
-    // jump to the top BEFORE the old page is snapshotted: both sides of
-    // the cross-fade are then top-anchored, so scrolled rows and a stuck
-    // thead never ghost through the dissolve at mismatched positions
-    if let Some(w) = web_sys::window() {
-        w.scroll_to_with_x_and_y(0.0, 0.0);
-    }
-    // collapse any open dropdown BEFORE the VT old snapshot — an open
-    // rating/brand/num menu in the capture paints as a flash on the hop
+
+    // collapse open dropdowns BEFORE the VT old snapshot
     if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
         if let Ok(nodes) = doc.query_selector_all(
             ".rating-menu, .brand-menu, .num-menu, .search-panel",
@@ -84,6 +78,16 @@ pub fn navigate_client(path: &str) {
             }
         }
     }
+
+    // top-anchor both sides of the dissolve so sticky thead / scrolled
+    // rows never ghost at mismatched Y. only jump when actually scrolled.
+    if let Some(w) = web_sys::window() {
+        let y = w.scroll_y().unwrap_or(0.0);
+        if y > 1.0 {
+            w.scroll_to_with_x_and_y(0.0, 0.0);
+        }
+    }
+
     let doc = web_sys::window().and_then(|w| w.document());
     let svt = doc.as_ref().and_then(|d| {
         js_sys::Reflect::get(d.as_ref(), &JsValue::from_str("startViewTransition"))
@@ -92,10 +96,51 @@ pub fn navigate_client(path: &str) {
     });
     match (svt, doc) {
         (Some(f), Some(d)) => {
+            // mark the hop so CSS can freeze sticky geometry if needed
+            if let Some(root) = d.document_element() {
+                let _ = root.class_list().add_1("vt-active");
+            }
             let cb = Closure::once_into_js(go);
             let _ = f.call1(d.as_ref(), &cb);
+            // remeasure after the dissolve (CSS ~320ms) — mid-transition
+            // --chrome-h reflow was a major source of header twitch
+            if let Some(w) = web_sys::window() {
+                let cleanup = Closure::once(Box::new(move |_: JsValue| {
+                    if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                        if let Some(root) = doc.document_element() {
+                            let _ = root.class_list().remove_1("vt-active");
+                        }
+                    }
+                    measure_chrome_height();
+                }) as Box<dyn FnMut(JsValue)>);
+                let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
+                    cleanup.as_ref().unchecked_ref(),
+                    380,
+                );
+                cleanup.forget();
+            }
         }
-        _ => go(),
+        _ => {
+            go();
+            measure_chrome_height();
+        }
+    }
+}
+
+/// Set --chrome-h without clobbering other inline styles on <html>.
+pub fn measure_chrome_height() {
+    if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+        if let (Ok(Some(chrome)), Some(root)) =
+            (doc.query_selector(".site-chrome"), doc.document_element())
+        {
+            let h = chrome
+                .unchecked_into::<web_sys::HtmlElement>()
+                .offset_height();
+            let _ = root
+                .unchecked_into::<web_sys::HtmlElement>()
+                .style()
+                .set_property("--chrome-h", &format!("{}px", h));
+        }
     }
 }
 

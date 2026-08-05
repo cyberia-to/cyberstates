@@ -15,13 +15,7 @@ use crate::pages::solar_map::SolarMapPage;
 /// headers and the map know where to stick. Re-measured after every
 /// navigation (chrome height differs per page) and on resize.
 fn measure_chrome() {
-    use wasm_bindgen::JsCast;
-    if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
-        if let (Ok(Some(chrome)), Some(root)) = (doc.query_selector(".site-chrome"), doc.document_element()) {
-            let h = chrome.unchecked_into::<web_sys::HtmlElement>().offset_height();
-            let _ = root.set_attribute("style", &format!("--chrome-h: {}px", h));
-        }
-    }
+    crate::pages::map::measure_chrome_height();
 }
 
 #[component]
@@ -79,12 +73,17 @@ fn ChromeMeter() -> impl IntoView {
         handler.forget();
     });
 
-    // per navigation: measure once the new page has rendered
+    // per navigation: measure after the dissolve has settled.
+    // VT path also measures on transition.finished; this covers
+    // back/forward and any hop that skipped startViewTransition.
     Effect::new(move |_| {
         let _ = location.pathname.get();
         if let Some(w) = web_sys::window() {
             let cb = Closure::wrap(Box::new(measure_chrome) as Box<dyn FnMut()>);
-            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 120);
+            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
+                cb.as_ref().unchecked_ref(),
+                360,
+            );
             cb.forget();
         }
     });
