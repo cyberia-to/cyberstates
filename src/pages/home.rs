@@ -1,22 +1,25 @@
-use leptos::prelude::*;
-use leptos_router::hooks::{use_location, use_navigate};
-use wasm_bindgen::JsCast;
-use crate::data::*;
-use crate::components::table::*;
-use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
-use std::collections::HashMap;
-use crate::components::nav::SiteNav;
 use crate::components::brand::BrandChooser;
 use crate::components::legend::{goodness_keep, RatingLegend};
+use crate::components::nav::SiteNav;
 use crate::components::solar::SolarPanel;
+use crate::components::table::*;
+use crate::data::*;
 use crate::numeraires::Numeraire;
+use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
+use leptos::prelude::*;
+use leptos_router::hooks::{use_location, use_navigate};
+use std::collections::HashMap;
+use wasm_bindgen::JsCast;
 
 fn region_slug(r: &str) -> String {
     r.to_lowercase().replace(' ', "-")
 }
 
 fn region_from_slug(s: &str) -> Option<String> {
-    REGIONS.iter().find(|r| region_slug(r) == s).map(|r| r.to_string())
+    REGIONS
+        .iter()
+        .find(|r| region_slug(r) == s)
+        .map(|r| r.to_string())
 }
 
 /// Canonical landing path for a view state. Root = All regions by capital.
@@ -61,7 +64,6 @@ fn parse_path(path: &str) -> (String, SortField) {
     (region, field)
 }
 
-
 /// Percentile-painted map values for a landing: rank coloring, log
 /// min-max where polygon size already encodes the axis, inverted where
 /// lower is better. Shared by the pre-painted mount and the live patch.
@@ -74,14 +76,14 @@ fn map_values(
     cut: Option<f64>,
     classes: (bool, bool, bool),
 ) -> std::collections::HashMap<String, f64> {
-    let mut ranked: Vec<(String, f64)> = countries.iter()
+    let mut ranked: Vec<(String, f64)> = countries
+        .iter()
         .filter(|c| {
             (match c.class() {
                 ListingClass::Planet => classes.0,
                 ListingClass::Continent => classes.1,
                 ListingClass::Country => classes.2,
-            })
-                && (region == "All" || c.region == region)
+            }) && (region == "All" || c.region == region)
                 && !(region != "All" && is_aggregate(&c.code))
                 && (query.is_empty()
                     || c.name.to_lowercase().contains(query)
@@ -91,6 +93,16 @@ fn map_values(
         })
         .map(|c| (c.code.clone(), c.metric(field)))
         .collect();
+
+    // Territory: photosphere is orders of magnitude above any planet or
+    // state — leave SUN out of the log domain and paint it full green so
+    // the Earth map still has dynamic range.
+    let pin_sun_green =
+        field == SortField::Territory && ranked.iter().any(|(code, _)| code == "SUN");
+    if pin_sun_green {
+        ranked.retain(|(code, _)| code != "SUN");
+    }
+
     ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
     let n = ranked.len();
     let log_scale = matches!(field, SortField::Population | SortField::Territory);
@@ -124,14 +136,27 @@ fn map_values(
         }
         values.insert(code, 0.02 + 0.98 * t);
     }
+    if pin_sun_green {
+        values.insert("SUN".to_string(), 1.0);
+    }
     values
 }
 
 #[derive(Clone, Copy, PartialEq)]
-enum NumField { Pop, Cap, Land, Freedom, Openness }
+enum NumField {
+    Pop,
+    Cap,
+    Land,
+    Freedom,
+    Openness,
+}
 
 #[derive(Clone, Copy)]
-struct NumFilter { field: NumField, gt: bool, val: f64 }
+struct NumFilter {
+    field: NumField,
+    gt: bool,
+    val: f64,
+}
 
 /// Split the raw search string into free text and typed numeric filters:
 /// `europe cap>1t freedom>60` -> ("europe", [cap>1000, freedom>60])
@@ -149,7 +174,10 @@ fn parse_query(raw: &str) -> (String, Vec<NumFilter>) {
 
 fn parse_filter_token(tok: &str) -> Option<NumFilter> {
     let t = tok.to_lowercase();
-    let (idx, gt) = t.find('>').map(|i| (i, true)).or_else(|| t.find('<').map(|i| (i, false)))?;
+    let (idx, gt) = t
+        .find('>')
+        .map(|i| (i, true))
+        .or_else(|| t.find('<').map(|i| (i, false)))?;
     let field = match &t[..idx] {
         "pop" | "population" => NumField::Pop,
         "cap" => NumField::Cap,
@@ -159,7 +187,9 @@ fn parse_filter_token(tok: &str) -> Option<NumFilter> {
         _ => return None,
     };
     let rest = &t[idx + 1..];
-    if rest.is_empty() { return None; }
+    if rest.is_empty() {
+        return None;
+    }
     let (num_part, suffix) = match rest.chars().last() {
         Some(c @ ('k' | 'm' | 'b' | 't')) => (&rest[..rest.len() - 1], Some(c)),
         _ => (rest, None),
@@ -178,7 +208,11 @@ fn parse_filter_token(tok: &str) -> Option<NumFilter> {
         (_, None) => 1.0,
         _ => 1.0,
     };
-    Some(NumFilter { field, gt, val: base * mult })
+    Some(NumFilter {
+        field,
+        gt,
+        val: base * mult,
+    })
 }
 
 fn passes(c: &Country, f: &NumFilter) -> bool {
@@ -189,10 +223,20 @@ fn passes(c: &Country, f: &NumFilter) -> bool {
         NumField::Freedom => c.index().freedom,
         NumField::Openness => c.index().openness,
     };
-    if f.gt { v > f.val } else { v < f.val }
+    if f.gt {
+        v > f.val
+    } else {
+        v < f.val
+    }
 }
 
-const FILTER_EXAMPLES: [&str; 5] = ["freedom>60", "openness>50", "pop>100m", "cap>1t", "territory>1m"];
+const FILTER_EXAMPLES: [&str; 5] = [
+    "freedom>60",
+    "openness>50",
+    "pop>100m",
+    "cap>1t",
+    "territory>1m",
+];
 
 /// Filters live in the URL: ?q= text, ?top=NN the legend cut (percent
 /// kept), ?classes= the enabled class toggles. Parse them back out.
@@ -225,9 +269,15 @@ fn build_filter_query(q: &str, cut: Option<f64>, classes: (bool, bool, bool)) ->
     }
     if classes != (true, true, true) {
         let mut on: Vec<&str> = Vec::new();
-        if classes.0 { on.push("planets"); }
-        if classes.1 { on.push("continents"); }
-        if classes.2 { on.push("countries"); }
+        if classes.0 {
+            on.push("planets");
+        }
+        if classes.1 {
+            on.push("continents");
+        }
+        if classes.2 {
+            on.push("countries");
+        }
         parts.push(format!("classes={}", on.join(",")));
     }
     if parts.is_empty() {
@@ -261,7 +311,15 @@ pub fn HomePage() -> impl IntoView {
     let initial_svg = {
         let (region, field) = parse_path(&location.pathname.get_untracked());
         let (q, filters) = parse_query(&initial_q.to_lowercase());
-        painted_world(&map_values(&countries, &region, field, &q, &filters, None, (true, true, true)))
+        painted_world(&map_values(
+            &countries,
+            &region,
+            field,
+            &q,
+            &filters,
+            None,
+            (true, true, true),
+        ))
     };
     let (search, set_search) = signal(initial_q);
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
@@ -293,7 +351,8 @@ pub fn HomePage() -> impl IntoView {
         use wasm_bindgen::prelude::*;
         let closure = Closure::wrap(Box::new(move |ev: web_sys::KeyboardEvent| {
             if ev.key() == "/" {
-                let tag = ev.target()
+                let tag = ev
+                    .target()
                     .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
                     .map(|e| e.tag_name())
                     .unwrap_or_default();
@@ -325,11 +384,21 @@ pub fn HomePage() -> impl IntoView {
             .and_then(|v| js_sys::decode_uri_component(&v.replace('+', " ")).ok())
             .map(String::from)
             .unwrap_or_default();
-        if color_cut.get_untracked() != cut { color_cut.set(cut); }
-        if show_planets.get_untracked() != classes.0 { show_planets.set(classes.0); }
-        if show_continents.get_untracked() != classes.1 { show_continents.set(classes.1); }
-        if show_countries.get_untracked() != classes.2 { show_countries.set(classes.2); }
-        if search.get_untracked() != q { set_search.set(q); }
+        if color_cut.get_untracked() != cut {
+            color_cut.set(cut);
+        }
+        if show_planets.get_untracked() != classes.0 {
+            show_planets.set(classes.0);
+        }
+        if show_continents.get_untracked() != classes.1 {
+            show_continents.set(classes.1);
+        }
+        if show_countries.get_untracked() != classes.2 {
+            show_countries.set(classes.2);
+        }
+        if search.get_untracked() != q {
+            set_search.set(q);
+        }
     });
 
     // state -> URL: toggles and the cut push history entries; typing in
@@ -338,7 +407,11 @@ pub fn HomePage() -> impl IntoView {
     Effect::new(move |_| {
         let q = search.get();
         let cut = color_cut.get();
-        let classes = (show_planets.get(), show_continents.get(), show_countries.get());
+        let classes = (
+            show_planets.get(),
+            show_continents.get(),
+            show_countries.get(),
+        );
         let desired = build_filter_query(&q, cut, classes);
         let Some(w) = web_sys::window() else { return };
         let current = w.location().search().unwrap_or_default();
@@ -379,8 +452,17 @@ pub fn HomePage() -> impl IntoView {
         let (region, field) = state.get();
         let (query, filters) = parse_query(&search.get().to_lowercase());
         let values = map_values(
-            &countries_for_map, &region, field, &query, &filters, color_cut.get(),
-            (show_planets.get(), show_continents.get(), show_countries.get()),
+            &countries_for_map,
+            &region,
+            field,
+            &query,
+            &filters,
+            color_cut.get(),
+            (
+                show_planets.get(),
+                show_continents.get(),
+                show_countries.get(),
+            ),
         );
         let max_val = 1.0;
         if let Some(w) = web_sys::window() {
@@ -392,10 +474,14 @@ pub fn HomePage() -> impl IntoView {
                             if let Some(node) = paths.item(i) {
                                 let el: web_sys::Element = node.unchecked_into();
                                 if let Some(id) = el.get_attribute("id") {
-                                    let color = values.get(&id)
+                                    let color = values
+                                        .get(&id)
                                         .map(|&v| value_to_color(v, max_val))
                                         .unwrap_or_else(|| "#1a1a1a".to_string());
-                                    let _ = el.set_attribute("style", &format!("fill: {}; cursor: pointer;", color));
+                                    let _ = el.set_attribute(
+                                        "style",
+                                        &format!("fill: {}; cursor: pointer;", color),
+                                    );
                                 }
                             }
                         }
@@ -409,7 +495,8 @@ pub fn HomePage() -> impl IntoView {
                             if let Some(node) = dots.item(i) {
                                 let el: web_sys::Element = node.unchecked_into();
                                 if let Some(code) = el.get_attribute("data-code") {
-                                    let color = values.get(&code)
+                                    let color = values
+                                        .get(&code)
                                         .map(|&v| value_to_color(v, 1.0))
                                         .unwrap_or_else(|| "#1a1a1a".to_string());
                                     let _ = el.set_attribute("fill", &color);
@@ -420,7 +507,10 @@ pub fn HomePage() -> impl IntoView {
                 }
                 setup_click_handlers();
             }) as Box<dyn FnMut()>);
-            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 200);
+            let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
+                cb.as_ref().unchecked_ref(),
+                200,
+            );
             cb.forget();
         }
     });
@@ -448,7 +538,9 @@ pub fn HomePage() -> impl IntoView {
         }
 
         list.sort_by(|a, b| {
-            b.metric(field).partial_cmp(&a.metric(field)).unwrap_or(std::cmp::Ordering::Equal)
+            b.metric(field)
+                .partial_cmp(&a.metric(field))
+                .unwrap_or(std::cmp::Ordering::Equal)
         });
 
         if let Some(g) = color_cut.get() {
