@@ -70,6 +70,20 @@ pub fn navigate_client(path: &str) {
     if let Some(w) = web_sys::window() {
         w.scroll_to_with_x_and_y(0.0, 0.0);
     }
+    // collapse any open dropdown BEFORE the VT old snapshot — an open
+    // rating/brand/num menu in the capture paints as a flash on the hop
+    if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+        if let Ok(nodes) = doc.query_selector_all(
+            ".rating-menu, .brand-menu, .num-menu, .search-panel",
+        ) {
+            for i in 0..nodes.length() {
+                if let Some(node) = nodes.item(i) {
+                    let el: web_sys::HtmlElement = node.unchecked_into();
+                    let _ = el.style().set_property("display", "none");
+                }
+            }
+        }
+    }
     let doc = web_sys::window().and_then(|w| w.document());
     let svt = doc.as_ref().and_then(|d| {
         js_sys::Reflect::get(d.as_ref(), &JsValue::from_str("startViewTransition"))

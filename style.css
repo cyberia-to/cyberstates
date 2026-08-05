@@ -321,6 +321,8 @@ body {
 }
 
 .rating-menu {
+    /* closed by default — never flash the full list on mount/nav */
+    display: none;
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
@@ -1062,17 +1064,20 @@ body {
     animation: vt-in 260ms ease both;
 }
 
-/* the chrome group is ONLY the constant row (logo+nav+numeraire) —
-   identical on every page, it renders rock-solid. the pills row is its
-   own group: identical between listings (invisible cross-fade), a soft
-   fade-out in place when a card page has none — it never ghosts over
-   the new page as part of a taller chrome snapshot */
+/* chrome = logo + nav only. rating-chooser is its OWN layer so it is
+   never baked into the chrome cross-fade (that bake-in was the flash
+   when leaving states/tokens for doctrine or a card page). pills row
+   is also its own layer and fades out in place when the next page
+   has no rating strip. */
 .header-row1 {
     view-transition-name: chrome;
     /* the VT name makes both rows stacking contexts; row1 must sit above
        row2 so its dropdown menus paint over the pills */
     position: relative;
     z-index: 5;
+}
+.rating-chooser {
+    view-transition-name: rating-chooser;
 }
 .header-row2 { view-transition-name: pills; }
 .map-pane { view-transition-name: map; }
@@ -1087,12 +1092,38 @@ body {
     animation: vt-in 260ms ease both;
 }
 
-/* chrome and dock: identical across pages — a plain quick cross-fade
-   renders them motionless */
-::view-transition-old(chrome), ::view-transition-new(chrome),
-::view-transition-old(pills), ::view-transition-new(pills),
-::view-transition-old(dock), ::view-transition-new(dock) {
-    animation-duration: 200ms;
+/* chrome + dock: short opacity cross-fade only (no geometry morph —
+   group animation is already none above) */
+::view-transition-old(chrome),
+::view-transition-old(dock) {
+    animation: vt-fade-out 160ms ease both;
+}
+::view-transition-new(chrome),
+::view-transition-new(dock) {
+    animation: vt-fade-in 160ms ease both;
+}
+
+/* listing-only UI: pure fade, never morph size/position into the void */
+@keyframes vt-fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+@keyframes vt-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+::view-transition-group(pills),
+::view-transition-group(rating-chooser) {
+    animation: none;
+    z-index: 0;
+}
+::view-transition-old(pills),
+::view-transition-old(rating-chooser) {
+    animation: vt-fade-out 140ms ease-out both;
+}
+::view-transition-new(pills),
+::view-transition-new(rating-chooser) {
+    animation: vt-fade-in 140ms ease-out both;
 }
 
 /* the brand word swaps SEQUENTIALLY — the old one is fully gone before
@@ -1138,10 +1169,13 @@ body {
     to   { opacity: 1; transform: none; }
 }
 
-.brand-menu,
-.rating-menu,
-.num-menu,
-.search-panel {
+/* breathe-in only when a menu is opened, never on page mount/nav.
+   closed menus stay display:none; open ones set display:flex inline. */
+.brand-menu[style*="flex"],
+.rating-menu[style*="flex"],
+.num-menu[style*="flex"],
+.search-panel[style*="block"],
+.search-panel[style*="flex"] {
     animation: menu-in 140ms ease-out;
 }
 
