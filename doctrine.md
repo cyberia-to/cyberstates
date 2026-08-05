@@ -47,24 +47,24 @@ taxation — and every domain is held separately: kept local, inherited
 from above, delegated upward, rented from a neighbor, or overridden
 outright. Inheritance runs in every direction:
 
-- downward: [Guam](/state/gu) inherits American law wholesale, then
+- downward: [Guam](/state/guam) inherits American law wholesale, then
   overrides the two domains a visitor actually touches — entry and tax.
-  [Hong Kong](/state/hk) inherits [China](/state/cn)'s sovereignty and
+  [Hong Kong](/state/hong-kong) inherits [China](/state/china)'s sovereignty and
   overrides token, border and law — a dependency holding more of the
-  stack than [Monaco](/state/mc), a full UN member with no currency of
+  stack than [Monaco](/state/monaco), a full UN member with no currency of
   its own, no customs of its own, and defense borrowed from France by
-  treaty. [Greenland](/state/gl) runs the same overrides under
-  [Denmark](/state/dk).
+  treaty. [Greenland](/state/greenland) runs the same overrides under
+  [Denmark](/state/denmark).
 - upward: thirty European cyberstates delegate their token domain to a
   shared mint and keep borders and law. A federation is upward
-  inheritance made permanent: [Micronesia](/state/fm)'s four member
+  inheritance made permanent: [Micronesia](/state/micronesia)'s four member
   states surrender most domains to their federation, which in turn rents
-  its token from [the USA](/state/us) and leases out defense by compact —
-  while the [Marshall Islands](/state/mh) and [Palau](/state/pw), same
+  its token from [the USA](/state/united-states) and leases out defense by compact —
+  while the [Marshall Islands](/state/marshall-islands) and [Palau](/state/palau), same
   ocean, same regional name, hold their own stacks and are therefore
   distinct states.
-- neither: [Transnistria](/state/pmr) holds every domain in fact and none
-  in law. [Antarctica](/state/aq) inverts it — a rule-set with no owner,
+- neither: [Transnistria](/state/transnistria) holds every domain in fact and none
+  in law. [Antarctica](/state/antarctica) inverts it — a rule-set with no owner,
   a treaty instead of a throne, running a continent.
 
 The stack is the reality an inhabitant meets: you land at a border,
@@ -106,8 +106,8 @@ keeps: the wealth the world agrees to hold behind its border, in its
 token. Stock primary, flow follows. Result, not activity.
 
 Price the states by what they hold and the world order rearranges: as of
-August 2026, [China](/state/cn) holds almost twice the wealth
-[the USA](/state/us) does — a ranking no GDP table has ever printed.
+August 2026, [China](/state/china) holds almost twice the wealth
+[the USA](/state/united-states) does — a ranking no GDP table has ever printed.
 
 ## 6. Three stocks exhaust the countable state
 
@@ -131,9 +131,9 @@ CAPITAL = PRICE × SUPPLY
 
 Nothing in this kernel is opinion: every number is measured or is
 arithmetic on measurements. As of August 2026 the kernel prices
-[Luxembourg](/state/lu)'s backing at ~$484k per resident and
-[Monaco](/state/mc)'s territory at ~$5.3B per km², while
-[Antarctica](/state/aq) prices at exactly zero — the visible supply
+[Luxembourg](/state/luxembourg)'s backing at ~$484k per resident and
+[Monaco](/state/monaco)'s territory at ~$5.3B per km², while
+[Antarctica](/state/antarctica) prices at exactly zero — the visible supply
 curve of the planet's unmonetized space.
 
 ## 7. Freedoms are measurable
@@ -156,7 +156,7 @@ whatever a state grants or withholds can be priced.
 
 Money only ever measures money; every measurement of wealth is a choice
 of token. The dollar is the current convention — and a convention is all
-it is: [the USA](/state/us)'s capital is equally ¥157T in the leading
+it is: [the USA](/state/united-states)'s capital is equally ¥157T in the leading
 state's token, or ₿370M — more bitcoin than will ever exist. Rankings
 survive any change of numeraire; intuitions do not. A doctrine that
 priced the world in only one state's token would be that state's
@@ -169,14 +169,14 @@ the day its rules become the interface of a territory. Nothing else was
 ever required — the old states just had a head start. By this test the
 roll today counts 281: UN members, their autonomous territories,
 partially recognized and unrecognized states —
-[Abkhazia](/state/abk), [Transnistria](/state/pmr),
-[Somaliland](/state/sol), [Kosovo](/state/xk) and their kin —
-[Antarctica](/state/aq); [Bir Tawil](/state/btwl), the one piece of
+[Abkhazia](/state/abkhazia), [Transnistria](/state/transnistria),
+[Somaliland](/state/somaliland), [Kosovo](/state/kosovo) and their kin —
+[Antarctica](/state/antarctica); [Bir Tawil](/state/bir-tawil), the one piece of
 land both its neighbors refuse to claim; and the solar system as a
 listing class:
-[Earth](/state/erth) itself, quoted once more as a single body, the
-forty solid-surface worlds from the [Moon](/state/luna) to
-[Sedna](/state/sedn) — territory held the way Antarctica is held,
+[Earth](/state/earth) itself, quoted once more as a single body, the
+forty solid-surface worlds from the [Moon](/state/moon) to
+[Sedna](/state/sedna) — territory held the way Antarctica is held,
 under a treaty instead of a throne, population zero and capital zero,
 the supply curve of unmonetized space — the [Sun](/state/sun), listed
 for its Dyson shell, and the four gas giants, listed for the harvest
@@ -237,8 +237,8 @@ contagious (a passport admitted nowhere scores 0, not half of the other
 axis); and the scale stays 0–100.
 
 Worked example, illustrative: a passport with visa-free access to the EU
-and [the USA](/state/us), an e-visa to [China](/state/cn) and
-visa-required for [India](/state/in) collects `1.0×(EU capital) +
+and [the USA](/state/united-states), an e-visa to [China](/state/china) and
+visa-required for [India](/state/india) collects `1.0×(EU capital) +
 1.0×(US capital) + 0.5×(CN capital) + 0.1×(IN capital) + …` — China's
 capital enters at half weight, India's at one tenth; summed, normalized
 by world totals, folded: one number.
@@ -252,7 +252,7 @@ The kernel is only as good as its measurements, so each source carries
 its honesty clause in the same breath.
 
 **Capital** — World Bank broad money (latest year ≥ 2018), FRED M2 for
-[the USA](/state/us), converted at live FX; script-refreshed, guarded
+[the USA](/state/united-states), converted at live FX; script-refreshed, guarded
 against redenominations. *Its limit:* states report money on slightly
 different aggregate definitions and dates — CAPITAL is the best single
 figure per state, not a synchronized global snapshot, and citizen value
@@ -260,7 +260,7 @@ and land value are exactly as good as capital is.
 
 **The visa matrix** — scraped from public passport-index data: every
 ordered pair of the 229 visa-issuing states, five regimes.
-[Antarctica](/state/aq) is listed but sits outside the matrix — no
+[Antarctica](/state/antarctica) is listed but sits outside the matrix — no
 passports, no visas, scores of zero. *Its limits:* regimes change
 weekly, so the matrix is as fresh as its last scrape; bilateral nuance
 is flattened — a 30-day and a 180-day visa-free both count 1.0, work

@@ -91,12 +91,12 @@ pub fn TokenPage() -> impl IntoView {
                                         </thead>
                                         <tbody>
                                             {countries.into_iter().map(|(ccode, cname, cflag)| {
-                                                let href = format!("/state/{}", ccode.to_lowercase());
                                                 let all_countries = load_countries();
-                                                let supply = all_countries.iter()
-                                                    .find(|c| c.code == ccode)
-                                                    .map(|c| c.money_supply_b_usd)
-                                                    .unwrap_or(0.0);
+                                                let state = all_countries.iter().find(|c| c.code == ccode);
+                                                let href = state
+                                                    .map(|c| c.path())
+                                                    .unwrap_or_else(|| format!("/state/{}", ccode.to_lowercase()));
+                                                let supply = state.map(|c| c.money_supply_b_usd).unwrap_or(0.0);
                                                 let share = if total_supply > 0.0 {
                                                     format!("{:.1}%", supply / total_supply * 100.0)
                                                 } else {

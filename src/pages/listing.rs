@@ -1,6 +1,6 @@
-use leptos::prelude::*;
 use crate::data::*;
 use crate::pages::country::SiteHeader;
+use leptos::prelude::*;
 
 /// /listing — where every "soon" points. A quote that reads soon
 /// marks a territory listed before its token: the ground is real, the
@@ -40,7 +40,7 @@ pub fn ListingPage() -> impl IntoView {
                 </p>
                 <div class="pending-grid">
                     {pending.into_iter().map(|c| {
-                        let href = format!("/state/{}", c.code.to_lowercase());
+                        let href = c.path();
                         view! {
                             <a href=href class="region-pill pending-pill">
                                 <span style="margin-right: 6px;">{c.flag.clone()}</span>

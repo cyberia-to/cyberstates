@@ -1,15 +1,16 @@
-use leptos::prelude::*;
 use crate::numeraires::{load_numeraire, Numeraire};
+use leptos::prelude::*;
 use leptos_router::components::*;
 use leptos_router::path;
 
-use crate::pages::home::HomePage;
+use crate::pages::corridor::CorridorPage;
 use crate::pages::country::CountryPage;
+use crate::pages::home::HomePage;
+use crate::pages::listing::ListingPage;
+use crate::pages::methodology::MethodologyPage;
+use crate::pages::solar_map::SolarMapPage;
 use crate::pages::token::TokenPage;
 use crate::pages::tokens::TokensPage;
-use crate::pages::methodology::MethodologyPage;
-use crate::pages::listing::ListingPage;
-use crate::pages::solar_map::SolarMapPage;
 
 /// Publish the sticky chrome's height as --chrome-h on <html>, so table
 /// headers and the map know where to stick. Re-measured after every
@@ -28,7 +29,8 @@ fn ChromeMeter() -> impl IntoView {
     Effect::new(move |_| {
         let on_resize = Closure::wrap(Box::new(measure_chrome) as Box<dyn FnMut()>);
         if let Some(w) = web_sys::window() {
-            let _ = w.add_event_listener_with_callback("resize", on_resize.as_ref().unchecked_ref());
+            let _ =
+                w.add_event_listener_with_callback("resize", on_resize.as_ref().unchecked_ref());
         }
         on_resize.forget();
     });
@@ -40,12 +42,22 @@ fn ChromeMeter() -> impl IntoView {
         let handler = Closure::wrap(Box::new(move |ev: web_sys::MouseEvent| {
             if ev.default_prevented()
                 || ev.button() != 0
-                || ev.meta_key() || ev.ctrl_key() || ev.shift_key() || ev.alt_key()
+                || ev.meta_key()
+                || ev.ctrl_key()
+                || ev.shift_key()
+                || ev.alt_key()
             {
                 return;
             }
-            let Some(el) = ev.target().and_then(|t| t.dyn_into::<web_sys::Element>().ok()) else { return };
-            let Ok(Some(a)) = el.closest("a[href]") else { return };
+            let Some(el) = ev
+                .target()
+                .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
+            else {
+                return;
+            };
+            let Ok(Some(a)) = el.closest("a[href]") else {
+                return;
+            };
             // internal links are root-relative; anything else is not ours
             let href = a.get_attribute("href").unwrap_or_default();
             if !href.starts_with('/') || a.get_attribute("target").is_some() {
@@ -56,7 +68,11 @@ fn ChromeMeter() -> impl IntoView {
             let current = web_sys::window()
                 .map(|w| {
                     let l = w.location();
-                    format!("{}{}", l.pathname().unwrap_or_default(), l.search().unwrap_or_default())
+                    format!(
+                        "{}{}",
+                        l.pathname().unwrap_or_default(),
+                        l.search().unwrap_or_default()
+                    )
                 })
                 .unwrap_or_default();
             if href != current {
@@ -114,8 +130,9 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/listing") view=ListingPage />
                 <Route path=path!("/solar") view=SolarMapPage />
                 <Route path=path!("/methodology") view=MethodologyPage />
-                <Route path=path!("/state/:code") view=CountryPage />
-                <Route path=path!("/country/:code") view=CountryPage />
+                <Route path=path!("/state/:slug") view=CountryPage />
+                <Route path=path!("/country/:slug") view=CountryPage />
+                <Route path=path!("/from/:from/to/:to") view=CorridorPage />
                 <Route path=path!("/token/:code") view=TokenPage />
             </Routes>
         </Router>

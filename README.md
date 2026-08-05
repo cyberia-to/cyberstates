@@ -27,9 +27,9 @@ writes `robots.txt` and the sitemap index into `dist/`:
 | `robots.txt` | Allow + Sitemap pointer |
 | `sitemap.xml` | index |
 | `sitemap-core.xml` | landings, regional rankings |
-| `sitemap-states.xml` | `/state/{code}` × all listings |
-| `sitemap-tokens.xml` | `/token/{code}` |
-| `sitemap-corridors-*.xml` | `/from/{a}/to/{b}` long-tail (terrestrial pairs) |
+| `sitemap-states.xml` | `/state/{slug}` × all listings (name slugs) |
+| `sitemap-tokens.xml` | `/token/{ticker}` |
+| `sitemap-corridors-*.xml` | `/from/{slug}/to/{slug}` long-tail (terrestrial pairs) |
 
 nginx must serve these as static files — not the SPA shell. Prefer
 `try_files $uri $uri/ /index.html` so real files win.
@@ -40,9 +40,10 @@ nginx must serve these as static files — not the SPA shell. Prefer
   including bilateral corridors (~53k URLs).
 - **P1 (next):** prerender HTML bodies for states, tokens, corridors
   so crawlers see text without WASM.
-- Corridor route: `/from/{from}/to/{to}` (lowercase ISO-style codes).
-  Pages land in P1; sitemap already lists every ordered pair among
-  230 terrestrial non-aggregate states (self-pairs omitted).
+- State URLs use **name slugs**: `/state/japan`, `/state/united-states`
+  (legacy `/state/jp` rewrites client-side). Tokens stay tickers: `/token/jpy`.
+- Corridor route: `/from/{slug}/to/{slug}` — full terrestrial long-tail
+  (~53k ordered pairs, self-pairs omitted).
 
 ## layout
 

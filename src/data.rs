@@ -14,6 +14,8 @@ pub struct VisaAccess {
 pub struct Country {
     pub name: String,
     pub code: String,
+    /// Canonical URL segment: /state/{slug}, /from/{slug}/to/{slug}
+    pub slug: String,
     pub flag: String,
     pub region: String,
     pub population: u64,
@@ -27,14 +29,44 @@ pub struct Country {
     pub oceans: String,
 }
 
+impl Country {
+    /// Canonical path for this state page.
+    pub fn path(&self) -> String {
+        format!("/state/{}", self.slug)
+    }
+}
+
+/// Resolve a path segment: prefer slug match, fall back to ISO/code (legacy URLs).
+pub fn find_country(param: &str) -> Option<Country> {
+    let countries = load_countries();
+    let key = param.to_lowercase();
+    countries
+        .iter()
+        .find(|c| c.slug == key)
+        .or_else(|| {
+            let upper = param.to_uppercase();
+            countries.iter().find(|c| c.code == upper)
+        })
+        .cloned()
+}
+
+/// Look up slug for a map path id / state code (SVG uses ISO-style codes).
+pub fn slug_for_code(code: &str) -> Option<String> {
+    let upper = code.to_uppercase();
+    load_countries()
+        .iter()
+        .find(|c| c.code == upper)
+        .map(|c| c.slug.clone())
+}
+
 #[derive(Clone, Copy, Debug, Default)]
 pub struct CountryIndex {
-    pub eco_out_pct: f64,  // weighted % of world economy accessible
-    pub eco_in_pct: f64,   // weighted % of world economy that can visit
-    pub pop_out_pct: f64,  // weighted % of world population accessible
-    pub pop_in_pct: f64,   // weighted % of world population that can visit
-    pub freedom: f64,      // √(eco_out × pop_out)
-    pub openness: f64,     // √(eco_in × pop_in)
+    pub eco_out_pct: f64, // weighted % of world economy accessible
+    pub eco_in_pct: f64,  // weighted % of world economy that can visit
+    pub pop_out_pct: f64, // weighted % of world population accessible
+    pub pop_in_pct: f64,  // weighted % of world population that can visit
+    pub freedom: f64,     // √(eco_out × pop_out)
+    pub openness: f64,    // √(eco_in × pop_in)
 }
 
 include!(concat!(env!("OUT_DIR"), "/countries.rs"));
@@ -42,16 +74,11 @@ include!(concat!(env!("OUT_DIR"), "/countries.rs"));
 static VISA_DATA: OnceLock<HashMap<String, Vec<VisaAccess>>> = OnceLock::new();
 
 pub fn get_visa_data() -> &'static HashMap<String, Vec<VisaAccess>> {
-    VISA_DATA.get_or_init(|| {
-        serde_json::from_str(VISA_DATA_JSON).unwrap_or_default()
-    })
+    VISA_DATA.get_or_init(|| serde_json::from_str(VISA_DATA_JSON).unwrap_or_default())
 }
 
 pub fn get_visa_outgoing(code: &str) -> Vec<VisaAccess> {
-    get_visa_data()
-        .get(code)
-        .cloned()
-        .unwrap_or_default()
+    get_visa_data().get(code).cloned().unwrap_or_default()
 }
 
 pub fn get_visa_incoming(country_name: &str) -> Vec<VisaAccess> {
@@ -61,7 +88,8 @@ pub fn get_visa_incoming(country_name: &str) -> Vec<VisaAccess> {
 
     for (code, entries) in data.iter() {
         if let Some(entry) = entries.iter().find(|e| e.country == country_name) {
-            let holder_name = countries.iter()
+            let holder_name = countries
+                .iter()
                 .find(|c| c.code == code.to_uppercase())
                 .map(|c| c.name.clone())
                 .unwrap_or_else(|| code.to_uppercase());
@@ -73,7 +101,11 @@ pub fn get_visa_incoming(country_name: &str) -> Vec<VisaAccess> {
         }
     }
 
-    results.sort_by(|a, b| a.access_type.cmp(&b.access_type).then(a.country.cmp(&b.country)));
+    results.sort_by(|a, b| {
+        a.access_type
+            .cmp(&b.access_type)
+            .then(a.country.cmp(&b.country))
+    });
     results
 }
 
@@ -139,19 +171,27 @@ pub fn get_tokens() -> Vec<Token> {
         entry.total_supply_b_usd += c.money_supply_b_usd;
         entry.total_population += c.population;
         entry.total_area_km2 += c.land_area_km2;
-        entry.countries.push((c.code.clone(), c.name.clone(), c.flag.clone()));
+        entry
+            .countries
+            .push((c.code.clone(), c.name.clone(), c.flag.clone()));
         if entry.price_usd <= 0.0 && c.token_price_usd > 0.0 {
             entry.price_usd = c.token_price_usd;
         }
     }
 
     let mut tokens: Vec<Token> = map.into_values().collect();
-    tokens.sort_by(|a, b| b.total_supply_b_usd.partial_cmp(&a.total_supply_b_usd).unwrap_or(std::cmp::Ordering::Equal));
+    tokens.sort_by(|a, b| {
+        b.total_supply_b_usd
+            .partial_cmp(&a.total_supply_b_usd)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     tokens
 }
 
 pub fn get_token(code: &str) -> Option<Token> {
-    get_tokens().into_iter().find(|t| t.code.to_uppercase() == code.to_uppercase())
+    get_tokens()
+        .into_iter()
+        .find(|t| t.code.to_uppercase() == code.to_uppercase())
 }
 
 impl Country {
@@ -178,16 +218,30 @@ impl Country {
         if tokens <= 0.0 {
             return "N/A".to_string();
         }
-        let sig = |v: f64| if v >= 100.0 { format!("{:.0}", v) } else if v >= 10.0 { format!("{:.1}", v) } else { format!("{:.2}", v) };
-        let (v, s) = if tokens >= 1e15 { (tokens / 1e15, "Q") }
-            else if tokens >= 1e12 { (tokens / 1e12, "T") }
-            else if tokens >= 1e9 { (tokens / 1e9, "B") }
-            else if tokens >= 1e6 { (tokens / 1e6, "M") }
-            else if tokens >= 1e3 { (tokens / 1e3, "k") }
-            else { (tokens, "") };
+        let sig = |v: f64| {
+            if v >= 100.0 {
+                format!("{:.0}", v)
+            } else if v >= 10.0 {
+                format!("{:.1}", v)
+            } else {
+                format!("{:.2}", v)
+            }
+        };
+        let (v, s) = if tokens >= 1e15 {
+            (tokens / 1e15, "Q")
+        } else if tokens >= 1e12 {
+            (tokens / 1e12, "T")
+        } else if tokens >= 1e9 {
+            (tokens / 1e9, "B")
+        } else if tokens >= 1e6 {
+            (tokens / 1e6, "M")
+        } else if tokens >= 1e3 {
+            (tokens / 1e3, "k")
+        } else {
+            (tokens, "")
+        };
         format!("{}{}", sig(v), s)
     }
-
 
     pub fn price_fmt(&self) -> String {
         if self.token_price_usd <= 0.0 {
@@ -208,24 +262,39 @@ impl Country {
         match f {
             SortField::Capital => self.money_supply_b_usd,
             SortField::Human => {
-                if self.population > 0 { self.money_supply_b_usd * 1e9 / self.population as f64 } else { 0.0 }
+                if self.population > 0 {
+                    self.money_supply_b_usd * 1e9 / self.population as f64
+                } else {
+                    0.0
+                }
             }
             SortField::Land => {
-                if self.land_area_km2 > 0 { self.money_supply_b_usd * 1e9 / self.land_area_km2 as f64 } else { 0.0 }
+                if self.land_area_km2 > 0 {
+                    self.money_supply_b_usd * 1e9 / self.land_area_km2 as f64
+                } else {
+                    0.0
+                }
             }
             SortField::Freedom => self.index().freedom,
             SortField::Hospitality => self.index().openness,
             SortField::Population => self.population as f64,
             SortField::Territory => self.land_area_km2 as f64,
             SortField::Density => {
-                if self.land_area_km2 > 0 { self.population as f64 / self.land_area_km2 as f64 } else { 0.0 }
+                if self.land_area_km2 > 0 {
+                    self.population as f64 / self.land_area_km2 as f64
+                } else {
+                    0.0
+                }
             }
         }
     }
 
     /// Weights: visa-free=1.0, VoA=0.8, eta/e-visa=0.5, visa-required=0.1, no-admission=0.0
     pub fn index(&self) -> CountryIndex {
-        index_cache().get(self.code.as_str()).copied().unwrap_or_default()
+        index_cache()
+            .get(self.code.as_str())
+            .copied()
+            .unwrap_or_default()
     }
 }
 
@@ -241,22 +310,30 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
 
         // world totals are terrestrial: celestial listings (Earth the
         // body among them) must not dilute the visa index denominators
-        let total_cap: f64 = countries.iter()
+        let total_cap: f64 = countries
+            .iter()
             .filter(|c| is_terrestrial(&c.region) && !is_aggregate(&c.code))
-            .map(|c| c.money_supply_b_usd).sum();
-        let total_pop: f64 = countries.iter()
+            .map(|c| c.money_supply_b_usd)
+            .sum();
+        let total_pop: f64 = countries
+            .iter()
             .filter(|c| is_terrestrial(&c.region) && !is_aggregate(&c.code))
-            .map(|c| c.population as f64).sum();
+            .map(|c| c.population as f64)
+            .sum();
 
         let by_name: HashMap<&str, &Country> =
             countries.iter().map(|c| (c.name.as_str(), c)).collect();
-        let by_code: HashMap<String, &Country> =
-            countries.iter().map(|c| (c.code.to_uppercase(), c)).collect();
+        let by_code: HashMap<String, &Country> = countries
+            .iter()
+            .map(|c| (c.code.to_uppercase(), c))
+            .collect();
 
         // (eco_out, pop_out, eco_in, pop_in) accumulated per state code
         let mut acc: HashMap<String, (f64, f64, f64, f64)> = HashMap::new();
         for (code, entries) in data.iter() {
-            let Some(holder) = by_code.get(&code.to_uppercase()) else { continue };
+            let Some(holder) = by_code.get(&code.to_uppercase()) else {
+                continue;
+            };
             for e in entries {
                 let w = access_type_weight(&e.access_type);
                 if let Some(dest) = by_name.get(e.country.as_str()) {
@@ -270,22 +347,44 @@ fn index_cache() -> &'static HashMap<String, CountryIndex> {
             }
         }
 
-        countries.iter().map(|c| {
-            let (eco_out, pop_out, eco_in, pop_in) =
-                acc.get(&c.code).copied().unwrap_or_default();
-            let eco_out_pct = if total_cap > 0.0 { eco_out / total_cap * 100.0 } else { 0.0 };
-            let eco_in_pct = if total_cap > 0.0 { eco_in / total_cap * 100.0 } else { 0.0 };
-            let pop_out_pct = if total_pop > 0.0 { pop_out / total_pop * 100.0 } else { 0.0 };
-            let pop_in_pct = if total_pop > 0.0 { pop_in / total_pop * 100.0 } else { 0.0 };
-            (c.code.clone(), CountryIndex {
-                eco_out_pct,
-                eco_in_pct,
-                pop_out_pct,
-                pop_in_pct,
-                freedom: (eco_out_pct * pop_out_pct).sqrt(),
-                openness: (eco_in_pct * pop_in_pct).sqrt(),
+        countries
+            .iter()
+            .map(|c| {
+                let (eco_out, pop_out, eco_in, pop_in) =
+                    acc.get(&c.code).copied().unwrap_or_default();
+                let eco_out_pct = if total_cap > 0.0 {
+                    eco_out / total_cap * 100.0
+                } else {
+                    0.0
+                };
+                let eco_in_pct = if total_cap > 0.0 {
+                    eco_in / total_cap * 100.0
+                } else {
+                    0.0
+                };
+                let pop_out_pct = if total_pop > 0.0 {
+                    pop_out / total_pop * 100.0
+                } else {
+                    0.0
+                };
+                let pop_in_pct = if total_pop > 0.0 {
+                    pop_in / total_pop * 100.0
+                } else {
+                    0.0
+                };
+                (
+                    c.code.clone(),
+                    CountryIndex {
+                        eco_out_pct,
+                        eco_in_pct,
+                        pop_out_pct,
+                        pop_in_pct,
+                        freedom: (eco_out_pct * pop_out_pct).sqrt(),
+                        openness: (eco_in_pct * pop_in_pct).sqrt(),
+                    },
+                )
             })
-        }).collect()
+            .collect()
     })
 }
 
@@ -348,15 +447,26 @@ pub fn compact_count(v: f64) -> String {
     if v <= 0.0 {
         return "0".to_string();
     }
-    let (val, suffix) = if v >= 1e15 { (v / 1e15, "Q") }
-        else if v >= 1e12 { (v / 1e12, "T") }
-        else if v >= 1e9 { (v / 1e9, "B") }
-        else if v >= 1e6 { (v / 1e6, "M") }
-        else if v >= 1e3 { (v / 1e3, "k") }
-        else { return format!("{}", v.round() as u64); };
-    let sig = if val >= 100.0 { format!("{:.0}", val) }
-        else if val >= 10.0 { format!("{:.1}", val) }
-        else { format!("{:.2}", val) };
+    let (val, suffix) = if v >= 1e15 {
+        (v / 1e15, "Q")
+    } else if v >= 1e12 {
+        (v / 1e12, "T")
+    } else if v >= 1e9 {
+        (v / 1e9, "B")
+    } else if v >= 1e6 {
+        (v / 1e6, "M")
+    } else if v >= 1e3 {
+        (v / 1e3, "k")
+    } else {
+        return format!("{}", v.round() as u64);
+    };
+    let sig = if val >= 100.0 {
+        format!("{:.0}", val)
+    } else if val >= 10.0 {
+        format!("{:.1}", val)
+    } else {
+        format!("{:.2}", val)
+    };
     format!("{}{}", sig, suffix)
 }
 
@@ -458,7 +568,11 @@ pub fn rank_color(rank: usize) -> &'static str {
 }
 
 pub fn rank_weight(rank: usize) -> &'static str {
-    if rank <= 3 { "700" } else { "400" }
+    if rank <= 3 {
+        "700"
+    } else {
+        "400"
+    }
 }
 
 impl SortField {
@@ -526,9 +640,14 @@ impl SortField {
     // The doctrine's kernel order: three primary stocks · three derived
     // exchange rates · two freedom scores from the Appendix A weights.
     pub const ALL: [SortField; 8] = [
-        Self::Capital, Self::Population, Self::Territory,
-        Self::Human, Self::Land, Self::Density,
-        Self::Freedom, Self::Hospitality,
+        Self::Capital,
+        Self::Population,
+        Self::Territory,
+        Self::Human,
+        Self::Land,
+        Self::Density,
+        Self::Freedom,
+        Self::Hospitality,
     ];
 
     /// True where a derived group begins — the pill rows draw a dot here.

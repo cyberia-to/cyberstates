@@ -5,9 +5,9 @@
 #   nu scripts/seo.nu --out dist   # after trunk build --release
 #
 # URL surface:
-#   core landings, /state/*, /token/*, /from/{a}/to/{b} for every
-#   terrestrial non-aggregate ordered pair (long-tail corridors).
-#   Self-pairs (from = to) are omitted.
+#   core landings, /state/{name-slug}, /token/{ticker},
+#   /from/{slug}/to/{slug} for every terrestrial non-aggregate pair.
+#   Self-pairs omitted. Slugs match build.rs (name + SEO overrides).
 
 const BASE = "https://cyberstates.net"
 const AGGREGATES = ["OCNA", "AFRI", "EURA", "AMER"]
@@ -26,8 +26,61 @@ const FIELDS = [
   "density"
 ]
 
+# Must stay in sync with build.rs slug_override + slugify
+const SLUG_OVERRIDES = {
+  US: "united-states"
+  GB: "united-kingdom"
+  AE: "united-arab-emirates"
+  KR: "south-korea"
+  KP: "north-korea"
+  CD: "dr-congo"
+  CG: "congo-brazzaville"
+  DO: "dominican-republic"
+  CI: "ivory-coast"
+  MK: "north-macedonia"
+  CZ: "czechia"
+  SZ: "eswatini"
+  VA: "vatican"
+  FM: "micronesia"
+  MH: "marshall-islands"
+  SB: "solomon-islands"
+  ST: "sao-tome"
+  VC: "saint-vincent"
+  KN: "saint-kitts"
+  LC: "saint-lucia"
+  GW: "guinea-bissau"
+  GQ: "equatorial-guinea"
+  CF: "central-african-republic"
+  BA: "bosnia-and-herzegovina"
+  TT: "trinidad-and-tobago"
+  AG: "antigua-and-barbuda"
+  PG: "papua-new-guinea"
+  NC: "new-caledonia"
+  CV: "cape-verde"
+  BF: "burkina-faso"
+  SA: "saudi-arabia"
+  ZA: "south-africa"
+  SS: "south-sudan"
+  NCY: "northern-cyprus"
+  OST: "south-ossetia"
+  BTWL: "bir-tawil"
+  PMR: "transnistria"
+}
+
 def region_slug [r: string] {
   $r | str downcase | str replace --all " " "-"
+}
+
+def slugify [name: string] {
+  $name
+  | str downcase
+  | str replace --all --regex "[^a-z0-9]+" "-"
+  | str trim --char "-"
+}
+
+def state_slug [code: string, name: string] {
+  let o = ($SLUG_OVERRIDES | get --optional $code)
+  if $o != null { $o } else { slugify $name }
 }
 
 def xml_escape [s: string] {
@@ -88,14 +141,19 @@ def main [--out: string = "seo"] {
 
   let lastmod = (date now | format date "%Y-%m-%d")
   let state_files = (glob $"($root)/states/*.toml")
-  let states = ($state_files | each {|f| open $f })
+  let states = (
+    $state_files
+    | each {|f|
+        let r = open $f
+        $r | insert slug (state_slug $r.code $r.name)
+      }
+  )
 
-  let codes_all = ($states | get code | each {|c| $c | str downcase} | sort)
-  let corridor_codes = (
+  let slugs_all = ($states | get slug | sort)
+  let corridor_slugs = (
     $states
     | where {|r| ($r.code not-in $AGGREGATES) and ($r.region not-in $SKIP_REGIONS)}
-    | get code
-    | each {|c| $c | str downcase}
+    | get slug
     | sort
   )
   let tokens = (
@@ -130,26 +188,25 @@ def main [--out: string = "seo"] {
   }
   write_urlset $"($out_dir)/sitemap-core.xml" $core
 
-  # --- states ---
+  # --- states (name slugs) ---
   let state_urls = (
-    $codes_all
-    | each {|c| url_entry $"/state/($c)" "0.9" "weekly" $lastmod}
+    $slugs_all
+    | each {|s| url_entry $"/state/($s)" "0.9" "weekly" $lastmod}
   )
   write_urlset $"($out_dir)/sitemap-states.xml" $state_urls
 
-  # --- tokens ---
+  # --- tokens (tickers stay short) ---
   let token_urls = (
     $tokens
     | each {|c| url_entry $"/token/($c)" "0.8" "weekly" $lastmod}
   )
   write_urlset $"($out_dir)/sitemap-tokens.xml" $token_urls
 
-  # --- bilateral corridors: /from/{a}/to/{b}, a != b ---
-  # build as a flat list via nested each (faster than mut append in a loop)
+  # --- bilateral corridors: /from/{slug}/to/{slug}, a != b ---
   let corridor_entries = (
-    $corridor_codes
+    $corridor_slugs
     | each {|a|
-        $corridor_codes
+        $corridor_slugs
         | where {|b| $b != $a}
         | each {|b| url_entry $"/from/($a)/to/($b)" "0.5" "monthly" $lastmod}
       }
@@ -208,10 +265,12 @@ def main [--out: string = "seo"] {
 
   print ""
   print $"seo surface → ($out_dir)"
-  print $"  states:     ($codes_all | length)"
+  print $"  states:     ($slugs_all | length)"
   print $"  tokens:     ($tokens | length)"
   print $"  core urls:  ($core | length)"
-  print $"  corridors:  ($n_corridors)  \(($corridor_codes | length) terrestrial x n-1)"
-  let total = (($core | length) + ($codes_all | length) + ($tokens | length) + $n_corridors)
+  print $"  corridors:  ($n_corridors)  \(($corridor_slugs | length) terrestrial x n-1)"
+  let total = (($core | length) + ($slugs_all | length) + ($tokens | length) + $n_corridors)
   print $"  total urls: ($total)"
+  # smoke: famous corridors must be name-slugs
+  print $"  sample:     /state/japan  /from/united-states/to/japan"
 }

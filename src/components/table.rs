@@ -33,8 +33,7 @@ pub fn CountryRow(
     #[prop(into)] numeraire: Signal<Numeraire>,
     #[prop(into)] field: Signal<SortField>,
 ) -> impl IntoView {
-    let code = country.code.to_lowercase();
-    let href = format!("/state/{}", code);
+    let href = country.path();
 
     let flag = country.flag.clone();
     let name = country.name.clone();

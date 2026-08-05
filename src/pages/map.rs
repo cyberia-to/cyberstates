@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use std::collections::HashMap;
 
 pub const WORLD_SVG: &str = include_str!("../../assets/world.svg");
 
@@ -19,7 +19,10 @@ pub fn painted_world(values: &HashMap<String, f64>) -> String {
             .and_then(|id| values.get(id))
             .map(|&v| value_to_color(v, 1.0))
             .unwrap_or_else(|| "#1a1a1a".to_string());
-        out.push_str(&format!("<path style=\"fill: {}; cursor: pointer;\" ", color));
+        out.push_str(&format!(
+            "<path style=\"fill: {}; cursor: pointer;\" ",
+            color
+        ));
         out.push_str(chunk);
     }
     out
@@ -27,7 +30,9 @@ pub fn painted_world(values: &HashMap<String, f64>) -> String {
 
 /// Cyber palette ramp: red → orange → yellow → cyan → green.
 pub fn value_to_color(val: f64, max: f64) -> String {
-    if max <= 0.0 { return "#111".to_string(); }
+    if max <= 0.0 {
+        return "#111".to_string();
+    }
     let t = (val / max).min(1.0).max(0.0);
     if t < 0.01 {
         return "#1a1a1a".to_string();
@@ -45,7 +50,12 @@ pub fn value_to_color(val: f64, max: f64) -> String {
         let s = (t - 0.75) / 0.25;
         (0.0, 229.0 + s * 26.0, 255.0 - s * 190.0)
     };
-    format!("rgb({:.0},{:.0},{:.0})", r.min(255.0), g.min(255.0), b.min(255.0))
+    format!(
+        "rgb({:.0},{:.0},{:.0})",
+        r.min(255.0),
+        g.min(255.0),
+        b.min(255.0)
+    )
 }
 
 /// Client-side navigation from plain DOM handlers: push the URL, then
@@ -67,9 +77,9 @@ pub fn navigate_client(path: &str) {
 
     // collapse open dropdowns BEFORE the VT old snapshot
     if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
-        if let Ok(nodes) = doc.query_selector_all(
-            ".rating-menu, .brand-menu, .num-menu, .search-panel",
-        ) {
+        if let Ok(nodes) =
+            doc.query_selector_all(".rating-menu, .brand-menu, .num-menu, .search-panel")
+        {
             for i in 0..nodes.length() {
                 if let Some(node) = nodes.item(i) {
                     let el: web_sys::HtmlElement = node.unchecked_into();
@@ -150,7 +160,9 @@ pub fn setup_click_handlers() {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
 
-    let paths = document.query_selector_all("svg.world-map path[id]").unwrap();
+    let paths = document
+        .query_selector_all("svg.world-map path[id]")
+        .unwrap();
     for i in 0..paths.length() {
         if let Some(node) = paths.item(i) {
             let el: web_sys::Element = node.unchecked_into();
@@ -159,15 +171,17 @@ pub fn setup_click_handlers() {
             }
             let _ = el.set_attribute("data-nav", "1");
             if let Some(id) = el.get_attribute("id") {
-                let code = id.to_lowercase();
+                // SVG path ids are ISO codes; navigate to the name slug.
+                let href = crate::data::slug_for_code(&id)
+                    .map(|s| format!("/state/{}", s))
+                    .unwrap_or_else(|| format!("/state/{}", id.to_lowercase()));
                 let closure = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
-                    navigate_client(&format!("/state/{}", code));
-                }) as Box<dyn FnMut(web_sys::MouseEvent)>);
+                    navigate_client(&href);
+                })
+                    as Box<dyn FnMut(web_sys::MouseEvent)>);
 
-                let _ = el.add_event_listener_with_callback(
-                    "click",
-                    closure.as_ref().unchecked_ref(),
-                );
+                let _ =
+                    el.add_event_listener_with_callback("click", closure.as_ref().unchecked_ref());
                 closure.forget();
             }
         }

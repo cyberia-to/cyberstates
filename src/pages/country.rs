@@ -1,21 +1,39 @@
-use leptos::prelude::*;
-use wasm_bindgen::JsCast;
+use crate::components::brand::BrandChooser;
+use crate::components::nav::SiteNav;
+use crate::components::notyet::value_or_notyet;
 use crate::data::*;
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
-use crate::components::nav::SiteNav;
-use crate::components::brand::BrandChooser;
-use crate::components::notyet::value_or_notyet;
+use leptos::prelude::*;
+use wasm_bindgen::JsCast;
 
 #[component]
 pub fn CountryPage() -> impl IntoView {
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
     let params = leptos_router::hooks::use_params_map();
-    let countries = load_countries();
+
+    // Legacy /state/jp → /state/japan (codes still resolve, then rewrite).
+    Effect::new(move |_| {
+        let p = params.get();
+        let raw = p.get("slug").or_else(|| p.get("code")).unwrap_or_default();
+        if raw.is_empty() {
+            return;
+        }
+        if let Some(c) = find_country(&raw) {
+            if raw.to_lowercase() != c.slug {
+                crate::pages::map::navigate_client(&c.path());
+            } else {
+                document().set_title(&format!(
+                    "{} — capital, freedom & openness | Cyberstates",
+                    c.name
+                ));
+            }
+        }
+    });
 
     let country = move || {
         let p = params.get();
-        let code = p.get("code").unwrap_or_default().to_uppercase();
-        countries.iter().find(|c| c.code == code).cloned()
+        let raw = p.get("slug").or_else(|| p.get("code")).unwrap_or_default();
+        find_country(&raw)
     };
 
     view! {
@@ -253,7 +271,7 @@ pub fn CountryPage() -> impl IntoView {
                                     </div>
                                     <div class="pending-grid">
                                         {members.into_iter().map(|m| {
-                                            let href = format!("/state/{}", m.code.to_lowercase());
+                                            let href = m.path();
                                             let cap = m.cap_fmt();
                                             view! {
                                                 <a href=href class="region-pill pending-pill">
@@ -340,20 +358,34 @@ fn FilterableVisaSection(
         ("visa-required", &["visa-required"]),
         ("no-admission", &["no-admission"]),
     ];
-    let counts: Vec<(String, usize)> = categories.iter().filter_map(|(key, types)| {
-        let n = entries.iter().filter(|e| types.contains(&e.access_type.as_str())).count();
-        if n > 0 { Some((key.to_string(), n)) } else { None }
-    }).collect();
+    let counts: Vec<(String, usize)> = categories
+        .iter()
+        .filter_map(|(key, types)| {
+            let n = entries
+                .iter()
+                .filter(|e| types.contains(&e.access_type.as_str()))
+                .count();
+            if n > 0 {
+                Some((key.to_string(), n))
+            } else {
+                None
+            }
+        })
+        .collect();
 
     let all_countries = load_countries();
 
     // Pre-compute hrefs
-    let entries_with_href: Vec<(VisaAccess, Option<String>)> = entries.into_iter().map(|e| {
-        let href = all_countries.iter()
-            .find(|c| c.name == e.country)
-            .map(|c| format!("/state/{}", c.code.to_lowercase()));
-        (e, href)
-    }).collect();
+    let entries_with_href: Vec<(VisaAccess, Option<String>)> = entries
+        .into_iter()
+        .map(|e| {
+            let href = all_countries
+                .iter()
+                .find(|c| c.name == e.country)
+                .map(|c| c.path());
+            (e, href)
+        })
+        .collect();
 
     view! {
         <div>

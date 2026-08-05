@@ -406,7 +406,7 @@ pub fn SolarMapPage() -> impl IntoView {
                 // the world hero: the selected body at full height
                 <div class="cockpit-world">
                     {move || sel_body().map(|c| {
-                        let href = format!("/state/{}", c.code.to_lowercase());
+                        let href = c.path();
                         let is_earth = c.code == "ERTH";
                         let color = colors.get().get(&c.code).cloned().unwrap_or_else(|| "#1a1a1a".into());
                         view! {

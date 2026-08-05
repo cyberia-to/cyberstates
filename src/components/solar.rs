@@ -50,7 +50,7 @@ pub fn SolarPanel() -> impl IntoView {
                 }).collect_view()}
 
                 {placed.into_iter().map(|(c, x, y, r)| {
-                    let href = format!("/state/{}", c.code.to_lowercase());
+                    let href = c.path();
                     let title = format!("{} — {}", c.name, c.land_area_fmt());
                     // the panel is small: dots grow a size class to stay clickable
                     let r = (r * 1.35).max(5.0);
