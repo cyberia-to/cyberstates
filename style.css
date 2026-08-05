@@ -544,15 +544,14 @@ body {
 .map-pane .world-map-container svg {
     display: block;
     margin-left: auto;
-    aspect-ratio: 847 / 689;
-    /* width-driven and then grown 1.4x: the land parallelogram fills the
-       band, the bbox corners and outlier islets spill off-stage */
+    aspect-ratio: 941 / 689;
+    /* width-driven, no transform games: the bbox now spans land to
+       Antarctica edge-to-edge, so the band fill IS the right size —
+       nothing hides under the table, nothing gapes on the right */
     width: calc(100vw - 542px);
     height: auto;
     max-width: none;
-    margin-top: -34px;
-    transform: translateX(-3%) scale(1.4);
-    transform-origin: 70% 40%;
+    margin-top: -18px;
 }
 
 .cyber-table.slim {
