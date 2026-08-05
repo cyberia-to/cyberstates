@@ -465,23 +465,17 @@ fn shell_page(
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 {assets}
 <script type="application/ld+json">{ld}</script>
-<style>
-  .seo-crawl {{ font-family: system-ui, sans-serif; max-width: 42rem; margin: 1.5rem auto; padding: 0 1rem 4rem; color: #e8e8e8; background: #000; line-height: 1.55; }}
-  .seo-crawl a {{ color: #4ade80; }}
-  .seo-crawl h1 {{ font-size: 1.75rem; color: #fff; margin: 0.5rem 0 1rem; }}
-  .seo-crawl h2 {{ font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; color: #666; margin: 1.75rem 0 0.75rem; }}
-  .seo-crawl table {{ width: 100%; border-collapse: collapse; font-size: 0.9rem; }}
-  .seo-crawl th, .seo-crawl td {{ text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid #222; }}
-  .seo-crawl .muted {{ color: #666; }}
-  .seo-crawl ul {{ padding-left: 1.2rem; }}
-  .seo-crawl .nav {{ font-size: 0.85rem; margin-bottom: 1rem; }}
-  .seo-crawl .nav a {{ margin-right: 0.75rem; }}
-</style>
 </head>
 <body>
-<main class="seo-crawl" id="seo-static">
+<!-- Crawlable copy for bots/no-JS. Hidden from view; SPA strips #seo-static on boot. -->
+<div id="seo-static" hidden>
+{body}
+</div>
+<noscript>
+<main style="font-family:system-ui,sans-serif;max-width:42rem;margin:1.5rem auto;padding:0 1rem 4rem;color:#e8e8e8;background:#000;line-height:1.55">
 {body}
 </main>
+</noscript>
 </body>
 </html>
 "##,
@@ -863,12 +857,17 @@ fn home_body(states: &[State]) -> String {
 }
 
 fn inject_body_into_shell(shell: &str, body_inner: &str) -> String {
-    // Replace <body>...</body> with crawlable main + keep scripts in head.
+    // Hidden crawlable directory + noscript. Never paint under the SPA.
     let main = format!(
         r#"<body>
-<main class="seo-crawl" id="seo-static" style="font-family:system-ui,sans-serif;max-width:42rem;margin:1.5rem auto;padding:0 1rem 4rem;color:#e8e8e8;background:#000;line-height:1.55">
+<div id="seo-static" hidden>
+{body}
+</div>
+<noscript>
+<main style="font-family:system-ui,sans-serif;max-width:42rem;margin:1.5rem auto;padding:0 1rem 4rem;color:#e8e8e8;background:#000;line-height:1.55">
 {body}
 </main>
+</noscript>
 </body>"#,
         body = body_inner
     );
