@@ -551,6 +551,7 @@ body {
     height: auto;
     max-width: none;
     margin-top: -18px;
+    transform: translateX(-10vw);
 }
 
 .cyber-table.slim {
