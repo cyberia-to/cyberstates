@@ -1343,13 +1343,14 @@ body {
 
 /* ---- solar panel: the celestial bodies that have no map polygon ------- */
 .solar-panel {
-    /* the orbital catalog disk, floating in the map's lower-left ocean —
-       the same live sky as /solar, every dot a link */
+    /* the orbital catalog disk, floating in the map's lower-right —
+       the same live sky as /solar, every dot a link.
+       +30% from 21vw/340; right+bottom keep the SE corner pinned */
     position: fixed;
     left: auto;
     right: 12px;
     bottom: 34px;
-    width: min(21vw, 340px);
+    width: min(27.3vw, 442px);
     aspect-ratio: 1 / 1;
     z-index: 6;
     pointer-events: none;
