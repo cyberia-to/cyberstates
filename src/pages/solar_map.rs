@@ -1,10 +1,10 @@
-use leptos::prelude::*;
-use std::collections::HashMap;
-use crate::data::*;
 use crate::components::table::metric_cell;
+use crate::data::*;
 use crate::numeraires::{price_parts, Numeraire};
 use crate::pages::country::SiteHeader;
 use crate::pages::map::{painted_world, value_to_color};
+use leptos::prelude::*;
+use std::collections::HashMap;
 
 /// Orbital elements, not frozen angles: (code, semi-major axis in AU,
 /// mean longitude at J2000 in degrees, mean motion in degrees/day).
@@ -43,11 +43,24 @@ pub const ELEMENTS: &[(&str, f64, f64, f64)] = &[
 /// around it in orbital order (their true offsets are sub-pixel here).
 pub const MOONS: &[(&str, &str)] = &[
     ("LUNA", "ERTH"),
-    ("PHOB", "MARS"), ("DEIM", "MARS"),
-    ("IO", "JUPI"), ("EUPA", "JUPI"), ("GANY", "JUPI"), ("CALL", "JUPI"),
-    ("MIMA", "SATN"), ("ENCE", "SATN"), ("TETH", "SATN"), ("DION", "SATN"),
-    ("RHEA", "SATN"), ("TITN", "SATN"), ("IAPE", "SATN"),
-    ("MIRA", "URAN"), ("ARIE", "URAN"), ("UMBR", "URAN"), ("TNIA", "URAN"), ("OBER", "URAN"),
+    ("PHOB", "MARS"),
+    ("DEIM", "MARS"),
+    ("IO", "JUPI"),
+    ("EUPA", "JUPI"),
+    ("GANY", "JUPI"),
+    ("CALL", "JUPI"),
+    ("MIMA", "SATN"),
+    ("ENCE", "SATN"),
+    ("TETH", "SATN"),
+    ("DION", "SATN"),
+    ("RHEA", "SATN"),
+    ("TITN", "SATN"),
+    ("IAPE", "SATN"),
+    ("MIRA", "URAN"),
+    ("ARIE", "URAN"),
+    ("UMBR", "URAN"),
+    ("TNIA", "URAN"),
+    ("OBER", "URAN"),
     ("TRIT", "NEPT"),
     ("CHAR", "PLUT"),
 ];
@@ -81,28 +94,39 @@ pub fn polar(a: f64, deg: f64) -> (f64, f64) {
 
 /// Dot radius in viewBox units from the body's surface (log of radius).
 pub fn dot_r(area_km2: u64) -> f64 {
-    let r_km = ((area_km2 as f64) / (4.0 * std::f64::consts::PI)).sqrt().max(1.0);
+    let r_km = ((area_km2 as f64) / (4.0 * std::f64::consts::PI))
+        .sqrt()
+        .max(1.0);
     (4.0 + 5.2 * (r_km / 50.0).log10()).clamp(2.6, 30.0)
 }
 
 /// Rank-percentile colors with ties sharing one color (42 zero-capital
-/// bodies must not fake a gradient).
+/// bodies must not fake a gradient). Two spectra: planets among planets,
+/// everything else among itself — same idea as the home map.
 fn colors_for(bodies: &[Country], field: SortField) -> HashMap<String, String> {
-    let mut vals: Vec<f64> = bodies.iter().map(|c| c.metric(field)).collect();
-    vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    let n = vals.len().max(2);
-    let first_idx = |v: f64| vals.iter().position(|&x| x == v).unwrap_or(0);
-    bodies
-        .iter()
-        .map(|c| {
+    let mut out = HashMap::new();
+    for is_planet in [true, false] {
+        let band: Vec<&Country> = bodies
+            .iter()
+            .filter(|c| matches!(c.class(), ListingClass::Planet) == is_planet)
+            .collect();
+        if band.is_empty() {
+            continue;
+        }
+        let mut vals: Vec<f64> = band.iter().map(|c| c.metric(field)).collect();
+        vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        let n = vals.len().max(2);
+        let first_idx = |v: f64| vals.iter().position(|&x| x == v).unwrap_or(0);
+        for c in band {
             let v = c.metric(field);
             let mut t = first_idx(v) as f64 / (n - 1) as f64;
             if field.lower_is_better() {
                 t = 1.0 - t;
             }
-            (c.code.clone(), value_to_color(0.02 + 0.98 * t, 1.0))
-        })
-        .collect()
+            out.insert(c.code.clone(), value_to_color(0.02 + 0.98 * t, 1.0));
+        }
+    }
+    out
 }
 
 /// Rank-percentile values for the world map pane (terrestrial states,
@@ -126,10 +150,16 @@ fn world_values(field: SortField) -> HashMap<String, f64> {
     let mut values = HashMap::new();
     for (i, (code, v)) in ranked.into_iter().enumerate() {
         let t = if log_scale {
-            if vmax > vmin { ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0) } else { 1.0 }
+            if vmax > vmin {
+                ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+            } else {
+                1.0
+            }
         } else if n > 1 {
             i as f64 / (n - 1) as f64
-        } else { 1.0 };
+        } else {
+            1.0
+        };
         let t = if field.lower_is_better() { 1.0 - t } else { t };
         values.insert(code, 0.02 + 0.98 * t);
     }
@@ -154,12 +184,19 @@ pub fn placed_bodies(by_code: &HashMap<String, Country>) -> Vec<(Country, f64, f
     }
     for &(moon, host) in MOONS {
         let Some(c) = by_code.get(moon) else { continue };
-        let Some(&(hx, hy)) = host_pos.get(host) else { continue };
+        let Some(&(hx, hy)) = host_pos.get(host) else {
+            continue;
+        };
         let idx = cluster_seen.entry(host).or_insert(0);
         let th = (90.0 - 62.0 * (*idx as f64)).to_radians();
         let orbit = 17.0 + 3.0 * (*idx as f64);
         *idx += 1;
-        placed.push((c.clone(), hx + orbit * th.cos(), hy - orbit * th.sin(), dot_r(c.land_area_km2)));
+        placed.push((
+            c.clone(),
+            hx + orbit * th.cos(),
+            hy - orbit * th.sin(),
+            dot_r(c.land_area_km2),
+        ));
     }
     placed
 }
@@ -203,7 +240,11 @@ pub fn SolarMapPage() -> impl IntoView {
     let table_rows = move || {
         let f = field.get();
         let mut v = bodies_for_table.clone();
-        v.sort_by(|a, b| b.metric(f).partial_cmp(&a.metric(f)).unwrap_or(std::cmp::Ordering::Equal));
+        v.sort_by(|a, b| {
+            b.metric(f)
+                .partial_cmp(&a.metric(f))
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
         v
     };
 
@@ -211,7 +252,12 @@ pub fn SolarMapPage() -> impl IntoView {
     let stars: Vec<(f64, f64, f64, f64)> = (0..170)
         .map(|i| {
             let f = |k: f64| (i as f64 * k).fract();
-            (f(0.7548776662) * 1000.0, f(0.5698402909) * 940.0, 0.4 + f(0.318) * 1.0, 0.05 + f(0.61) * 0.22)
+            (
+                f(0.7548776662) * 1000.0,
+                f(0.5698402909) * 940.0,
+                0.4 + f(0.318) * 1.0,
+                0.05 + f(0.61) * 0.22,
+            )
         })
         .collect();
 

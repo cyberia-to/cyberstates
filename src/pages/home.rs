@@ -64,9 +64,9 @@ fn parse_path(path: &str) -> (String, SortField) {
     (region, field)
 }
 
-/// Percentile-painted map values for a landing: rank coloring, log
-/// min-max where polygon size already encodes the axis, inverted where
-/// lower is better. Shared by the pre-painted mount and the live patch.
+/// Two color spectra: planets scale among planets; continents+countries
+/// among themselves. Same ramp, independent domains — works for every
+/// rating (territory log no longer crushed by the Sun).
 fn map_values(
     countries: &[Country],
     region: &str,
@@ -76,7 +76,7 @@ fn map_values(
     cut: Option<f64>,
     classes: (bool, bool, bool),
 ) -> std::collections::HashMap<String, f64> {
-    let mut ranked: Vec<(String, f64)> = countries
+    let mut items: Vec<(String, f64, bool)> = countries
         .iter()
         .filter(|c| {
             (match c.class() {
@@ -91,61 +91,66 @@ fn map_values(
                     || c.currency_code.to_lowercase().contains(query))
                 && filters.iter().all(|f| passes(c, f))
         })
-        .map(|c| (c.code.clone(), c.metric(field)))
+        .map(|c| {
+            (
+                c.code.clone(),
+                c.metric(field),
+                matches!(c.class(), ListingClass::Planet),
+            )
+        })
         .collect();
 
-    // Territory: Sun + gas giants dwarf every terrestrial body on a log
-    // scale. Drop them from the domain and pin full green so the Earth
-    // map keeps dynamic range. Codes match states/*.toml.
-    const TERRITORY_PIN_GREEN: &[&str] = &["SUN", "JUPI", "SATN", "URAN", "NEPT"];
-    let pin_green: Vec<String> = if field == SortField::Territory {
-        ranked
-            .iter()
-            .filter(|(code, _)| TERRITORY_PIN_GREEN.contains(&code.as_str()))
-            .map(|(code, _)| code.clone())
-            .collect()
-    } else {
-        Vec::new()
-    };
-    if !pin_green.is_empty() {
-        ranked.retain(|(code, _)| !TERRITORY_PIN_GREEN.contains(&code.as_str()));
-    }
+    // Global rank for the goodness cut (table-aligned), then paint each band alone.
+    items.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+    let n_all = items.len();
+    let pass_cut: std::collections::HashSet<String> = items
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| match cut {
+            Some(g) => goodness_keep(n_all - 1 - i, n_all, field.lower_is_better(), g),
+            None => true,
+        })
+        .map(|(_, (code, _, _))| code.clone())
+        .collect();
 
-    ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
-    let n = ranked.len();
     let log_scale = matches!(field, SortField::Population | SortField::Territory);
-    let (vmin, vmax) = if log_scale && n > 0 {
-        let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
-        let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
-        (p10, top)
-    } else {
-        (0.0, 1.0)
-    };
     let mut values = std::collections::HashMap::new();
-    for (i, (code, v)) in ranked.into_iter().enumerate() {
-        let t = if log_scale {
-            if vmax > vmin {
-                ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-            } else {
-                1.0
-            }
-        } else if n > 1 {
-            i as f64 / (n - 1) as f64
+    for is_planet in [true, false] {
+        let mut band: Vec<(String, f64)> = items
+            .iter()
+            .filter(|(_, _, p)| *p == is_planet)
+            .map(|(c, v, _)| (c.clone(), *v))
+            .collect();
+        band.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+        let n = band.len();
+        if n == 0 {
+            continue;
+        }
+        let (vmin, vmax) = if log_scale {
+            let p10 = band[(n as f64 * 0.10) as usize].1.max(1.0).ln();
+            let top = band.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+            (p10, top)
         } else {
-            1.0
+            (0.0, 1.0)
         };
-        let t = if field.lower_is_better() { 1.0 - t } else { t };
-        // ranked ascending: flip the index so goodness_keep sees the
-        // same descending order the table uses
-        if let Some(g) = cut {
-            if !goodness_keep(n - 1 - i, n, field.lower_is_better(), g) {
+        for (i, (code, v)) in band.into_iter().enumerate() {
+            if !pass_cut.contains(&code) {
                 continue;
             }
+            let t = if log_scale {
+                if vmax > vmin {
+                    ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+                } else {
+                    1.0
+                }
+            } else if n > 1 {
+                i as f64 / (n - 1) as f64
+            } else {
+                1.0
+            };
+            let t = if field.lower_is_better() { 1.0 - t } else { t };
+            values.insert(code, 0.02 + 0.98 * t);
         }
-        values.insert(code, 0.02 + 0.98 * t);
-    }
-    for code in pin_green {
-        values.insert(code, 1.0);
     }
     values
 }
