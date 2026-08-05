@@ -544,7 +544,7 @@ body {
 .map-pane .world-map-container svg {
     display: block;
     margin-left: auto;
-    aspect-ratio: 759 / 583;
+    aspect-ratio: 875 / 583;
     /* grow from the LEFT edge (at the table): continents get big, the
        empty gap + Antarctica sweep toward the right edge and disk bay */
     width: calc(100vw - 542px);
