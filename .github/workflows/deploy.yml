@@ -49,8 +49,9 @@ jobs:
           install -m 600 /dev/null /tmp/deploy_key
           printf '%s\n' "$SSH_KEY" > /tmp/deploy_key
           mkdir -p ~/.ssh
-          # the server key is scoped by a forced `command=rrsync` in its
-          # authorized_keys — this identity can only write dist/ into the
-          # cyberstates webroot, nothing else
+          # the server key is scoped by a forced `command=rrsync ...DIR` in
+          # its authorized_keys — rrsync prepends that DIR to whatever path
+          # the client gives it, so the destination here must be "/" (or
+          # empty), NOT the real absolute path, or the two concatenate
           rsync -az --delete -e "ssh -i /tmp/deploy_key -p 8333 -o StrictHostKeyChecking=accept-new" \
-            dist/ cyber@167.235.28.94:/var/www/html/cyberstates/
+            dist/ cyber@167.235.28.94:/
