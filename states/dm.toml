@@ -9,7 +9,9 @@ land_area_km2 = 751
 currency_code = "XCD"
 currency_name = "East Caribbean Dollar"
 money_supply_b_usd = 0.585
+money_supply_b_usd_prev = 0.585
 token_price_usd = 0.370370
+token_price_usd_prev = 0.370370
 visa_free_destinations = 145
 visa_free_inbound = 145
 

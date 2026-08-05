@@ -9,7 +9,9 @@ land_area_km2 = 17098242
 currency_code = "RUB"
 currency_name = "Russian Ruble"
 money_supply_b_usd = 929
+money_supply_b_usd_prev = 929
 token_price_usd = 0.012340
+token_price_usd_prev = 0.012340
 visa_free_destinations = 118
 visa_free_inbound = 70
 

@@ -9,7 +9,9 @@ land_area_km2 = 430
 currency_code = "BBD"
 currency_name = "Barbadian Dollar"
 money_supply_b_usd = 7.0
+money_supply_b_usd_prev = 7.0
 token_price_usd = 0.500000
+token_price_usd_prev = 0.500000
 visa_free_destinations = 144
 visa_free_inbound = 128
 

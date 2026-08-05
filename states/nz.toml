@@ -9,7 +9,9 @@ land_area_km2 = 270467
 currency_code = "NZD"
 currency_name = "New Zealand Dollar"
 money_supply_b_usd = 263
+money_supply_b_usd_prev = 263
 token_price_usd = 0.587717
+token_price_usd_prev = 0.587717
 visa_free_destinations = 189
 visa_free_inbound = 60
 

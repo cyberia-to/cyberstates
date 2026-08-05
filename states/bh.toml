@@ -9,7 +9,9 @@ land_area_km2 = 778
 currency_code = "BHD"
 currency_name = "Bahraini Dinar"
 money_supply_b_usd = 35.1
+money_supply_b_usd_prev = 35.1
 token_price_usd = 2.659574
+token_price_usd_prev = 2.659574
 visa_free_destinations = 97
 visa_free_inbound = 82
 

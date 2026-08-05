@@ -9,7 +9,9 @@ land_area_km2 = 459
 currency_code = "USD"
 currency_name = "American Dollar"
 money_supply_b_usd = 0.200
+money_supply_b_usd_prev = 0.200
 token_price_usd = 1.000000
+token_price_usd_prev = 1.000000
 visa_free_destinations = 128
 visa_free_inbound = 194
 

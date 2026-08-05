@@ -9,7 +9,9 @@ land_area_km2 = 22966
 currency_code = "BZD"
 currency_name = "Belize Dollar"
 money_supply_b_usd = 2.6
+money_supply_b_usd_prev = 2.6
 token_price_usd = 0.500000
+token_price_usd_prev = 0.500000
 visa_free_destinations = 107
 visa_free_inbound = 120
 

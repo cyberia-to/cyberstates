@@ -9,7 +9,9 @@ land_area_km2 = 118484
 currency_code = "MWK"
 currency_name = "Malawian Kwacha"
 money_supply_b_usd = 3.1
+money_supply_b_usd_prev = 3.1
 token_price_usd = 0.000573
+token_price_usd_prev = 0.000573
 visa_free_destinations = 63
 visa_free_inbound = 172
 

@@ -9,7 +9,9 @@ land_area_km2 = 1221037
 currency_code = "ZAR"
 currency_name = "South African Rand"
 money_supply_b_usd = 358
+money_supply_b_usd_prev = 358
 token_price_usd = 0.060982
+token_price_usd_prev = 0.060982
 visa_free_destinations = 106
 visa_free_inbound = 72
 

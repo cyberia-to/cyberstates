@@ -9,7 +9,9 @@ land_area_km2 = 180
 currency_code = "AWG"
 currency_name = "Aruban Florin"
 money_supply_b_usd = 3.1
+money_supply_b_usd_prev = 3.1
 token_price_usd = 0.558659
+token_price_usd_prev = 0.558659
 visa_free_destinations = 0
 visa_free_inbound = 0
 

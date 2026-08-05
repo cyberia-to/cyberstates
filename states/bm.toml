@@ -9,7 +9,9 @@ land_area_km2 = 54
 currency_code = "BMD"
 currency_name = "Bermudian Dollar"
 money_supply_b_usd = 3.5
+money_supply_b_usd_prev = 3.5
 token_price_usd = 1.000000
+token_price_usd_prev = 1.000000
 visa_free_destinations = 0
 visa_free_inbound = 0
 

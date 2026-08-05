@@ -9,7 +9,9 @@ land_area_km2 = 108889
 currency_code = "GTQ"
 currency_name = "Guatemalan Quetzal"
 money_supply_b_usd = 75.0
+money_supply_b_usd_prev = 75.0
 token_price_usd = 0.131101
+token_price_usd_prev = 0.131101
 visa_free_destinations = 140
 visa_free_inbound = 138
 

@@ -9,7 +9,9 @@ land_area_km2 = 23200
 currency_code = "DJF"
 currency_name = "Djiboutian Franc"
 money_supply_b_usd = 3.0
+money_supply_b_usd_prev = 3.0
 token_price_usd = 0.005627
+token_price_usd_prev = 0.005627
 visa_free_destinations = 54
 visa_free_inbound = 180
 
