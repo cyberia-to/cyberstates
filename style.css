@@ -1154,9 +1154,14 @@ body {
 }
 
 .class-toggle {
-    font-size: 16px;
+    /* same box height as .region-pill rating buttons in this row */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
     line-height: 1;
-    padding: 4px 8px;
+    padding: 6px 9px;
+    box-sizing: border-box;
     background: transparent;
     border: 1px solid #222;
     border-radius: 2px;
@@ -1292,7 +1297,7 @@ body {
     .legend-bar { width: 150px; }
     .legend-zone { gap: 7px; }
     .class-filter { gap: 4px; }
-    .class-toggle { padding: 3px 6px; font-size: 14px; }
+    .class-toggle { padding: 6px 9px; font-size: 14px; }
     .class-filter + .legend-zone { margin-left: 8px; }
     .by-label { margin-right: 2px; }
 }
