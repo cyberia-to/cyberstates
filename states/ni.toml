@@ -9,7 +9,7 @@ land_area_km2 = 130373
 currency_code = "NIO"
 currency_name = "Nicaraguan Cordoba"
 money_supply_b_usd = 6.0
-token_price_usd = 0.027186
+token_price_usd = 0.027171
 visa_free_destinations = 125
 visa_free_inbound = 148
 

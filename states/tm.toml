@@ -9,7 +9,7 @@ land_area_km2 = 488100
 currency_code = "TMT"
 currency_name = "Turkmenistani Manat"
 money_supply_b_usd = 10.0
-token_price_usd = 0.285679
+token_price_usd = 0.285714
 visa_free_destinations = 62
 visa_free_inbound = 12
 

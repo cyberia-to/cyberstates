@@ -8,8 +8,8 @@ population = 2150842
 land_area_km2 = 36125
 currency_code = "XOF"
 currency_name = "West African Franc"
-money_supply_b_usd = 0.961
-token_price_usd = 0.001755
+money_supply_b_usd = 0.962
+token_price_usd = 0.001757
 visa_free_destinations = 53
 visa_free_inbound = 185
 

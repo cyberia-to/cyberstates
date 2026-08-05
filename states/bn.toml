@@ -9,7 +9,7 @@ land_area_km2 = 5765
 currency_code = "BND"
 currency_name = "Brunei Dollar"
 money_supply_b_usd = 13.7
-token_price_usd = 0.779460
+token_price_usd = 0.779970
 visa_free_destinations = 166
 visa_free_inbound = 100
 

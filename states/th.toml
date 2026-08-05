@@ -8,8 +8,8 @@ population = 71801279
 land_area_km2 = 513120
 currency_code = "THB"
 currency_name = "Thai Baht"
-money_supply_b_usd = 788
-token_price_usd = 0.029900
+money_supply_b_usd = 791
+token_price_usd = 0.030035
 visa_free_destinations = 84
 visa_free_inbound = 130
 

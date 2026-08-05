@@ -8,8 +8,8 @@ population = 6687717
 land_area_km2 = 110879
 currency_code = "BGN"
 currency_name = "Bulgarian Lev"
-money_supply_b_usd = 50.6
-token_price_usd = 0.588574
+money_supply_b_usd = 50.7
+token_price_usd = 0.589275
 visa_free_destinations = 175
 visa_free_inbound = 88
 

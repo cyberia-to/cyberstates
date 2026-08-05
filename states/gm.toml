@@ -9,7 +9,7 @@ land_area_km2 = 11300
 currency_code = "GMD"
 currency_name = "Gambian Dalasi"
 money_supply_b_usd = 1.0
-token_price_usd = 0.013429
+token_price_usd = 0.013430
 visa_free_destinations = 59
 visa_free_inbound = 158
 

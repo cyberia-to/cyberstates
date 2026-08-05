@@ -9,7 +9,7 @@ land_area_km2 = 33
 currency_code = "MOP"
 currency_name = "Macanese Pataca"
 money_supply_b_usd = 104
-token_price_usd = 0.123798
+token_price_usd = 0.123787
 visa_free_destinations = 0
 visa_free_inbound = 0
 

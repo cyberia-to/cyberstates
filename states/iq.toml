@@ -9,7 +9,7 @@ land_area_km2 = 438317
 currency_code = "IQD"
 currency_name = "Iraqi Dinar"
 money_supply_b_usd = 133
-token_price_usd = 0.000763
+token_price_usd = 0.000762
 visa_free_destinations = 36
 visa_free_inbound = 30
 

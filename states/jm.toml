@@ -9,7 +9,7 @@ land_area_km2 = 10991
 currency_code = "JMD"
 currency_name = "Jamaican Dollar"
 money_supply_b_usd = 15.0
-token_price_usd = 0.006321
+token_price_usd = 0.006310
 visa_free_destinations = 100
 visa_free_inbound = 128
 

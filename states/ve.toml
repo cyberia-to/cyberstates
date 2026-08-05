@@ -9,7 +9,7 @@ land_area_km2 = 912050
 currency_code = "VES"
 currency_name = "Venezuelan Bolivar"
 money_supply_b_usd = 5.0
-token_price_usd = 0.001335
+token_price_usd = 0.001324
 visa_free_destinations = 127
 visa_free_inbound = 60
 

@@ -9,7 +9,7 @@ land_area_km2 = 214969
 currency_code = "GYD"
 currency_name = "Guyanese Dollar"
 money_supply_b_usd = 7.8
-token_price_usd = 0.004779
+token_price_usd = 0.004775
 visa_free_destinations = 93
 visa_free_inbound = 125
 

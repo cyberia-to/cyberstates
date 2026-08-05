@@ -9,7 +9,7 @@ land_area_km2 = 86600
 currency_code = "AZN"
 currency_name = "Azerbaijani Manat"
 money_supply_b_usd = 29.3
-token_price_usd = 0.588266
+token_price_usd = 0.588408
 visa_free_destinations = 74
 visa_free_inbound = 65
 

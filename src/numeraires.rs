@@ -1,11 +1,12 @@
 //! Alternative numeraires: the table can denominate state caps and token
 //! prices in USD, bitcoin, ether, or gold. Rates are baked at data-refresh
-//! time by update_market_data.py (gold via PAXG = 1 troy oz).
+//! time by `cargo run --bin update-market-data --features tools`
+//! (gold via PAXG = 1 troy oz).
 
-pub const CNY_USD: f64 = 0.147822; // USD per 1 CNY
-pub const BTC_USD: f64 = 63030.0;
-pub const ETH_USD: f64 = 1866.81;
-pub const XAU_USD: f64 = 4043.92; // per troy oz
+pub const CNY_USD: f64 = 0.147866; // USD per 1 CNY
+pub const BTC_USD: f64 = 64664.0;
+pub const ETH_USD: f64 = 1917.24;
+pub const XAU_USD: f64 = 4244.97; // per troy oz
 
 pub const GRAMS_PER_OZ: f64 = 31.1034768;
 
@@ -78,17 +79,27 @@ impl Numeraire {
 
 /// Scale a positive number into (value, suffix) with k/M/B/T steps.
 fn scaled(v: f64) -> (f64, &'static str) {
-    if v >= 1e12 { (v / 1e12, "T") }
-    else if v >= 1e9 { (v / 1e9, "B") }
-    else if v >= 1e6 { (v / 1e6, "M") }
-    else if v >= 1e3 { (v / 1e3, "k") }
-    else { (v, "") }
+    if v >= 1e12 {
+        (v / 1e12, "T")
+    } else if v >= 1e9 {
+        (v / 1e9, "B")
+    } else if v >= 1e6 {
+        (v / 1e6, "M")
+    } else if v >= 1e3 {
+        (v / 1e3, "k")
+    } else {
+        (v, "")
+    }
 }
 
 fn sig(v: f64) -> String {
-    if v >= 100.0 { format!("{:.0}", v) }
-    else if v >= 10.0 { format!("{:.1}", v) }
-    else { format!("{:.2}", v) }
+    if v >= 100.0 {
+        format!("{:.0}", v)
+    } else if v >= 10.0 {
+        format!("{:.1}", v)
+    } else {
+        format!("{:.2}", v)
+    }
 }
 
 /// Format a state/token cap given in billions of USD under a numeraire.
@@ -129,11 +140,26 @@ pub fn fmt_value(usd: f64, n: Numeraire) -> String {
         return "—".to_string();
     }
     match n {
-        Numeraire::Usd => { let (v, s) = scaled(usd); format!("${}{}", sig(v), s) }
-        Numeraire::Cny => { let (v, s) = scaled(usd / CNY_USD); format!("¥{}{}", sig(v), s) }
-        Numeraire::Btc => { let (v, s) = scaled(usd / BTC_USD); format!("₿{}{}", sig(v), s) }
-        Numeraire::Eth => { let (v, s) = scaled(usd / ETH_USD); format!("Ξ{}{}", sig(v), s) }
-        Numeraire::Gold => { let (v, s) = scaled(usd / XAU_USD); format!("{}{} oz", sig(v), s) }
+        Numeraire::Usd => {
+            let (v, s) = scaled(usd);
+            format!("${}{}", sig(v), s)
+        }
+        Numeraire::Cny => {
+            let (v, s) = scaled(usd / CNY_USD);
+            format!("¥{}{}", sig(v), s)
+        }
+        Numeraire::Btc => {
+            let (v, s) = scaled(usd / BTC_USD);
+            format!("₿{}{}", sig(v), s)
+        }
+        Numeraire::Eth => {
+            let (v, s) = scaled(usd / ETH_USD);
+            format!("Ξ{}{}", sig(v), s)
+        }
+        Numeraire::Gold => {
+            let (v, s) = scaled(usd / XAU_USD);
+            format!("{}{} oz", sig(v), s)
+        }
     }
 }
 
@@ -178,7 +204,6 @@ pub fn price_parts(usd: f64, n: Numeraire) -> (String, String, String) {
         }
     }
 }
-
 
 /// The chosen measure survives reloads: read at boot, written on change.
 pub fn load_numeraire() -> Numeraire {

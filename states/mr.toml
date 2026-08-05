@@ -8,8 +8,8 @@ population = 4862989
 land_area_km2 = 1030700
 currency_code = "MRU"
 currency_name = "Mauritanian Ouguiya"
-money_supply_b_usd = 2.1
-token_price_usd = 0.024908
+money_supply_b_usd = 2.0
+token_price_usd = 0.024864
 visa_free_destinations = 56
 visa_free_inbound = 145
 

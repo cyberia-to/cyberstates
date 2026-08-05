@@ -8,8 +8,8 @@ population = 54179306
 land_area_km2 = 676578
 currency_code = "MMK"
 currency_name = "Myanmar Kyat"
-money_supply_b_usd = 35.5
-token_price_usd = 0.000475
+money_supply_b_usd = 35.6
+token_price_usd = 0.000476
 visa_free_destinations = 48
 visa_free_inbound = 150
 

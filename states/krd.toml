@@ -8,8 +8,8 @@ population = 6000000
 land_area_km2 = 40643
 currency_code = "IQD"
 currency_name = "Iraqi Dinar"
-money_supply_b_usd = 30.1
-token_price_usd = 0.000763
+money_supply_b_usd = 30.0
+token_price_usd = 0.000762
 visa_free_destinations = 0
 visa_free_inbound = 0
 

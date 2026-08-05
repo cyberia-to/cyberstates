@@ -8,8 +8,8 @@ population = 37840044
 land_area_km2 = 446550
 currency_code = "MAD"
 currency_name = "Moroccan Dirham"
-money_supply_b_usd = 221
-token_price_usd = 0.106837
+money_supply_b_usd = 222
+token_price_usd = 0.107316
 visa_free_destinations = 72
 visa_free_inbound = 95
 
