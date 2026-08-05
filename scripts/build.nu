@@ -21,6 +21,11 @@ def main [] {
   print "→ seo surface → dist/"
   ^nu $"($root)/scripts/seo.nu" --out dist
 
+  print "→ prerender entity HTML → dist/"
+  with-env { PATH: $path } {
+    ^cargo run --release --features prerender --bin prerender -- dist
+  }
+
   print ""
   print "dist/ ready. deploy:"
   print "  rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/"

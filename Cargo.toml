@@ -40,6 +40,11 @@ name = "import-visa-json"
 path = "src/bin/import_visa_json.rs"
 required-features = ["tools"]
 
+[[bin]]
+name = "prerender"
+path = "src/bin/prerender.rs"
+required-features = ["prerender"]
+
 [dependencies.reqwest]
 version = "0.12"
 features = ["blocking"]
@@ -53,6 +58,7 @@ optional = true
 default = []
 tools = ["reqwest"]
 scraper = ["headless_chrome"]
+prerender = []
 
 [profile.release]
 opt-level = "z"

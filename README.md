@@ -19,8 +19,11 @@ nu scripts/build.nu
 rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
 ```
 
-`build.nu` runs `trunk build --release` then `scripts/seo.nu`, which
-writes `robots.txt` and the sitemap index into `dist/`:
+`build.nu` runs:
+
+1. `trunk build --release` (WASM app)
+2. `scripts/seo.nu` → robots + sitemaps
+3. `cargo run --features prerender --bin prerender` → crawlable HTML
 
 | file | content |
 |------|---------|
@@ -29,10 +32,18 @@ writes `robots.txt` and the sitemap index into `dist/`:
 | `sitemap-core.xml` | landings, regional rankings |
 | `sitemap-states.xml` | `/state/{slug}` × all listings (name slugs) |
 | `sitemap-tokens.xml` | `/token/{ticker}` |
-| `sitemap-corridors-*.xml` | `/from/{slug}/to/{slug}` long-tail (terrestrial pairs) |
+| `sitemap-corridors-*.xml` | `/from/{slug}/to/{slug}` long-tail |
+| `state/{slug}/index.html` | prerendered state pages |
+| `token/{ticker}/index.html` | prerendered token pages |
+| `from/{a}/to/{b}/index.html` | prerendered corridors (~53k) |
 
-nginx must serve these as static files — not the SPA shell. Prefer
-`try_files $uri $uri/ /index.html` so real files win.
+nginx (required for directory index):
+
+```
+try_files $uri $uri/ /index.html;
+```
+
+Static entity HTML must win over the SPA fallback.
 
 ## SEO surface
 
