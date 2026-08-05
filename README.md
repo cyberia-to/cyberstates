@@ -3,7 +3,7 @@
 Global visa openness analytics — https://cyberstates.net
 
 229 states ranked by FREEDOM (√(eco_out × pop_out)) and OPENNESS
-(√(eco_in × pop_in)), with their 155 currency tokens. Leptos CSR + Trunk,
+(√(eco_in × pop_in)), with their currency tokens. Leptos CSR + Trunk,
 data baked at build time from `states/*.toml`.
 
 ## develop
@@ -15,15 +15,41 @@ PATH="$HOME/.cargo/bin:$PATH" trunk serve        # 127.0.0.1:8080
 ## deploy
 
 ```
-PATH="$HOME/.cargo/bin:$PATH" trunk build --release
+nu scripts/build.nu
 rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
 ```
+
+`build.nu` runs `trunk build --release` then `scripts/seo.nu`, which
+writes `robots.txt` and the sitemap index into `dist/`:
+
+| file | content |
+|------|---------|
+| `robots.txt` | Allow + Sitemap pointer |
+| `sitemap.xml` | index |
+| `sitemap-core.xml` | landings, regional rankings |
+| `sitemap-states.xml` | `/state/{code}` × all listings |
+| `sitemap-tokens.xml` | `/token/{code}` |
+| `sitemap-corridors-*.xml` | `/from/{a}/to/{b}` long-tail (terrestrial pairs) |
+
+nginx must serve these as static files — not the SPA shell. Prefer
+`try_files $uri $uri/ /index.html` so real files win.
+
+## SEO surface
+
+- **P0 (done):** crawl foundation — meta shell, robots, full sitemap
+  including bilateral corridors (~53k URLs).
+- **P1 (next):** prerender HTML bodies for states, tokens, corridors
+  so crawlers see text without WASM.
+- Corridor route: `/from/{from}/to/{to}` (lowercase ISO-style codes).
+  Pages land in P1; sitemap already lists every ordered pair among
+  230 terrestrial non-aggregate states (self-pairs omitted).
 
 ## layout
 
 - `src/pages/` — home (landings: `/in/:region/by/:field`), tokens, token, country, map
 - `states/*.toml` — one file per state: population, land, currency, visa matrix
 - `build.rs` — generates `load_countries()` from the toml set
+- `scripts/seo.nu` — robots + sitemaps from the toml set
 - `scrape_passport.py`, `add_token_prices.py` — data refresh scripts
 
 ## roadmap
