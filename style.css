@@ -551,7 +551,7 @@ body {
     height: auto;
     max-width: none;
     margin-top: -18px;
-    transform: scale(1.12);
+    transform: scale(1.5);
     transform-origin: left center;
 }
 
@@ -1348,9 +1348,9 @@ body {
        the same live sky as /solar, every dot a link */
     position: fixed;
     left: auto;
-    right: 30px;
-    bottom: 60px;
-    width: min(22vw, 350px);
+    right: 12px;
+    bottom: 34px;
+    width: min(21vw, 340px);
     aspect-ratio: 1 / 1;
     z-index: 6;
     pointer-events: none;
