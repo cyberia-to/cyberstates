@@ -4,8 +4,7 @@
 #   nu scripts/seo.nu              # writes to seo/
 #   nu scripts/seo.nu --out dist   # after trunk build --release
 #
-# URL surface is read from content: states/*.toml `slug` field.
-# Code does not invent slugs — edit the toml.
+# lastmod comes from state file mtimes (content freshness).
 
 const BASE = "https://cyberstates.net"
 const AGGREGATES = ["OCNA", "AFRI", "EURA", "AMER"]
@@ -74,6 +73,11 @@ def project_root [] {
   }
 }
 
+def file_lastmod [path: string] {
+  let m = (ls $path | get modified | first)
+  $m | format date "%Y-%m-%d"
+}
+
 def main [--out: string = "seo"] {
   let root = (project_root)
   let out_dir = if ($out | str starts-with "/") or ($out | str starts-with "~") {
@@ -83,23 +87,36 @@ def main [--out: string = "seo"] {
   }
   mkdir $out_dir
 
-  let lastmod = (date now | format date "%Y-%m-%d")
+  let today = (date now | format date "%Y-%m-%d")
   let state_files = (glob $"($root)/states/*.toml")
-  let states = ($state_files | each {|f| open $f })
+  let states = (
+    $state_files
+    | each {|f|
+        let r = open $f
+        let lm = (file_lastmod $f)
+        $r | insert lastmod $lm | insert file $f
+      }
+  )
 
-  # slug is required content — fail loud if missing
   for r in $states {
     if ($r.slug? | default "") == "" {
       error make {msg: $"state ($r.code) missing slug — set slug in states/*.toml"}
     }
   }
 
-  let slugs_all = ($states | get slug | sort)
-  let corridor_slugs = (
+  let global_lastmod = (
+    $states
+    | get lastmod
+    | sort
+    | last
+  )
+
+  let slugs_all = ($states | select slug lastmod | sort-by slug)
+  let corridor_rows = (
     $states
     | where {|r| ($r.code not-in $AGGREGATES) and ($r.region not-in $SKIP_REGIONS)}
-    | get slug
-    | sort
+    | select slug lastmod
+    | sort-by slug
   )
   let tokens = (
     $states
@@ -112,21 +129,21 @@ def main [--out: string = "seo"] {
   let regions = ($states | get region | uniq | sort)
 
   mut core = []
-  $core = ($core | append (url_entry "/" "1.0" "daily" $lastmod))
+  $core = ($core | append (url_entry "/" "1.0" "daily" $global_lastmod))
   for p in ["/tokens" "/doctrine" "/methodology" "/listing" "/solar" "/map"] {
-    $core = ($core | append (url_entry $p "0.7" "weekly" $lastmod))
+    $core = ($core | append (url_entry $p "0.7" "weekly" $global_lastmod))
   }
   for f in $FIELDS {
     if $f != "capital" {
-      $core = ($core | append (url_entry $"/by/($f)" "0.8" "daily" $lastmod))
+      $core = ($core | append (url_entry $"/by/($f)" "0.8" "daily" $global_lastmod))
     }
   }
   for r in $regions {
     let rs = (region_slug $r)
-    $core = ($core | append (url_entry $"/in/($rs)" "0.7" "daily" $lastmod))
+    $core = ($core | append (url_entry $"/in/($rs)" "0.7" "daily" $global_lastmod))
     for f in $FIELDS {
       if $f != "capital" {
-        $core = ($core | append (url_entry $"/in/($rs)/by/($f)" "0.6" "weekly" $lastmod))
+        $core = ($core | append (url_entry $"/in/($rs)/by/($f)" "0.6" "weekly" $global_lastmod))
       }
     }
   }
@@ -134,22 +151,26 @@ def main [--out: string = "seo"] {
 
   let state_urls = (
     $slugs_all
-    | each {|s| url_entry $"/state/($s)" "0.9" "weekly" $lastmod}
+    | each {|row| url_entry $"/state/($row.slug)" "0.9" "weekly" $row.lastmod}
   )
   write_urlset $"($out_dir)/sitemap-states.xml" $state_urls
 
   let token_urls = (
     $tokens
-    | each {|c| url_entry $"/token/($c)" "0.8" "weekly" $lastmod}
+    | each {|c| url_entry $"/token/($c)" "0.8" "weekly" $global_lastmod}
   )
   write_urlset $"($out_dir)/sitemap-tokens.xml" $token_urls
 
+  # corridors: lastmod = max(from,to) state file dates
   let corridor_entries = (
-    $corridor_slugs
+    $corridor_rows
     | each {|a|
-        $corridor_slugs
-        | where {|b| $b != $a}
-        | each {|b| url_entry $"/from/($a)/to/($b)" "0.5" "monthly" $lastmod}
+        $corridor_rows
+        | where {|b| $b.slug != $a.slug}
+        | each {|b|
+            let lm = if $a.lastmod > $b.lastmod { $a.lastmod } else { $b.lastmod }
+            url_entry $"/from/($a.slug)/to/($b.slug)" "0.5" "monthly" $lm
+          }
       }
     | flatten
   )
@@ -170,7 +191,7 @@ def main [--out: string = "seo"] {
         [
           "  <sitemap>"
           $"    <loc>($loc)</loc>"
-          $"    <lastmod>($lastmod)</lastmod>"
+          $"    <lastmod>($global_lastmod)</lastmod>"
           "  </sitemap>"
         ] | str join "\n"
       }
@@ -204,10 +225,10 @@ def main [--out: string = "seo"] {
 
   print ""
   print $"seo surface → ($out_dir)"
-  print $"  states:     ($slugs_all | length)"
+  print $"  states:     ($slugs_all | length)  lastmod max ($global_lastmod)"
   print $"  tokens:     ($tokens | length)"
   print $"  core urls:  ($core | length)"
-  print $"  corridors:  ($n_corridors)  \(($corridor_slugs | length) terrestrial x n-1)"
+  print $"  corridors:  ($n_corridors)"
   let total = (($core | length) + ($slugs_all | length) + ($tokens | length) + $n_corridors)
   print $"  total urls: ($total)"
 }

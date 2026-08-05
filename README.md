@@ -37,13 +37,26 @@ rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/
 | `token/{ticker}/index.html` | prerendered token pages |
 | `from/{a}/to/{b}/index.html` | prerendered corridors (~53k) |
 
-nginx (required for directory index):
+nginx: use `scripts/nginx-cyberstates.net.conf` (entity paths 404 when
+missing, no forced trailing slash, includes generated `nginx-redirects.conf`
+for `/state/{code}` → `/state/{slug}`, `/country/*` → `/state/*`,
+`/methodology` → `/doctrine`).
 
 ```
-try_files $uri $uri/ /index.html;
+rsync … && sudo cp scripts/nginx-cyberstates.net.conf /etc/nginx/sites-available/cyberstates.net
+sudo nginx -t && sudo systemctl reload nginx
+nu scripts/indexnow.nu   # optional Bing/Yandex ping
 ```
 
-Static entity HTML must win over the SPA fallback.
+### Search Console / IndexNow
+
+1. [Google Search Console](https://search.google.com/search-console) — add
+   `cyberstates.net`, DNS or HTML file verify, submit
+   `https://cyberstates.net/sitemap.xml`.
+2. IndexNow key is deployed as
+   `https://cyberstates.net/cyberstates-indexnow-8f3a2c1e9b7d4a60.txt`
+   — run `nu scripts/indexnow.nu` after major deploys.
+3. Default share image: `https://cyberstates.net/og.png`
 
 ## SEO surface
 

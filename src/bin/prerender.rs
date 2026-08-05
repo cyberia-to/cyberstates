@@ -56,8 +56,11 @@ struct State {
     rank_capital: usize,
     rank_pop: usize,
     rank_area: usize,
-    rank_freedom: usize,     // by visa_free_destinations
-    rank_hospitality: usize, // by visa_free_inbound
+    /// Full tri-kernel-style scores (√ eco×pop reach), same formula as the app.
+    freedom: f64,
+    openness: f64,
+    rank_freedom: usize,
+    rank_hospitality: usize,
 }
 
 #[derive(Clone)]
@@ -96,17 +99,13 @@ fn main() {
     raw.sort_by(|a, b| a.slug.cmp(&b.slug));
 
     let states = rank_states(raw);
-    let by_name: HashMap<String, usize> = states
-        .iter()
-        .enumerate()
-        .map(|(i, s)| (s.t.name.clone(), i))
-        .collect();
-    let by_slug: HashMap<String, usize> = states
-        .iter()
-        .enumerate()
-        .map(|(i, s)| (s.t.slug.clone(), i))
-        .collect();
     let tokens = aggregate_tokens(&states);
+
+    // static SEO assets
+    let _ = fs::copy("assets/og.png", dist.join("og.png"));
+    write_page(&dist.join("404.html"), &page_404(&head_assets));
+    write_code_redirects(&dist, &states);
+    write_indexnow_key(&dist);
 
     let mut n_pages = 0usize;
 
@@ -143,7 +142,7 @@ fn main() {
                 .join("to")
                 .join(&b.t.slug)
                 .join("index.html");
-            let html = page_corridor(a, b, &head_assets);
+            let html = page_corridor(a, b, &states, &head_assets);
             write_page(&path, &html);
             n_corr += 1;
         }
@@ -202,7 +201,12 @@ fn main() {
                 "Travel freedom",
                 &states,
                 |s| s.rank_freedom,
-                |s| format!("{} visa-free destinations", s.t.visa_free_destinations),
+                |s| {
+                    format!(
+                        "{:.1} freedom · {} visa-free destinations",
+                        s.freedom, s.t.visa_free_destinations
+                    )
+                },
             ),
             &head_assets,
         ),
@@ -218,7 +222,12 @@ fn main() {
                 "Hospitality",
                 &states,
                 |s| s.rank_hospitality,
-                |s| format!("{} visa-free inbound", s.t.visa_free_inbound),
+                |s| {
+                    format!(
+                        "{:.1} hospitality · {} visa-free inbound",
+                        s.openness, s.t.visa_free_inbound
+                    )
+                },
             ),
             &head_assets,
         ),
@@ -246,13 +255,95 @@ fn main() {
     let root_html = inject_body_into_shell(&shell, &root_body);
     fs::write(dist.join("index.html"), root_html).expect("write root index");
 
-    let _ = (&by_name, &by_slug); // reserved for future cross-links density
     eprintln!(
         "prerender: {} pages in {:.1}s → {}",
         n_pages,
         t0.elapsed().as_secs_f64(),
         dist.display()
     );
+}
+
+fn access_type_weight(t: &str) -> f64 {
+    match t {
+        "visa-free" => 1.0,
+        "visa-on-arrival" => 0.8,
+        "eta" | "e-visa" => 0.5,
+        "visa-required" => 0.1,
+        "no-admission" => 0.0,
+        _ => 0.0,
+    }
+}
+
+fn is_terrestrial(region: &str) -> bool {
+    !matches!(region, "Oceans" | "Terra Nullius" | "Solar System")
+}
+
+/// Same freedom/openness construction as src/data.rs index_cache.
+fn compute_indexes(raw: &[StateToml]) -> HashMap<String, (f64, f64)> {
+    let total_cap: f64 = raw
+        .iter()
+        .filter(|c| is_terrestrial(&c.region) && !AGGREGATES.contains(&c.code.as_str()))
+        .map(|c| c.money_supply_b_usd)
+        .sum();
+    let total_pop: f64 = raw
+        .iter()
+        .filter(|c| is_terrestrial(&c.region) && !AGGREGATES.contains(&c.code.as_str()))
+        .map(|c| c.population as f64)
+        .sum();
+
+    let by_name: HashMap<&str, &StateToml> = raw.iter().map(|c| (c.name.as_str(), c)).collect();
+    let by_code: HashMap<String, &StateToml> =
+        raw.iter().map(|c| (c.code.to_uppercase(), c)).collect();
+
+    let mut acc: HashMap<String, (f64, f64, f64, f64)> = HashMap::new();
+    for holder in raw {
+        for e in &holder.visa_access {
+            let w = access_type_weight(&e.access_type);
+            if let Some(dest) = by_name.get(e.country.as_str()) {
+                let out = acc.entry(holder.code.clone()).or_default();
+                out.0 += w * dest.money_supply_b_usd;
+                out.1 += w * dest.population as f64;
+                let inn = acc.entry(dest.code.clone()).or_default();
+                inn.2 += w * holder.money_supply_b_usd;
+                inn.3 += w * holder.population as f64;
+            }
+        }
+    }
+    // touch by_code so unused-warn free if empty matrix rows
+    let _ = by_code.len();
+
+    raw.iter()
+        .map(|c| {
+            let (eco_out, pop_out, eco_in, pop_in) = acc.get(&c.code).copied().unwrap_or_default();
+            let eco_out_pct = if total_cap > 0.0 {
+                eco_out / total_cap * 100.0
+            } else {
+                0.0
+            };
+            let eco_in_pct = if total_cap > 0.0 {
+                eco_in / total_cap * 100.0
+            } else {
+                0.0
+            };
+            let pop_out_pct = if total_pop > 0.0 {
+                pop_out / total_pop * 100.0
+            } else {
+                0.0
+            };
+            let pop_in_pct = if total_pop > 0.0 {
+                pop_in / total_pop * 100.0
+            } else {
+                0.0
+            };
+            (
+                c.code.clone(),
+                (
+                    (eco_out_pct * pop_out_pct).max(0.0).sqrt(),
+                    (eco_in_pct * pop_in_pct).max(0.0).sqrt(),
+                ),
+            )
+        })
+        .collect()
 }
 
 fn load_states(dir: &Path) -> Vec<StateToml> {
@@ -279,16 +370,21 @@ fn load_states(dir: &Path) -> Vec<StateToml> {
 }
 
 fn rank_states(raw: Vec<StateToml>) -> Vec<State> {
+    let indexes = compute_indexes(&raw);
     let n = raw.len();
-    let mut idx: Vec<usize> = (0..n).collect();
+    let scores: Vec<(f64, f64)> = raw
+        .iter()
+        .map(|t| indexes.get(&t.code).copied().unwrap_or((0.0, 0.0)))
+        .collect();
 
+    let mut idx: Vec<usize> = (0..n).collect();
     let mut rank_capital = vec![0; n];
     let mut rank_pop = vec![0; n];
     let mut rank_area = vec![0; n];
     let mut rank_freedom = vec![0; n];
     let mut rank_hospitality = vec![0; n];
 
-    let assign =
+    let assign_raw =
         |rank: &mut [usize], idx: &mut [usize], raw: &[StateToml], key: fn(&StateToml) -> f64| {
             idx.sort_by(|&a, &b| {
                 key(&raw[b])
@@ -299,16 +395,23 @@ fn rank_states(raw: Vec<StateToml>) -> Vec<State> {
                 rank[i] = r + 1;
             }
         };
+    let assign_score =
+        |rank: &mut [usize], idx: &mut [usize], scores: &[(f64, f64)], which: usize| {
+            idx.sort_by(|&a, &b| {
+                let sa = if which == 0 { scores[a].0 } else { scores[a].1 };
+                let sb = if which == 0 { scores[b].0 } else { scores[b].1 };
+                sb.partial_cmp(&sa).unwrap_or(std::cmp::Ordering::Equal)
+            });
+            for (r, &i) in idx.iter().enumerate() {
+                rank[i] = r + 1;
+            }
+        };
 
-    assign(&mut rank_capital, &mut idx, &raw, |s| s.money_supply_b_usd);
-    assign(&mut rank_pop, &mut idx, &raw, |s| s.population as f64);
-    assign(&mut rank_area, &mut idx, &raw, |s| s.land_area_km2 as f64);
-    assign(&mut rank_freedom, &mut idx, &raw, |s| {
-        s.visa_free_destinations as f64
-    });
-    assign(&mut rank_hospitality, &mut idx, &raw, |s| {
-        s.visa_free_inbound as f64
-    });
+    assign_raw(&mut rank_capital, &mut idx, &raw, |s| s.money_supply_b_usd);
+    assign_raw(&mut rank_pop, &mut idx, &raw, |s| s.population as f64);
+    assign_raw(&mut rank_area, &mut idx, &raw, |s| s.land_area_km2 as f64);
+    assign_score(&mut rank_freedom, &mut idx, &scores, 0);
+    assign_score(&mut rank_hospitality, &mut idx, &scores, 1);
 
     raw.into_iter()
         .enumerate()
@@ -317,10 +420,57 @@ fn rank_states(raw: Vec<StateToml>) -> Vec<State> {
             rank_capital: rank_capital[i],
             rank_pop: rank_pop[i],
             rank_area: rank_area[i],
+            freedom: scores[i].0,
+            openness: scores[i].1,
             rank_freedom: rank_freedom[i],
             rank_hospitality: rank_hospitality[i],
         })
         .collect()
+}
+
+fn write_code_redirects(dist: &Path, states: &[State]) {
+    let mut lines = vec![
+        "# generated by prerender — do not edit".to_string(),
+        "# include inside server { } for cyberstates.net".to_string(),
+    ];
+    for s in states {
+        let code = s.t.code.to_lowercase();
+        if code != s.t.slug {
+            lines.push(format!(
+                "location = /state/{code} {{ return 301 /state/{slug}; }}",
+                code = code,
+                slug = s.t.slug
+            ));
+            lines.push(format!(
+                "location = /state/{code}/ {{ return 301 /state/{slug}; }}",
+                code = code,
+                slug = s.t.slug
+            ));
+            lines.push(format!(
+                "location = /country/{code} {{ return 301 /state/{slug}; }}",
+                code = code,
+                slug = s.t.slug
+            ));
+        }
+        lines.push(format!(
+            "location = /country/{slug} {{ return 301 /state/{slug}; }}",
+            slug = s.t.slug
+        ));
+        lines.push(format!(
+            "location = /country/{slug}/ {{ return 301 /state/{slug}; }}",
+            slug = s.t.slug
+        ));
+    }
+    lines.push("location = /methodology { return 301 /doctrine; }".into());
+    lines.push("location = /methodology/ { return 301 /doctrine; }".into());
+    fs::write(dist.join("nginx-redirects.conf"), lines.join("\n") + "\n").unwrap();
+    eprintln!("  redirects:  nginx-redirects.conf");
+}
+
+fn write_indexnow_key(dist: &Path) {
+    let key = "cyberstates-indexnow-8f3a2c1e9b7d4a60";
+    fs::write(dist.join(format!("{key}.txt")), key).unwrap();
+    fs::write(dist.join("indexnow-key.txt"), format!("{key}\n")).unwrap();
 }
 
 fn is_corridor_eligible(s: &State) -> bool {
@@ -458,9 +608,13 @@ fn shell_page(
 <meta property="og:title" content="{title}" />
 <meta property="og:description" content="{desc}" />
 <meta property="og:locale" content="en_US" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="{base}/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="{title}" />
 <meta name="twitter:description" content="{desc}" />
+<meta name="twitter:image" content="{base}/og.png" />
 <meta name="theme-color" content="#000000" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 {assets}
@@ -482,9 +636,29 @@ fn shell_page(
         title = title_e,
         desc = desc_e,
         canon = canon_e,
+        base = BASE,
         assets = head_assets,
         ld = json_ld,
         body = body_inner,
+    )
+}
+
+fn page_404(assets: &str) -> String {
+    // Built without shell_page index robots — inject noindex via dedicated shell.
+    let body = r#"<nav class="nav"><a href="/">Cyberstates</a><a href="/tokens">Tokens</a><a href="/doctrine">Doctrine</a></nav>
+<h1>404 — not found</h1>
+<p>No state, token, or visa corridor at this URL. Start from the <a href="/">terminal</a>, <a href="/tokens">tokens</a>, or the <a href="/sitemap.xml">sitemap</a>.</p>"#;
+    let html = shell_page(
+        "404 — not found | Cyberstates",
+        "This path is not a listed cyberstate, token, or corridor.",
+        "/404",
+        r#"{"@context":"https://schema.org","@type":"WebPage","name":"404"}"#,
+        body,
+        assets,
+    );
+    html.replace(
+        "content=\"index, follow, max-image-preview:large, max-snippet:-1\"",
+        "content=\"noindex, follow\"",
     )
 }
 
@@ -502,20 +676,21 @@ fn page_simple(title: &str, desc: &str, path: &str, body: &str, assets: &str) ->
 fn page_state(s: &State, all: &[State], assets: &str) -> String {
     let path = format!("/state/{}", s.t.slug);
     let title = format!(
-        "{} — capital #{}, freedom #{} | Cyberstates",
-        s.t.name, s.rank_capital, s.rank_freedom
+        "{} — capital #{}, freedom {:.1} (#{}) | Cyberstates",
+        s.t.name, s.rank_capital, s.freedom, s.rank_freedom
     );
     let desc = format!(
-        "{} ({}): money stock ${:.0}B (rank #{}), population {}, land {} km². Token {}. Visa-free destinations: {}. Hospitality inbound: {}.",
+        "{} ({}): money stock ${:.0}B (rank #{}), freedom {:.1} (#{}, √eco×pop reach), hospitality {:.1} (#{}). Token {}. Population {}.",
         s.t.name,
         s.t.code,
         s.t.money_supply_b_usd,
         s.rank_capital,
-        s.t.population,
-        s.t.land_area_km2,
+        s.freedom,
+        s.rank_freedom,
+        s.openness,
+        s.rank_hospitality,
         s.t.currency_code,
-        s.t.visa_free_destinations,
-        s.t.visa_free_inbound
+        s.t.population
     );
     let ld = format!(
         r#"{{"@context":"https://schema.org","@type":"Place","name":"{}","identifier":"{}","url":"{}{}","additionalProperty":[{{"@type":"PropertyValue","name":"capital_b_usd","value":{}}},{{"@type":"PropertyValue","name":"population","value":{}}},{{"@type":"PropertyValue","name":"currency","value":"{}"}}]}}"#,
@@ -589,15 +764,15 @@ fn page_state(s: &State, all: &[State], assets: &str) -> String {
 <tr><th>Population</th><td>{pop} · rank #{rp}</td></tr>
 <tr><th>Territory</th><td>{area} km² · rank #{ra}</td></tr>
 <tr><th>Token price</th><td>{price}</td></tr>
-<tr><th>Travel freedom</th><td>{vf} visa-free destinations · rank #{rf}</td></tr>
-<tr><th>Hospitality</th><td>{vi} visa-free inbound · rank #{rh}</td></tr>
+<tr><th>Travel freedom</th><td>{fs:.1} (√ eco×pop reach) · rank #{rf} · {vf} visa-free destinations</td></tr>
+<tr><th>Hospitality</th><td>{os:.1} · rank #{rh} · {vi} visa-free inbound</td></tr>
 </table>
 <h2>Visa-free destinations</h2>
 <ul>{free}</ul>
 {more_free}
 <h2>Corridors from {name}</h2>
 <ul>{corr}</ul>
-<p class="muted"><a href="/from/{slug}/to/japan">Sample corridor builder</a> — full long-tail at /from/{slug}/to/…</p>
+<p class="muted">Every ordered pair is listed under /from/{slug}/to/…</p>
 "##,
         flag = s.t.flag,
         region = esc(&s.t.region),
@@ -617,6 +792,8 @@ fn page_state(s: &State, all: &[State], assets: &str) -> String {
         } else {
             "N/A".into()
         },
+        fs = s.freedom,
+        os = s.openness,
         vf = s.t.visa_free_destinations,
         rf = s.rank_freedom,
         vi = s.t.visa_free_inbound,
@@ -691,7 +868,7 @@ fn page_token(t: &TokenAgg, assets: &str) -> String {
     shell_page(&title, &desc, &path, &ld, &body, assets)
 }
 
-fn page_corridor(a: &State, b: &State, assets: &str) -> String {
+fn page_corridor(a: &State, b: &State, all: &[State], assets: &str) -> String {
     let path = format!("/from/{}/to/{}", a.t.slug, b.t.slug);
     let (out_t, out_d) = find_access(a, b);
     let (in_t, in_d) = find_access(b, a);
@@ -702,8 +879,8 @@ fn page_corridor(a: &State, b: &State, assets: &str) -> String {
         a.t.name, b.t.name, out_l
     );
     let desc = format!(
-        "Can {} passport holders enter {}? {}. Reverse: {}. Capital ranks #{} → #{}.",
-        a.t.name, b.t.name, out_l, in_l, a.rank_capital, b.rank_capital
+        "Can {} passport holders enter {}? {}. Reverse: {}. Freedom {:.1} → hospitality {:.1}. Capital #{} → #{}.",
+        a.t.name, b.t.name, out_l, in_l, a.freedom, b.openness, a.rank_capital, b.rank_capital
     );
     let ld = format!(
         r#"{{"@context":"https://schema.org","@type":"WebPage","name":"{}","url":"{}{}","about":["{}","{}"]}}"#,
@@ -714,18 +891,69 @@ fn page_corridor(a: &State, b: &State, assets: &str) -> String {
         jesc(&b.t.name)
     );
     let days = |d: Option<u32>| d.map(|x| format!(" · {x} days")).unwrap_or_default();
+
+    // Related: reverse, same-region peers from A, same-token peers from B
+    let mut related = Vec::new();
+    related.push(format!(
+        r#"<li><a href="/from/{}/to/{}">Reverse: {} → {}</a></li>"#,
+        b.t.slug,
+        a.t.slug,
+        esc(&b.t.name),
+        esc(&a.t.name)
+    ));
+    let mut region_peers: Vec<&State> = all
+        .iter()
+        .filter(|s| {
+            is_corridor_eligible(s)
+                && s.t.region == b.t.region
+                && s.t.slug != b.t.slug
+                && s.t.slug != a.t.slug
+        })
+        .collect();
+    region_peers.sort_by_key(|s| s.rank_capital);
+    for p in region_peers.iter().take(6) {
+        related.push(format!(
+            r#"<li><a href="/from/{}/to/{}">{} → {}</a> (same region as destination)</li>"#,
+            a.t.slug,
+            p.t.slug,
+            esc(&a.t.name),
+            esc(&p.t.name)
+        ));
+    }
+    let mut token_peers: Vec<&State> = all
+        .iter()
+        .filter(|s| {
+            is_corridor_eligible(s)
+                && s.t.currency_code == a.t.currency_code
+                && s.t.slug != a.t.slug
+        })
+        .collect();
+    token_peers.sort_by_key(|s| s.rank_capital);
+    for p in token_peers.iter().take(4) {
+        related.push(format!(
+            r#"<li><a href="/from/{}/to/{}">{} → {}</a> (same token {})</li>"#,
+            p.t.slug,
+            b.t.slug,
+            esc(&p.t.name),
+            esc(&b.t.name),
+            esc(&a.t.currency_code)
+        ));
+    }
+
     let body = format!(
-        r##"<nav class="nav"><a href="/">Cyberstates</a><a href="/state/{as}">{an}</a><a href="/state/{bs}">{bn}</a><a href="/from/{bs}/to/{as}">Flip</a></nav>
+        r##"<nav class="nav"><a href="/">Cyberstates</a><a href="/state/{as}">{an}</a><a href="/state/{bs}">{bn}</a><a href="/from/{bs}/to/{as}">Flip</a><a href="/token/{tok}">Token</a></nav>
 <p class="muted">Visa corridor</p>
 <h1>{af} {an} → {bf} {bn}</h1>
 <p>Outbound access for a <strong>{an}</strong> passport into <strong>{bn}</strong>: <strong>{out}</strong>{outd}.</p>
 <p>Reverse — <strong>{bn}</strong> into <strong>{an}</strong>: <strong>{inn}</strong>{ind}.</p>
 <h2>States</h2>
 <table>
-<tr><th>From</th><td><a href="/state/{as}">{an}</a> · capital #{ar} · freedom #{afr}</td></tr>
-<tr><th>To</th><td><a href="/state/{bs}">{bn}</a> · capital #{br} · hospitality #{bh}</td></tr>
+<tr><th>From</th><td><a href="/state/{as}">{an}</a> · capital #{ar} · freedom {afs:.1} (#{afr})</td></tr>
+<tr><th>To</th><td><a href="/state/{bs}">{bn}</a> · capital #{br} · hospitality {bos:.1} (#{bh})</td></tr>
 </table>
-<p class="muted">Data from the cyberstates visa matrix. Full interactive terminal loads when JavaScript is available.</p>
+<h2>Related corridors</h2>
+<ul>{related}</ul>
+<p class="muted">Data from the cyberstates visa matrix.</p>
 "##,
         as = a.t.slug,
         bs = b.t.slug,
@@ -733,14 +961,18 @@ fn page_corridor(a: &State, b: &State, assets: &str) -> String {
         bn = esc(&b.t.name),
         af = a.t.flag,
         bf = b.t.flag,
+        tok = a.t.currency_code.to_lowercase(),
         out = out_l,
         inn = in_l,
         outd = days(out_d),
         ind = days(in_d),
         ar = a.rank_capital,
         afr = a.rank_freedom,
+        afs = a.freedom,
         br = b.rank_capital,
         bh = b.rank_hospitality,
+        bos = b.openness,
+        related = related.join("\n"),
     );
     shell_page(&title, &desc, &path, &ld, &body, assets)
 }
@@ -834,11 +1066,12 @@ fn home_body(states: &[State]) -> String {
         .take(50)
         .map(|s| {
             format!(
-                r#"<li><a href="/state/{}">{} {}</a> — ${:.0}B capital · freedom #{}</li>"#,
+                r#"<li><a href="/state/{}">{} {}</a> — ${:.0}B capital · freedom {:.1} (#{})</li>"#,
                 s.t.slug,
                 s.t.flag,
                 esc(&s.t.name),
                 s.t.money_supply_b_usd,
+                s.freedom,
                 s.rank_freedom
             )
         })

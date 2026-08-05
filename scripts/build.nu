@@ -29,4 +29,6 @@ def main [] {
   print ""
   print "dist/ ready. deploy:"
   print "  rsync -az --delete dist/ cyberproxy:/var/www/html/cyberstates/"
+  print "  # if nginx-redirects.conf changed: sudo nginx -t && sudo systemctl reload nginx"
+  print "  # optional: nu scripts/indexnow.nu"
 }
