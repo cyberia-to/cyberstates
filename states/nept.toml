@@ -1,5 +1,6 @@
 name = "Neptune"
 code = "NEPT"
+slug = "neptune"
 flag = "🌬️"
 region = "Solar System"
 population = 0

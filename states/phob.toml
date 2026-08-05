@@ -1,5 +1,6 @@
 name = "Phobos"
 code = "PHOB"
+slug = "phobos"
 flag = "😱"
 region = "Solar System"
 oceans = ""

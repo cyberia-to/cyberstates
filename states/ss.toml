@@ -1,5 +1,6 @@
 name = "South Sudan"
 code = "SS"
+slug = "south-sudan"
 flag = "🇸🇸"
 region = "Africa"
 oceans = ""

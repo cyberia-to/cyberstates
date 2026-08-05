@@ -1,5 +1,6 @@
 name = "Saturn"
 code = "SATN"
+slug = "saturn"
 flag = "🪐"
 region = "Solar System"
 population = 0

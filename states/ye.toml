@@ -1,5 +1,6 @@
 name = "Yemen"
 code = "YE"
+slug = "yemen"
 flag = "🇾🇪"
 region = "Middle East"
 oceans = ""

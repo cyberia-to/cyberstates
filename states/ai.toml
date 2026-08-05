@@ -1,5 +1,6 @@
 name = "Anguilla"
 code = "AI"
+slug = "anguilla"
 flag = "🇦🇮"
 region = "Oceania"
 oceans = ""

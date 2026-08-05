@@ -1,5 +1,6 @@
 name = "Titania"
 code = "TNIA"
+slug = "titania"
 flag = "👑"
 region = "Solar System"
 oceans = ""

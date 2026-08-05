@@ -1,5 +1,6 @@
 name = "Tahiti"
 code = "PF"
+slug = "tahiti"
 flag = "🇵🇫"
 region = "Oceania"
 oceans = ""

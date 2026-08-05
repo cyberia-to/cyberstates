@@ -1,5 +1,6 @@
 name = "Gonggong"
 code = "GONG"
+slug = "gonggong"
 flag = "🐉"
 region = "Solar System"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Guadeloupe"
 code = "GP"
+slug = "guadeloupe"
 flag = "🇬🇵"
 region = "Latin America"
 oceans = ""

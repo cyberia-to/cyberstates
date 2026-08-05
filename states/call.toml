@@ -1,5 +1,6 @@
 name = "Callisto"
 code = "CALL"
+slug = "callisto"
 flag = "🕳️"
 region = "Solar System"
 oceans = ""

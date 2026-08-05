@@ -1,5 +1,6 @@
 name = "Sedna"
 code = "SEDN"
+slug = "sedna"
 flag = "🐋"
 region = "Solar System"
 oceans = ""

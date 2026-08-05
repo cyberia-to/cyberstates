@@ -1,5 +1,6 @@
 name = "Moon"
 code = "LUNA"
+slug = "moon"
 flag = "🌕"
 region = "Solar System"
 oceans = ""

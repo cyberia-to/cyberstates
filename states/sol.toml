@@ -1,5 +1,6 @@
 name = "Somaliland"
 code = "SOL"
+slug = "somaliland"
 flag = "⭐"
 region = "Africa"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "North Korea"
 code = "KP"
+slug = "north-korea"
 flag = "🇰🇵"
 region = "Asia"
 oceans = ""

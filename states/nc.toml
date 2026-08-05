@@ -1,5 +1,6 @@
 name = "Caledonia"
 code = "NC"
+slug = "new-caledonia"
 flag = "🇳🇨"
 region = "Oceania"
 oceans = ""

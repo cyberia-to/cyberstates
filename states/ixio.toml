@@ -1,5 +1,6 @@
 name = "Ixion"
 code = "IXIO"
+slug = "ixion"
 flag = "🎡"
 region = "Solar System"
 oceans = ""

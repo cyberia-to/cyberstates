@@ -1,5 +1,6 @@
 name = "China"
 code = "CN"
+slug = "china"
 flag = "🇨🇳"
 region = "Asia"
 oceans = ""

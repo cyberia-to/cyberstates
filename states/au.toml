@@ -1,5 +1,6 @@
 name = "Australia"
 code = "AU"
+slug = "australia"
 flag = "🇦🇺"
 region = "Oceania"
 oceans = ""

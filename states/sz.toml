@@ -1,5 +1,6 @@
 name = "Swaziland"
 code = "SZ"
+slug = "eswatini"
 flag = "🇸🇿"
 region = "Africa"
 oceans = ""

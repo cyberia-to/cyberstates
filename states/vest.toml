@@ -1,5 +1,6 @@
 name = "Vesta"
 code = "VEST"
+slug = "vesta"
 flag = "🔥"
 region = "Solar System"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Jupiter"
 code = "JUPI"
+slug = "jupiter"
 flag = "⚡"
 region = "Solar System"
 population = 0

@@ -1,5 +1,6 @@
 name = "Rhea"
 code = "RHEA"
+slug = "rhea"
 flag = "⛰️"
 region = "Solar System"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Belize"
 code = "BZ"
+slug = "belize"
 flag = "🇧🇿"
 region = "Latin America"
 oceans = ""

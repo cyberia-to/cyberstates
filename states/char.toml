@@ -1,5 +1,6 @@
 name = "Charon"
 code = "CHAR"
+slug = "charon"
 flag = "⛴️"
 region = "Solar System"
 oceans = ""

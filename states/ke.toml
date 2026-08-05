@@ -1,5 +1,6 @@
 name = "Kenya"
 code = "KE"
+slug = "kenya"
 flag = "🇰🇪"
 region = "Africa"
 oceans = ""

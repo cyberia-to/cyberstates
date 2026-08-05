@@ -1,5 +1,6 @@
 name = "Juno"
 code = "JUNO"
+slug = "juno"
 flag = "💍"
 region = "Solar System"
 oceans = ""

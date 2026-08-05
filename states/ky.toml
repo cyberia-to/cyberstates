@@ -1,5 +1,6 @@
 name = "Caymans"
 code = "KY"
+slug = "caymans"
 flag = "🇰🇾"
 region = "Oceania"
 oceans = ""

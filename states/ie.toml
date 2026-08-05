@@ -1,5 +1,6 @@
 name = "Ireland"
 code = "IE"
+slug = "ireland"
 flag = "🇮🇪"
 region = "Oceania"
 oceans = ""

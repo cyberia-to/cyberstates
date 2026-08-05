@@ -1,5 +1,6 @@
 name = "San Marino"
 code = "SM"
+slug = "san-marino"
 flag = "🇸🇲"
 region = "Europe"
 oceans = ""

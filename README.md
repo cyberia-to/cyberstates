@@ -40,17 +40,19 @@ nginx must serve these as static files — not the SPA shell. Prefer
   including bilateral corridors (~53k URLs).
 - **P1 (next):** prerender HTML bodies for states, tokens, corridors
   so crawlers see text without WASM.
-- State URLs use **name slugs**: `/state/japan`, `/state/united-states`
-  (legacy `/state/jp` rewrites client-side). Tokens stay tickers: `/token/jpy`.
+- State URLs use content `slug`: `/state/japan`, `/state/united-states`.
+  Authored in `states/*.toml` (`slug = "…"`). Legacy `/state/jp` still
+  resolves and rewrites to the content slug. Tokens stay tickers: `/token/jpy`.
 - Corridor route: `/from/{slug}/to/{slug}` — full terrestrial long-tail
   (~53k ordered pairs, self-pairs omitted).
 
 ## layout
 
 - `src/pages/` — home (landings: `/in/:region/by/:field`), tokens, token, country, map
-- `states/*.toml` — one file per state: population, land, currency, visa matrix
-- `build.rs` — generates `load_countries()` from the toml set
-- `scripts/seo.nu` — robots + sitemaps from the toml set
+- `states/*.toml` — one file per state: name, code, **slug**, population, land, currency, visa matrix
+- `build.rs` — generates `load_countries()` from the toml set (reads `slug`, does not invent it)
+- `scripts/seo.nu` — robots + sitemaps from content slugs
+- `scripts/write_slugs.nu` — fill missing `slug` from name only (never overwrites)
 - `scrape_passport.py`, `add_token_prices.py` — data refresh scripts
 
 ## roadmap

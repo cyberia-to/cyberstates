@@ -1,5 +1,6 @@
 name = "South Ossetia"
 code = "OST"
+slug = "south-ossetia"
 flag = "🏔️"
 region = "Eurasia"
 oceans = ""

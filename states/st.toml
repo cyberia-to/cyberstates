@@ -1,5 +1,6 @@
 name = "Sao Tome"
 code = "ST"
+slug = "sao-tome"
 flag = "🇸🇹"
 region = "Oceania"
 oceans = ""

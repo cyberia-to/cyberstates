@@ -1,5 +1,6 @@
 name = "Triton"
 code = "TRIT"
+slug = "triton"
 flag = "🔱"
 region = "Solar System"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Montserrat"
 code = "MS"
+slug = "montserrat"
 flag = "🇲🇸"
 region = "Oceania"
 oceans = ""

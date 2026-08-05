@@ -1,5 +1,6 @@
 name = "Cyprus"
 code = "CY"
+slug = "cyprus"
 flag = "🇨🇾"
 region = "Oceania"
 oceans = ""

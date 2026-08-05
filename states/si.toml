@@ -1,5 +1,6 @@
 name = "Slovenia"
 code = "SI"
+slug = "slovenia"
 flag = "🇸🇮"
 region = "Europe"
 oceans = ""

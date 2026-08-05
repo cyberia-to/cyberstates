@@ -1,5 +1,6 @@
 name = "Gabon"
 code = "GA"
+slug = "gabon"
 flag = "🇬🇦"
 region = "Africa"
 oceans = ""

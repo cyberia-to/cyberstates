@@ -1,5 +1,6 @@
 name = "Monaco"
 code = "MC"
+slug = "monaco"
 flag = "🇲🇨"
 region = "Europe"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Deimos"
 code = "DEIM"
+slug = "deimos"
 flag = "😨"
 region = "Solar System"
 oceans = ""

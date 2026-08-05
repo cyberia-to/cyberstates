@@ -1,5 +1,6 @@
 name = "Venus"
 code = "VENU"
+slug = "venus"
 flag = "♀️"
 region = "Solar System"
 oceans = ""

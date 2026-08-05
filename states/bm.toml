@@ -1,5 +1,6 @@
 name = "Bermuda"
 code = "BM"
+slug = "bermuda"
 flag = "🇧🇲"
 region = "Oceania"
 oceans = ""

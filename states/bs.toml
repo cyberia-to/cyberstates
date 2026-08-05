@@ -1,5 +1,6 @@
 name = "Bahamas"
 code = "BS"
+slug = "bahamas"
 flag = "🇧🇸"
 region = "Oceania"
 oceans = ""

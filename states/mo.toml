@@ -1,5 +1,6 @@
 name = "Macau"
 code = "MO"
+slug = "macau"
 flag = "🇲🇴"
 region = "Oceania"
 oceans = ""

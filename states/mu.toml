@@ -1,5 +1,6 @@
 name = "Mauritius"
 code = "MU"
+slug = "mauritius"
 flag = "🇲🇺"
 region = "Oceania"
 oceans = ""

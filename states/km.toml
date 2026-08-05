@@ -1,5 +1,6 @@
 name = "Comoros"
 code = "KM"
+slug = "comoros"
 flag = "🇰🇲"
 region = "Oceania"
 oceans = ""

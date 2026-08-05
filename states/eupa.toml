@@ -1,5 +1,6 @@
 name = "Europa"
 code = "EUPA"
+slug = "europa"
 flag = "🧊"
 region = "Solar System"
 oceans = ""

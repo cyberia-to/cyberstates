@@ -1,5 +1,6 @@
 name = "Libya"
 code = "LY"
+slug = "libya"
 flag = "🇱🇾"
 region = "Africa"
 oceans = ""

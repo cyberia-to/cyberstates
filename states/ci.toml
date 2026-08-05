@@ -1,5 +1,6 @@
 name = "Ivory Coast"
 code = "CI"
+slug = "ivory-coast"
 flag = "🇨🇮"
 region = "Africa"
 oceans = ""

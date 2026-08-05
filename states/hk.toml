@@ -1,5 +1,6 @@
 name = "Hong Kong"
 code = "HK"
+slug = "hong-kong"
 flag = "🇭🇰"
 region = "Oceania"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Venezuela"
 code = "VE"
+slug = "venezuela"
 flag = "🇻🇪"
 region = "Latin America"
 oceans = ""

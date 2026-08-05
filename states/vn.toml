@@ -1,5 +1,6 @@
 name = "Vietnam"
 code = "VN"
+slug = "vietnam"
 flag = "🇻🇳"
 region = "Asia"
 oceans = ""

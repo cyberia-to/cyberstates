@@ -1,5 +1,6 @@
 name = "Haumea"
 code = "HAUM"
+slug = "haumea"
 flag = "🌺"
 region = "Solar System"
 oceans = ""

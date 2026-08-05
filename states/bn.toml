@@ -1,5 +1,6 @@
 name = "Brunei"
 code = "BN"
+slug = "brunei"
 flag = "🇧🇳"
 region = "Oceania"
 oceans = ""

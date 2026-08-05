@@ -1,5 +1,6 @@
 name = "Bir Tawil"
 code = "BTWL"
+slug = "bir-tawil"
 flag = "🏜️"
 region = "Terra Nullius"
 oceans = ""

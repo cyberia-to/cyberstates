@@ -1,5 +1,6 @@
 name = "Usa"
 code = "US"
+slug = "united-states"
 flag = "🇺🇸"
 region = "North America"
 oceans = ""

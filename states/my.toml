@@ -1,5 +1,6 @@
 name = "Malaysia"
 code = "MY"
+slug = "malaysia"
 flag = "🇲🇾"
 region = "Asia"
 oceans = ""

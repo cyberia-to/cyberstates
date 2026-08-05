@@ -1,5 +1,6 @@
 name = "Nepal"
 code = "NP"
+slug = "nepal"
 flag = "🇳🇵"
 region = "Asia"
 oceans = ""

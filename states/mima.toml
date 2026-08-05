@@ -1,5 +1,6 @@
 name = "Mimas"
 code = "MIMA"
+slug = "mimas"
 flag = "🎯"
 region = "Solar System"
 oceans = ""

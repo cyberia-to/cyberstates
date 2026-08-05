@@ -1,5 +1,6 @@
 name = "Lesotho"
 code = "LS"
+slug = "lesotho"
 flag = "🇱🇸"
 region = "Africa"
 oceans = ""

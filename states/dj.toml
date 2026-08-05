@@ -1,5 +1,6 @@
 name = "Djibouti"
 code = "DJ"
+slug = "djibouti"
 flag = "🇩🇯"
 region = "Africa"
 oceans = ""

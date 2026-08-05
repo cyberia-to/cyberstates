@@ -1,5 +1,6 @@
 name = "Quaoar"
 code = "QUAO"
+slug = "quaoar"
 flag = "🪶"
 region = "Solar System"
 oceans = ""

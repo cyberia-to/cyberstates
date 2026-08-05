@@ -1,5 +1,6 @@
 name = "Tethys"
 code = "TETH"
+slug = "tethys"
 flag = "🌊"
 region = "Solar System"
 oceans = ""

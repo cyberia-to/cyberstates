@@ -1,5 +1,6 @@
 name = "Pakistan"
 code = "PK"
+slug = "pakistan"
 flag = "🇵🇰"
 region = "Asia"
 oceans = ""

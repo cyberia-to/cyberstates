@@ -1,5 +1,6 @@
 name = "Kurdistan"
 code = "KRD"
+slug = "kurdistan"
 flag = "☀️"
 region = "Middle East"
 oceans = ""

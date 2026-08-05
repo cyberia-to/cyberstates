@@ -1,5 +1,6 @@
 name = "Andorra"
 code = "AD"
+slug = "andorra"
 flag = "🇦🇩"
 region = "Europe"
 oceans = ""

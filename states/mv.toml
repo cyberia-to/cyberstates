@@ -1,5 +1,6 @@
 name = "Maldives"
 code = "MV"
+slug = "maldives"
 flag = "🇲🇻"
 region = "Oceania"
 oceans = ""

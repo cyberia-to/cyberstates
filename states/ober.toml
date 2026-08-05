@@ -1,5 +1,6 @@
 name = "Oberon"
 code = "OBER"
+slug = "oberon"
 flag = "🧝"
 region = "Solar System"
 oceans = ""

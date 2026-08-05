@@ -1,5 +1,6 @@
 name = "Antigua"
 code = "AG"
+slug = "antigua-and-barbuda"
 flag = "🇦🇬"
 region = "Oceania"
 oceans = ""

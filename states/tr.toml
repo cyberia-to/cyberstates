@@ -1,5 +1,6 @@
 name = "Turkey"
 code = "TR"
+slug = "turkey"
 flag = "🇹🇷"
 region = "Eurasia"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Uruguay"
 code = "UY"
+slug = "uruguay"
 flag = "🇺🇾"
 region = "Latin America"
 oceans = ""

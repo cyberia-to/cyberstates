@@ -1,5 +1,6 @@
 name = "Taiwan"
 code = "TW"
+slug = "taiwan"
 flag = "🇹🇼"
 region = "Oceania"
 oceans = ""

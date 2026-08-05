@@ -1,5 +1,6 @@
 name = "Mars"
 code = "MARS"
+slug = "mars"
 flag = "♂️"
 region = "Solar System"
 oceans = ""

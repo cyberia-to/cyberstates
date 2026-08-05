@@ -1,5 +1,6 @@
 name = "Mauritania"
 code = "MR"
+slug = "mauritania"
 flag = "🇲🇷"
 region = "Africa"
 oceans = ""

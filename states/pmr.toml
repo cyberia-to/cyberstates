@@ -1,5 +1,6 @@
 name = "Pridnestrovie"
 code = "PMR"
+slug = "transnistria"
 flag = "☭"
 region = "Europe"
 oceans = ""

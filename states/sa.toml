@@ -1,5 +1,6 @@
 name = "Saudi"
 code = "SA"
+slug = "saudi-arabia"
 flag = "🇸🇦"
 region = "Middle East"
 oceans = ""

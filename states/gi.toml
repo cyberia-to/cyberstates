@@ -1,5 +1,6 @@
 name = "Gibraltar"
 code = "GI"
+slug = "gibraltar"
 flag = "🇬🇮"
 region = "Europe"
 oceans = ""

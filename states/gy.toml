@@ -1,5 +1,6 @@
 name = "Guyana"
 code = "GY"
+slug = "guyana"
 flag = "🇬🇾"
 region = "Latin America"
 oceans = ""

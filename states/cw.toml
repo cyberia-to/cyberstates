@@ -1,5 +1,6 @@
 name = "Curacao"
 code = "CW"
+slug = "curacao"
 flag = "🇨🇼"
 region = "Oceania"
 oceans = ""

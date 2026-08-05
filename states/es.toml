@@ -1,5 +1,6 @@
 name = "Spain"
 code = "ES"
+slug = "spain"
 flag = "🇪🇸"
 region = "Europe"
 oceans = ""

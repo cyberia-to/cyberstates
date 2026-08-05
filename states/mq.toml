@@ -1,5 +1,6 @@
 name = "Martinique"
 code = "MQ"
+slug = "martinique"
 flag = "🇲🇶"
 region = "Latin America"
 oceans = ""

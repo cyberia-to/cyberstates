@@ -1,5 +1,6 @@
 name = "Makemake"
 code = "MAKE"
+slug = "makemake"
 flag = "🗿"
 region = "Solar System"
 oceans = ""

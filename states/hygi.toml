@@ -1,5 +1,6 @@
 name = "Hygiea"
 code = "HYGI"
+slug = "hygiea"
 flag = "⚕️"
 region = "Solar System"
 oceans = ""

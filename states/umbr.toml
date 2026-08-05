@@ -1,5 +1,6 @@
 name = "Umbriel"
 code = "UMBR"
+slug = "umbriel"
 flag = "🌑"
 region = "Solar System"
 oceans = ""

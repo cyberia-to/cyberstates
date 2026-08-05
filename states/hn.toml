@@ -1,5 +1,6 @@
 name = "Honduras"
 code = "HN"
+slug = "honduras"
 flag = "🇭🇳"
 region = "Latin America"
 oceans = ""

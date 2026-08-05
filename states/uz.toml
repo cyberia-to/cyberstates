@@ -1,5 +1,6 @@
 name = "Uzbekistan"
 code = "UZ"
+slug = "uzbekistan"
 flag = "🇺🇿"
 region = "Eurasia"
 oceans = ""

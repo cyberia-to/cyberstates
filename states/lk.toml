@@ -1,5 +1,6 @@
 name = "Sri Lanka"
 code = "LK"
+slug = "sri-lanka"
 flag = "🇱🇰"
 region = "Oceania"
 oceans = ""

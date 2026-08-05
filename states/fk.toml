@@ -1,5 +1,6 @@
 name = "Falklands"
 code = "FK"
+slug = "falklands"
 flag = "🇫🇰"
 region = "Oceania"
 oceans = ""

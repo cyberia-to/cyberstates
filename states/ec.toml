@@ -1,5 +1,6 @@
 name = "Ecuador"
 code = "EC"
+slug = "ecuador"
 flag = "🇪🇨"
 region = "Latin America"
 oceans = ""

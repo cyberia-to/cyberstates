@@ -8,6 +8,8 @@ use std::path::Path;
 struct CountryToml {
     name: String,
     code: String,
+    /// Canonical URL segment — authored in content, not invented here.
+    slug: String,
     flag: String,
     region: String,
     population: u64,
@@ -38,77 +40,6 @@ fn escape(s: &str) -> String {
     s.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
-/// URL slug from display name: "Hong Kong" → "hong-kong", "New Zealand" → "new-zealand".
-fn slugify(name: &str) -> String {
-    let mut out = String::with_capacity(name.len());
-    for c in name.chars() {
-        let c = c.to_ascii_lowercase();
-        if c.is_ascii_alphanumeric() {
-            out.push(c);
-        } else if c == ' ' || c == '-' || c == '_' || c == '/' {
-            if !out.ends_with('-') && !out.is_empty() {
-                out.push('-');
-            }
-        }
-        // drop apostrophes, dots, accents (names are already ascii-ish)
-    }
-    while out.ends_with('-') {
-        out.pop();
-    }
-    out
-}
-
-/// SEO / disambiguation overrides when the short display name is weak.
-/// Keyed by state code. Name field stays for display; slug is the URL.
-fn slug_override(code: &str) -> Option<&'static str> {
-    Some(match code {
-        "US" => "united-states",
-        "GB" => "united-kingdom",
-        "AE" => "united-arab-emirates",
-        "KR" => "south-korea",
-        "KP" => "north-korea",
-        "CD" => "dr-congo",
-        "CG" => "congo-brazzaville",
-        "DO" => "dominican-republic",
-        "CI" => "ivory-coast",
-        "MK" => "north-macedonia",
-        "CZ" => "czechia",
-        "SZ" => "eswatini",
-        "VA" => "vatican",
-        "FM" => "micronesia",
-        "MH" => "marshall-islands",
-        "SB" => "solomon-islands",
-        "ST" => "sao-tome",
-        "VC" => "saint-vincent",
-        "KN" => "saint-kitts",
-        "LC" => "saint-lucia",
-        "GW" => "guinea-bissau",
-        "GQ" => "equatorial-guinea",
-        "CF" => "central-african-republic",
-        "BA" => "bosnia-and-herzegovina",
-        "TT" => "trinidad-and-tobago",
-        "AG" => "antigua-and-barbuda",
-        "PG" => "papua-new-guinea",
-        "NC" => "new-caledonia",
-        "CV" => "cape-verde",
-        "BF" => "burkina-faso",
-        "SA" => "saudi-arabia",
-        "ZA" => "south-africa",
-        "SS" => "south-sudan",
-        "NCY" => "northern-cyprus",
-        "OST" => "south-ossetia",
-        "BTWL" => "bir-tawil",
-        "PMR" => "transnistria",
-        _ => return None,
-    })
-}
-
-fn state_slug(code: &str, name: &str) -> String {
-    slug_override(code)
-        .map(|s| s.to_string())
-        .unwrap_or_else(|| slugify(name))
-}
-
 fn main() {
     println!("cargo:rerun-if-changed=states");
 
@@ -131,7 +62,8 @@ fn main() {
         .collect();
     entries.sort_by_key(|e| e.file_name());
 
-    let mut code = String::from("pub fn load_countries() -> Vec<crate::data::Country> {\n    vec![\n");
+    let mut code =
+        String::from("pub fn load_countries() -> Vec<crate::data::Country> {\n    vec![\n");
 
     // We need to keep parsed data alive for references
     let mut parsed: Vec<(String, CountryToml)> = Vec::new();
@@ -158,9 +90,21 @@ fn main() {
             visa_json_map.insert(code_key.clone(), &c.visa_access);
         }
 
-        let slug = state_slug(&c.code, &c.name);
+        let slug = c.slug.trim().to_string();
         if slug.is_empty() {
-            panic!("empty slug for state code {}", c.code);
+            panic!(
+                "empty slug for state {} — set slug = \"...\" in states/*.toml",
+                c.code
+            );
+        }
+        if !slug
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '-')
+        {
+            panic!(
+                "invalid slug {:?} for state {} — use [a-z0-9-]+ only",
+                slug, c.code
+            );
         }
         if let Some(other) = seen_slugs.insert(slug.clone(), c.code.clone()) {
             panic!(

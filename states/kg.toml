@@ -1,5 +1,6 @@
 name = "Kyrgyzstan"
 code = "KG"
+slug = "kyrgyzstan"
 flag = "🇰🇬"
 region = "Eurasia"
 oceans = ""

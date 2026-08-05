@@ -1,5 +1,6 @@
 name = "Reunion"
 code = "RE"
+slug = "reunion"
 flag = "🇷🇪"
 region = "Oceania"
 oceans = ""

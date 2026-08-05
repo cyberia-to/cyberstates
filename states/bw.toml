@@ -1,5 +1,6 @@
 name = "Botswana"
 code = "BW"
+slug = "botswana"
 flag = "🇧🇼"
 region = "Africa"
 oceans = ""

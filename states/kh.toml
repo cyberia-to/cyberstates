@@ -1,5 +1,6 @@
 name = "Cambodia"
 code = "KH"
+slug = "cambodia"
 flag = "🇰🇭"
 region = "Asia"
 oceans = ""

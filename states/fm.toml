@@ -1,5 +1,6 @@
 name = "Micronesia"
 code = "FM"
+slug = "micronesia"
 flag = "🇫🇲"
 region = "Oceania"
 oceans = ""

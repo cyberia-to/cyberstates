@@ -1,5 +1,6 @@
 name = "Canada"
 code = "CA"
+slug = "canada"
 flag = "🇨🇦"
 region = "North America"
 oceans = ""

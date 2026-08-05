@@ -1,5 +1,6 @@
 name = "Ceres"
 code = "CERE"
+slug = "ceres"
 flag = "🌾"
 region = "Solar System"
 oceans = ""

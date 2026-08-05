@@ -1,5 +1,6 @@
 name = "Denmark"
 code = "DK"
+slug = "denmark"
 flag = "🇩🇰"
 region = "Europe"
 oceans = ""

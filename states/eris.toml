@@ -1,5 +1,6 @@
 name = "Eris"
 code = "ERIS"
+slug = "eris"
 flag = "🍎"
 region = "Solar System"
 oceans = ""

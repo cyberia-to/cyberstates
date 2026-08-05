@@ -1,5 +1,6 @@
 name = "Mali"
 code = "ML"
+slug = "mali"
 flag = "🇲🇱"
 region = "Africa"
 oceans = ""

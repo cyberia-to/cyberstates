@@ -1,5 +1,6 @@
 name = "Oceania"
 code = "OCNA"
+slug = "oceania"
 flag = "🏝️"
 region = "Oceania"
 population = 781229203

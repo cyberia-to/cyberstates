@@ -1,5 +1,6 @@
 name = "Samoa"
 code = "WS"
+slug = "samoa"
 flag = "🇼🇸"
 region = "Oceania"
 oceans = ""

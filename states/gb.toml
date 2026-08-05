@@ -1,5 +1,6 @@
 name = "Britain"
 code = "GB"
+slug = "united-kingdom"
 flag = "🇬🇧"
 region = "Oceania"
 oceans = ""

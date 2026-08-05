@@ -1,5 +1,6 @@
 name = "Grenada"
 code = "GD"
+slug = "grenada"
 flag = "🇬🇩"
 region = "Oceania"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Kiribati"
 code = "KI"
+slug = "kiribati"
 flag = "🇰🇮"
 region = "Oceania"
 oceans = ""

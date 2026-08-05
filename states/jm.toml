@@ -1,5 +1,6 @@
 name = "Jamaica"
 code = "JM"
+slug = "jamaica"
 flag = "🇯🇲"
 region = "Oceania"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Mexico"
 code = "MX"
+slug = "mexico"
 flag = "🇲🇽"
 region = "North America"
 oceans = ""

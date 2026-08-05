@@ -1,5 +1,6 @@
 name = "Switzerland"
 code = "CH"
+slug = "switzerland"
 flag = "🇨🇭"
 region = "Europe"
 oceans = ""

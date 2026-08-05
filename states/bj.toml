@@ -1,5 +1,6 @@
 name = "Benin"
 code = "BJ"
+slug = "benin"
 flag = "🇧🇯"
 region = "Africa"
 oceans = ""

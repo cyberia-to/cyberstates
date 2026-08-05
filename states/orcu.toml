@@ -1,5 +1,6 @@
 name = "Orcus"
 code = "ORCU"
+slug = "orcus"
 flag = "⚱️"
 region = "Solar System"
 oceans = ""

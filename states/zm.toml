@@ -1,5 +1,6 @@
 name = "Zambia"
 code = "ZM"
+slug = "zambia"
 flag = "🇿🇲"
 region = "Africa"
 oceans = ""

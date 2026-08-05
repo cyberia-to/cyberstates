@@ -1,5 +1,6 @@
 name = "Aruba"
 code = "AW"
+slug = "aruba"
 flag = "🇦🇼"
 region = "Oceania"
 oceans = ""

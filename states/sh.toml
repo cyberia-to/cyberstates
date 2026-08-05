@@ -1,5 +1,6 @@
 name = "Helena"
 code = "SH"
+slug = "helena"
 flag = "🇸🇭"
 region = "Oceania"
 oceans = ""

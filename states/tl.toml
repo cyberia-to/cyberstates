@@ -1,5 +1,6 @@
 name = "Timor"
 code = "TL"
+slug = "timor"
 flag = "🇹🇱"
 region = "Oceania"
 oceans = ""

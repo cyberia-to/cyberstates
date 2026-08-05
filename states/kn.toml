@@ -1,5 +1,6 @@
 name = "Kitts"
 code = "KN"
+slug = "saint-kitts"
 flag = "🇰🇳"
 region = "Oceania"
 oceans = ""

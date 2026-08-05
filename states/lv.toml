@@ -1,5 +1,6 @@
 name = "Latvia"
 code = "LV"
+slug = "latvia"
 flag = "🇱🇻"
 region = "Europe"
 oceans = ""

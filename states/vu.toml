@@ -1,5 +1,6 @@
 name = "Vanuatu"
 code = "VU"
+slug = "vanuatu"
 flag = "🇻🇺"
 region = "Oceania"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Marshalls"
 code = "MH"
+slug = "marshall-islands"
 flag = "🇲🇭"
 region = "Oceania"
 oceans = ""

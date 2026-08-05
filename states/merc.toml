@@ -1,5 +1,6 @@
 name = "Mercury"
 code = "MERC"
+slug = "mercury"
 flag = "🪽"
 region = "Solar System"
 oceans = ""

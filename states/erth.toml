@@ -1,5 +1,6 @@
 name = "Earth"
 code = "ERTH"
+slug = "earth"
 flag = "🌍"
 region = "Solar System"
 oceans = ""

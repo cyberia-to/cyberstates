@@ -1,5 +1,6 @@
 name = "Nigeria"
 code = "NG"
+slug = "nigeria"
 flag = "🇳🇬"
 region = "Africa"
 oceans = ""

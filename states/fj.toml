@@ -1,5 +1,6 @@
 name = "Fiji"
 code = "FJ"
+slug = "fiji"
 flag = "🇫🇯"
 region = "Oceania"
 oceans = ""

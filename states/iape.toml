@@ -1,5 +1,6 @@
 name = "Iapetus"
 code = "IAPE"
+slug = "iapetus"
 flag = "🌗"
 region = "Solar System"
 oceans = ""

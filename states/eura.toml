@@ -1,5 +1,6 @@
 name = "Eurasia"
 code = "EURA"
+slug = "eurasia"
 flag = "🦣"
 region = "Eurasia"
 population = 4834047975

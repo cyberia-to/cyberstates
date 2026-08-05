@@ -1,5 +1,6 @@
 name = "Titan"
 code = "TITN"
+slug = "titan"
 flag = "🌫️"
 region = "Solar System"
 oceans = ""

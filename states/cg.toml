@@ -1,5 +1,6 @@
 name = "Brazzaville"
 code = "CG"
+slug = "congo-brazzaville"
 flag = "🇨🇬"
 region = "Africa"
 oceans = ""

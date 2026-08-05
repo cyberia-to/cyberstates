@@ -1,5 +1,6 @@
 name = "Salacia"
 code = "SALA"
+slug = "salacia"
 flag = "🧜‍♀️"
 region = "Solar System"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Hungary"
 code = "HU"
+slug = "hungary"
 flag = "🇭🇺"
 region = "Europe"
 oceans = ""

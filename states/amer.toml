@@ -1,5 +1,6 @@
 name = "America"
 code = "AMER"
+slug = "america"
 flag = "🌎"
 region = "North America"
 population = 992823193

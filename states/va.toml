@@ -1,5 +1,6 @@
 name = "Vatican"
 code = "VA"
+slug = "vatican"
 flag = "🇻🇦"
 region = "Europe"
 oceans = ""

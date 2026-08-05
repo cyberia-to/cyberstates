@@ -1,5 +1,6 @@
 name = "Turkmenistan"
 code = "TM"
+slug = "turkmenistan"
 flag = "🇹🇲"
 region = "Eurasia"
 oceans = ""

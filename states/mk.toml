@@ -1,5 +1,6 @@
 name = "Macedonia"
 code = "MK"
+slug = "north-macedonia"
 flag = "🇲🇰"
 region = "Europe"
 oceans = ""

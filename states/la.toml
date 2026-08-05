@@ -1,5 +1,6 @@
 name = "Laos"
 code = "LA"
+slug = "laos"
 flag = "🇱🇦"
 region = "Asia"
 oceans = ""

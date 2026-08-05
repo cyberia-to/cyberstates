@@ -1,5 +1,6 @@
 name = "Bvi"
 code = "VG"
+slug = "bvi"
 flag = "🇻🇬"
 region = "Oceania"
 oceans = ""

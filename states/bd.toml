@@ -1,5 +1,6 @@
 name = "Bangladesh"
 code = "BD"
+slug = "bangladesh"
 flag = "🇧🇩"
 region = "Asia"
 oceans = ""

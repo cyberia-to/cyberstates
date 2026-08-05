@@ -1,5 +1,6 @@
 name = "Iraq"
 code = "IQ"
+slug = "iraq"
 flag = "🇮🇶"
 region = "Middle East"
 oceans = ""

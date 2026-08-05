@@ -1,5 +1,6 @@
 name = "Eritrea"
 code = "ER"
+slug = "eritrea"
 flag = "🇪🇷"
 region = "Africa"
 oceans = ""

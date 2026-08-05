@@ -1,5 +1,6 @@
 name = "India"
 code = "IN"
+slug = "india"
 flag = "🇮🇳"
 region = "Asia"
 oceans = ""

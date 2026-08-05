@@ -1,5 +1,6 @@
 name = "Qatar"
 code = "QA"
+slug = "qatar"
 flag = "🇶🇦"
 region = "Middle East"
 oceans = ""

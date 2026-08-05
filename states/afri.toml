@@ -1,5 +1,6 @@
 name = "Africa"
 code = "AFRI"
+slug = "africa"
 flag = "🦁"
 region = "Africa"
 population = 1422335437

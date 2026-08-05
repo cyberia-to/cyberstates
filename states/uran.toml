@@ -1,5 +1,6 @@
 name = "Uranus"
 code = "URAN"
+slug = "uranus"
 flag = "🌀"
 region = "Solar System"
 population = 0

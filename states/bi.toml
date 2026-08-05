@@ -1,5 +1,6 @@
 name = "Burundi"
 code = "BI"
+slug = "burundi"
 flag = "🇧🇮"
 region = "Africa"
 oceans = ""

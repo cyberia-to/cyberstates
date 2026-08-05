@@ -1,5 +1,6 @@
 name = "Enceladus"
 code = "ENCE"
+slug = "enceladus"
 flag = "⛲"
 region = "Solar System"
 oceans = ""

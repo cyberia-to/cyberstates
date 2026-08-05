@@ -1,5 +1,6 @@
 name = "Panama"
 code = "PA"
+slug = "panama"
 flag = "🇵🇦"
 region = "Latin America"
 oceans = ""

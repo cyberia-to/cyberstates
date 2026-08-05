@@ -1,5 +1,6 @@
 name = "Seychelles"
 code = "SC"
+slug = "seychelles"
 flag = "🇸🇨"
 region = "Oceania"
 oceans = ""

@@ -1,5 +1,6 @@
 name = "Kosovo"
 code = "XK"
+slug = "kosovo"
 flag = "🇽🇰"
 region = "Europe"
 oceans = ""

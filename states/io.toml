@@ -1,5 +1,6 @@
 name = "Io"
 code = "IO"
+slug = "io"
 flag = "🌋"
 region = "Solar System"
 oceans = ""

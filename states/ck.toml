@@ -1,5 +1,6 @@
 name = "Cooks"
 code = "CK"
+slug = "cooks"
 flag = "🇨🇰"
 region = "Oceania"
 oceans = ""

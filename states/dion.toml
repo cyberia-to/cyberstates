@@ -1,5 +1,6 @@
 name = "Dione"
 code = "DION"
+slug = "dione"
 flag = "🏛️"
 region = "Solar System"
 oceans = ""

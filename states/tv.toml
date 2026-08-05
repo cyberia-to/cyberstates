@@ -1,5 +1,6 @@
 name = "Tuvalu"
 code = "TV"
+slug = "tuvalu"
 flag = "🇹🇻"
 region = "Oceania"
 oceans = ""

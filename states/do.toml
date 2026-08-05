@@ -1,5 +1,6 @@
 name = "Dominicana"
 code = "DO"
+slug = "dominican-republic"
 flag = "🇩🇴"
 region = "Oceania"
 oceans = ""

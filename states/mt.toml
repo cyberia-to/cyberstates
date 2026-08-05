@@ -1,5 +1,6 @@
 name = "Malta"
 code = "MT"
+slug = "malta"
 flag = "🇲🇹"
 region = "Oceania"
 oceans = ""

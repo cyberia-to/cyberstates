@@ -1,5 +1,6 @@
 name = "Turks"
 code = "TC"
+slug = "turks"
 flag = "🇹🇨"
 region = "Oceania"
 oceans = ""

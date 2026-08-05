@@ -1,5 +1,6 @@
 name = "Ariel"
 code = "ARIE"
+slug = "ariel"
 flag = "🧚"
 region = "Solar System"
 oceans = ""

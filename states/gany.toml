@@ -1,5 +1,6 @@
 name = "Ganymede"
 code = "GANY"
+slug = "ganymede"
 flag = "🧲"
 region = "Solar System"
 oceans = ""

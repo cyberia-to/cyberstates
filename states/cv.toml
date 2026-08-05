@@ -1,5 +1,6 @@
 name = "Cape Verde"
 code = "CV"
+slug = "cape-verde"
 flag = "🇨🇻"
 region = "Oceania"
 oceans = ""
