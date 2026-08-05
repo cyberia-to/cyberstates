@@ -4,9 +4,9 @@
 //! (gold via PAXG = 1 troy oz).
 
 pub const CNY_USD: f64 = 0.147866; // USD per 1 CNY
-pub const BTC_USD: f64 = 64664.0;
-pub const ETH_USD: f64 = 1917.24;
-pub const XAU_USD: f64 = 4244.97; // per troy oz
+pub const BTC_USD: f64 = 64667.0;
+pub const ETH_USD: f64 = 1918.21;
+pub const XAU_USD: f64 = 4252.75; // per troy oz
 
 pub const GRAMS_PER_OZ: f64 = 31.1034768;
 
