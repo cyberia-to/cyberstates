@@ -94,13 +94,21 @@ fn map_values(
         .map(|c| (c.code.clone(), c.metric(field)))
         .collect();
 
-    // Territory: photosphere is orders of magnitude above any planet or
-    // state — leave SUN out of the log domain and paint it full green so
-    // the Earth map still has dynamic range.
-    let pin_sun_green =
-        field == SortField::Territory && ranked.iter().any(|(code, _)| code == "SUN");
-    if pin_sun_green {
-        ranked.retain(|(code, _)| code != "SUN");
+    // Territory: Sun + gas giants dwarf every terrestrial body on a log
+    // scale. Drop them from the domain and pin full green so the Earth
+    // map keeps dynamic range. Codes match states/*.toml.
+    const TERRITORY_PIN_GREEN: &[&str] = &["SUN", "JUPI", "SATN", "URAN", "NEPT"];
+    let pin_green: Vec<String> = if field == SortField::Territory {
+        ranked
+            .iter()
+            .filter(|(code, _)| TERRITORY_PIN_GREEN.contains(&code.as_str()))
+            .map(|(code, _)| code.clone())
+            .collect()
+    } else {
+        Vec::new()
+    };
+    if !pin_green.is_empty() {
+        ranked.retain(|(code, _)| !TERRITORY_PIN_GREEN.contains(&code.as_str()));
     }
 
     ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
@@ -136,8 +144,8 @@ fn map_values(
         }
         values.insert(code, 0.02 + 0.98 * t);
     }
-    if pin_sun_green {
-        values.insert("SUN".to_string(), 1.0);
+    for code in pin_green {
+        values.insert(code, 1.0);
     }
     values
 }
