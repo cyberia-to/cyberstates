@@ -61,6 +61,22 @@ fn try_fetch(c: &reqwest::blocking::Client, url: &str) -> Result<String, String>
     resp.text().map_err(|e| format!("reading body from {url} failed: {e}"))
 }
 
+/// fred.stlouisfed.org silently black-holes reqwest's TLS handshake until
+/// timeout — reproduced identically from two different machines/networks,
+/// while plain curl against the exact same URL succeeds in ~0.2s every
+/// time. Akamai fingerprints the TLS client, not the request; shelling out
+/// to curl for this one host is simpler and more honest than fighting it.
+fn fetch_via_curl(url: &str) -> Result<String, String> {
+    let output = std::process::Command::new("curl")
+        .args(["-sSL", "--max-time", "20", url])
+        .output()
+        .map_err(|e| format!("failed to spawn curl for {url}: {e}"))?;
+    if !output.status.success() {
+        return Err(format!("curl exited {} for {url}", output.status));
+    }
+    String::from_utf8(output.stdout).map_err(|e| format!("curl output not utf8 for {url}: {e}"))
+}
+
 /// World Bank's edge intermittently answers `country/all` queries with a
 /// WAF error page instead of JSON — reproduced directly with curl, no
 /// pattern in per_page, unrelated to this client. A few retries with
@@ -292,7 +308,7 @@ fn main() {
     }
 
     // --- US M2 from FRED --------------------------------------------
-    let fred_row = try_fetch(&c, FRED_URL).ok().and_then(|csv| {
+    let fred_row = fetch_via_curl(FRED_URL).ok().and_then(|csv| {
         csv.lines()
             .skip(1)
             .filter(|l| l.contains(','))
