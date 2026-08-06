@@ -11,7 +11,7 @@ currency_name = "Turkish Lira"
 money_supply_b_usd = 3.6
 money_supply_b_usd_prev = 3.6
 token_price_usd = 0.021012
-token_price_usd_prev = 0.021021
+token_price_usd_prev = 0.021012
 visa_free_destinations = 0
 visa_free_inbound = 0
 

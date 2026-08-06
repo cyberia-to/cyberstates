@@ -9,9 +9,9 @@ land_area_km2 = 25713
 currency_code = "MKD"
 currency_name = "Macedonian Denar"
 money_supply_b_usd = 10.9
-money_supply_b_usd_prev = 10.8
+money_supply_b_usd_prev = 10.9
 token_price_usd = 0.018730
-token_price_usd_prev = 0.018504
+token_price_usd_prev = 0.018730
 visa_free_destinations = 126
 visa_free_inbound = 78
 

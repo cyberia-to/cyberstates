@@ -11,7 +11,7 @@ currency_name = "Moldovan Leu"
 money_supply_b_usd = 10.9
 money_supply_b_usd_prev = 10.9
 token_price_usd = 0.057412
-token_price_usd_prev = 0.057342
+token_price_usd_prev = 0.057412
 visa_free_destinations = 122
 visa_free_inbound = 70
 

@@ -9,9 +9,9 @@ land_area_km2 = 9596961
 currency_code = "CNY"
 currency_name = "Chinese Yuan"
 money_supply_b_usd = 45387
-money_supply_b_usd_prev = 45382
+money_supply_b_usd_prev = 45387
 token_price_usd = 0.147881
-token_price_usd_prev = 0.147866
+token_price_usd_prev = 0.147881
 visa_free_destinations = 85
 visa_free_inbound = 77
 

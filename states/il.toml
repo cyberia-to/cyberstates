@@ -9,9 +9,9 @@ land_area_km2 = 22072
 currency_code = "ILS"
 currency_name = "Israeli New Shekel"
 money_supply_b_usd = 728
-money_supply_b_usd_prev = 726
+money_supply_b_usd_prev = 728
 token_price_usd = 0.332812
-token_price_usd_prev = 0.331763
+token_price_usd_prev = 0.332812
 visa_free_destinations = 167
 visa_free_inbound = 73
 

@@ -11,7 +11,7 @@ currency_name = "Mauritanian Ouguiya"
 money_supply_b_usd = 2.0
 money_supply_b_usd_prev = 2.0
 token_price_usd = 0.024881
-token_price_usd_prev = 0.024864
+token_price_usd_prev = 0.024881
 visa_free_destinations = 56
 visa_free_inbound = 145
 

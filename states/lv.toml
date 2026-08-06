@@ -11,7 +11,7 @@ currency_name = "Euro"
 money_supply_b_usd = 17.1
 money_supply_b_usd_prev = 17.1
 token_price_usd = 1.155135
-token_price_usd_prev = 1.152339
+token_price_usd_prev = 1.155135
 visa_free_destinations = 186
 visa_free_inbound = 93
 
