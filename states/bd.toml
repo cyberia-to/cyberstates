@@ -11,7 +11,7 @@ currency_name = "Bangladeshi Taka"
 money_supply_b_usd = 213
 money_supply_b_usd_prev = 213
 token_price_usd = 0.008081
-token_price_usd_prev = 0.008081
+token_price_usd_prev = 0.008083
 visa_free_destinations = 42
 visa_free_inbound = 50
 

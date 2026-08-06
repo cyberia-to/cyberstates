@@ -9,9 +9,9 @@ land_area_km2 = 28896
 currency_code = "SBD"
 currency_name = "Solomon Islands Dollar"
 money_supply_b_usd = 0.805
-money_supply_b_usd_prev = 0.805
+money_supply_b_usd_prev = 0.806
 token_price_usd = 0.125683
-token_price_usd_prev = 0.125683
+token_price_usd_prev = 0.125799
 visa_free_destinations = 99
 visa_free_inbound = 165
 

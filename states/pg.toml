@@ -9,9 +9,9 @@ land_area_km2 = 462840
 currency_code = "PGK"
 currency_name = "Papua New Guinean Kina"
 money_supply_b_usd = 5.0
-money_supply_b_usd_prev = 5.0
+money_supply_b_usd_prev = 5.1
 token_price_usd = 0.225058
-token_price_usd_prev = 0.225058
+token_price_usd_prev = 0.226526
 visa_free_destinations = 57
 visa_free_inbound = 130
 

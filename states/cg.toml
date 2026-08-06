@@ -11,7 +11,7 @@ currency_name = "Central African Franc"
 money_supply_b_usd = 4.6
 money_supply_b_usd_prev = 4.6
 token_price_usd = 0.001761
-token_price_usd_prev = 0.001761
+token_price_usd_prev = 0.001757
 visa_free_destinations = 52
 visa_free_inbound = 145
 

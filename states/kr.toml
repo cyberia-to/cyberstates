@@ -9,9 +9,9 @@ land_area_km2 = 100210
 currency_code = "KRW"
 currency_name = "South Korean Won"
 money_supply_b_usd = 2924
-money_supply_b_usd_prev = 2924
+money_supply_b_usd_prev = 2911
 token_price_usd = 0.000703
-token_price_usd_prev = 0.000703
+token_price_usd_prev = 0.000700
 visa_free_destinations = 193
 visa_free_inbound = 98
 
