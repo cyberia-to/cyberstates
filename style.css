@@ -773,19 +773,29 @@ body {
 
 /* slim table columns — widths live here so viewports can reshape them */
 .cyber-table.slim col.c-rank {
-    width: 9%;
+    width: 8%;
 }
 .cyber-table.slim col.c-state {
-    width: 34%;
+    width: 30%;
 }
 .cyber-table.slim col.c-token {
-    width: 13%;
+    width: 12%;
 }
 .cyber-table.slim col.c-price {
-    width: 22%;
+    width: 18%;
+}
+.cyber-table.slim col.c-delta {
+    width: 10%;
 }
 .cyber-table.slim col.c-metric {
     width: 22%;
+}
+
+/* the 24h badge rides small, like the price's fraction — narrower than a
+   full metric cell, so it never needs the column's full share of width */
+.cyber-table.slim td.delta-cell {
+    font-size: 0.82em;
+    letter-spacing: -0.2px;
 }
 
 @media (max-width: 640px) {
@@ -813,13 +823,32 @@ body {
         padding-left: 6px;
         padding-right: 6px;
     }
-    /* fixed-px gutters for the narrow columns; every spare pixel
-       flows to state names and values */
+    /* every column in %, none in px: on a table-layout:fixed table at
+       width:100%, percentage columns can never sum past the container —
+       mixing in a fixed px column risks the table growing wider than the
+       viewport (real horizontal scroll) the moment paddings get tight, so
+       this budget is deliberately all-% even though 6 columns is a squeeze */
     .cyber-table.slim col.c-rank {
-        width: 28px;
+        width: 8%;
+    }
+    .cyber-table.slim col.c-state {
+        width: 26%;
     }
     .cyber-table.slim col.c-token {
-        width: 44px;
+        width: 11%;
+    }
+    .cyber-table.slim col.c-price {
+        width: 18%;
+    }
+    .cyber-table.slim col.c-delta {
+        width: 15%;
+    }
+    .cyber-table.slim col.c-metric {
+        width: 22%;
+    }
+    .cyber-table.slim td.delta-cell {
+        font-size: 10px;
+        letter-spacing: -0.3px;
     }
     .cyber-table.slim td:nth-child(2) span:first-child {
         margin-right: 6px !important;

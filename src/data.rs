@@ -432,6 +432,19 @@ pub fn delta_badge(pct: f64) -> (&'static str, String, &'static str) {
     }
 }
 
+/// One-cell rendering of a delta, for table columns — a plain (text, color)
+/// pair matching the shape `metric_cell()` already returns everywhere else.
+/// `None` (no prior snapshot yet) reads as a dim dash, not a fake 0.0%.
+pub fn delta_cell(pct: Option<f64>) -> (String, &'static str) {
+    match pct {
+        None => ("—".to_string(), "#333"),
+        Some(pct) => {
+            let (arrow, text, color) = delta_badge(pct);
+            (format!("{arrow}{text}"), color)
+        }
+    }
+}
+
 fn fmt_usd_billions(v: f64) -> String {
     if v <= 0.0 {
         "N/A".to_string()

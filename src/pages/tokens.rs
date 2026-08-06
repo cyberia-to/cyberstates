@@ -350,6 +350,7 @@ pub fn TokensPage() -> impl IntoView {
                         <col class="c-token" />
                         <col class="c-state" />
                         <col class="c-price" />
+                        <col class="c-delta" />
                         <col class="c-metric" />
                     </colgroup>
                     <thead>
@@ -358,6 +359,7 @@ pub fn TokensPage() -> impl IntoView {
                             <th class="th-static">"TOKEN"</th>
                             <th class="th-static">"STATES"</th>
                             <th class="th-static" style="text-align: right;">"PRICE"</th>
+                            <th class="th-static" style="text-align: right;">"24H"</th>
                             <th class="th-static metric-th" style="text-align: right;">
                                 {move || field.get().short()}
                             </th>
@@ -376,6 +378,7 @@ pub fn TokensPage() -> impl IntoView {
                                     let flags: String = t.countries.iter().take(4).map(|(_, _, f)| f.as_str()).collect::<Vec<_>>().join(" ");
                                     let more = n_states.saturating_sub(4);
                                     let price_usd = t.price_usd;
+                                    let price_delta = t.price_delta();
                                     let t_for_metric = t.clone();
                                     let scores = scores.clone();
                                     view! {
@@ -399,6 +402,12 @@ pub fn TokensPage() -> impl IntoView {
                                                         }.into_any()
                                                     }
                                                 }}
+                                            </td>
+                                            <td class="tabular-nums delta-cell" style="text-align: right;">
+                                                {
+                                                    let (text, color) = delta_cell(price_delta);
+                                                    view! { <span style:color=color>{text}</span> }
+                                                }
                                             </td>
                                             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                                                 {move || {

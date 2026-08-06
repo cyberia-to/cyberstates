@@ -763,6 +763,7 @@ pub fn HomePage() -> impl IntoView {
                                 <col class="c-state" />
                                 <col class="c-token" />
                                 <col class="c-price" />
+                                <col class="c-delta" />
                                 <col class="c-metric" />
                             </colgroup>
                             <thead>
@@ -771,6 +772,7 @@ pub fn HomePage() -> impl IntoView {
                                     <th class="th-static">"STATE"</th>
                                     <th class="th-static">"TOKEN"</th>
                                     <th class="th-static" style="text-align: right;">"PRICE"</th>
+                                    <th class="th-static" style="text-align: right;">"24H"</th>
                                     <th class="th-static metric-th" style="text-align: right;">
                                         {move || sort_field.get().short()}
                                     </th>

@@ -1,5 +1,5 @@
 use crate::components::notyet::NotYet;
-use crate::data::{Country, SortField};
+use crate::data::{delta_cell, Country, SortField};
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 use leptos::prelude::*;
 
@@ -46,6 +46,7 @@ pub fn CountryRow(
     let token_code = country.currency_code.clone();
     let token_slug = token_code.to_lowercase();
     let price_usd = country.token_price_usd;
+    let price_delta = country.price_delta();
     let c_for_metric = country.clone();
 
     view! {
@@ -74,6 +75,12 @@ pub fn CountryRow(
                         }.into_any()
                     }
                 }}
+            </td>
+            <td class="tabular-nums delta-cell" style="text-align: right;">
+                {
+                    let (text, color) = delta_cell(price_delta);
+                    view! { <span style:color=color>{text}</span> }
+                }
             </td>
             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                 {move || {
