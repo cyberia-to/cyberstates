@@ -2,6 +2,7 @@ use crate::components::brand::BrandChooser;
 use crate::components::legend::{goodness_keep, RatingLegend};
 use crate::components::nav::SiteNav;
 use crate::components::notyet::NotYet;
+use crate::components::solar::SolarPanel;
 use crate::data::*;
 use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
 use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
@@ -75,28 +76,53 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
 
 /// Map values for the token landing: every member state wears its
 /// token's rank percentile — currency zones read as solid blocks.
+/// Class toggles filter which members (and which tokens) participate —
+/// same planets / continents / countries language as the states page.
 fn token_map_values(
     tokens: &[Token],
     scores: &HashMap<String, (f64, f64, f64)>,
+    by_code: &HashMap<String, Country>,
     field: SortField,
     query: &str,
     cut: Option<f64>,
+    classes: (bool, bool, bool),
 ) -> HashMap<String, f64> {
+    let (planets, continents, countries) = classes;
+    let code_refs: HashMap<String, &Country> =
+        by_code.iter().map(|(k, v)| (k.clone(), v)).collect();
+
     let mut ranked: Vec<(Vec<String>, f64)> = tokens
         .iter()
         .filter(|t| {
-            query.is_empty()
+            (query.is_empty()
                 || t.code.to_lowercase().contains(query)
-                || t.name.to_lowercase().contains(query)
+                || t.name.to_lowercase().contains(query))
+                && token_class_visible(t, &code_refs, planets, continents, countries)
         })
         .map(|t| {
-            let members = t.countries.iter().map(|(c, _, _)| c.clone()).collect();
+            // only paint members that match the class toggles
+            let members: Vec<String> = t
+                .countries
+                .iter()
+                .filter(|(code, _, _)| {
+                    by_code
+                        .get(code)
+                        .map(|c| c.class_visible(planets, continents, countries))
+                        .unwrap_or(false)
+                })
+                .map(|(c, _, _)| c.clone())
+                .collect();
             (members, token_metric(t, field, scores))
         })
+        .filter(|(members, _)| !members.is_empty())
         .collect();
     ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
     let n = ranked.len();
     let log_scale = matches!(field, SortField::Population | SortField::Territory);
+    // first index of each distinct value — equal metrics share one color
+    let first_rank = |band: &[(Vec<String>, f64)], v: f64| -> usize {
+        band.iter().position(|(_, x)| *x == v).unwrap_or(0)
+    };
     let (vmin, vmax) = if log_scale && n > 0 {
         let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
         let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
@@ -104,18 +130,23 @@ fn token_map_values(
     } else {
         (0.0, 1.0)
     };
+    const FLOOR: f64 = 0.12;
     let mut values = HashMap::new();
-    for (i, (members, v)) in ranked.into_iter().enumerate() {
+    for (i, (members, v)) in ranked.iter().enumerate() {
         let t = if log_scale {
             if vmax > vmin {
                 ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-            } else {
+            } else if *v > 0.0 {
                 1.0
+            } else {
+                0.0
             }
         } else if n > 1 {
-            i as f64 / (n - 1) as f64
-        } else {
+            first_rank(&ranked, *v) as f64 / (n - 1) as f64
+        } else if *v > 0.0 {
             1.0
+        } else {
+            0.0
         };
         let t = if field.lower_is_better() { 1.0 - t } else { t };
         // ranked ascending: flip the index for the descending-order predicate
@@ -124,8 +155,9 @@ fn token_map_values(
                 continue;
             }
         }
+        let paint = FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0);
         for code in members {
-            values.insert(code, 0.02 + 0.98 * t);
+            values.insert(code.clone(), paint);
         }
     }
     values
@@ -170,9 +202,15 @@ fn metric_cell(
 pub fn TokensPage() -> impl IntoView {
     let tokens = get_tokens();
     let total = tokens.len();
+    let all_countries = load_countries();
+    let by_code: HashMap<String, Country> = all_countries
+        .iter()
+        .map(|c| (c.code.clone(), c.clone()))
+        .collect();
+    let by_code = std::sync::Arc::new(by_code);
 
     // per-state (population, freedom, hospitality) for weighted zone scores
-    let scores: HashMap<String, (f64, f64, f64)> = load_countries()
+    let scores: HashMap<String, (f64, f64, f64)> = all_countries
         .iter()
         .map(|c| {
             let idx = c.index();
@@ -187,13 +225,22 @@ pub fn TokensPage() -> impl IntoView {
     let location = use_location();
     let field = Signal::derive(move || parse_path(&location.pathname.get()));
 
+    // same global class filter as states (localStorage)
+    let init_classes = load_class_filter();
+    store_class_filter(init_classes);
+    let show_planets = RwSignal::new(init_classes.0);
+    let show_continents = RwSignal::new(init_classes.1);
+    let show_countries = RwSignal::new(init_classes.2);
+
     // the map mounts already painted — page switches never flash
     let initial_svg = painted_world(&token_map_values(
         &tokens,
         &scores,
+        &by_code,
         parse_path(&location.pathname.get_untracked()),
         "",
         None,
+        init_classes,
     ));
     // color-bar filter: keep only tokens at least this good (0..1)
     let color_cut = RwSignal::new(None::<f64>);
@@ -202,20 +249,42 @@ pub fn TokensPage() -> impl IntoView {
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
 
     Effect::new(move |_| {
+        store_class_filter((
+            show_planets.get(),
+            show_continents.get(),
+            show_countries.get(),
+        ));
+    });
+
+    Effect::new(move |_| {
         document().set_title(&format!(
             "Cyberstates tokens by {} — the sovereignty terminal",
             field.get().label().to_lowercase()
         ));
     });
 
-    // Desktop side map: every state wears its token's rank — currency
-    // zones surface as solid blocks of one color.
+    // Desktop side map + solar panel: every visible member wears its
+    // token's rank; class toggles dim planets / continents like states.
     let tokens_for_map = tokens.clone();
     let scores_for_map = scores.clone();
+    let by_code_for_map = by_code.clone();
     Effect::new(move |_| {
         let f = field.get();
         let query = search.get().to_lowercase();
-        let values = token_map_values(&tokens_for_map, &scores_for_map, f, &query, color_cut.get());
+        let classes = (
+            show_planets.get(),
+            show_continents.get(),
+            show_countries.get(),
+        );
+        let values = token_map_values(
+            &tokens_for_map,
+            &scores_for_map,
+            &by_code_for_map,
+            f,
+            &query,
+            color_cut.get(),
+            classes,
+        );
         if let Some(w) = web_sys::window() {
             use wasm_bindgen::prelude::*;
             let cb = Closure::wrap(Box::new(move || {
@@ -237,6 +306,21 @@ pub fn TokensPage() -> impl IntoView {
                             }
                         }
                     }
+                    // solar dots share the values map — same as home
+                    if let Ok(dots) = doc.query_selector_all(".solar-panel circle[data-code]") {
+                        for i in 0..dots.length() {
+                            if let Some(node) = dots.item(i) {
+                                let el: web_sys::Element = node.unchecked_into();
+                                if let Some(code) = el.get_attribute("data-code") {
+                                    let color = values
+                                        .get(&code)
+                                        .map(|&v| value_to_color(v, 1.0))
+                                        .unwrap_or_else(|| "#1a1a1a".to_string());
+                                    let _ = el.set_attribute("fill", &color);
+                                }
+                            }
+                        }
+                    }
                 }
                 setup_click_handlers();
             }) as Box<dyn FnMut()>);
@@ -250,15 +334,26 @@ pub fn TokensPage() -> impl IntoView {
 
     let tokens_for_count = tokens.clone();
     let scores_for_sort = scores.clone();
+    let by_code_for_filter = by_code.clone();
     let filtered_sorted = move || {
         let query = search.get().to_lowercase();
         let f = field.get();
+        let classes = (
+            show_planets.get(),
+            show_continents.get(),
+            show_countries.get(),
+        );
+        let code_refs: HashMap<String, &Country> = by_code_for_filter
+            .iter()
+            .map(|(k, v)| (k.clone(), v))
+            .collect();
         let mut list: Vec<(Token, f64)> = tokens
             .iter()
             .filter(|t| {
-                query.is_empty()
+                (query.is_empty()
                     || t.code.to_lowercase().contains(&query)
-                    || t.name.to_lowercase().contains(&query)
+                    || t.name.to_lowercase().contains(&query))
+                    && token_class_visible(t, &code_refs, classes.0, classes.1, classes.2)
             })
             .map(|t| {
                 let m = token_metric(t, f, &scores_for_sort);
@@ -279,6 +374,7 @@ pub fn TokensPage() -> impl IntoView {
     };
 
     let scores_for_cells = scores.clone();
+    let by_code_for_count = by_code.clone();
 
     view! {
         <div class="page-shell">
@@ -317,7 +413,7 @@ pub fn TokensPage() -> impl IntoView {
                 <SiteNav active="TOKENS" />
             </div>
 
-            // Header row 2: the same eight ratings, for token zones
+            // Header row 2: ratings + class toggles (same as states)
             <div class="header-row2">
                 <span class="by-label">"by"</span>
                 <div class="region-pills">
@@ -332,6 +428,19 @@ pub fn TokensPage() -> impl IntoView {
                             </a>
                         }
                     }).collect_view()}
+                </div>
+                <div class="class-filter">
+                    {[
+                        ("\u{1FA90}", "planets", show_planets),
+                        ("\u{1F30D}", "continents", show_continents),
+                        ("\u{1F1FA}\u{1F1F3}", "countries", show_countries),
+                    ].map(|(icon, name, sig)| view! {
+                        <button
+                            class=move || if sig.get() { "class-toggle on" } else { "class-toggle" }
+                            title=name
+                            on:click=move |_| sig.update(|v| *v = !*v)
+                        >{icon}</button>
+                    })}
                 </div>
                 <RatingLegend field=field cut=color_cut />
             </div>
@@ -436,6 +545,7 @@ pub fn TokensPage() -> impl IntoView {
                 </div>
                 <div class="map-pane">
                     <div class="world-map-container" inner_html=initial_svg></div>
+                    <SolarPanel />
                 </div>
             </div>
 
@@ -444,8 +554,26 @@ pub fn TokensPage() -> impl IntoView {
                 <span class="dock-count">
                     {move || {
                         let query = search.get().to_lowercase();
+                        let classes = (
+                            show_planets.get(),
+                            show_continents.get(),
+                            show_countries.get(),
+                        );
+                        let code_refs: HashMap<String, &Country> = by_code_for_count
+                            .iter()
+                            .map(|(k, v)| (k.clone(), v))
+                            .collect();
                         let count = tokens_for_count.iter().filter(|t| {
-                            query.is_empty() || t.code.to_lowercase().contains(&query) || t.name.to_lowercase().contains(&query)
+                            (query.is_empty()
+                                || t.code.to_lowercase().contains(&query)
+                                || t.name.to_lowercase().contains(&query))
+                                && token_class_visible(
+                                    t,
+                                    &code_refs,
+                                    classes.0,
+                                    classes.1,
+                                    classes.2,
+                                )
                         }).count();
                         let count = match color_cut.get() {
                             Some(g) => (0..count)

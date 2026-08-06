@@ -261,47 +261,6 @@ const FILTER_EXAMPLES: [&str; 5] = [
     "territory>1m",
 ];
 
-/// Default class filter: countries only. Planets and continents start off —
-/// the table is a country ranking first; celestial / continental aggregates
-/// are opt-in.
-const DEFAULT_CLASSES: (bool, bool, bool) = (false, false, true); // planets, continents, countries
-
-const CLASS_FILTER_KEY: &str = "class_filter";
-
-fn encode_classes(c: (bool, bool, bool)) -> String {
-    let mut on: Vec<&str> = Vec::new();
-    if c.0 {
-        on.push("planets");
-    }
-    if c.1 {
-        on.push("continents");
-    }
-    if c.2 {
-        on.push("countries");
-    }
-    on.join(",")
-}
-
-fn decode_classes(v: &str) -> (bool, bool, bool) {
-    let has = |s: &str| v.split(',').filter(|x| !x.is_empty()).any(|x| x == s);
-    (has("planets"), has("continents"), has("countries"))
-}
-
-/// Global site setting — survives ranking hops and reloads (like numeraire).
-fn load_class_filter() -> (bool, bool, bool) {
-    web_sys::window()
-        .and_then(|w| w.local_storage().ok().flatten())
-        .and_then(|ls| ls.get_item(CLASS_FILTER_KEY).ok().flatten())
-        .map(|s| decode_classes(&s))
-        .unwrap_or(DEFAULT_CLASSES)
-}
-
-fn store_class_filter(c: (bool, bool, bool)) {
-    if let Some(ls) = web_sys::window().and_then(|w| w.local_storage().ok().flatten()) {
-        let _ = ls.set_item(CLASS_FILTER_KEY, &encode_classes(c));
-    }
-}
-
 /// Filters in the URL: ?q= text, ?top=NN legend cut, ?classes= toggles.
 /// `classes` is `None` when the param is absent — caller must not treat
 /// that as "all on" (would wipe the global setting on ranking hops).
@@ -317,10 +276,25 @@ fn parse_filter_params(search: &str) -> (Option<f64>, Option<(bool, bool, bool)>
             }
         }
         if let Some(v) = kv.strip_prefix("classes=") {
-            classes = Some(decode_classes(v));
+            let has = |s: &str| v.split(',').filter(|x| !x.is_empty()).any(|x| x == s);
+            classes = Some((has("planets"), has("continents"), has("countries")));
         }
     }
     (cut, classes)
+}
+
+fn encode_classes_for_url(c: (bool, bool, bool)) -> String {
+    let mut on: Vec<&str> = Vec::new();
+    if c.0 {
+        on.push("planets");
+    }
+    if c.1 {
+        on.push("continents");
+    }
+    if c.2 {
+        on.push("countries");
+    }
+    on.join(",")
 }
 
 fn build_filter_query(q: &str, cut: Option<f64>, classes: (bool, bool, bool)) -> String {
@@ -331,10 +305,9 @@ fn build_filter_query(q: &str, cut: Option<f64>, classes: (bool, bool, bool)) ->
     if let Some(g) = cut {
         parts.push(format!("top={:.0}", (1.0 - g) * 100.0));
     }
-    // always stamp classes when not default so ranking links / shared URLs
-    // carry the global setting; default countries-only keeps the URL clean
+    // stamp classes when not default so ranking links carry the global setting
     if classes != DEFAULT_CLASSES {
-        parts.push(format!("classes={}", encode_classes(classes)));
+        parts.push(format!("classes={}", encode_classes_for_url(classes)));
     }
     if parts.is_empty() {
         String::new()

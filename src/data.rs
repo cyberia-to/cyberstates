@@ -606,6 +606,75 @@ impl Country {
     }
 }
 
+/// Default class filter: countries only. Planets and continents start off.
+pub const DEFAULT_CLASSES: (bool, bool, bool) = (false, false, true); // planets, continents, countries
+
+const CLASS_FILTER_KEY: &str = "class_filter";
+
+fn encode_classes(c: (bool, bool, bool)) -> String {
+    let mut on: Vec<&str> = Vec::new();
+    if c.0 {
+        on.push("planets");
+    }
+    if c.1 {
+        on.push("continents");
+    }
+    if c.2 {
+        on.push("countries");
+    }
+    on.join(",")
+}
+
+fn decode_classes(v: &str) -> (bool, bool, bool) {
+    let has = |s: &str| v.split(',').filter(|x| !x.is_empty()).any(|x| x == s);
+    (has("planets"), has("continents"), has("countries"))
+}
+
+/// Global site setting — same toggles on states and tokens (localStorage).
+pub fn load_class_filter() -> (bool, bool, bool) {
+    #[cfg(target_arch = "wasm32")]
+    {
+        return web_sys::window()
+            .and_then(|w| w.local_storage().ok().flatten())
+            .and_then(|ls| ls.get_item(CLASS_FILTER_KEY).ok().flatten())
+            .map(|s| decode_classes(&s))
+            .unwrap_or(DEFAULT_CLASSES);
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        DEFAULT_CLASSES
+    }
+}
+
+pub fn store_class_filter(c: (bool, bool, bool)) {
+    #[cfg(target_arch = "wasm32")]
+    {
+        if let Some(ls) = web_sys::window().and_then(|w| w.local_storage().ok().flatten()) {
+            let _ = ls.set_item(CLASS_FILTER_KEY, &encode_classes(c));
+        }
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let _ = c;
+    }
+}
+
+/// Token is visible if any member state matches the class toggles.
+pub fn token_class_visible(
+    t: &Token,
+    by_code: &HashMap<String, &Country>,
+    planets: bool,
+    continents: bool,
+    countries: bool,
+) -> bool {
+    t.countries.iter().any(|(code, _, _)| {
+        by_code
+            .get(code.as_str())
+            .map(|c| c.class_visible(planets, continents, countries))
+            .unwrap_or(false)
+    })
+}
+
 /// Terrestrial = carries real population and capital; the visa index
 /// denominators sum over these only, so celestial and oceanic listings
 /// never dilute the scores.
