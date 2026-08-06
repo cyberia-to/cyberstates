@@ -683,7 +683,10 @@ body {
 }
 
 .table-pane {
-    flex: 0 0 500px;
+    /* was 500px — +40 to give the 24H column room without starving any
+       of the other columns, which were already at their exact content
+       width (zero slack) before that column existed */
+    flex: 0 0 540px;
     min-width: 0;
     /* the grown map sweeps beneath — the table stays on top */
     position: relative;
@@ -693,13 +696,13 @@ body {
 
 .map-pane {
     /* fixed, not sticky: the map is an instrument panel, it never scrolls.
-       left = shell pad 20 + table pane 500 + gap 16.
+       left = shell pad 20 + table pane 540 + gap 16.
        top uses --map-chrome-h (listing-only), NOT --chrome-h: leaving a
        state/token page leaves a short --chrome-h and the map would mount
        too high, then drop when listing chrome is measured. */
     position: fixed;
     top: calc(var(--map-chrome-h, 112px) + 8px);
-    left: 536px;
+    left: 576px;
     right: 0;
     z-index: 5;
     /* never interpolate top — variable updates must snap, not slide */
@@ -714,7 +717,7 @@ body {
     aspect-ratio: 880 / 550;
     /* grow from the LEFT edge (at the table): continents get big, the
        empty gap + Antarctica sweep toward the right edge and disk bay */
-    width: calc(100vw - 542px);
+    width: calc(100vw - 582px);
     height: auto;
     max-width: none;
     margin-top: -18px;
@@ -771,24 +774,27 @@ body {
     } /* no map, no bleed — symmetric margins */
 }
 
-/* slim table columns — widths live here so viewports can reshape them */
+/* slim table columns, desktop — px, not %: rank/state/token/price/metric
+   are each already sized to their exact content (measured live, zero
+   slack), so 24H must not steal a % share from them — it gets the
+   table-pane's spare 40px outright. Sum must equal .table-pane's 540px. */
 .cyber-table.slim col.c-rank {
-    width: 8%;
+    width: 40px;
 }
 .cyber-table.slim col.c-state {
-    width: 30%;
+    width: 150px;
 }
 .cyber-table.slim col.c-token {
-    width: 12%;
+    width: 60px;
 }
 .cyber-table.slim col.c-price {
-    width: 18%;
+    width: 90px;
 }
 .cyber-table.slim col.c-delta {
-    width: 10%;
+    width: 90px;
 }
 .cyber-table.slim col.c-metric {
-    width: 22%;
+    width: 110px;
 }
 
 /* the 24h badge rides small, like the price's fraction — narrower than a
