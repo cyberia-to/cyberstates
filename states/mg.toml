@@ -9,9 +9,9 @@ land_area_km2 = 587041
 currency_code = "MGA"
 currency_name = "Malagasy Ariary"
 money_supply_b_usd = 5.1
-money_supply_b_usd_prev = 5.0
-token_price_usd = 0.000233
-token_price_usd_prev = 0.000232
+money_supply_b_usd_prev = 5.1
+token_price_usd = 0.000232
+token_price_usd_prev = 0.000233
 visa_free_destinations = 58
 visa_free_inbound = 175
 

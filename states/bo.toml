@@ -8,10 +8,10 @@ population = 12388571
 land_area_km2 = 1098581
 currency_code = "BOB"
 currency_name = "Bolivian Boliviano"
-money_supply_b_usd = 21.2
+money_supply_b_usd = 21.3
 money_supply_b_usd_prev = 21.2
-token_price_usd = 0.082413
-token_price_usd_prev = 0.082193
+token_price_usd = 0.082504
+token_price_usd_prev = 0.082413
 visa_free_destinations = 82
 visa_free_inbound = 165
 

@@ -8,10 +8,10 @@ population = 106858
 land_area_km2 = 747
 currency_code = "TOP"
 currency_name = "Tongan Pa'anga"
-money_supply_b_usd = 0.409
-money_supply_b_usd_prev = 0.408
-token_price_usd = 0.421514
-token_price_usd_prev = 0.420097
+money_supply_b_usd = 0.412
+money_supply_b_usd_prev = 0.409
+token_price_usd = 0.423765
+token_price_usd_prev = 0.421514
 visa_free_destinations = 133
 visa_free_inbound = 170
 

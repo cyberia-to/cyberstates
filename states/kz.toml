@@ -8,10 +8,10 @@ population = 19606633
 land_area_km2 = 2724900
 currency_code = "KZT"
 currency_name = "Kazakhstani Tenge"
-money_supply_b_usd = 112
+money_supply_b_usd = 113
 money_supply_b_usd_prev = 112
-token_price_usd = 0.002129
-token_price_usd_prev = 0.002120
+token_price_usd = 0.002135
+token_price_usd_prev = 0.002129
 visa_free_destinations = 85
 visa_free_inbound = 55
 

@@ -10,8 +10,8 @@ currency_code = "NIO"
 currency_name = "Nicaraguan Cordoba"
 money_supply_b_usd = 6.0
 money_supply_b_usd_prev = 6.0
-token_price_usd = 0.027191
-token_price_usd_prev = 0.027171
+token_price_usd = 0.027182
+token_price_usd_prev = 0.027191
 visa_free_destinations = 125
 visa_free_inbound = 148
 

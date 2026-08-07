@@ -10,8 +10,8 @@ currency_code = "VES"
 currency_name = "Venezuelan Bolivar"
 money_supply_b_usd = 5.0
 money_supply_b_usd_prev = 5.0
-token_price_usd = 0.001323
-token_price_usd_prev = 0.001324
+token_price_usd = 0.001322
+token_price_usd_prev = 0.001323
 visa_free_destinations = 127
 visa_free_inbound = 60
 
