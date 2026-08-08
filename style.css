@@ -2314,3 +2314,24 @@ html.vt-active .world-map-container path {
         text-align: left;
     }
 }
+
+/* map ↔ ranking hover sync */
+svg.world-map path.map-sync-hover {
+    stroke: #ffffff !important;
+    stroke-width: 1.4px;
+    filter: brightness(1.35) drop-shadow(0 0 6px rgba(0, 255, 65, 0.55));
+    outline: none;
+}
+.solar-panel circle.map-sync-hover {
+    stroke: #fff;
+    stroke-width: 2px;
+    filter: brightness(1.4);
+}
+.cyber-table tbody tr.row-sync-hover td {
+    background: #0a160a !important;
+    color: #eee;
+}
+.cyber-table tbody tr.row-sync-hover {
+    outline: 1px solid rgba(0, 255, 65, 0.45);
+    outline-offset: -1px;
+}

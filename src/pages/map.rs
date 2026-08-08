@@ -203,7 +203,85 @@ pub fn measure_chrome_height() {
     }
 }
 
-/// Wire every state path to navigate to its /state/ page on click.
+/// Clear map↔table hover classes (paths, solar dots, ranking rows).
+pub fn clear_hover_sync() {
+    let Some(doc) = web_sys::window().and_then(|w| w.document()) else {
+        return;
+    };
+    for sel in [
+        "svg.world-map path.map-sync-hover",
+        ".solar-panel circle.map-sync-hover",
+        "tr.row-sync-hover",
+    ] {
+        if let Ok(nodes) = doc.query_selector_all(sel) {
+            for i in 0..nodes.length() {
+                if let Some(node) = nodes.item(i) {
+                    let el: web_sys::Element = node.unchecked_into();
+                    let _ = el.class_list().remove_1(if sel.contains("tr.") {
+                        "row-sync-hover"
+                    } else {
+                        "map-sync-hover"
+                    });
+                }
+            }
+        }
+    }
+}
+
+/// Highlight a state on the map and its ranking row.
+/// `scroll_row`: when true (map → table), scroll the row into view.
+pub fn set_hover_sync(code: &str, scroll_row: bool) {
+    clear_hover_sync();
+    if code.is_empty() {
+        return;
+    }
+    let Some(doc) = web_sys::window().and_then(|w| w.document()) else {
+        return;
+    };
+
+    // map path(s) — id is ISO code
+    if let Ok(Some(path)) = doc.query_selector(&format!("svg.world-map path[id=\"{}\"]", code)) {
+        let _ = path.class_list().add_1("map-sync-hover");
+    }
+    // solar panel body (if any)
+    if let Ok(Some(dot)) =
+        doc.query_selector(&format!(".solar-panel circle[data-code=\"{}\"]", code))
+    {
+        let _ = dot.class_list().add_1("map-sync-hover");
+    }
+    // ranking row
+    if let Ok(Some(tr)) = doc.query_selector(&format!("tr[data-code=\"{}\"]", code)) {
+        let _ = tr.class_list().add_1("row-sync-hover");
+        if scroll_row {
+            // scrollIntoView options via JS object — web_sys feature flags
+            // for ScrollIntoViewOptions vary; Reflect keeps this portable.
+            let opts = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &opts,
+                &JsValue::from_str("block"),
+                &JsValue::from_str("nearest"),
+            );
+            let _ = js_sys::Reflect::set(
+                &opts,
+                &JsValue::from_str("inline"),
+                &JsValue::from_str("nearest"),
+            );
+            let _ = js_sys::Reflect::set(
+                &opts,
+                &JsValue::from_str("behavior"),
+                &JsValue::from_str("smooth"),
+            );
+            if let Ok(fun) = js_sys::Reflect::get(tr.as_ref(), &JsValue::from_str("scrollIntoView"))
+            {
+                if let Ok(f) = fun.dyn_into::<js_sys::Function>() {
+                    let _ = f.call1(tr.as_ref(), opts.as_ref());
+                }
+            }
+        }
+    }
+}
+
+/// Wire every state path to navigate on click, and map→table hover sync.
 /// Idempotent: repaint effects call this often — each path is wired once.
 pub fn setup_click_handlers() {
     let window = web_sys::window().unwrap();
@@ -224,14 +302,29 @@ pub fn setup_click_handlers() {
                 let href = crate::data::slug_for_code(&id)
                     .map(|s| format!("/state/{}", s))
                     .unwrap_or_else(|| format!("/state/{}", id.to_lowercase()));
-                let closure = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
+                let code = id.clone();
+                let click = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
                     navigate_client(&href);
+                })
+                    as Box<dyn FnMut(web_sys::MouseEvent)>);
+                let enter = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
+                    set_hover_sync(&code, true);
+                })
+                    as Box<dyn FnMut(web_sys::MouseEvent)>);
+                let leave = Closure::wrap(Box::new(move |_: web_sys::MouseEvent| {
+                    clear_hover_sync();
                 })
                     as Box<dyn FnMut(web_sys::MouseEvent)>);
 
                 let _ =
-                    el.add_event_listener_with_callback("click", closure.as_ref().unchecked_ref());
-                closure.forget();
+                    el.add_event_listener_with_callback("click", click.as_ref().unchecked_ref());
+                let _ = el
+                    .add_event_listener_with_callback("mouseenter", enter.as_ref().unchecked_ref());
+                let _ = el
+                    .add_event_listener_with_callback("mouseleave", leave.as_ref().unchecked_ref());
+                click.forget();
+                enter.forget();
+                leave.forget();
             }
         }
     }

@@ -44,14 +44,22 @@ pub fn CountryRow(
 
     let flag = country.flag.clone();
     let name = country.name.clone();
+    let state_code = country.code.clone();
     let token_code = country.currency_code.clone();
     let token_slug = token_code.to_lowercase();
     let price_usd = country.token_price_usd;
     let price_delta = country.price_delta();
     let c_for_metric = country.clone();
+    let code_enter = state_code.clone();
+    let code_leave = state_code.clone();
 
     view! {
-        <tr on:click=move |_| crate::pages::map::navigate_client(&href)>
+        <tr
+            data-code=state_code
+            on:click=move |_| crate::pages::map::navigate_client(&href)
+            on:mouseenter=move |_| crate::pages::map::set_hover_sync(&code_enter, false)
+            on:mouseleave=move |_| crate::pages::map::clear_hover_sync()
+        >
             <td class="tabular-nums" style=format!("text-align: right; color: {}; font-weight: {};", crate::data::rank_color(rank), crate::data::rank_weight(rank))>{rank}</td>
             <td>
                 <span style="margin-right: 8px; font-size: 16px;">{flag.clone()}</span>
