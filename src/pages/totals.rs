@@ -134,13 +134,21 @@ fn region_panel(
     value_of: impl Fn(&Bundle) -> f64,
     fmt: impl Fn(f64) -> String,
 ) -> AnyView {
-    let max = regions
-        .iter()
+    // always largest → smallest for the active rating
+    let mut ordered: Vec<&Bundle> = regions.iter().collect();
+    ordered.sort_by(|a, b| {
+        value_of(b)
+            .partial_cmp(&value_of(a))
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| a.name.cmp(&b.name))
+    });
+    let max = ordered
+        .first()
         .map(|r| value_of(r))
-        .fold(0.0_f64, f64::max)
+        .unwrap_or(0.0)
         .max(1e-12);
-    let rows: Vec<AnyView> = regions
-        .iter()
+    let rows: Vec<AnyView> = ordered
+        .into_iter()
         .map(|r| {
             let v = value_of(r);
             bar_row(&r.name, v / max * 100.0, &fmt(v), color)
