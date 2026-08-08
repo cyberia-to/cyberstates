@@ -282,6 +282,13 @@ impl Country {
     pub fn metric(&self, f: SortField) -> f64 {
         match f {
             SortField::Capital => self.money_supply_b_usd,
+            // 24h token price change as percent points (+1.8 = +1.8%).
+            // no prior snapshot → −∞ so they sink to the bottom of a
+            // descending rank instead of masquerading as 0.0% flat.
+            SortField::Growth => self
+                .price_delta()
+                .map(|d| d * 100.0)
+                .unwrap_or(f64::NEG_INFINITY),
             SortField::Human => {
                 if self.population > 0 {
                     self.money_supply_b_usd * 1e9 / self.population as f64
@@ -700,6 +707,8 @@ pub const REGIONS: &[&str] = &[
 #[derive(Clone, Copy, PartialEq)]
 pub enum SortField {
     Capital,
+    /// 24h token price change (%). ranks like CAPITAL ranks by stock size.
+    Growth,
     Human,
     Land,
     Freedom,
@@ -744,6 +753,7 @@ impl SortField {
     pub fn short(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
+            Self::Growth => "24H",
             Self::Human => "CITIZEN",
             Self::Land => "LAND",
             Self::Freedom => "FREEDOM",
@@ -757,6 +767,7 @@ impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
+            Self::Growth => "24H GROWTH",
             Self::Human => "CITIZEN VALUE",
             Self::Land => "LAND VALUE",
             Self::Freedom => "TRAVEL FREEDOM",
@@ -770,6 +781,7 @@ impl SortField {
     pub fn slug(&self) -> &'static str {
         match self {
             Self::Capital => "capital",
+            Self::Growth => "growth",
             Self::Human => "citizen-value",
             Self::Land => "land-value",
             Self::Freedom => "travel-freedom",
@@ -783,6 +795,7 @@ impl SortField {
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
             "capital" | "cap" => Self::Capital,
+            "growth" | "24h" | "change" | "delta" => Self::Growth,
             "citizen-value" | "citizen" | "human-value" | "human" => Self::Human,
             "land-value" | "land" => Self::Land,
             "travel-freedom" | "freedom" => Self::Freedom,
@@ -794,11 +807,12 @@ impl SortField {
         })
     }
 
-    /// The eight ratings, in display order.
-    // The doctrine's kernel order: three primary stocks · three derived
+    /// The ratings, in display order.
+    // kernel: capital + its day-change · three primary stocks · three derived
     // exchange rates · two freedom scores from the Appendix A weights.
-    pub const ALL: [SortField; 8] = [
+    pub const ALL: [SortField; 9] = [
         Self::Capital,
+        Self::Growth,
         Self::Population,
         Self::Territory,
         Self::Human,
@@ -810,6 +824,6 @@ impl SortField {
 
     /// True where a derived group begins — the pill rows draw a dot here.
     pub fn derived_break(&self) -> bool {
-        matches!(self, Self::Human | Self::Freedom)
+        matches!(self, Self::Population | Self::Human | Self::Freedom)
     }
 }

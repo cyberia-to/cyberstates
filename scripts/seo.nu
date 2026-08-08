@@ -13,6 +13,7 @@ const CHUNK = 45000
 
 const FIELDS = [
   "capital"
+  "growth"
   "citizen-value"
   "land-value"
   "travel-freedom"

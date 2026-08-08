@@ -33,6 +33,10 @@ fn parse_path(path: &str) -> SortField {
 fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64)>) -> f64 {
     match f {
         SortField::Capital => t.total_supply_b_usd,
+        SortField::Growth => t
+            .price_delta()
+            .map(|d| d * 100.0)
+            .unwrap_or(f64::NEG_INFINITY),
         SortField::Human => {
             if t.total_population > 0 {
                 t.total_supply_b_usd * 1e9 / t.total_population as f64
@@ -187,14 +191,22 @@ fn metric_cell(
     n: Numeraire,
     scores: &HashMap<String, (f64, f64, f64)>,
 ) -> (String, &'static str) {
-    let v = token_metric(t, f, scores);
     match f {
-        SortField::Capital => (fmt_cap(v, n), "#e0e0e0"),
-        SortField::Human | SortField::Land => (fmt_value(v, n), "#e0e0e0"),
-        SortField::Freedom | SortField::Hospitality => (format!("{:.1}", v), score_color(v)),
-        SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
-        SortField::Territory => (format!("{} km²", format_area(v as u64)), "#e0e0e0"),
-        SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
+        SortField::Growth => delta_cell(t.price_delta()),
+        _ => {
+            let v = token_metric(t, f, scores);
+            match f {
+                SortField::Capital => (fmt_cap(v, n), "#e0e0e0"),
+                SortField::Human | SortField::Land => (fmt_value(v, n), "#e0e0e0"),
+                SortField::Freedom | SortField::Hospitality => {
+                    (format!("{:.1}", v), score_color(v))
+                }
+                SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
+                SortField::Territory => (format!("{} km²", format_area(v as u64)), "#e0e0e0"),
+                SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
+                SortField::Growth => unreachable!(),
+            }
+        }
     }
 }
 
