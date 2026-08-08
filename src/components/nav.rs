@@ -6,9 +6,10 @@ use leptos::prelude::*;
 /// so the header never changes shape between pages.
 #[component]
 pub fn SiteNav(active: &'static str) -> impl IntoView {
-    const ITEMS: [(&str, &str, &str); 3] = [
+    const ITEMS: [(&str, &str, &str); 4] = [
         ("STATES", "/", "nav-states"),
         ("TOKENS", "/tokens", "nav-tokens"),
+        ("TOTALS", "/totals", "nav-totals"),
         ("DOCTRINE", "/doctrine", "nav-method"),
     ];
 

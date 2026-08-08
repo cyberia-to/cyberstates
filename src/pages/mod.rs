@@ -7,3 +7,4 @@ pub mod methodology;
 pub mod solar_map;
 pub mod token;
 pub mod tokens;
+pub mod totals;

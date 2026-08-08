@@ -11,6 +11,7 @@ use crate::pages::methodology::MethodologyPage;
 use crate::pages::solar_map::SolarMapPage;
 use crate::pages::token::TokenPage;
 use crate::pages::tokens::TokensPage;
+use crate::pages::totals::TotalsPage;
 
 /// Publish the sticky chrome's height as --chrome-h on <html>, so table
 /// headers and the map know where to stick. Re-measured after every
@@ -126,6 +127,7 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/map") view=HomePage />
                 <Route path=path!("/tokens") view=TokensPage />
                 <Route path=path!("/tokens/by/:field") view=TokensPage />
+                <Route path=path!("/totals") view=TotalsPage />
                 <Route path=path!("/doctrine") view=MethodologyPage />
                 <Route path=path!("/listing") view=ListingPage />
                 <Route path=path!("/solar") view=SolarMapPage />

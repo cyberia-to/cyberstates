@@ -35,7 +35,13 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
         SortField::Capital => t.total_supply_b_usd,
         SortField::Growth => t
             .price_delta()
+            .filter(|d| *d > 0.0005)
             .map(|d| d * 100.0)
+            .unwrap_or(f64::NEG_INFINITY),
+        SortField::Loss => t
+            .price_delta()
+            .filter(|d| *d < -0.0005)
+            .map(|d| -d * 100.0)
             .unwrap_or(f64::NEG_INFINITY),
         SortField::Human => {
             if t.total_population > 0 {
@@ -192,7 +198,7 @@ fn metric_cell(
     scores: &HashMap<String, (f64, f64, f64)>,
 ) -> (String, &'static str) {
     match f {
-        SortField::Growth => delta_cell(t.price_delta()),
+        SortField::Growth | SortField::Loss => delta_cell(t.price_delta()),
         _ => {
             let v = token_metric(t, f, scores);
             match f {
@@ -204,7 +210,7 @@ fn metric_cell(
                 SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
                 SortField::Territory => (format!("{} km²", format_area(v as u64)), "#e0e0e0"),
                 SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
-                SortField::Growth => unreachable!(),
+                SortField::Growth | SortField::Loss => unreachable!(),
             }
         }
     }

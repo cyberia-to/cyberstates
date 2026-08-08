@@ -166,6 +166,9 @@ body {
 .nav-tokens {
     --btn-c: var(--cyber-yellow);
 }
+.nav-totals {
+    --btn-c: var(--cyber-orange);
+}
 .nav-method {
     --btn-c: var(--cyber-cyan);
 }
@@ -2069,6 +2072,7 @@ html.vt-active .world-map-container path {
     /* hard hide — must beat the inline-flex rule below (same or higher specificity) */
     .header-row1 .map-zone .nav-btn.nav-states,
     .header-row1 .map-zone .nav-btn.nav-tokens,
+    .header-row1 .map-zone .nav-btn.nav-totals,
     .header-row1 .map-zone .nav-btn.nav-here {
         display: none !important;
     }
@@ -2141,5 +2145,172 @@ html.vt-active .world-map-container path {
         content: none !important;
         display: none !important;
         border: none !important;
+    }
+}
+
+/* ---- totals page: world capital / pop / territory ---- */
+.totals-lede {
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    margin: 8px 0 20px;
+    max-width: 720px;
+}
+.totals-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.totals-kpi {
+    background: #050505;
+    border: 1px solid #1a1a1a;
+    border-radius: 2px;
+    padding: 16px 18px;
+}
+.totals-kpi-lab {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #555;
+    margin-bottom: 8px;
+}
+.totals-kpi-val {
+    font-size: clamp(20px, 3.5vw, 32px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+    color: var(--cyber-green);
+}
+.totals-kpi-val.cyan { color: var(--cyber-cyan); }
+.totals-kpi-val.green { color: var(--cyber-green); }
+.totals-kpi-val.yellow { color: var(--cyber-yellow); }
+.totals-kpi-hint {
+    font-size: 11px;
+    color: #444;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+}
+.totals-panel {
+    background: #050505;
+    border: 1px solid #111;
+    border-radius: 2px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+.totals-panel-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #555;
+    margin-bottom: 4px;
+}
+.totals-panel-hint {
+    font-size: 11px;
+    color: #333;
+    margin: 0 0 14px;
+    letter-spacing: 0.5px;
+}
+.totals-world-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 16px;
+    height: 160px;
+    padding: 8px 8px 0;
+}
+.totals-world-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    min-width: 0;
+}
+.totals-world-bar {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 72px;
+    border-radius: 2px 2px 0 0;
+    min-height: 48px;
+    opacity: 0.85;
+}
+.totals-world-bar.cyan { background: var(--cyber-cyan); }
+.totals-world-bar.green { background: var(--cyber-green); }
+.totals-world-bar.yellow { background: var(--cyber-yellow); }
+.totals-world-lab {
+    margin-top: 8px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #666;
+}
+.totals-world-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ccc;
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+    text-align: center;
+}
+.totals-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.totals-bar-row {
+    display: grid;
+    grid-template-columns: minmax(72px, 120px) 1fr minmax(72px, 140px);
+    gap: 10px;
+    align-items: center;
+}
+.totals-bar-lab {
+    font-size: 11px;
+    color: #888;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.totals-bar-track {
+    height: 14px;
+    background: #0a0a0a;
+    border: 1px solid #151515;
+    border-radius: 1px;
+    overflow: hidden;
+}
+.totals-bar-fill {
+    height: 100%;
+    min-width: 0;
+    opacity: 0.85;
+}
+.totals-bar-val {
+    font-size: 11px;
+    color: #aaa;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+.dock-link {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #555;
+    text-decoration: none;
+    margin-right: 12px;
+}
+.dock-link:hover {
+    color: var(--cyber-green);
+}
+@media (max-width: 720px) {
+    .totals-kpis {
+        grid-template-columns: 1fr;
+    }
+    .totals-bar-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+    .totals-bar-lab {
+        text-align: left;
+    }
+    .totals-bar-val {
+        text-align: left;
     }
 }

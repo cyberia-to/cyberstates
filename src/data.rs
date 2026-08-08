@@ -282,12 +282,18 @@ impl Country {
     pub fn metric(&self, f: SortField) -> f64 {
         match f {
             SortField::Capital => self.money_supply_b_usd,
-            // 24h token price change as percent points (+1.8 = +1.8%).
-            // no prior snapshot → −∞ so they sink to the bottom of a
-            // descending rank instead of masquerading as 0.0% flat.
+            // growth today: only gainers score; flat/down/missing → −∞ (bottom).
             SortField::Growth => self
                 .price_delta()
+                .filter(|d| *d > 0.0005)
                 .map(|d| d * 100.0)
+                .unwrap_or(f64::NEG_INFINITY),
+            // loss today: magnitude of drop so biggest losers rank #1
+            // (descending). gainers/flat/missing → −∞.
+            SortField::Loss => self
+                .price_delta()
+                .filter(|d| *d < -0.0005)
+                .map(|d| -d * 100.0)
                 .unwrap_or(f64::NEG_INFINITY),
             SortField::Human => {
                 if self.population > 0 {
@@ -707,8 +713,10 @@ pub const REGIONS: &[&str] = &[
 #[derive(Clone, Copy, PartialEq)]
 pub enum SortField {
     Capital,
-    /// 24h token price change (%). ranks like CAPITAL ranks by stock size.
+    /// today's token price gain (%). ranks like CAPITAL ranks by stock size.
     Growth,
+    /// today's token price loss magnitude (%). biggest losers first.
+    Loss,
     Human,
     Land,
     Freedom,
@@ -753,7 +761,8 @@ impl SortField {
     pub fn short(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            Self::Growth => "24H",
+            Self::Growth => "GROWTH",
+            Self::Loss => "LOSS",
             Self::Human => "CITIZEN",
             Self::Land => "LAND",
             Self::Freedom => "FREEDOM",
@@ -767,7 +776,8 @@ impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            Self::Growth => "24H GROWTH",
+            Self::Growth => "GROWTH TODAY",
+            Self::Loss => "LOSS TODAY",
             Self::Human => "CITIZEN VALUE",
             Self::Land => "LAND VALUE",
             Self::Freedom => "TRAVEL FREEDOM",
@@ -782,6 +792,7 @@ impl SortField {
         match self {
             Self::Capital => "capital",
             Self::Growth => "growth",
+            Self::Loss => "loss",
             Self::Human => "citizen-value",
             Self::Land => "land-value",
             Self::Freedom => "travel-freedom",
@@ -795,7 +806,8 @@ impl SortField {
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
             "capital" | "cap" => Self::Capital,
-            "growth" | "24h" | "change" | "delta" => Self::Growth,
+            "growth" | "growth-today" | "gain" | "24h" => Self::Growth,
+            "loss" | "loss-today" | "losers" => Self::Loss,
             "citizen-value" | "citizen" | "human-value" | "human" => Self::Human,
             "land-value" | "land" => Self::Land,
             "travel-freedom" | "freedom" => Self::Freedom,
@@ -808,11 +820,11 @@ impl SortField {
     }
 
     /// The ratings, in display order.
-    // kernel: capital + its day-change · three primary stocks · three derived
-    // exchange rates · two freedom scores from the Appendix A weights.
-    pub const ALL: [SortField; 9] = [
+    // capital · day tape (gain/loss) · stocks · derived rates · freedom scores
+    pub const ALL: [SortField; 10] = [
         Self::Capital,
         Self::Growth,
+        Self::Loss,
         Self::Population,
         Self::Territory,
         Self::Human,

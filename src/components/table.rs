@@ -21,7 +21,7 @@ fn score_color(v: f64) -> &'static str {
 pub fn metric_cell(c: &Country, f: SortField, n: Numeraire) -> (String, &'static str) {
     match f {
         SortField::Capital => (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0"),
-        SortField::Growth => delta_cell(c.price_delta()),
+        SortField::Growth | SortField::Loss => delta_cell(c.price_delta()),
         SortField::Human | SortField::Land => (fmt_value(c.metric(f), n), "#e0e0e0"),
         SortField::Freedom | SortField::Hospitality => {
             let v = c.metric(f);

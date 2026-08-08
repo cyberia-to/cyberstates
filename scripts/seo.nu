@@ -14,6 +14,7 @@ const CHUNK = 45000
 const FIELDS = [
   "capital"
   "growth"
+  "loss"
   "citizen-value"
   "land-value"
   "travel-freedom"
@@ -131,7 +132,7 @@ def main [--out: string = "seo"] {
 
   mut core = []
   $core = ($core | append (url_entry "/" "1.0" "daily" $global_lastmod))
-  for p in ["/tokens" "/doctrine" "/methodology" "/listing" "/solar" "/map"] {
+  for p in ["/tokens" "/totals" "/doctrine" "/methodology" "/listing" "/solar" "/map"] {
     $core = ($core | append (url_entry $p "0.7" "weekly" $global_lastmod))
   }
   for f in $FIELDS {
