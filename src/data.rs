@@ -310,9 +310,9 @@ impl Country {
                 .filter(|d| *d > 0.0005)
                 .map(|d| d * 100.0)
                 .unwrap_or(f64::NEG_INFINITY),
-            // depth pace: magnitude of % drop so deepest declines rank #1
+            // death pace: magnitude of % drop so steepest declines rank #1
             // (descending). gainers/flat/missing → −∞.
-            SortField::DepthPace => self
+            SortField::DeathPace => self
                 .price_delta()
                 .filter(|d| *d < -0.0005)
                 .map(|d| -d * 100.0)
@@ -357,10 +357,10 @@ impl Country {
     }
 
     /// Map paint value. Day-tape uses *signed* change so red = loss and
-    /// green = gain (DepthPace/CapitalLoss rank metrics are magnitude-only).
+    /// green = gain (DeathPace/CapitalLoss rank metrics are magnitude-only).
     pub fn paint_metric(&self, f: SortField) -> f64 {
         match f {
-            SortField::GrowthPace | SortField::DepthPace => {
+            SortField::GrowthPace | SortField::DeathPace => {
                 self.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
             }
             SortField::CapitalGain | SortField::CapitalLoss => {
@@ -780,8 +780,8 @@ pub enum SortField {
     Capital,
     /// today's token price gain rate (%). pace of growth, not $ volume.
     GrowthPace,
-    /// today's token price decline rate (% magnitude). pace of depth.
-    DepthPace,
+    /// today's token price decline rate (% magnitude). pace of death.
+    DeathPace,
     /// absolute capital gained today (B USD). biggest $ winners first.
     CapitalGain,
     /// absolute capital lost today (B USD magnitude). biggest $ losers first.
@@ -831,7 +831,7 @@ impl SortField {
         match self {
             Self::Capital => "CAPITAL",
             Self::GrowthPace => "GROWTH PACE",
-            Self::DepthPace => "DEPTH PACE",
+            Self::DeathPace => "DEATH PACE",
             Self::CapitalGain => "CAPITAL GAIN",
             Self::CapitalLoss => "CAPITAL LOSS",
             Self::Human => "CITIZEN",
@@ -848,7 +848,7 @@ impl SortField {
         match self {
             Self::Capital => "CAPITAL",
             Self::GrowthPace => "GROWTH PACE",
-            Self::DepthPace => "DEPTH PACE",
+            Self::DeathPace => "DEATH PACE",
             Self::CapitalGain => "CAPITAL GAIN",
             Self::CapitalLoss => "CAPITAL LOSS",
             Self::Human => "CITIZEN VALUE",
@@ -866,7 +866,7 @@ impl SortField {
     pub fn is_day_change(&self) -> bool {
         matches!(
             self,
-            Self::GrowthPace | Self::DepthPace | Self::CapitalGain | Self::CapitalLoss
+            Self::GrowthPace | Self::DeathPace | Self::CapitalGain | Self::CapitalLoss
         )
     }
 
@@ -874,7 +874,7 @@ impl SortField {
         match self {
             Self::Capital => "capital",
             Self::GrowthPace => "growth-pace",
-            Self::DepthPace => "depth-pace",
+            Self::DeathPace => "death-pace",
             Self::CapitalGain => "capital-gain",
             Self::CapitalLoss => "capital-loss",
             Self::Human => "citizen-value",
@@ -892,10 +892,9 @@ impl SortField {
             "capital" | "cap" => Self::Capital,
             // growth-pace is canonical; growth/24h/gain kept for old links
             "growth-pace" | "growth" | "growth-today" | "gain" | "24h" => Self::GrowthPace,
-            // depth-pace is canonical; loss/decline kept for old links
-            "depth-pace" | "loss" | "loss-today" | "losers" | "decline" | "decline-pace" => {
-                Self::DepthPace
-            }
+            // death-pace is canonical; depth-pace/loss/decline kept for old links
+            "death-pace" | "depth-pace" | "loss" | "loss-today" | "losers" | "decline"
+            | "decline-pace" => Self::DeathPace,
             "capital-gain" | "cap-gain" | "abs-gain" => Self::CapitalGain,
             "capital-loss" | "cap-loss" | "abs-loss" => Self::CapitalLoss,
             "citizen-value" | "citizen" | "human-value" | "human" => Self::Human,
@@ -914,7 +913,7 @@ impl SortField {
     pub const ALL: [SortField; 12] = [
         Self::Capital,
         Self::GrowthPace,
-        Self::DepthPace,
+        Self::DeathPace,
         Self::CapitalGain,
         Self::CapitalLoss,
         Self::Population,

@@ -38,7 +38,7 @@ fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64
             .filter(|d| *d > 0.0005)
             .map(|d| d * 100.0)
             .unwrap_or(f64::NEG_INFINITY),
-        SortField::DepthPace => t
+        SortField::DeathPace => t
             .price_delta()
             .filter(|d| *d < -0.0005)
             .map(|d| -d * 100.0)
@@ -135,7 +135,7 @@ fn token_map_values(
             // paint: signed % for price boards, signed $ for capital boards
             let rank_v = token_metric(t, field, scores);
             let paint_v = match field {
-                SortField::GrowthPace | SortField::DepthPace => {
+                SortField::GrowthPace | SortField::DeathPace => {
                     t.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
                 }
                 SortField::CapitalGain | SortField::CapitalLoss => {
@@ -251,7 +251,7 @@ fn metric_cell(
         SortField::Capital => (fmt_cap(t.total_supply_b_usd, n), "#e0e0e0"),
         // day tape: metric column = $ gained/lost today
         SortField::GrowthPace
-        | SortField::DepthPace
+        | SortField::DeathPace
         | SortField::CapitalGain
         | SortField::CapitalLoss => fmt_cap_delta(t.capital_delta_b(), n),
         _ => {
@@ -266,7 +266,7 @@ fn metric_cell(
                 SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
                 SortField::Capital
                 | SortField::GrowthPace
-                | SortField::DepthPace
+                | SortField::DeathPace
                 | SortField::CapitalGain
                 | SortField::CapitalLoss => unreachable!(),
             }
