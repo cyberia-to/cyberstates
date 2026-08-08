@@ -37,7 +37,10 @@ const MIN_YEAR: i32 = 2018;
 const WB_URL: &str = "https://api.worldbank.org/v2/country/all/indicator/FM.LBL.BMNY.CN?format=json&mrnev=1&per_page=400";
 const FRED_URL: &str = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=M2SL";
 const CG_URL: &str =
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd";
+    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd&include_market_cap=true";
+
+/// Free-floating tokens in tokens/*.toml keyed by CoinGecko id.
+const STANDALONE_CG: &[(&str, &str)] = &[("BTC", "bitcoin"), ("ETH", "ethereum")];
 
 fn client() -> reqwest::blocking::Client {
     reqwest::blocking::Client::builder()
@@ -57,8 +60,12 @@ fn fetch(c: &reqwest::blocking::Client, url: &str) -> String {
 /// sandboxing) become an `Err` instead of a crash, same as a bad-JSON
 /// response from `fetch_json_retry`.
 fn try_fetch(c: &reqwest::blocking::Client, url: &str) -> Result<String, String> {
-    let resp = c.get(url).send().map_err(|e| format!("request to {url} failed: {e}"))?;
-    resp.text().map_err(|e| format!("reading body from {url} failed: {e}"))
+    let resp = c
+        .get(url)
+        .send()
+        .map_err(|e| format!("request to {url} failed: {e}"))?;
+    resp.text()
+        .map_err(|e| format!("reading body from {url} failed: {e}"))
 }
 
 /// fred.stlouisfed.org silently black-holes reqwest's TLS handshake until
@@ -225,7 +232,12 @@ mod tests {
     #[test]
     fn upsert_inserts_when_missing() {
         let toml = "money_supply_b_usd = 30682\ntoken_price_usd = 1.000000\nvisa_free_destinations = 186\n";
-        let out = upsert_field(toml, "money_supply_b_usd_prev", "money_supply_b_usd", "30500");
+        let out = upsert_field(
+            toml,
+            "money_supply_b_usd_prev",
+            "money_supply_b_usd",
+            "30500",
+        );
         assert_eq!(
             out,
             "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30500\ntoken_price_usd = 1.000000\nvisa_free_destinations = 186\n"
@@ -235,8 +247,16 @@ mod tests {
     #[test]
     fn upsert_replaces_when_present() {
         let toml = "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30000\n";
-        let out = upsert_field(toml, "money_supply_b_usd_prev", "money_supply_b_usd", "30500");
-        assert_eq!(out, "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30500\n");
+        let out = upsert_field(
+            toml,
+            "money_supply_b_usd_prev",
+            "money_supply_b_usd",
+            "30500",
+        );
+        assert_eq!(
+            out,
+            "money_supply_b_usd = 30682\nmoney_supply_b_usd_prev = 30500\n"
+        );
     }
 
     #[test]
@@ -246,7 +266,10 @@ mod tests {
         let toml = "token_price_usd = 1.000000\n";
         let out = upsert_field(toml, "token_price_usd_prev", "token_price_usd", "0.999000");
         let out2 = set_field(&out, "token_price_usd", "1.010000");
-        assert_eq!(out2, "token_price_usd = 1.010000\ntoken_price_usd_prev = 0.999000\n");
+        assert_eq!(
+            out2,
+            "token_price_usd = 1.010000\ntoken_price_usd_prev = 0.999000\n"
+        );
     }
 }
 
@@ -314,7 +337,12 @@ fn main() {
             .filter(|l| l.contains(','))
             .last()
             .and_then(|last| last.split_once(','))
-            .and_then(|(date, val)| val.trim().parse::<f64>().ok().map(|v| (date.to_string(), v)))
+            .and_then(|(date, val)| {
+                val.trim()
+                    .parse::<f64>()
+                    .ok()
+                    .map(|v| (date.to_string(), v))
+            })
     });
     match fred_row {
         Some((date, m2_b)) => {
@@ -327,7 +355,7 @@ fn main() {
         None => eprintln!("warn: FRED M2 fetch failed or non-numeric; US falls back to revalue"),
     }
 
-    // --- Numeraires: BTC / ETH / gold (PAXG = 1 troy oz) -------------
+    // --- Numeraires + free-floating tokens (BTC / ETH) --------------
     match fetch_json_retry(&c, CG_URL, 3) {
         Ok(cg) => {
             let btc = cg["bitcoin"]["usd"].as_f64();
@@ -352,6 +380,9 @@ fn main() {
                     "warn: CoinGecko response missing a field; src/numeraires.rs unchanged"
                 ),
             }
+            // tokens/*.toml — price + market-cap capital for network tokens
+            // that have no member states yet.
+            update_standalone_tokens(&cg);
         }
         Err(e) => eprintln!("warn: CoinGecko fetch failed ({e}); src/numeraires.rs unchanged"),
     }
@@ -465,5 +496,70 @@ fn main() {
             pct,
             m.src
         );
+    }
+}
+
+/// Refresh price_usd + total_supply_b_usd (market cap) for tokens/*.toml
+/// free-floating network tokens. Snapshots prev fields first.
+fn update_standalone_tokens(cg: &serde_json::Value) {
+    let tokens_dir = PathBuf::from("tokens");
+    if !tokens_dir.exists() {
+        return;
+    }
+    for &(code, cg_id) in STANDALONE_CG {
+        let path = tokens_dir.join(format!("{}.toml", code.to_lowercase()));
+        if !path.exists() {
+            eprintln!("warn: missing {path:?} — skip standalone {code}");
+            continue;
+        }
+        let Some(price) = cg[cg_id]["usd"].as_f64() else {
+            eprintln!("warn: CoinGecko missing usd for {cg_id}");
+            continue;
+        };
+        let Some(mcap) = cg[cg_id]["usd_market_cap"].as_f64() else {
+            eprintln!("warn: CoinGecko missing usd_market_cap for {cg_id}");
+            continue;
+        };
+        let cap_b = mcap / 1e9;
+        let content = fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {path:?}: {e}"));
+        let old_price: f64 = field(&content, "price_usd")
+            .parse()
+            .unwrap_or_else(|e| panic!("{code}: bad price_usd: {e}"));
+        let old_cap: f64 = field(&content, "total_supply_b_usd")
+            .parse()
+            .unwrap_or_else(|e| panic!("{code}: bad total_supply_b_usd: {e}"));
+        let updated = upsert_field(
+            &content,
+            "price_usd_prev",
+            "price_usd",
+            &format_standalone_price(code, old_price),
+        );
+        let updated = upsert_field(
+            &updated,
+            "total_supply_b_usd_prev",
+            "total_supply_b_usd",
+            &fmt_cap(old_cap),
+        );
+        let updated = set_field(&updated, "price_usd", &format_standalone_price(code, price));
+        let updated = set_field(&updated, "total_supply_b_usd", &fmt_cap(cap_b));
+        fs::write(&path, updated).unwrap_or_else(|e| panic!("write {path:?}: {e}"));
+        let pct = if old_cap > 0.0 {
+            (cap_b / old_cap - 1.0) * 100.0
+        } else {
+            0.0
+        };
+        println!(
+            "token {code}: ${price:.2}  cap ${:.1}B → ${:.1}B ({pct:+.1}%)",
+            old_cap, cap_b
+        );
+    }
+}
+
+fn format_standalone_price(code: &str, price: f64) -> String {
+    // BTC quoted whole-dollars-ish; ETH two decimals — match numeraires style.
+    if code == "BTC" {
+        format!("{price:.1}")
+    } else {
+        format!("{price:.2}")
     }
 }

@@ -189,6 +189,13 @@ pub fn get_tokens() -> Vec<Token> {
         }
     }
 
+    // Free-floating network tokens (BTC, ETH, …) from tokens/*.toml.
+    // Only inserted when no state currently claims that currency code —
+    // once a state adopts it, the state-derived aggregate takes over.
+    for st in load_standalone_tokens() {
+        map.entry(st.code.clone()).or_insert(st);
+    }
+
     let mut tokens: Vec<Token> = map.into_values().collect();
     tokens.sort_by(|a, b| {
         b.total_supply_b_usd
@@ -726,6 +733,8 @@ pub fn store_class_filter(c: (bool, bool, bool)) {
 }
 
 /// Token is visible if any member state matches the class toggles.
+/// Free-floating network tokens (no member states yet) stay visible —
+/// they are not geographic listings and class filters don't apply.
 pub fn token_class_visible(
     t: &Token,
     by_code: &HashMap<String, &Country>,
@@ -733,6 +742,9 @@ pub fn token_class_visible(
     continents: bool,
     countries: bool,
 ) -> bool {
+    if t.countries.is_empty() {
+        return true;
+    }
     t.countries.iter().any(|(code, _, _)| {
         by_code
             .get(code.as_str())

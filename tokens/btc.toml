@@ -1,0 +1,8 @@
+# Free-floating network token — no member states yet.
+code = "BTC"
+name = "Bitcoin"
+price_usd = 64906.0
+price_usd_prev = 64906.0
+# CoinGecko market cap / 1e9 (USD billions)
+total_supply_b_usd = 1302.8
+total_supply_b_usd_prev = 1302.8

@@ -81,55 +81,65 @@ pub fn TokenPage() -> impl IntoView {
                                 </div>
                             </div>
 
-                            // Countries using this token
+                            // Countries using this token (empty for free-floating network tokens)
                             <div style="margin-top: 32px;">
                                 <div class="section-label">"STATES ON THIS TOKEN"</div>
-                                <div style="border: 1px solid #111; border-radius: 4px;">
-                                    <table class="cyber-table" style="font-size: 13px;">
-                                        <thead>
-                                            <tr>
-                                                <th style="padding: 8px 16px;">"STATE"</th>
-                                                <th style="padding: 8px 16px; text-align: right;">"SUPPLY SHARE"</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {countries.into_iter().map(|(ccode, cname, cflag)| {
-                                                let all_countries = load_countries();
-                                                let state = all_countries.iter().find(|c| c.code == ccode);
-                                                let href = state
-                                                    .map(|c| c.path())
-                                                    .unwrap_or_else(|| format!("/state/{}", ccode.to_lowercase()));
-                                                let supply = state.map(|c| c.money_supply_b_usd).unwrap_or(0.0);
-                                                let share = if total_supply > 0.0 {
-                                                    format!("{:.1}%", supply / total_supply * 100.0)
-                                                } else {
-                                                    "—".to_string()
-                                                };
-                                                let supply_str = if supply >= 1000.0 {
-                                                    format!("${:.1}T", supply / 1000.0)
-                                                } else if supply > 0.0 {
-                                                    format!("${:.0}B", supply)
-                                                } else {
-                                                    "N/A".to_string()
-                                                };
-
-                                                view! {
+                                {if countries.is_empty() {
+                                    view! {
+                                        <div style="border: 1px solid #111; border-radius: 4px; padding: 20px 16px; color: #666; font-size: 13px; letter-spacing: 0.5px;">
+                                            "No states yet — free-floating network token. Capital is market cap, not state money stock."
+                                        </div>
+                                    }.into_any()
+                                } else {
+                                    view! {
+                                        <div style="border: 1px solid #111; border-radius: 4px;">
+                                            <table class="cyber-table" style="font-size: 13px;">
+                                                <thead>
                                                     <tr>
-                                                        <td style="padding: 8px 16px;">
-                                                            <a href=href style="color: #ccc; text-decoration: none;">
-                                                                <span style="margin-right: 8px;">{cflag}</span>
-                                                                {cname}
-                                                            </a>
-                                                        </td>
-                                                        <td class="tabular-nums" style="padding: 8px 16px; text-align: right; color: var(--cyber-yellow);">
-                                                            {supply_str}" "{share}
-                                                        </td>
+                                                        <th style="padding: 8px 16px;">"STATE"</th>
+                                                        <th style="padding: 8px 16px; text-align: right;">"SUPPLY SHARE"</th>
                                                     </tr>
-                                                }
-                                            }).collect::<Vec<_>>()}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                </thead>
+                                                <tbody>
+                                                    {countries.into_iter().map(|(ccode, cname, cflag)| {
+                                                        let all_countries = load_countries();
+                                                        let state = all_countries.iter().find(|c| c.code == ccode);
+                                                        let href = state
+                                                            .map(|c| c.path())
+                                                            .unwrap_or_else(|| format!("/state/{}", ccode.to_lowercase()));
+                                                        let supply = state.map(|c| c.money_supply_b_usd).unwrap_or(0.0);
+                                                        let share = if total_supply > 0.0 {
+                                                            format!("{:.1}%", supply / total_supply * 100.0)
+                                                        } else {
+                                                            "—".to_string()
+                                                        };
+                                                        let supply_str = if supply >= 1000.0 {
+                                                            format!("${:.1}T", supply / 1000.0)
+                                                        } else if supply > 0.0 {
+                                                            format!("${:.0}B", supply)
+                                                        } else {
+                                                            "N/A".to_string()
+                                                        };
+
+                                                        view! {
+                                                            <tr>
+                                                                <td style="padding: 8px 16px;">
+                                                                    <a href=href style="color: #ccc; text-decoration: none;">
+                                                                        <span style="margin-right: 8px;">{cflag}</span>
+                                                                        {cname}
+                                                                    </a>
+                                                                </td>
+                                                                <td class="tabular-nums" style="padding: 8px 16px; text-align: right; color: var(--cyber-yellow);">
+                                                                    {supply_str}" "{share}
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }).collect::<Vec<_>>()}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }.into_any()
+                                }}
                             </div>
                         </div>
                     }.into_any()

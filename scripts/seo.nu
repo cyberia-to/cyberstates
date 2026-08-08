@@ -122,11 +122,27 @@ def main [--out: string = "seo"] {
     | select slug lastmod
     | sort-by slug
   )
-  let tokens = (
+  # free-floating network tokens (tokens/*.toml) + state-derived currencies
+  let state_tokens = (
     $states
     | get currency_code
     | where {|c| ($c | str length) > 0}
     | each {|c| $c | str downcase}
+  )
+  let free_tokens = (
+    if ($"($root)/tokens" | path exists) {
+      glob $"($root)/tokens/*.toml"
+      | each {|f|
+          let r = open $f
+          $r.code | str downcase
+        }
+    } else {
+      []
+    }
+  )
+  let tokens = (
+    $state_tokens
+    | append $free_tokens
     | uniq
     | sort
   )

@@ -46,8 +46,21 @@ fn escape(s: &str) -> String {
     s.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
+#[derive(Deserialize)]
+struct TokenToml {
+    code: String,
+    name: String,
+    price_usd: f64,
+    #[serde(default)]
+    price_usd_prev: f64,
+    total_supply_b_usd: f64,
+    #[serde(default)]
+    total_supply_b_usd_prev: f64,
+}
+
 fn main() {
     println!("cargo:rerun-if-changed=states");
+    println!("cargo:rerun-if-changed=tokens");
 
     let states_dir = Path::new("states");
     if !states_dir.exists() {
@@ -55,6 +68,7 @@ fn main() {
         fs::write(
             Path::new(&out_dir).join("countries.rs"),
             "pub fn load_countries() -> Vec<crate::data::Country> { vec![] }\n\
+             pub fn load_standalone_tokens() -> Vec<crate::data::Token> { vec![] }\n\
              pub const VISA_DATA_JSON: &str = \"{}\";\n",
         )
         .unwrap();
@@ -157,6 +171,53 @@ fn main() {
         ));
     }
 
+    code.push_str("    ]\n}\n\n");
+
+    // Free-floating tokens (BTC, ETH, …) live in tokens/*.toml — no
+    // member states yet. Merged at runtime by get_tokens().
+    code.push_str("pub fn load_standalone_tokens() -> Vec<crate::data::Token> {\n    vec![\n");
+    let tokens_dir = Path::new("tokens");
+    if tokens_dir.exists() {
+        let mut token_entries: Vec<_> = fs::read_dir(tokens_dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.path().extension().map_or(false, |ext| ext == "toml"))
+            .collect();
+        token_entries.sort_by_key(|e| e.file_name());
+        for entry in &token_entries {
+            let content = fs::read_to_string(entry.path()).unwrap();
+            let t: TokenToml = match toml::from_str(&content) {
+                Ok(t) => t,
+                Err(e) => {
+                    eprintln!("Warning: failed to parse {:?}: {}", entry.path(), e);
+                    continue;
+                }
+            };
+            let code_up = t.code.trim().to_uppercase();
+            if code_up.is_empty() {
+                panic!("empty code in {:?}", entry.path());
+            }
+            code.push_str(&format!(
+                "        crate::data::Token {{\n\
+                 \x20           code: \"{}\".to_string(),\n\
+                 \x20           name: \"{}\".to_string(),\n\
+                 \x20           price_usd: {:.6}_f64,\n\
+                 \x20           price_usd_prev: {:.6}_f64,\n\
+                 \x20           total_supply_b_usd: {:.4}_f64,\n\
+                 \x20           total_supply_b_usd_prev: {:.4}_f64,\n\
+                 \x20           total_population: 0,\n\
+                 \x20           total_area_km2: 0,\n\
+                 \x20           countries: vec![],\n\
+                 \x20       }},\n",
+                escape(&code_up),
+                escape(&t.name),
+                t.price_usd,
+                t.price_usd_prev,
+                t.total_supply_b_usd,
+                t.total_supply_b_usd_prev,
+            ));
+        }
+    }
     code.push_str("    ]\n}\n\n");
 
     // Serialize visa data as a single JSON string constant

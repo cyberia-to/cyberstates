@@ -514,6 +514,37 @@ fn aggregate_tokens(states: &[State]) -> Vec<TokenAgg> {
         e.states
             .push((s.t.slug.clone(), s.t.name.clone(), s.t.flag.clone()));
     }
+    // Free-floating network tokens (tokens/*.toml) — only when no state
+    // claims that currency code.
+    let tokens_dir = PathBuf::from("tokens");
+    if tokens_dir.exists() {
+        if let Ok(rd) = fs::read_dir(&tokens_dir) {
+            for entry in rd.flatten() {
+                let path = entry.path();
+                if path.extension().and_then(|e| e.to_str()) != Some("toml") {
+                    continue;
+                }
+                let Ok(content) = fs::read_to_string(&path) else {
+                    continue;
+                };
+                let Ok(t) = toml::from_str::<StandaloneTokenToml>(&content) else {
+                    eprintln!("warn: failed to parse {}", path.display());
+                    continue;
+                };
+                let code = t.code.trim().to_uppercase();
+                if code.is_empty() {
+                    continue;
+                }
+                map.entry(code.clone()).or_insert(TokenAgg {
+                    code,
+                    name: t.name,
+                    price_usd: t.price_usd,
+                    total_cap_b: t.total_supply_b_usd,
+                    states: Vec::new(),
+                });
+            }
+        }
+    }
     let mut v: Vec<_> = map.into_values().collect();
     v.sort_by(|a, b| {
         b.total_cap_b
@@ -524,6 +555,14 @@ fn aggregate_tokens(states: &[State]) -> Vec<TokenAgg> {
         t.states.sort_by(|a, b| a.1.cmp(&b.1));
     }
     v
+}
+
+#[derive(Deserialize)]
+struct StandaloneTokenToml {
+    code: String,
+    name: String,
+    price_usd: f64,
+    total_supply_b_usd: f64,
 }
 
 fn access_label(t: &str) -> &str {
@@ -945,17 +984,29 @@ fn page_state(s: &State, all: &[State], assets: &str) -> String {
 fn page_token(t: &TokenAgg, assets: &str) -> String {
     let slug = t.code.to_lowercase();
     let path = format!("/token/{}", slug);
-    let title = format!(
-        "{} ({}) — states on this token | Cyberstates",
-        t.name, t.code
-    );
-    let desc = format!(
-        "{} money stock ${:.0}B across {} states. Price ${:.6}.",
-        t.code,
-        t.total_cap_b,
-        t.states.len(),
-        t.price_usd
-    );
+    let free_float = t.states.is_empty();
+    let title = if free_float {
+        format!("{} ({}) — network token | Cyberstates", t.name, t.code)
+    } else {
+        format!(
+            "{} ({}) — states on this token | Cyberstates",
+            t.name, t.code
+        )
+    };
+    let desc = if free_float {
+        format!(
+            "{} free-floating network token. Market capital ${:.0}B. Price ${:.6}. No states yet.",
+            t.code, t.total_cap_b, t.price_usd
+        )
+    } else {
+        format!(
+            "{} money stock ${:.0}B across {} states. Price ${:.6}.",
+            t.code,
+            t.total_cap_b,
+            t.states.len(),
+            t.price_usd
+        )
+    };
     let fin = format!(
         r#"{{"@type":"ExchangeRateSpecification","@id":"{base}{path}#token","currency":"{code}","url":"{base}{path}","name":"{name}","description":"{desc}","currentExchangeRate":{{"@type":"UnitPriceSpecification","price":{price},"priceCurrency":"USD"}}}}"#,
         base = BASE,
@@ -982,24 +1033,49 @@ fn page_token(t: &TokenAgg, assets: &str) -> String {
         ld_breadcrumb(&trail),
         fin,
     ]);
-    let rows: String = t
-        .states
-        .iter()
-        .map(|(s, n, f)| {
-            format!(
-                r#"<li>{f} <a href="/state/{s}">{n}</a></li>"#,
-                f = f,
-                s = s,
-                n = esc(n)
-            )
-        })
-        .collect::<Vec<_>>()
-        .join("\n");
+    let rows: String = if free_float {
+        r#"<li class="muted">No states yet — free-floating network token. Capital is market cap, not state money stock.</li>"#.into()
+    } else {
+        t.states
+            .iter()
+            .map(|(s, n, f)| {
+                format!(
+                    r#"<li>{f} <a href="/state/{s}">{n}</a></li>"#,
+                    f = f,
+                    s = s,
+                    n = esc(n)
+                )
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    };
+    let blurb = if free_float {
+        format!(
+            "Free-floating network token. Market capital ${cap:.1}B. Price {price}. No member states yet.",
+            cap = t.total_cap_b,
+            price = if t.price_usd > 0.0 {
+                format!("${:.6}", t.price_usd)
+            } else {
+                "N/A".into()
+            },
+        )
+    } else {
+        format!(
+            "Token of record for {n} cyberstates. Aggregate capital ${cap:.1}B. Price {price}.",
+            n = t.states.len(),
+            cap = t.total_cap_b,
+            price = if t.price_usd > 0.0 {
+                format!("${:.6}", t.price_usd)
+            } else {
+                "N/A".into()
+            },
+        )
+    };
     let body = format!(
         r##"{crumbs}
 <nav class="nav"><a href="/">Cyberstates</a><a href="/tokens">All tokens</a><a href="/by/capital">Capital</a><a href="/doctrine">Doctrine</a></nav>
 <h1>{code} — {name}</h1>
-<p>Token of record for {n} cyberstates. Aggregate capital ${cap:.1}B. Price {price}.</p>
+<p>{blurb}</p>
 <h2>States on {code}</h2>
 <ul>{rows}</ul>
 <p class="muted"><a href="/tokens">All tokens</a> · <a href="/sitemap.xml">Sitemap</a></p>
@@ -1007,13 +1083,7 @@ fn page_token(t: &TokenAgg, assets: &str) -> String {
         crumbs = html_breadcrumb(&trail),
         code = esc(&t.code),
         name = esc(&t.name),
-        n = t.states.len(),
-        cap = t.total_cap_b,
-        price = if t.price_usd > 0.0 {
-            format!("${:.6}", t.price_usd)
-        } else {
-            "N/A".into()
-        },
+        blurb = blurb,
         rows = rows,
     );
     shell_page(&title, &desc, &path, &ld, &body, assets)

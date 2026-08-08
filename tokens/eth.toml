@@ -1,0 +1,8 @@
+# Free-floating network token — no member states yet.
+code = "ETH"
+name = "Ethereum"
+price_usd = 1915.49
+price_usd_prev = 1915.49
+# CoinGecko market cap / 1e9 (USD billions)
+total_supply_b_usd = 231.2
+total_supply_b_usd_prev = 231.2
