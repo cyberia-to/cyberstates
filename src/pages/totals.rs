@@ -3,7 +3,7 @@ use crate::components::nav::SiteNav;
 use crate::data::{
     compact_count, format_area, is_aggregate, is_terrestrial, load_countries, Country, REGIONS,
 };
-use crate::numeraires::{fmt_cap, Numeraire};
+use crate::numeraires::{fmt_cap, fmt_value, Numeraire};
 use leptos::prelude::*;
 use std::collections::BTreeMap;
 
@@ -16,30 +16,71 @@ fn country_rows() -> Vec<Country> {
         .collect()
 }
 
-struct Totals {
+/// One region's (or the world's) full rating tape.
+#[derive(Clone, Default)]
+struct Bundle {
+    name: String,
     capital_b: f64,
     capital_prev_b: f64,
     population: u64,
     territory_km2: u64,
+    /// pop-weighted freedom / hospitality (Σ score·pop)
+    freedom_w: f64,
+    hospitality_w: f64,
     n: usize,
 }
 
-impl Totals {
-    fn from(rows: &[Country]) -> Self {
-        let mut t = Totals {
-            capital_b: 0.0,
-            capital_prev_b: 0.0,
-            population: 0,
-            territory_km2: 0,
-            n: rows.len(),
-        };
-        for c in rows {
-            t.capital_b += c.money_supply_b_usd;
-            t.capital_prev_b += c.money_supply_b_usd_prev;
-            t.population += c.population;
-            t.territory_km2 += c.land_area_km2;
+impl Bundle {
+    fn add(&mut self, c: &Country) {
+        self.capital_b += c.money_supply_b_usd;
+        self.capital_prev_b += c.money_supply_b_usd_prev;
+        self.population += c.population;
+        self.territory_km2 += c.land_area_km2;
+        let idx = c.index();
+        let p = c.population as f64;
+        self.freedom_w += idx.freedom * p;
+        self.hospitality_w += idx.openness * p;
+        self.n += 1;
+    }
+
+    fn citizen_usd(&self) -> f64 {
+        if self.population > 0 {
+            self.capital_b * 1e9 / self.population as f64
+        } else {
+            0.0
         }
-        t
+    }
+
+    fn land_usd(&self) -> f64 {
+        if self.territory_km2 > 0 {
+            self.capital_b * 1e9 / self.territory_km2 as f64
+        } else {
+            0.0
+        }
+    }
+
+    fn density(&self) -> f64 {
+        if self.territory_km2 > 0 {
+            self.population as f64 / self.territory_km2 as f64
+        } else {
+            0.0
+        }
+    }
+
+    fn freedom(&self) -> f64 {
+        if self.population > 0 {
+            self.freedom_w / self.population as f64
+        } else {
+            0.0
+        }
+    }
+
+    fn hospitality(&self) -> f64 {
+        if self.population > 0 {
+            self.hospitality_w / self.population as f64
+        } else {
+            0.0
+        }
     }
 
     fn capital_delta(&self) -> Option<f64> {
@@ -51,32 +92,24 @@ impl Totals {
     }
 }
 
-#[derive(Clone)]
-struct RegionBar {
-    name: String,
-    capital_b: f64,
-    population: u64,
-    territory_km2: u64,
-}
-
-fn region_bars(rows: &[Country]) -> Vec<RegionBar> {
-    let mut map: BTreeMap<String, RegionBar> = BTreeMap::new();
+fn world_and_regions(rows: &[Country]) -> (Bundle, Vec<Bundle>) {
+    let mut world = Bundle {
+        name: "World".into(),
+        ..Default::default()
+    };
+    let mut map: BTreeMap<String, Bundle> = BTreeMap::new();
     for c in rows {
-        let e = map.entry(c.region.clone()).or_insert_with(|| RegionBar {
+        world.add(c);
+        let e = map.entry(c.region.clone()).or_insert_with(|| Bundle {
             name: c.region.clone(),
-            capital_b: 0.0,
-            population: 0,
-            territory_km2: 0,
+            ..Default::default()
         });
-        e.capital_b += c.money_supply_b_usd;
-        e.population += c.population;
-        e.territory_km2 += c.land_area_km2;
+        e.add(c);
     }
-    // display order follows REGIONS when present
-    let mut out: Vec<RegionBar> = REGIONS.iter().filter_map(|r| map.remove(*r)).collect();
-    out.extend(map.into_values());
-    out.retain(|r| r.population > 0 || r.capital_b > 0.0 || r.territory_km2 > 0);
-    out
+    let mut regions: Vec<Bundle> = REGIONS.iter().filter_map(|r| map.remove(*r)).collect();
+    regions.extend(map.into_values());
+    regions.retain(|r| r.n > 0);
+    (world, regions)
 }
 
 fn bar_row(label: &str, pct: f64, value: &str, color: &str) -> AnyView {
@@ -93,48 +126,67 @@ fn bar_row(label: &str, pct: f64, value: &str, color: &str) -> AnyView {
     .into_any()
 }
 
+fn region_panel(
+    title: &'static str,
+    hint: &'static str,
+    regions: &[Bundle],
+    color: &'static str,
+    value_of: impl Fn(&Bundle) -> f64,
+    fmt: impl Fn(f64) -> String,
+) -> AnyView {
+    let max = regions
+        .iter()
+        .map(|r| value_of(r))
+        .fold(0.0_f64, f64::max)
+        .max(1e-12);
+    let rows: Vec<AnyView> = regions
+        .iter()
+        .map(|r| {
+            let v = value_of(r);
+            bar_row(&r.name, v / max * 100.0, &fmt(v), color)
+        })
+        .collect();
+    view! {
+        <div class="totals-panel">
+            <div class="totals-panel-title">{title}</div>
+            <p class="totals-panel-hint">{hint}</p>
+            <div class="totals-bars">{rows}</div>
+        </div>
+    }
+    .into_any()
+}
+
+fn kpi_card(lab: &'static str, val: String, hint: String, klass: &'static str) -> AnyView {
+    view! {
+        <div class="totals-kpi">
+            <div class="totals-kpi-lab">{lab}</div>
+            <div class=format!("totals-kpi-val {klass}")>{val}</div>
+            <div class="totals-kpi-hint">{hint}</div>
+        </div>
+    }
+    .into_any()
+}
+
 #[component]
 pub fn TotalsPage() -> impl IntoView {
     let numeraire = use_context::<RwSignal<Numeraire>>().expect("numeraire context");
     let rows = country_rows();
-    let totals = Totals::from(&rows);
-    let regions = region_bars(&rows);
+    let (world, regions) = world_and_regions(&rows);
 
-    let max_cap = regions
-        .iter()
-        .map(|r| r.capital_b)
-        .fold(0.0_f64, f64::max)
-        .max(1e-9);
-    let max_pop = regions
-        .iter()
-        .map(|r| r.population)
-        .max()
-        .unwrap_or(1)
-        .max(1) as f64;
-    let max_land = regions
-        .iter()
-        .map(|r| r.territory_km2)
-        .max()
-        .unwrap_or(1)
-        .max(1) as f64;
-
-    let cap_delta = totals.capital_delta();
-    let n_states = totals.n;
-    let pop = totals.population;
-    let land = totals.territory_km2;
-    let cap_b = totals.capital_b;
+    let n_states = world.n;
+    let pop = world.population;
+    let land = world.territory_km2;
+    let cap_b = world.capital_b;
+    let cap_delta = world.capital_delta();
+    let citizen = world.citizen_usd();
+    let land_v = world.land_usd();
+    let dens = world.density();
+    let free = world.freedom();
+    let hosp = world.hospitality();
 
     Effect::new(move |_| {
-        document().set_title("World totals — capital · population · territory · cyberstates");
+        document().set_title("World totals — all ratings by region · cyberstates");
     });
-
-    // share of world for the three macro stocks (normalized side-by-side)
-    let share_items = {
-        // pure relative visual: each stock scaled to 100% of its own total
-        // shown as three equal full bars with labels — plus region breakdown
-        ()
-    };
-    let _ = share_items;
 
     view! {
         <div class="page-frame">
@@ -142,7 +194,7 @@ pub fn TotalsPage() -> impl IntoView {
             <div class="header-row1">
                 <div class="logo-zone">
                     <BrandChooser active="TOTALS" />
-                    <div class="logo-suffix">"capital · people · land"</div>
+                    <div class="logo-suffix">"all ratings · by region"</div>
                 </div>
                 <SiteNav active="TOTALS" />
             </div>
@@ -151,104 +203,151 @@ pub fn TotalsPage() -> impl IntoView {
             <p class="totals-lede">
                 "Sum of terrestrial countries only — planets and continent aggregates "
                 "excluded so nothing is counted twice. "
+                "Citizen / land value and density are derived from regional stocks; "
+                "freedom / hospitality are population-weighted averages. "
                 {format!("{n_states} states on the tape.")}
             </p>
 
-            <div class="totals-kpis">
-                <div class="totals-kpi">
-                    <div class="totals-kpi-lab">"CAPITAL"</div>
-                    <div class="totals-kpi-val cyan">
-                        {move || fmt_cap(cap_b, numeraire.get())}
-                    </div>
-                    <div class="totals-kpi-hint">
-                        {match cap_delta {
-                            Some(d) if d > 0.0005 => format!("▲{:.2}% vs prior snapshot", d * 100.0),
-                            Some(d) if d < -0.0005 => format!("▼{:.2}% vs prior snapshot", -d * 100.0),
-                            Some(_) => "flat vs prior snapshot".into(),
-                            None => "money stock · B USD".into(),
-                        }}
-                    </div>
-                </div>
-                <div class="totals-kpi">
-                    <div class="totals-kpi-lab">"POPULATION"</div>
-                    <div class="totals-kpi-val green">{compact_count(pop as f64)}</div>
-                    <div class="totals-kpi-hint">
-                        {if pop >= 1_000_000_000 {
-                            format!("{:.2}B humans", pop as f64 / 1e9)
-                        } else {
-                            format!("{} humans", compact_count(pop as f64))
-                        }}
-                    </div>
-                </div>
-                <div class="totals-kpi">
-                    <div class="totals-kpi-lab">"TERRITORY"</div>
-                    <div class="totals-kpi-val yellow">{format!("{} km²", format_area(land))}</div>
-                    <div class="totals-kpi-hint">"land area · terrestrial"</div>
-                </div>
+            // every primary + derived rating as world KPIs
+            <div class="totals-kpis totals-kpis-wide">
+                {move || {
+                    let n = numeraire.get();
+                    view! {
+                        {kpi_card(
+                            "CAPITAL",
+                            fmt_cap(cap_b, n),
+                            match cap_delta {
+                                Some(d) if d > 0.0005 => format!("▲{:.2}% vs prior", d * 100.0),
+                                Some(d) if d < -0.0005 => format!("▼{:.2}% vs prior", -d * 100.0),
+                                Some(_) => "flat vs prior".into(),
+                                None => "money stock".into(),
+                            },
+                            "cyan",
+                        )}
+                        {kpi_card(
+                            "POPULATION",
+                            compact_count(pop as f64),
+                            if pop >= 1_000_000_000 {
+                                format!("{:.2}B humans", pop as f64 / 1e9)
+                            } else {
+                                format!("{} humans", compact_count(pop as f64))
+                            },
+                            "green",
+                        )}
+                        {kpi_card(
+                            "TERRITORY",
+                            format!("{} km²", format_area(land)),
+                            "land area · terrestrial".into(),
+                            "yellow",
+                        )}
+                        {kpi_card(
+                            "CITIZEN VALUE",
+                            fmt_value(citizen, n),
+                            "capital / human".into(),
+                            "magenta",
+                        )}
+                        {kpi_card(
+                            "LAND VALUE",
+                            fmt_value(land_v, n),
+                            "capital / km²".into(),
+                            "orange",
+                        )}
+                        {kpi_card(
+                            "DENSITY",
+                            format!("{:.1}/km²", dens),
+                            "humans / km²".into(),
+                            "green",
+                        )}
+                        {kpi_card(
+                            "TRAVEL FREEDOM",
+                            format!("{:.1}", free),
+                            "pop-weighted mean".into(),
+                            "cyan",
+                        )}
+                        {kpi_card(
+                            "HOSPITALITY",
+                            format!("{:.1}", hosp),
+                            "pop-weighted mean".into(),
+                            "yellow",
+                        )}
+                    }
+                }}
             </div>
 
-            // three world stocks as a single comparative strip (each bar = 100% of that stock)
-            <div class="totals-panel">
-                <div class="totals-panel-title">"WORLD STOCKS"</div>
-                <p class="totals-panel-hint">"each bar is the full terrestrial sum — different units, same stage"</p>
-                <div class="totals-world-chart">
-                    <div class="totals-world-col">
-                        <div class="totals-world-bar cyan" style="height: 100%"></div>
-                        <div class="totals-world-lab">"CAPITAL"</div>
-                        <div class="totals-world-num">{move || fmt_cap(cap_b, numeraire.get())}</div>
-                    </div>
-                    <div class="totals-world-col">
-                        <div class="totals-world-bar green" style="height: 100%"></div>
-                        <div class="totals-world-lab">"POPULATION"</div>
-                        <div class="totals-world-num">{compact_count(pop as f64)}</div>
-                    </div>
-                    <div class="totals-world-col">
-                        <div class="totals-world-bar yellow" style="height: 100%"></div>
-                        <div class="totals-world-lab">"TERRITORY"</div>
-                        <div class="totals-world-num">{format_area(land)}</div>
-                    </div>
-                </div>
-            </div>
+            // stocks by region
+            {region_panel(
+                "CAPITAL BY REGION",
+                "money stock · bar vs largest region",
+                &regions,
+                "var(--cyber-cyan)",
+                |r| r.capital_b,
+                |v| fmt_cap(v, Numeraire::Usd),
+            )}
+            {region_panel(
+                "POPULATION BY REGION",
+                "humans · bar vs largest region",
+                &regions,
+                "var(--cyber-green)",
+                |r| r.population as f64,
+                |v| compact_count(v),
+            )}
+            {region_panel(
+                "TERRITORY BY REGION",
+                "land km² · bar vs largest region",
+                &regions,
+                "var(--cyber-yellow)",
+                |r| r.territory_km2 as f64,
+                |v| format!("{} km²", format_area(v as u64)),
+            )}
 
-            <div class="totals-panel">
-                <div class="totals-panel-title">"CAPITAL BY REGION"</div>
-                <p class="totals-panel-hint">"money stock share · bar width vs largest region"</p>
-                <div class="totals-bars">
-                    {regions.iter().map(|r| {
-                        let pct = r.capital_b / max_cap * 100.0;
-                        let val = fmt_cap(r.capital_b, Numeraire::Usd);
-                        bar_row(&r.name, pct, &val, "var(--cyber-cyan)")
-                    }).collect_view()}
-                </div>
-            </div>
+            // derived prices by region
+            {region_panel(
+                "CITIZEN VALUE BY REGION",
+                "capital ÷ population · $ per human",
+                &regions,
+                "var(--cyber-magenta)",
+                |r| r.citizen_usd(),
+                |v| fmt_value(v, Numeraire::Usd),
+            )}
+            {region_panel(
+                "LAND VALUE BY REGION",
+                "capital ÷ territory · $ per km²",
+                &regions,
+                "var(--cyber-orange)",
+                |r| r.land_usd(),
+                |v| fmt_value(v, Numeraire::Usd),
+            )}
+            {region_panel(
+                "DENSITY BY REGION",
+                "population ÷ territory · humans / km²",
+                &regions,
+                "var(--cyber-green)",
+                |r| r.density(),
+                |v| format!("{:.1}/km²", v),
+            )}
 
-            <div class="totals-panel">
-                <div class="totals-panel-title">"POPULATION BY REGION"</div>
-                <p class="totals-panel-hint">"humans · bar width vs largest region"</p>
-                <div class="totals-bars">
-                    {regions.iter().map(|r| {
-                        let pct = r.population as f64 / max_pop * 100.0;
-                        let val = compact_count(r.population as f64);
-                        bar_row(&r.name, pct, &val, "var(--cyber-green)")
-                    }).collect_view()}
-                </div>
-            </div>
-
-            <div class="totals-panel">
-                <div class="totals-panel-title">"TERRITORY BY REGION"</div>
-                <p class="totals-panel-hint">"land km² · bar width vs largest region"</p>
-                <div class="totals-bars">
-                    {regions.iter().map(|r| {
-                        let pct = r.territory_km2 as f64 / max_land * 100.0;
-                        let val = format!("{} km²", format_area(r.territory_km2));
-                        bar_row(&r.name, pct, &val, "var(--cyber-yellow)")
-                    }).collect_view()}
-                </div>
-            </div>
+            // freedom scores by region
+            {region_panel(
+                "TRAVEL FREEDOM BY REGION",
+                "population-weighted mean score",
+                &regions,
+                "var(--cyber-cyan)",
+                |r| r.freedom(),
+                |v| format!("{:.1}", v),
+            )}
+            {region_panel(
+                "HOSPITALITY BY REGION",
+                "population-weighted mean score",
+                &regions,
+                "var(--cyber-yellow)",
+                |r| r.hospitality(),
+                |v| format!("{:.1}", v),
+            )}
 
             <div class="search-dock">
-                <a href="/by/growth" class="dock-link">"growth today →"</a>
-                <a href="/by/loss" class="dock-link">"loss today →"</a>
+                <a href="/by/capital" class="dock-link">"by capital →"</a>
+                <a href="/by/citizen-value" class="dock-link">"by citizen →"</a>
+                <a href="/by/land-value" class="dock-link">"by land →"</a>
                 <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" class="dock-credit">
                     "🏴 a "<span style="color: var(--cyber-green);">"cyberia"</span>" project"
                 </a>

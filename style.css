@@ -2163,6 +2163,15 @@ html.vt-active .world-map-container path {
     gap: 12px;
     margin-bottom: 24px;
 }
+.totals-kpis-wide {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.totals-kpi-val.magenta {
+    color: var(--cyber-magenta);
+}
+.totals-kpi-val.orange {
+    color: var(--cyber-orange);
+}
 .totals-kpi {
     background: #050505;
     border: 1px solid #1a1a1a;
@@ -2182,9 +2191,15 @@ html.vt-active .world-map-container path {
     line-height: 1.15;
     color: var(--cyber-green);
 }
-.totals-kpi-val.cyan { color: var(--cyber-cyan); }
-.totals-kpi-val.green { color: var(--cyber-green); }
-.totals-kpi-val.yellow { color: var(--cyber-yellow); }
+.totals-kpi-val.cyan {
+    color: var(--cyber-cyan);
+}
+.totals-kpi-val.green {
+    color: var(--cyber-green);
+}
+.totals-kpi-val.yellow {
+    color: var(--cyber-yellow);
+}
 .totals-kpi-hint {
     font-size: 11px;
     color: #444;
@@ -2234,9 +2249,15 @@ html.vt-active .world-map-container path {
     min-height: 48px;
     opacity: 0.85;
 }
-.totals-world-bar.cyan { background: var(--cyber-cyan); }
-.totals-world-bar.green { background: var(--cyber-green); }
-.totals-world-bar.yellow { background: var(--cyber-yellow); }
+.totals-world-bar.cyan {
+    background: var(--cyber-cyan);
+}
+.totals-world-bar.green {
+    background: var(--cyber-green);
+}
+.totals-world-bar.yellow {
+    background: var(--cyber-yellow);
+}
 .totals-world-lab {
     margin-top: 8px;
     font-size: 10px;
