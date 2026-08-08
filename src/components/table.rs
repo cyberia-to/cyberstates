@@ -20,8 +20,11 @@ fn score_color(v: f64) -> &'static str {
 /// Render the rating-object cell: value formatted per field, scores colored.
 pub fn metric_cell(c: &Country, f: SortField, n: Numeraire) -> (String, &'static str) {
     match f {
-        SortField::Capital => (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0"),
-        SortField::Growth | SortField::Loss => delta_cell(c.price_delta()),
+        // Growth/Loss only change *order* — value column stays capital
+        // (the 24H column already shows price Δ).
+        SortField::Capital | SortField::Growth | SortField::Loss => {
+            (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0")
+        }
         SortField::Human | SortField::Land => (fmt_value(c.metric(f), n), "#e0e0e0"),
         SortField::Freedom | SortField::Hospitality => {
             let v = c.metric(f);
@@ -85,21 +88,12 @@ pub fn CountryRow(
                     }
                 }}
             </td>
-            // PRICE Δ only when the rating is something else — under
-            // GROWTH TODAY / LOSS TODAY the metric column *is* that %.
-            {move || {
-                if field.get().is_day_change() {
-                    view! { }.into_any()
-                } else {
+            <td class="tabular-nums delta-cell" style="text-align: right;">
+                {
                     let (text, color) = delta_cell(price_delta);
-                    view! {
-                        <td class="tabular-nums delta-cell" style="text-align: right;">
-                            <span style:color=color>{text}</span>
-                        </td>
-                    }
-                    .into_any()
+                    view! { <span style:color=color>{text}</span> }
                 }
-            }}
+            </td>
             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                 {move || {
                     let (text, color) = metric_cell(&c_for_metric, field.get(), numeraire.get());

@@ -736,11 +736,7 @@ pub fn HomePage() -> impl IntoView {
                                 <col class="c-state" />
                                 <col class="c-token" />
                                 <col class="c-price" />
-                                {move || {
-                                    (!sort_field.get().is_day_change()).then(|| {
-                                        view! { <col class="c-delta" /> }
-                                    })
-                                }}
+                                <col class="c-delta" />
                                 <col class="c-metric" />
                             </colgroup>
                             <thead>
@@ -749,18 +745,16 @@ pub fn HomePage() -> impl IntoView {
                                     <th class="th-static">"STATE"</th>
                                     <th class="th-static">"TOKEN"</th>
                                     <th class="th-static" style="text-align: right;">"PRICE"</th>
-                                    {move || {
-                                        if sort_field.get().is_day_change() {
-                                            view! { }.into_any()
-                                        } else {
-                                            view! {
-                                                <th class="th-static" style="text-align: right;">"24H"</th>
-                                            }
-                                            .into_any()
-                                        }
-                                    }}
+                                    <th class="th-static" style="text-align: right;">"24H"</th>
                                     <th class="th-static metric-th" style="text-align: right;">
-                                        {move || sort_field.get().short()}
+                                        // growth/loss only reorders rows — values stay capital
+                                        {move || {
+                                            if sort_field.get().is_day_change() {
+                                                "CAPITAL"
+                                            } else {
+                                                sort_field.get().short()
+                                            }
+                                        }}
                                     </th>
                                 </tr>
                             </thead>

@@ -789,8 +789,8 @@ impl SortField {
         }
     }
 
-    /// True when the rating *is* the day change — the fixed PRICE Δ column
-    /// would duplicate the metric column, so the table hides it.
+    /// Day-tape ratings: rows ordered by price Δ, but the metric column
+    /// still shows CAPITAL (24H column already carries the %).
     pub fn is_day_change(&self) -> bool {
         matches!(self, Self::Growth | Self::Loss)
     }

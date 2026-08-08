@@ -198,11 +198,13 @@ fn metric_cell(
     scores: &HashMap<String, (f64, f64, f64)>,
 ) -> (String, &'static str) {
     match f {
-        SortField::Growth | SortField::Loss => delta_cell(t.price_delta()),
+        // Growth/Loss reorder by price Δ; value column stays capital.
+        SortField::Capital | SortField::Growth | SortField::Loss => {
+            (fmt_cap(t.total_supply_b_usd, n), "#e0e0e0")
+        }
         _ => {
             let v = token_metric(t, f, scores);
             match f {
-                SortField::Capital => (fmt_cap(v, n), "#e0e0e0"),
                 SortField::Human | SortField::Land => (fmt_value(v, n), "#e0e0e0"),
                 SortField::Freedom | SortField::Hospitality => {
                     (format!("{:.1}", v), score_color(v))
@@ -210,7 +212,7 @@ fn metric_cell(
                 SortField::Population => (fmt_int(v as u64), "#e0e0e0"),
                 SortField::Territory => (format!("{} km²", format_area(v as u64)), "#e0e0e0"),
                 SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
-                SortField::Growth | SortField::Loss => unreachable!(),
+                SortField::Capital | SortField::Growth | SortField::Loss => unreachable!(),
             }
         }
     }
@@ -477,11 +479,7 @@ pub fn TokensPage() -> impl IntoView {
                         <col class="c-token" />
                         <col class="c-state" />
                         <col class="c-price" />
-                        {move || {
-                            (!field.get().is_day_change()).then(|| {
-                                view! { <col class="c-delta" /> }
-                            })
-                        }}
+                        <col class="c-delta" />
                         <col class="c-metric" />
                     </colgroup>
                     <thead>
@@ -490,18 +488,15 @@ pub fn TokensPage() -> impl IntoView {
                             <th class="th-static">"TOKEN"</th>
                             <th class="th-static">"STATES"</th>
                             <th class="th-static" style="text-align: right;">"PRICE"</th>
-                            {move || {
-                                if field.get().is_day_change() {
-                                    view! { }.into_any()
-                                } else {
-                                    view! {
-                                        <th class="th-static" style="text-align: right;">"24H"</th>
-                                    }
-                                    .into_any()
-                                }
-                            }}
+                            <th class="th-static" style="text-align: right;">"24H"</th>
                             <th class="th-static metric-th" style="text-align: right;">
-                                {move || field.get().short()}
+                                {move || {
+                                    if field.get().is_day_change() {
+                                        "CAPITAL"
+                                    } else {
+                                        field.get().short()
+                                    }
+                                }}
                             </th>
                         </tr>
                     </thead>
@@ -543,19 +538,12 @@ pub fn TokensPage() -> impl IntoView {
                                                     }
                                                 }}
                                             </td>
-                                            {move || {
-                                                if field.get().is_day_change() {
-                                                    view! { }.into_any()
-                                                } else {
+                                            <td class="tabular-nums delta-cell" style="text-align: right;">
+                                                {
                                                     let (text, color) = delta_cell(price_delta);
-                                                    view! {
-                                                        <td class="tabular-nums delta-cell" style="text-align: right;">
-                                                            <span style:color=color>{text}</span>
-                                                        </td>
-                                                    }
-                                                    .into_any()
+                                                    view! { <span style:color=color>{text}</span> }
                                                 }
-                                            }}
+                                            </td>
                                             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                                                 {move || {
                                                     let (text, color) = metric_cell(&t_for_metric, field.get(), numeraire.get(), &scores);
