@@ -310,6 +310,17 @@ impl Country {
                 .filter(|d| *d < -0.0005)
                 .map(|d| -d * 100.0)
                 .unwrap_or(f64::NEG_INFINITY),
+            // absolute $ capital gained today (B USD); losers/flat → −∞.
+            SortField::CapitalGain => self
+                .capital_delta_b()
+                .filter(|d| *d > 1e-12)
+                .unwrap_or(f64::NEG_INFINITY),
+            // absolute $ capital lost today (B USD magnitude); gainers/flat → −∞.
+            SortField::CapitalLoss => self
+                .capital_delta_b()
+                .filter(|d| *d < -1e-12)
+                .map(|d| -d)
+                .unwrap_or(f64::NEG_INFINITY),
             SortField::Human => {
                 if self.population > 0 {
                     self.money_supply_b_usd * 1e9 / self.population as f64
@@ -338,12 +349,15 @@ impl Country {
         }
     }
 
-    /// Map paint value. Day-tape uses *signed* price % so red = loss and
-    /// green = gain on both boards (Loss rank metric is magnitude-only).
+    /// Map paint value. Day-tape uses *signed* change so red = loss and
+    /// green = gain (rank metrics for Loss/CapitalLoss are magnitude-only).
     pub fn paint_metric(&self, f: SortField) -> f64 {
         match f {
             SortField::Growth | SortField::Loss => {
                 self.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
+            }
+            SortField::CapitalGain | SortField::CapitalLoss => {
+                self.capital_delta_b().unwrap_or(f64::NAN)
             }
             _ => self.metric(f),
         }
@@ -756,6 +770,10 @@ pub enum SortField {
     Growth,
     /// today's token price loss magnitude (%). biggest losers first.
     Loss,
+    /// absolute capital gained today (B USD). biggest $ winners first.
+    CapitalGain,
+    /// absolute capital lost today (B USD magnitude). biggest $ losers first.
+    CapitalLoss,
     Human,
     Land,
     Freedom,
@@ -803,6 +821,8 @@ impl SortField {
             // full phrase — user-facing name, not "24H"
             Self::Growth => "GROWTH TODAY",
             Self::Loss => "LOSS TODAY",
+            Self::CapitalGain => "CAPITAL GAIN",
+            Self::CapitalLoss => "CAPITAL LOSS",
             Self::Human => "CITIZEN",
             Self::Land => "LAND",
             Self::Freedom => "FREEDOM",
@@ -818,6 +838,8 @@ impl SortField {
             Self::Capital => "CAPITAL",
             Self::Growth => "GROWTH TODAY",
             Self::Loss => "LOSS TODAY",
+            Self::CapitalGain => "CAPITAL GAIN",
+            Self::CapitalLoss => "CAPITAL LOSS",
             Self::Human => "CITIZEN VALUE",
             Self::Land => "LAND VALUE",
             Self::Freedom => "TRAVEL FREEDOM",
@@ -828,10 +850,13 @@ impl SortField {
         }
     }
 
-    /// Day-tape ratings: rows ordered by price Δ, but the metric column
-    /// still shows CAPITAL (24H column already carries the %).
+    /// Day-tape ratings: % price boards + absolute $ capital boards.
+    /// Metric column shows Δ CAPITAL; 24H column carries price %.
     pub fn is_day_change(&self) -> bool {
-        matches!(self, Self::Growth | Self::Loss)
+        matches!(
+            self,
+            Self::Growth | Self::Loss | Self::CapitalGain | Self::CapitalLoss
+        )
     }
 
     pub fn slug(&self) -> &'static str {
@@ -839,6 +864,8 @@ impl SortField {
             Self::Capital => "capital",
             Self::Growth => "growth",
             Self::Loss => "loss",
+            Self::CapitalGain => "capital-gain",
+            Self::CapitalLoss => "capital-loss",
             Self::Human => "citizen-value",
             Self::Land => "land-value",
             Self::Freedom => "travel-freedom",
@@ -854,6 +881,8 @@ impl SortField {
             "capital" | "cap" => Self::Capital,
             "growth" | "growth-today" | "gain" | "24h" => Self::Growth,
             "loss" | "loss-today" | "losers" => Self::Loss,
+            "capital-gain" | "cap-gain" | "abs-gain" => Self::CapitalGain,
+            "capital-loss" | "cap-loss" | "abs-loss" => Self::CapitalLoss,
             "citizen-value" | "citizen" | "human-value" | "human" => Self::Human,
             "land-value" | "land" => Self::Land,
             "travel-freedom" | "freedom" => Self::Freedom,
@@ -866,11 +895,13 @@ impl SortField {
     }
 
     /// The ratings, in display order.
-    // capital · day tape (gain/loss) · stocks · derived rates · freedom scores
-    pub const ALL: [SortField; 10] = [
+    // capital · day tape (% then abs $) · stocks · derived rates · freedom scores
+    pub const ALL: [SortField; 12] = [
         Self::Capital,
         Self::Growth,
         Self::Loss,
+        Self::CapitalGain,
+        Self::CapitalLoss,
         Self::Population,
         Self::Territory,
         Self::Human,

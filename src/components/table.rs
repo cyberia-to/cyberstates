@@ -21,8 +21,10 @@ fn score_color(v: f64) -> &'static str {
 pub fn metric_cell(c: &Country, f: SortField, n: Numeraire) -> (String, &'static str) {
     match f {
         SortField::Capital => (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0"),
-        // growth/loss: order by price %, capital column = $ gained/lost today
-        SortField::Growth | SortField::Loss => fmt_cap_delta(c.capital_delta_b(), n),
+        // day tape: metric column = $ gained/lost today (rank order differs by board)
+        SortField::Growth | SortField::Loss | SortField::CapitalGain | SortField::CapitalLoss => {
+            fmt_cap_delta(c.capital_delta_b(), n)
+        }
         SortField::Human | SortField::Land => (fmt_value(c.metric(f), n), "#e0e0e0"),
         SortField::Freedom | SortField::Hospitality => {
             let v = c.metric(f);

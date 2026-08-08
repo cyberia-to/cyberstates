@@ -15,6 +15,8 @@ const FIELDS = [
   "capital"
   "growth"
   "loss"
+  "capital-gain"
+  "capital-loss"
   "citizen-value"
   "land-value"
   "travel-freedom"
