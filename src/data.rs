@@ -503,6 +503,19 @@ impl Token {
         delta_pct(self.total_supply_b_usd, self.total_supply_b_usd_prev)
     }
 
+    /// Absolute capital gained/lost today, billions USD (zone aggregate).
+    pub fn capital_delta_b(&self) -> Option<f64> {
+        if self.total_supply_b_usd_prev > 0.0 {
+            let d = self.total_supply_b_usd - self.total_supply_b_usd_prev;
+            if d.abs() > 1e-12 {
+                return Some(d);
+            }
+        }
+        self.price_delta()
+            .filter(|d| d.abs() > 0.0005)
+            .map(|d| self.total_supply_b_usd * d)
+    }
+
     pub fn price_delta(&self) -> Option<f64> {
         delta_pct(self.price_usd, self.price_usd_prev)
     }
