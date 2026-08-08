@@ -671,6 +671,14 @@ body {
     padding: var(--pad-t) var(--pad-x) 0;
 }
 
+/* header + rating pills + filters: same horizontal stage as home-split
+   (table 540 + gap + map to the right edge) — never a narrower 1400 box */
+.chrome-inner {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
 .table-shell {
     overflow-x: clip;
     border: 1px solid #111;
@@ -1641,8 +1649,8 @@ html.vt-active .world-map-container path {
     border-color: var(--cyber-green);
 }
 
-/* the header inner box caps at 1400px, so the slim row is the rule at
-   EVERY width — full-fat pills + toggles + bar never fit 1400 */
+/* chrome is full-width with the table+map; pills still need to stay compact
+   enough to fit with toggles + legend on one row */
 @media (min-width: 0px) {
     .header-row2 {
         gap: 8px;

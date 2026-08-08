@@ -436,7 +436,7 @@ pub fn TokensPage() -> impl IntoView {
     view! {
         <div class="page-shell">
             <div class="site-chrome">
-            <div style="max-width: 1400px; margin: 0 auto;">
+            <div class="chrome-inner">
             // Header row 1: logo — nav
             <div class="header-row1">
                 <div class="logo-zone">

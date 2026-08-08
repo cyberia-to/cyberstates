@@ -678,7 +678,8 @@ pub fn HomePage() -> impl IntoView {
     view! {
         <div class="page-shell">
             <div class="site-chrome">
-            <div style="max-width: 1400px; margin: 0 auto;">
+            // full width of the shell — same stage as table + map (no 1400px cap)
+            <div class="chrome-inner">
             // Header row 1: logo — centered search — map flush right
             <div class="header-row1">
                 <div class="logo-zone">
