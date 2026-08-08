@@ -255,11 +255,13 @@ pub fn set_hover_sync(code: &str, scroll_row: bool) {
         if scroll_row {
             // scrollIntoView options via JS object — web_sys feature flags
             // for ScrollIntoViewOptions vary; Reflect keeps this portable.
+            // center the row in the viewport so the highlight is obvious
+            // (nearest often leaves it under sticky chrome / half off-screen)
             let opts = js_sys::Object::new();
             let _ = js_sys::Reflect::set(
                 &opts,
                 &JsValue::from_str("block"),
-                &JsValue::from_str("nearest"),
+                &JsValue::from_str("center"),
             );
             let _ = js_sys::Reflect::set(
                 &opts,
