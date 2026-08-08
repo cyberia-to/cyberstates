@@ -13,8 +13,8 @@ const CHUNK = 45000
 
 const FIELDS = [
   "capital"
-  "growth"
-  "loss"
+  "growth-pace"
+  "depth-pace"
   "capital-gain"
   "capital-loss"
   "citizen-value"

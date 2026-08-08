@@ -33,12 +33,12 @@ fn parse_path(path: &str) -> SortField {
 fn token_metric(t: &Token, f: SortField, scores: &HashMap<String, (f64, f64, f64)>) -> f64 {
     match f {
         SortField::Capital => t.total_supply_b_usd,
-        SortField::Growth => t
+        SortField::GrowthPace => t
             .price_delta()
             .filter(|d| *d > 0.0005)
             .map(|d| d * 100.0)
             .unwrap_or(f64::NEG_INFINITY),
-        SortField::Loss => t
+        SortField::DepthPace => t
             .price_delta()
             .filter(|d| *d < -0.0005)
             .map(|d| -d * 100.0)
@@ -135,7 +135,7 @@ fn token_map_values(
             // paint: signed % for price boards, signed $ for capital boards
             let rank_v = token_metric(t, field, scores);
             let paint_v = match field {
-                SortField::Growth | SortField::Loss => {
+                SortField::GrowthPace | SortField::DepthPace => {
                     t.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
                 }
                 SortField::CapitalGain | SortField::CapitalLoss => {
@@ -250,9 +250,10 @@ fn metric_cell(
     match f {
         SortField::Capital => (fmt_cap(t.total_supply_b_usd, n), "#e0e0e0"),
         // day tape: metric column = $ gained/lost today
-        SortField::Growth | SortField::Loss | SortField::CapitalGain | SortField::CapitalLoss => {
-            fmt_cap_delta(t.capital_delta_b(), n)
-        }
+        SortField::GrowthPace
+        | SortField::DepthPace
+        | SortField::CapitalGain
+        | SortField::CapitalLoss => fmt_cap_delta(t.capital_delta_b(), n),
         _ => {
             let v = token_metric(t, f, scores);
             match f {
@@ -264,8 +265,8 @@ fn metric_cell(
                 SortField::Territory => (format!("{} km²", format_area(v as u64)), "#e0e0e0"),
                 SortField::Density => (format!("{:.1}/km²", v), "#e0e0e0"),
                 SortField::Capital
-                | SortField::Growth
-                | SortField::Loss
+                | SortField::GrowthPace
+                | SortField::DepthPace
                 | SortField::CapitalGain
                 | SortField::CapitalLoss => unreachable!(),
             }

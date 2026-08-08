@@ -297,15 +297,15 @@ impl Country {
     pub fn metric(&self, f: SortField) -> f64 {
         match f {
             SortField::Capital => self.money_supply_b_usd,
-            // growth today: only gainers score; flat/down/missing → −∞ (bottom).
-            SortField::Growth => self
+            // growth pace: only % gainers score; flat/down/missing → −∞ (bottom).
+            SortField::GrowthPace => self
                 .price_delta()
                 .filter(|d| *d > 0.0005)
                 .map(|d| d * 100.0)
                 .unwrap_or(f64::NEG_INFINITY),
-            // loss today: magnitude of drop so biggest losers rank #1
+            // depth pace: magnitude of % drop so deepest declines rank #1
             // (descending). gainers/flat/missing → −∞.
-            SortField::Loss => self
+            SortField::DepthPace => self
                 .price_delta()
                 .filter(|d| *d < -0.0005)
                 .map(|d| -d * 100.0)
@@ -350,10 +350,10 @@ impl Country {
     }
 
     /// Map paint value. Day-tape uses *signed* change so red = loss and
-    /// green = gain (rank metrics for Loss/CapitalLoss are magnitude-only).
+    /// green = gain (DepthPace/CapitalLoss rank metrics are magnitude-only).
     pub fn paint_metric(&self, f: SortField) -> f64 {
         match f {
-            SortField::Growth | SortField::Loss => {
+            SortField::GrowthPace | SortField::DepthPace => {
                 self.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
             }
             SortField::CapitalGain | SortField::CapitalLoss => {
@@ -766,10 +766,10 @@ pub const REGIONS: &[&str] = &[
 #[derive(Clone, Copy, PartialEq)]
 pub enum SortField {
     Capital,
-    /// today's token price gain (%). ranks like CAPITAL ranks by stock size.
-    Growth,
-    /// today's token price loss magnitude (%). biggest losers first.
-    Loss,
+    /// today's token price gain rate (%). pace of growth, not $ volume.
+    GrowthPace,
+    /// today's token price decline rate (% magnitude). pace of depth.
+    DepthPace,
     /// absolute capital gained today (B USD). biggest $ winners first.
     CapitalGain,
     /// absolute capital lost today (B USD magnitude). biggest $ losers first.
@@ -818,9 +818,8 @@ impl SortField {
     pub fn short(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            // full phrase — user-facing name, not "24H"
-            Self::Growth => "GROWTH TODAY",
-            Self::Loss => "LOSS TODAY",
+            Self::GrowthPace => "GROWTH PACE",
+            Self::DepthPace => "DEPTH PACE",
             Self::CapitalGain => "CAPITAL GAIN",
             Self::CapitalLoss => "CAPITAL LOSS",
             Self::Human => "CITIZEN",
@@ -836,8 +835,8 @@ impl SortField {
     pub fn label(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            Self::Growth => "GROWTH TODAY",
-            Self::Loss => "LOSS TODAY",
+            Self::GrowthPace => "GROWTH PACE",
+            Self::DepthPace => "DEPTH PACE",
             Self::CapitalGain => "CAPITAL GAIN",
             Self::CapitalLoss => "CAPITAL LOSS",
             Self::Human => "CITIZEN VALUE",
@@ -850,20 +849,20 @@ impl SortField {
         }
     }
 
-    /// Day-tape ratings: % price boards + absolute $ capital boards.
+    /// Day-tape ratings: % pace boards + absolute $ capital boards.
     /// Metric column shows Δ CAPITAL; 24H column carries price %.
     pub fn is_day_change(&self) -> bool {
         matches!(
             self,
-            Self::Growth | Self::Loss | Self::CapitalGain | Self::CapitalLoss
+            Self::GrowthPace | Self::DepthPace | Self::CapitalGain | Self::CapitalLoss
         )
     }
 
     pub fn slug(&self) -> &'static str {
         match self {
             Self::Capital => "capital",
-            Self::Growth => "growth",
-            Self::Loss => "loss",
+            Self::GrowthPace => "growth-pace",
+            Self::DepthPace => "depth-pace",
             Self::CapitalGain => "capital-gain",
             Self::CapitalLoss => "capital-loss",
             Self::Human => "citizen-value",
@@ -879,8 +878,12 @@ impl SortField {
     pub fn from_slug(s: &str) -> Option<Self> {
         Some(match s {
             "capital" | "cap" => Self::Capital,
-            "growth" | "growth-today" | "gain" | "24h" => Self::Growth,
-            "loss" | "loss-today" | "losers" => Self::Loss,
+            // growth-pace is canonical; growth/24h/gain kept for old links
+            "growth-pace" | "growth" | "growth-today" | "gain" | "24h" => Self::GrowthPace,
+            // depth-pace is canonical; loss/decline kept for old links
+            "depth-pace" | "loss" | "loss-today" | "losers" | "decline" | "decline-pace" => {
+                Self::DepthPace
+            }
             "capital-gain" | "cap-gain" | "abs-gain" => Self::CapitalGain,
             "capital-loss" | "cap-loss" | "abs-loss" => Self::CapitalLoss,
             "citizen-value" | "citizen" | "human-value" | "human" => Self::Human,
@@ -895,11 +898,11 @@ impl SortField {
     }
 
     /// The ratings, in display order.
-    // capital · day tape (% then abs $) · stocks · derived rates · freedom scores
+    // capital · day tape (% pace then abs $) · stocks · derived rates · freedom
     pub const ALL: [SortField; 12] = [
         Self::Capital,
-        Self::Growth,
-        Self::Loss,
+        Self::GrowthPace,
+        Self::DepthPace,
         Self::CapitalGain,
         Self::CapitalLoss,
         Self::Population,
