@@ -10,8 +10,8 @@ currency_code = "JMD"
 currency_name = "Jamaican Dollar"
 money_supply_b_usd = 15.0
 money_supply_b_usd_prev = 15.0
-token_price_usd = 0.006304
-token_price_usd_prev = 0.006308
+token_price_usd = 0.006309
+token_price_usd_prev = 0.006304
 visa_free_destinations = 100
 visa_free_inbound = 128
 

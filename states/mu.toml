@@ -8,10 +8,10 @@ population = 1300557
 land_area_km2 = 2040
 currency_code = "MUR"
 currency_name = "Mauritian Rupee"
-money_supply_b_usd = 22.5
+money_supply_b_usd = 22.6
 money_supply_b_usd_prev = 22.5
-token_price_usd = 0.021306
-token_price_usd_prev = 0.021279
+token_price_usd = 0.021347
+token_price_usd_prev = 0.021306
 visa_free_destinations = 90
 visa_free_inbound = 125
 

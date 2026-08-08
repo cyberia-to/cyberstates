@@ -8,10 +8,10 @@ population = 598682
 land_area_km2 = 4033
 currency_code = "CVE"
 currency_name = "Cape Verdean Escudo"
-money_supply_b_usd = 2.9
-money_supply_b_usd_prev = 3.0
-token_price_usd = 0.010456
-token_price_usd_prev = 0.010476
+money_supply_b_usd = 3.0
+money_supply_b_usd_prev = 2.9
+token_price_usd = 0.010476
+token_price_usd_prev = 0.010456
 visa_free_destinations = 73
 visa_free_inbound = 155
 

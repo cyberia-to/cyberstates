@@ -11,7 +11,7 @@ currency_name = "Mozambican Metical"
 money_supply_b_usd = 13.3
 money_supply_b_usd_prev = 13.3
 token_price_usd = 0.015684
-token_price_usd_prev = 0.015679
+token_price_usd_prev = 0.015684
 visa_free_destinations = 68
 visa_free_inbound = 198
 

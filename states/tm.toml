@@ -10,8 +10,8 @@ currency_code = "TMT"
 currency_name = "Turkmenistani Manat"
 money_supply_b_usd = 10.0
 money_supply_b_usd_prev = 10.0
-token_price_usd = 0.285698
-token_price_usd_prev = 0.285690
+token_price_usd = 0.285706
+token_price_usd_prev = 0.285698
 visa_free_destinations = 62
 visa_free_inbound = 12
 
