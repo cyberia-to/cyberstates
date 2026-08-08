@@ -757,12 +757,13 @@ impl SortField {
         matches!(self, Self::Density)
     }
 
-    /// One-word header for the narrow table column — never wraps.
+    /// Compact header for the metric column / rating button.
     pub fn short(&self) -> &'static str {
         match self {
             Self::Capital => "CAPITAL",
-            Self::Growth => "GROWTH",
-            Self::Loss => "LOSS",
+            // full phrase — user-facing name, not "24H"
+            Self::Growth => "GROWTH TODAY",
+            Self::Loss => "LOSS TODAY",
             Self::Human => "CITIZEN",
             Self::Land => "LAND",
             Self::Freedom => "FREEDOM",
@@ -786,6 +787,12 @@ impl SortField {
             Self::Territory => "TERRITORY",
             Self::Density => "DENSITY",
         }
+    }
+
+    /// True when the rating *is* the day change — the fixed PRICE Δ column
+    /// would duplicate the metric column, so the table hides it.
+    pub fn is_day_change(&self) -> bool {
+        matches!(self, Self::Growth | Self::Loss)
     }
 
     pub fn slug(&self) -> &'static str {

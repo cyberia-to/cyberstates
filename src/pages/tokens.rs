@@ -410,7 +410,7 @@ pub fn TokensPage() -> impl IntoView {
                         class="region-pill active rating-btn"
                         on:click=move |_| set_rating_open.update(|o| *o = !*o)
                     >
-                        {move || field.get().short()}
+                        {move || field.get().label()}
                         <span class="rating-caret" aria-hidden="true"></span>
                     </button>
                     <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
@@ -477,7 +477,11 @@ pub fn TokensPage() -> impl IntoView {
                         <col class="c-token" />
                         <col class="c-state" />
                         <col class="c-price" />
-                        <col class="c-delta" />
+                        {move || {
+                            (!field.get().is_day_change()).then(|| {
+                                view! { <col class="c-delta" /> }
+                            })
+                        }}
                         <col class="c-metric" />
                     </colgroup>
                     <thead>
@@ -486,7 +490,16 @@ pub fn TokensPage() -> impl IntoView {
                             <th class="th-static">"TOKEN"</th>
                             <th class="th-static">"STATES"</th>
                             <th class="th-static" style="text-align: right;">"PRICE"</th>
-                            <th class="th-static" style="text-align: right;">"24H"</th>
+                            {move || {
+                                if field.get().is_day_change() {
+                                    view! { }.into_any()
+                                } else {
+                                    view! {
+                                        <th class="th-static" style="text-align: right;">"24H"</th>
+                                    }
+                                    .into_any()
+                                }
+                            }}
                             <th class="th-static metric-th" style="text-align: right;">
                                 {move || field.get().short()}
                             </th>
@@ -530,12 +543,19 @@ pub fn TokensPage() -> impl IntoView {
                                                     }
                                                 }}
                                             </td>
-                                            <td class="tabular-nums delta-cell" style="text-align: right;">
-                                                {
+                                            {move || {
+                                                if field.get().is_day_change() {
+                                                    view! { }.into_any()
+                                                } else {
                                                     let (text, color) = delta_cell(price_delta);
-                                                    view! { <span style:color=color>{text}</span> }
+                                                    view! {
+                                                        <td class="tabular-nums delta-cell" style="text-align: right;">
+                                                            <span style:color=color>{text}</span>
+                                                        </td>
+                                                    }
+                                                    .into_any()
                                                 }
-                                            </td>
+                                            }}
                                             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                                                 {move || {
                                                     let (text, color) = metric_cell(&t_for_metric, field.get(), numeraire.get(), &scores);

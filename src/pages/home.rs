@@ -656,7 +656,7 @@ pub fn HomePage() -> impl IntoView {
                         class="region-pill active rating-btn"
                         on:click=move |_| set_rating_open.update(|o| *o = !*o)
                     >
-                        {move || state.get().1.short()}
+                        {move || state.get().1.label()}
                         <span class="rating-caret" aria-hidden="true"></span>
                     </button>
                     <div class="rating-menu" style:display=move || if rating_open.get() { "flex" } else { "none" }>
@@ -736,7 +736,11 @@ pub fn HomePage() -> impl IntoView {
                                 <col class="c-state" />
                                 <col class="c-token" />
                                 <col class="c-price" />
-                                <col class="c-delta" />
+                                {move || {
+                                    (!sort_field.get().is_day_change()).then(|| {
+                                        view! { <col class="c-delta" /> }
+                                    })
+                                }}
                                 <col class="c-metric" />
                             </colgroup>
                             <thead>
@@ -745,7 +749,16 @@ pub fn HomePage() -> impl IntoView {
                                     <th class="th-static">"STATE"</th>
                                     <th class="th-static">"TOKEN"</th>
                                     <th class="th-static" style="text-align: right;">"PRICE"</th>
-                                    <th class="th-static" style="text-align: right;">"24H"</th>
+                                    {move || {
+                                        if sort_field.get().is_day_change() {
+                                            view! { }.into_any()
+                                        } else {
+                                            view! {
+                                                <th class="th-static" style="text-align: right;">"24H"</th>
+                                            }
+                                            .into_any()
+                                        }
+                                    }}
                                     <th class="th-static metric-th" style="text-align: right;">
                                         {move || sort_field.get().short()}
                                     </th>

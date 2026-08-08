@@ -77,12 +77,21 @@ pub fn CountryRow(
                     }
                 }}
             </td>
-            <td class="tabular-nums delta-cell" style="text-align: right;">
-                {
+            // PRICE Δ only when the rating is something else — under
+            // GROWTH TODAY / LOSS TODAY the metric column *is* that %.
+            {move || {
+                if field.get().is_day_change() {
+                    view! { }.into_any()
+                } else {
                     let (text, color) = delta_cell(price_delta);
-                    view! { <span style:color=color>{text}</span> }
+                    view! {
+                        <td class="tabular-nums delta-cell" style="text-align: right;">
+                            <span style:color=color>{text}</span>
+                        </td>
+                    }
+                    .into_any()
                 }
-            </td>
+            }}
             <td class="tabular-nums" style="text-align: right; font-weight: 700;">
                 {move || {
                     let (text, color) = metric_cell(&c_for_metric, field.get(), numeraire.get());
