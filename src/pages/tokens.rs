@@ -101,7 +101,8 @@ fn token_map_values(
     let code_refs: HashMap<String, &Country> =
         by_code.iter().map(|(k, v)| (k.clone(), v)).collect();
 
-    let mut ranked: Vec<(Vec<String>, f64)> = tokens
+    // (members, paint_value, rank_value)
+    let mut ranked: Vec<(Vec<String>, f64, f64)> = tokens
         .iter()
         .filter(|t| {
             (query.is_empty()
@@ -122,50 +123,86 @@ fn token_map_values(
                 })
                 .map(|(c, _, _)| c.clone())
                 .collect();
-            (members, token_metric(t, field, scores))
+            // paint uses signed % for day tape; rank metric for cut/order
+            let rank_v = token_metric(t, field, scores);
+            let paint_v = if field.is_day_change() {
+                t.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
+            } else {
+                rank_v
+            };
+            (members, paint_v, rank_v)
         })
-        .filter(|(members, _)| !members.is_empty())
+        .filter(|(members, _, _)| !members.is_empty())
         .collect();
-    ranked.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+    // cut/order by rank metric (gainers-only / losers-only)
+    ranked.sort_by(|a, b| a.2.partial_cmp(&b.2).unwrap_or(std::cmp::Ordering::Equal));
     let n = ranked.len();
     let log_scale = matches!(field, SortField::Population | SortField::Territory);
-    // first index of each distinct value — equal metrics share one color
-    let first_rank = |band: &[(Vec<String>, f64)], v: f64| -> usize {
-        band.iter().position(|(_, x)| *x == v).unwrap_or(0)
+    let day_tape = field.is_day_change();
+    let first_rank = |band: &[(Vec<String>, f64, f64)], v: f64| -> usize {
+        band.iter().position(|(_, _, x)| *x == v).unwrap_or(0)
+    };
+    let max_abs = if day_tape {
+        ranked
+            .iter()
+            .filter(|(_, p, _)| p.is_finite())
+            .map(|(_, p, _)| p.abs())
+            .fold(0.0_f64, f64::max)
+            .max(1e-9)
+    } else {
+        0.0
     };
     let (vmin, vmax) = if log_scale && n > 0 {
-        let p10 = ranked[(n as f64 * 0.10) as usize].1.max(1.0).ln();
-        let top = ranked.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+        let p10 = ranked[(n as f64 * 0.10) as usize].2.max(1.0).ln();
+        let top = ranked.last().map(|x| x.2.max(1.0).ln()).unwrap_or(1.0);
         (p10, top)
     } else {
         (0.0, 1.0)
     };
     const FLOOR: f64 = 0.12;
     let mut values = HashMap::new();
-    for (i, (members, v)) in ranked.iter().enumerate() {
-        let t = if log_scale {
-            if vmax > vmin {
-                ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-            } else if *v > 0.0 {
-                1.0
-            } else {
-                0.0
-            }
-        } else if n > 1 {
-            first_rank(&ranked, *v) as f64 / (n - 1) as f64
-        } else if *v > 0.0 {
-            1.0
-        } else {
-            0.0
-        };
-        let t = if field.lower_is_better() { 1.0 - t } else { t };
-        // ranked ascending: flip the index for the descending-order predicate
+    for (i, (members, paint_v, rank_v)) in ranked.iter().enumerate() {
+        // ranked ascending on rank metric for cut
         if let Some(g) = cut {
             if !goodness_keep(n - 1 - i, n, field.lower_is_better(), g) {
                 continue;
             }
         }
-        let paint = FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0);
+        let t = if day_tape {
+            if !paint_v.is_finite() {
+                0.0
+            } else {
+                (0.5 + 0.5 * (paint_v / max_abs)).clamp(0.0, 1.0)
+            }
+        } else if log_scale {
+            if vmax > vmin {
+                ((rank_v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+            } else if *rank_v > 0.0 {
+                1.0
+            } else {
+                0.0
+            }
+        } else if n > 1 {
+            first_rank(&ranked, *rank_v) as f64 / (n - 1) as f64
+        } else if *rank_v > 0.0 {
+            1.0
+        } else {
+            0.0
+        };
+        let t = if !day_tape && field.lower_is_better() {
+            1.0 - t
+        } else {
+            t
+        };
+        let paint = if day_tape {
+            if t < 0.01 {
+                0.0
+            } else {
+                t
+            }
+        } else {
+            FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0)
+        };
         for code in members {
             values.insert(code.clone(), paint);
         }

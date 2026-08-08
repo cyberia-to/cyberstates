@@ -76,7 +76,8 @@ fn map_values(
     cut: Option<f64>,
     classes: (bool, bool, bool),
 ) -> std::collections::HashMap<String, f64> {
-    let mut items: Vec<(String, f64, bool)> = countries
+    // (code, paint_value, rank_value, is_planet)
+    let mut items: Vec<(String, f64, f64, bool)> = countries
         .iter()
         .filter(|c| {
             c.class_visible(classes.0, classes.1, classes.2)
@@ -91,14 +92,16 @@ fn map_values(
         .map(|c| {
             (
                 c.code.clone(),
-                c.metric(field),
+                c.paint_metric(field),
+                c.metric(field), // rank metric for cut alignment with table
                 c.belongs_to(ListingClass::Planet),
             )
         })
         .collect();
 
     // Global rank for the goodness cut (table-aligned), then paint each band alone.
-    items.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+    // cut uses the *rank* metric (gainers-only / losers-only), not signed paint.
+    items.sort_by(|a, b| a.2.partial_cmp(&b.2).unwrap_or(std::cmp::Ordering::Equal));
     let n_all = items.len();
     let pass_cut: std::collections::HashSet<String> = items
         .iter()
@@ -107,59 +110,96 @@ fn map_values(
             Some(g) => goodness_keep(n_all - 1 - i, n_all, field.lower_is_better(), g),
             None => true,
         })
-        .map(|(_, (code, _, _))| code.clone())
+        .map(|(_, item)| item.0.clone())
         .collect();
 
     let log_scale = matches!(field, SortField::Population | SortField::Territory);
+    let day_tape = field.is_day_change();
     let mut values = std::collections::HashMap::new();
     for is_planet in [true, false] {
-        let mut band: Vec<(String, f64)> = items
+        let mut band: Vec<(String, f64, f64)> = items
             .iter()
-            .filter(|(_, _, p)| *p == is_planet)
-            .map(|(c, v, _)| (c.clone(), *v))
+            .filter(|item| item.3 == is_planet)
+            .map(|item| (item.0.clone(), item.1, item.2))
             .collect();
-        band.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+        // day tape: diverging color on signed %; else rank-paint on rank metric
+        if day_tape {
+            band.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+        } else {
+            band.sort_by(|a, b| a.2.partial_cmp(&b.2).unwrap_or(std::cmp::Ordering::Equal));
+        }
         let n = band.len();
         if n == 0 {
             continue;
         }
+        // diverging: red ← flat → green from signed price %
+        let max_abs = if day_tape {
+            band.iter()
+                .filter(|(_, p, _)| p.is_finite())
+                .map(|(_, p, _)| p.abs())
+                .fold(0.0_f64, f64::max)
+                .max(1e-9)
+        } else {
+            0.0
+        };
         // first index of each distinct value — equal metrics share one color
         // (all zero-capital solar bodies must not rainbow by sort order)
         let (vmin, vmax) = if log_scale {
-            let p10 = band[(n as f64 * 0.10) as usize].1.max(1.0).ln();
-            let top = band.last().map(|x| x.1.max(1.0).ln()).unwrap_or(1.0);
+            let p10 = band[(n as f64 * 0.10) as usize].2.max(1.0).ln();
+            let top = band.last().map(|x| x.2.max(1.0).ln()).unwrap_or(1.0);
             (p10, top)
         } else {
             (0.0, 1.0)
         };
-        for (code, v) in &band {
+        for (code, paint, rank_v) in &band {
             if !pass_cut.contains(code) {
                 continue;
             }
-            let first = band.iter().position(|(_, x)| x == v).unwrap_or(0);
-            let t = if log_scale {
+            let t = if day_tape {
+                if !paint.is_finite() {
+                    0.0 // no price tape → dark grey
+                } else {
+                    // 0.0 = worst red, 0.5 = flat, 1.0 = best green
+                    (0.5 + 0.5 * (*paint / max_abs)).clamp(0.0_f64, 1.0)
+                }
+            } else if log_scale {
                 if vmax > vmin {
-                    ((v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
-                } else if *v > 0.0 {
+                    ((rank_v.max(1.0).ln() - vmin) / (vmax - vmin)).clamp(0.0, 1.0)
+                } else if *rank_v > 0.0 {
                     1.0
                 } else {
                     0.0
                 }
             } else if n > 1 {
+                let first = band.iter().position(|(_, _, x)| x == rank_v).unwrap_or(0);
                 first as f64 / (n - 1) as f64
-            } else if *v > 0.0 {
+            } else if *rank_v > 0.0 {
                 1.0
             } else {
                 0.0
             };
-            let t = if field.lower_is_better() { 1.0 - t } else { t };
+            let t = if !day_tape && field.lower_is_better() {
+                1.0 - t
+            } else {
+                t
+            };
             // Always paint entities that are in the listing. Floor keeps the
             // bottom rank (AQ capital=0, low-density GL, log-scale p10 clamp)
             // on the red tip of the ramp — never the missing-data grey
             // (#1a1a1a). Ties still share one t, so zero-capital solar bodies
             // stay a single color instead of a fake rainbow.
+            // Day tape keeps mid-grey for flat (t≈0.5); floor only for missing.
             const FLOOR: f64 = 0.12;
-            values.insert(code.clone(), FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0));
+            let paint_v = if day_tape {
+                if t < 0.01 {
+                    0.0
+                } else {
+                    t
+                }
+            } else {
+                FLOOR + (1.0 - FLOOR) * t.clamp(0.0, 1.0)
+            };
+            values.insert(code.clone(), paint_v);
         }
     }
     values

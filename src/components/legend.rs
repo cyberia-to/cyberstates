@@ -25,7 +25,16 @@ pub fn RatingLegend(
     view! {
         <div class="legend-zone">
             <span class="legend-end">
-                {move || if field.get().lower_is_better() { "HIGH" } else { "LOW" }}
+                {move || {
+                    let f = field.get();
+                    if f.is_day_change() {
+                        "LOSS"
+                    } else if f.lower_is_better() {
+                        "HIGH"
+                    } else {
+                        "LOW"
+                    }
+                }}
             </span>
             <div class="legend-barwrap">
             <div
@@ -61,7 +70,16 @@ pub fn RatingLegend(
             })}
             </div>
             <span class="legend-end">
-                {move || if field.get().lower_is_better() { "LOW" } else { "HIGH" }}
+                {move || {
+                    let f = field.get();
+                    if f.is_day_change() {
+                        "GAIN"
+                    } else if f.lower_is_better() {
+                        "LOW"
+                    } else {
+                        "HIGH"
+                    }
+                }}
             </span>
             {move || cut.get().map(|g| view! {
                 <button class="legend-clear" on:click=move |_| cut.set(None)>

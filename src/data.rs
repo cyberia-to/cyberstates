@@ -323,6 +323,17 @@ impl Country {
         }
     }
 
+    /// Map paint value. Day-tape uses *signed* price % so red = loss and
+    /// green = gain on both boards (Loss rank metric is magnitude-only).
+    pub fn paint_metric(&self, f: SortField) -> f64 {
+        match f {
+            SortField::Growth | SortField::Loss => {
+                self.price_delta().map(|d| d * 100.0).unwrap_or(f64::NAN)
+            }
+            _ => self.metric(f),
+        }
+    }
+
     /// Weights: visa-free=1.0, VoA=0.8, eta/e-visa=0.5, visa-required=0.1, no-admission=0.0
     pub fn index(&self) -> CountryIndex {
         index_cache()
