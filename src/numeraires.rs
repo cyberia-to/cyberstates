@@ -134,6 +134,26 @@ pub fn fmt_cap(b_usd: f64, n: Numeraire) -> String {
     }
 }
 
+/// Signed capital change for GROWTH/LOSS boards: `+$1.2B` / `−$400M`.
+/// Color: green gain, red loss, dim flat/missing.
+pub fn fmt_cap_delta(b_usd: Option<f64>, n: Numeraire) -> (String, &'static str) {
+    let Some(b) = b_usd else {
+        return ("—".to_string(), "#333");
+    };
+    if b.abs() < 1e-12 {
+        return ("•0".to_string(), "#777");
+    }
+    let abs = fmt_cap(b.abs(), n);
+    if abs == "N/A" {
+        return ("—".to_string(), "#333");
+    }
+    if b > 0.0 {
+        (format!("+{abs}"), "var(--cyber-green)")
+    } else {
+        (format!("−{abs}"), "var(--cyber-red)")
+    }
+}
+
 /// Format a plain USD amount (per person, per km²) under a numeraire.
 pub fn fmt_value(usd: f64, n: Numeraire) -> String {
     if usd <= 0.0 {

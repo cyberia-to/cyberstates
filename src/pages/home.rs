@@ -788,10 +788,10 @@ pub fn HomePage() -> impl IntoView {
                                     <th class="th-static" style="text-align: right;">"PRICE"</th>
                                     <th class="th-static" style="text-align: right;">"24H"</th>
                                     <th class="th-static metric-th" style="text-align: right;">
-                                        // growth/loss only reorders rows — values stay capital
+                                        // growth/loss: $ capital gained/lost (not stock size)
                                         {move || {
                                             if sort_field.get().is_day_change() {
-                                                "CAPITAL"
+                                                "Δ CAPITAL"
                                             } else {
                                                 sort_field.get().short()
                                             }

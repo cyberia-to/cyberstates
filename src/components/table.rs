@@ -1,6 +1,6 @@
 use crate::components::notyet::NotYet;
 use crate::data::{delta_cell, Country, SortField};
-use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
+use crate::numeraires::{fmt_cap, fmt_cap_delta, fmt_value, price_parts, Numeraire};
 use leptos::prelude::*;
 
 fn score_color(v: f64) -> &'static str {
@@ -20,11 +20,9 @@ fn score_color(v: f64) -> &'static str {
 /// Render the rating-object cell: value formatted per field, scores colored.
 pub fn metric_cell(c: &Country, f: SortField, n: Numeraire) -> (String, &'static str) {
     match f {
-        // Growth/Loss only change *order* — value column stays capital
-        // (the 24H column already shows price Δ).
-        SortField::Capital | SortField::Growth | SortField::Loss => {
-            (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0")
-        }
+        SortField::Capital => (fmt_cap(c.money_supply_b_usd, n), "#e0e0e0"),
+        // growth/loss: order by price %, capital column = $ gained/lost today
+        SortField::Growth | SortField::Loss => fmt_cap_delta(c.capital_delta_b(), n),
         SortField::Human | SortField::Land => (fmt_value(c.metric(f), n), "#e0e0e0"),
         SortField::Freedom | SortField::Hospitality => {
             let v = c.metric(f);

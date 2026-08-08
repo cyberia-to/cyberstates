@@ -4,7 +4,7 @@ use crate::components::nav::SiteNav;
 use crate::components::notyet::NotYet;
 use crate::components::solar::SolarPanel;
 use crate::data::*;
-use crate::numeraires::{fmt_cap, fmt_value, price_parts, Numeraire};
+use crate::numeraires::{fmt_cap, fmt_cap_delta, fmt_value, price_parts, Numeraire};
 use crate::pages::map::{painted_world, setup_click_handlers, value_to_color};
 use leptos::prelude::*;
 use leptos_router::hooks::use_location;
@@ -235,10 +235,9 @@ fn metric_cell(
     scores: &HashMap<String, (f64, f64, f64)>,
 ) -> (String, &'static str) {
     match f {
-        // Growth/Loss reorder by price Δ; value column stays capital.
-        SortField::Capital | SortField::Growth | SortField::Loss => {
-            (fmt_cap(t.total_supply_b_usd, n), "#e0e0e0")
-        }
+        SortField::Capital => (fmt_cap(t.total_supply_b_usd, n), "#e0e0e0"),
+        // growth/loss: order by price %, capital column = $ gained/lost today
+        SortField::Growth | SortField::Loss => fmt_cap_delta(t.capital_delta_b(), n),
         _ => {
             let v = token_metric(t, f, scores);
             match f {
@@ -529,7 +528,7 @@ pub fn TokensPage() -> impl IntoView {
                             <th class="th-static metric-th" style="text-align: right;">
                                 {move || {
                                     if field.get().is_day_change() {
-                                        "CAPITAL"
+                                        "Δ CAPITAL"
                                     } else {
                                         field.get().short()
                                     }

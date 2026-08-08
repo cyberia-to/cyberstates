@@ -271,6 +271,21 @@ impl Country {
         delta_pct(self.money_supply_b_usd, self.money_supply_b_usd_prev)
     }
 
+    /// Absolute capital gained/lost today, in billions USD.
+    /// Prefer money-stock delta; if stock is flat but price moved, revalue
+    /// as `capital × price_delta` (supply held constant).
+    pub fn capital_delta_b(&self) -> Option<f64> {
+        if self.money_supply_b_usd_prev > 0.0 {
+            let d = self.money_supply_b_usd - self.money_supply_b_usd_prev;
+            if d.abs() > 1e-12 {
+                return Some(d);
+            }
+        }
+        self.price_delta()
+            .filter(|d| d.abs() > 0.0005)
+            .map(|d| self.money_supply_b_usd * d)
+    }
+
     /// Day-over-day change in token PRICE, as a fraction.
     pub fn price_delta(&self) -> Option<f64> {
         delta_pct(self.token_price_usd, self.token_price_usd_prev)
