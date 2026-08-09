@@ -1,0 +1,21 @@
+# Free Republic of Liberland — micronation on the Danube between
+# Croatia and Serbia (Gornja Siga). Unrecognised; claimed 2015–present.
+# Capital stock = LLD (Liberland Dollar) market cap (~$0.7M → rounds to 0.0B
+# at the site's $0.1B display resolution). Population = registered citizens
+# (permanent residents still ~0).
+name = "Liberland"
+code = "LL"
+slug = "liberland"
+flag = "🟨"
+region = "Europe"
+oceans = ""
+population = 1400
+land_area_km2 = 7
+currency_code = "LLD"
+currency_name = "Liberland Dollar"
+money_supply_b_usd = 0.001
+money_supply_b_usd_prev = 0.001
+token_price_usd = 0.264360
+token_price_usd_prev = 0.264360
+visa_free_destinations = 0
+visa_free_inbound = 0
