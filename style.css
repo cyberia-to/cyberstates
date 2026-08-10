@@ -2424,6 +2424,14 @@ svg.world-map path.map-sync-hover {
     gap: 8px;
     align-items: center;
 }
+/* full-width action strip under chrome — primary market actions */
+.cyberia-cta-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 10px 0 4px;
+    width: 100%;
+}
 .cta-btn {
     font-family: inherit;
     font-size: 11px;
@@ -2434,21 +2442,60 @@ svg.world-map path.map-sync-hover {
     cursor: pointer;
     border: 1px solid;
 }
+.cta-btn.cta-lg {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    min-height: 56px;
+    text-align: left;
+}
+.cta-ico {
+    font-size: 22px;
+    line-height: 1;
+}
+.cta-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.cta-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+.cta-sub {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    opacity: 0.7;
+}
 .cta-buy {
     color: var(--cyber-orange);
-    border-color: rgba(255, 102, 0, 0.55);
-    background: rgba(255, 102, 0, 0.08);
+    border-color: rgba(255, 102, 0, 0.7);
+    background: rgba(255, 102, 0, 0.12);
+    box-shadow: 0 0 18px rgba(255, 102, 0, 0.12);
 }
 .cta-buy:hover {
-    background: rgba(255, 102, 0, 0.16);
+    background: rgba(255, 102, 0, 0.22);
+    box-shadow: 0 0 24px rgba(255, 102, 0, 0.22);
 }
 .cta-lease {
     color: var(--cyber-green);
-    border-color: rgba(0, 255, 65, 0.45);
-    background: rgba(0, 255, 65, 0.07);
+    border-color: rgba(0, 255, 65, 0.65);
+    background: rgba(0, 255, 65, 0.1);
+    box-shadow: 0 0 18px rgba(0, 255, 65, 0.1);
 }
 .cta-lease:hover {
-    background: rgba(0, 255, 65, 0.14);
+    background: rgba(0, 255, 65, 0.18);
+    box-shadow: 0 0 24px rgba(0, 255, 65, 0.18);
+}
+@media (max-width: 560px) {
+    .cyberia-cta-bar {
+        grid-template-columns: 1fr;
+    }
 }
 .panel-cta {
     margin-left: auto;
