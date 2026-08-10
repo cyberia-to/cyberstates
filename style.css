@@ -2385,8 +2385,16 @@ svg.world-map path.map-sync-hover {
     display: flex;
     flex-direction: column;
 }
-.cyberia-shell .site-chrome {
+.cyberia-shell .site-chrome,
+.cyberia-chrome {
     flex-shrink: 0;
+}
+/* single header row only — no subhead strip; stage eats the rest */
+.cyberia-chrome .header-row2 {
+    display: none;
+}
+.cyberia-chrome .chrome-inner {
+    padding-bottom: 6px;
 }
 .cyberia-phase-pill {
     display: inline-flex;
@@ -2406,24 +2414,6 @@ svg.world-map path.map-sync-hover {
     border-radius: 50%;
     background: var(--cyber-green);
     box-shadow: 0 0 8px var(--cyber-green);
-}
-.cyberia-subhead {
-    gap: 14px;
-    align-items: center;
-}
-.cyberia-site {
-    color: #888;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-}
-.cyberia-soft3 {
-    margin-left: auto;
-    font-size: 11px;
-    color: #555;
-    letter-spacing: 0.4px;
-    border: 1px solid #222;
-    padding: 3px 10px;
-    border-radius: 2px;
 }
 .cyberia-ctas {
     display: flex;

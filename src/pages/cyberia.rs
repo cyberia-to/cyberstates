@@ -762,11 +762,10 @@ pub fn CyberiaPage() -> impl IntoView {
     });
 
     let map_for_svg = map.clone();
-    let map_for_meta = map.clone();
 
     view! {
         <div class="page-shell cyberia-shell">
-            <div class="site-chrome">
+            <div class="site-chrome cyberia-chrome">
             <div class="chrome-inner">
             <div class="header-row1">
                 <div class="logo-zone">
@@ -781,13 +780,6 @@ pub fn CyberiaPage() -> impl IntoView {
                     }}
                 </div>
                 <SiteNav active="CYBERIA" />
-            </div>
-            <div class="header-row2 cyberia-subhead">
-                <span class="by-label">"fleets & flats"</span>
-                <span class="cyberia-site">{map_for_meta.site.clone()}</span>
-                <span class="cyberia-soft3" title="soft3: intent first-class · open map · no closed API">
-                    "soft3 · intent → fleet × flat × work"
-                </span>
             </div>
             </div>
             </div>
