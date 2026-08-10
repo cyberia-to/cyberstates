@@ -1,5 +1,6 @@
 pub mod corridor;
 pub mod country;
+pub mod cyberia;
 pub mod home;
 pub mod listing;
 pub mod map;

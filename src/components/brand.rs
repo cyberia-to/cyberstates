@@ -20,6 +20,7 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
                     "TOKENS" => "Tokens",
                     "TOTALS" => "Totals",
                     "DOCTRINE" => "Doctrine",
+                    "CYBERIA" => "ia",
                     _ => "States",
                 }}</span>
                 <span class="brand-caret" aria-hidden="true"></span>
@@ -29,6 +30,7 @@ pub fn BrandChooser(#[prop(optional)] active: &'static str) -> impl IntoView {
                 <a class=if active == "TOKENS" { "region-pill active" } else { "region-pill" } href="/tokens">"TOKENS"</a>
                 <a class=if active == "TOTALS" { "region-pill active" } else { "region-pill" } href="/totals">"TOTALS"</a>
                 <a class=if active == "DOCTRINE" { "region-pill active" } else { "region-pill" } href="/doctrine">"DOCTRINE"</a>
+                <a class=if active == "CYBERIA" { "region-pill active" } else { "region-pill" } href="/cyberia">"CYBERIA"</a>
             </div>
         </div>
     }
