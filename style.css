@@ -3111,16 +3111,41 @@ svg.world-map path.map-sync-hover {
     color: #444;
 }
 .district-label {
-    fill: rgba(255, 255, 255, 0.18);
-    font-size: 9px;
+    fill: rgba(255, 255, 255, 0.22);
+    font-size: 10px;
     letter-spacing: 1.2px;
     font-weight: 700;
     pointer-events: none;
     font-family: "Play", sans-serif;
+    /* size is screen-stable via SVG inverse-scale under map zoom */
 }
 .flat-label {
-    font-size: 8px;
-    letter-spacing: 0.6px;
+    fill: #f0f0f0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    pointer-events: none;
+    font-family: "Play", sans-serif;
+    paint-order: stroke;
+    stroke: rgba(0, 0, 0, 0.85);
+    stroke-width: 3px;
+}
+.place-dot {
+    pointer-events: none;
+}
+.place-label {
+    fill: #888;
+    font-size: 9px;
+    letter-spacing: 0.4px;
+    pointer-events: none;
+    font-family: "Play", sans-serif;
+}
+.map-caption {
+    fill: #555;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    font-family: "Play", sans-serif;
+    pointer-events: none;
 }
 
 .cyberia-right {

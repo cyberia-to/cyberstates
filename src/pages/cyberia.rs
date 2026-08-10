@@ -668,6 +668,13 @@ fn poly_path(coords: &[[f64; 2]], bbox: &BBox, w: f64, h: f64, pad: f64) -> Stri
     s
 }
 
+/// Keep HUD-sized marks (labels, dots) constant on screen while the
+/// map-world CSS scale zooms geometry. Anchor at (x,y) in SVG units.
+fn screen_stable_tf(x: f64, y: f64, zoom: f64) -> String {
+    let s = 1.0 / zoom.max(0.25);
+    format!("translate({x:.2},{y:.2}) scale({s:.4})")
+}
+
 fn centroid(coords: &[[f64; 2]]) -> (f64, f64) {
     if coords.is_empty() {
         return (0.0, 0.0);
@@ -989,10 +996,16 @@ pub fn CyberiaPage() -> impl IntoView {
                                                     d=path
                                                     fill="rgba(255,255,255,0.015)"
                                                     stroke="rgba(255,255,255,0.12)"
-                                                    stroke-width="1"
+                                                    stroke-width=move || format!("{:.3}", 1.0 / map_zoom.get().max(0.25))
                                                     stroke-dasharray="4 3"
+                                                    vector-effect="non-scaling-stroke"
                                                 />
-                                                <text x=lx y=ly text-anchor="middle" class="district-label">{label}</text>
+                                                <text
+                                                    class="district-label"
+                                                    text-anchor="middle"
+                                                    dominant-baseline="middle"
+                                                    transform=move || screen_stable_tf(lx, ly, map_zoom.get())
+                                                >{label.clone()}</text>
                                             </g>
                                         }
                                     }).collect_view()}
@@ -1060,7 +1073,10 @@ pub fn CyberiaPage() -> impl IntoView {
                                                         stroke-width=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_sw.as_str());
                                                             let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_sw.as_str());
-                                                            if sel { "2.2" } else if hov { "1.8" } else { "0.9" }
+                                                            let z = map_zoom.get().max(0.25);
+                                                            // keep stroke ~constant on screen under CSS camera scale
+                                                            let base = if sel { 2.0 } else if hov { 1.6 } else { 0.85 };
+                                                            format!("{:.3}", base / z)
                                                         }
                                                         class=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_cls.as_str());
@@ -1082,8 +1098,14 @@ pub fn CyberiaPage() -> impl IntoView {
                                                         } else {
                                                             base_label.clone()
                                                         };
+                                                        // inverse-scale so label stays HUD-sized while map zooms
                                                         view! {
-                                                            <text x=lx y=ly text-anchor="middle" class="flat-label">{text}</text>
+                                                            <text
+                                                                class="flat-label"
+                                                                text-anchor="middle"
+                                                                dominant-baseline="middle"
+                                                                transform=move || screen_stable_tf(lx, ly, map_zoom.get())
+                                                            >{text}</text>
                                                         }.into_any()
                                                     }}
                                                 </g>
@@ -1095,22 +1117,28 @@ pub fn CyberiaPage() -> impl IntoView {
                                         if p.coords.is_empty() { return view! { <g></g> }.into_any(); }
                                         let (x, y) = project(p.coords[0][0], p.coords[0][1], &m_places.bbox, W, H, PAD);
                                         let name = p.name.clone();
-                                        let ty = y - 6.0;
                                         view! {
-                                            <g class="place-dot">
-                                                <circle cx=x cy=y r="2.5" fill="#3a3a3a" stroke="#666" stroke-width="0.8" />
-                                                <text x=x y=ty text-anchor="middle" class="place-label">{name}</text>
+                                            // dots + names stay screen-stable under camera zoom
+                                            <g
+                                                class="place-dot"
+                                                transform=move || screen_stable_tf(x, y, map_zoom.get())
+                                            >
+                                                <circle cx="0" cy="0" r="3" fill="#3a3a3a" stroke="#777" stroke-width="0.9" />
+                                                <text x="0" y="-7" text-anchor="middle" class="place-label">{name}</text>
                                             </g>
                                         }.into_any()
                                     }).collect_view()}
 
-                                    <text x=PAD y={H - 8.0} class="map-caption">
+                                    <text
+                                        class="map-caption"
+                                        text-anchor="start"
+                                        transform=move || screen_stable_tf(PAD, H - 10.0, map_zoom.get())
+                                    >
                                         {format!(
-                                            "N ↑  ·  {} plots  ·  {:.1} ha plots / {:.0} ha site  ·  {}",
+                                            "N ↑  ·  {} plots  ·  {:.1} ha plots / {:.0} ha site",
                                             m_cap.stats.plot_count,
                                             m_cap.stats.plot_ha,
                                             m_cap.stats.district_ha,
-                                            m_cap.source
                                         )}
                                     </text>
                                 </svg>
