@@ -19,9 +19,24 @@ struct MapData {
     site: String,
     center: [f64; 2],
     bbox: BBox,
+    #[serde(default)]
+    stats: MapStats,
+    /// All interactive land plots (from KML `plots` folder).
     phase0: Vec<Flat>,
+    #[serde(default)]
+    districts: Vec<Flat>,
     places: Vec<Flat>,
     source: String,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+struct MapStats {
+    #[serde(default)]
+    plot_count: u32,
+    #[serde(default)]
+    plot_ha: f64,
+    #[serde(default)]
+    district_ha: f64,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -40,6 +55,8 @@ struct Flat {
     phase: u32,
     geom: String,
     coords: Vec<[f64; 2]>,
+    #[serde(default)]
+    zone: String,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -383,6 +400,7 @@ fn split_flat_at(flat: &Flat, axis: usize, ratio: f64) -> Option<(Flat, Flat, f6
         phase: flat.phase,
         geom: "polygon".into(),
         coords: a_coords,
+        zone: flat.zone.clone(),
     };
     let b = Flat {
         id: format!("{}-b", flat.id),
@@ -391,6 +409,7 @@ fn split_flat_at(flat: &Flat, axis: usize, ratio: f64) -> Option<(Flat, Flat, f6
         phase: flat.phase,
         geom: "polygon".into(),
         coords: b_coords,
+        zone: flat.zone.clone(),
     };
     Some((a, b, t))
 }
@@ -415,42 +434,89 @@ fn merge_flats(a: &Flat, b: &Flat) -> Flat {
         phase: a.phase.min(b.phase),
         geom: "polygon".into(),
         coords,
+        zone: if a.zone == b.zone {
+            a.zone.clone()
+        } else {
+            "mixed".into()
+        },
     }
 }
 
-fn flat_fill(id: &str, selected: bool) -> &'static str {
-    if selected {
-        if id.contains("avalon") {
-            "rgba(255,102,0,0.45)"
-        } else if id.contains("sinwood") {
-            "rgba(0,255,65,0.45)"
-        } else {
-            "rgba(0,229,255,0.40)"
-        }
-    } else if id.contains("avalon") {
-        "rgba(255,102,0,0.18)"
-    } else if id.contains("sinwood") {
-        "rgba(0,255,65,0.18)"
+fn zone_key(flat: &Flat) -> &str {
+    if !flat.zone.is_empty() {
+        return flat.zone.as_str();
+    }
+    // fallback: prefix of id/name
+    let s = if flat.id.is_empty() {
+        flat.name.as_str()
     } else {
-        "rgba(0,229,255,0.15)"
+        flat.id.as_str()
+    };
+    s
+}
+
+fn flat_fill(zone_or_id: &str, selected: bool) -> &'static str {
+    let z = zone_or_id.to_lowercase();
+    let (hi, lo) = if z.contains("avalon") {
+        ("rgba(255,102,0,0.48)", "rgba(255,102,0,0.16)")
+    } else if z.contains("sinwood") {
+        ("rgba(0,255,65,0.45)", "rgba(0,255,65,0.14)")
+    } else if z.contains("bridge") {
+        ("rgba(0,229,255,0.42)", "rgba(0,229,255,0.12)")
+    } else if z.contains("core") {
+        ("rgba(255,215,0,0.42)", "rgba(255,215,0,0.12)")
+    } else if z.contains("ether") {
+        ("rgba(153,69,255,0.42)", "rgba(153,69,255,0.12)")
+    } else if z.contains("asgard") {
+        ("rgba(255,0,64,0.38)", "rgba(255,0,64,0.10)")
+    } else if z.contains("edem") || z.contains("canyon") {
+        ("rgba(0,255,200,0.38)", "rgba(0,255,200,0.10)")
+    } else {
+        ("rgba(160,160,160,0.35)", "rgba(160,160,160,0.10)")
+    };
+    if selected {
+        hi
+    } else {
+        lo
     }
 }
 
-fn flat_stroke_col(id: &str, selected: bool) -> &'static str {
+fn flat_stroke_col(zone_or_id: &str, selected: bool) -> &'static str {
+    let z = zone_or_id.to_lowercase();
     if selected {
-        if id.contains("avalon") {
-            "var(--cyber-orange)"
-        } else if id.contains("sinwood") {
-            "var(--cyber-green)"
-        } else {
-            "var(--cyber-cyan)"
-        }
-    } else if id.contains("avalon") {
-        "rgba(255,102,0,0.55)"
-    } else if id.contains("sinwood") {
+        return "#ffffff";
+    }
+    if z.contains("avalon") {
+        "rgba(255,102,0,0.65)"
+    } else if z.contains("sinwood") {
         "rgba(0,255,65,0.55)"
+    } else if z.contains("bridge") {
+        "rgba(0,229,255,0.55)"
+    } else if z.contains("core") {
+        "rgba(255,215,0,0.55)"
+    } else if z.contains("ether") {
+        "rgba(153,69,255,0.55)"
+    } else if z.contains("asgard") {
+        "rgba(255,0,64,0.5)"
     } else {
-        "rgba(0,229,255,0.45)"
+        "rgba(140,140,140,0.45)"
+    }
+}
+
+fn zone_hover_fill(zone_or_id: &str) -> &'static str {
+    let z = zone_or_id.to_lowercase();
+    if z.contains("avalon") {
+        "rgba(255,102,0,0.40)"
+    } else if z.contains("sinwood") {
+        "rgba(0,255,65,0.40)"
+    } else if z.contains("bridge") {
+        "rgba(0,229,255,0.38)"
+    } else if z.contains("core") {
+        "rgba(255,215,0,0.38)"
+    } else if z.contains("ether") {
+        "rgba(153,69,255,0.38)"
+    } else {
+        "rgba(200,200,200,0.28)"
     }
 }
 
@@ -625,7 +691,12 @@ pub fn CyberiaPage() -> impl IntoView {
     let map = load_map();
     let map = std::sync::Arc::new(map);
 
-    let selected_flat = RwSignal::new(Some("sinwood".to_string()));
+    let selected_flat = RwSignal::new(
+        map.phase0
+            .first()
+            .map(|f| f.id.clone())
+            .or_else(|| Some("sinwood".into())),
+    );
     let selected_fleet = RwSignal::new(Some("w-sutar".to_string()));
     let selected_action = RwSignal::new("survey".to_string());
     let intents = RwSignal::new(Vec::<Intent>::new());
@@ -697,7 +768,10 @@ pub fn CyberiaPage() -> impl IntoView {
                 </div>
                 <div class="cyberia-phase-pill">
                     <span class="phase-dot"></span>
-                    "PHASE 0 · SINWOOD + AVALON"
+                    {move || {
+                        let n = flats.get().len();
+                        format!("PHASE 0 · {n} PLOTS · GESING")
+                    }}
                 </div>
                 <SiteNav active="CYBERIA" />
             </div>
@@ -765,7 +839,14 @@ pub fn CyberiaPage() -> impl IntoView {
                 <section class="cyberia-panel cyberia-flats">
                     <div class="cyberia-panel-h">
                         <span class="panel-kicker">"FLATS"</span>
-                        <span class="panel-sub">"Gesing · scroll zoom · drag pan · arrows"</span>
+                        <span class="panel-sub">
+                            {format!(
+                                "{} plots · {:.1} ha plots · {:.0} ha site · scroll zoom",
+                                map.stats.plot_count.max(map.phase0.len() as u32),
+                                map.stats.plot_ha,
+                                map.stats.district_ha,
+                            )}
+                        </span>
                         <span class="map-zoom-readout">
                             {move || format!("×{:.1}", map_zoom.get())}
                         </span>
@@ -866,9 +947,10 @@ pub fn CyberiaPage() -> impl IntoView {
                             let m = map_for_svg.clone();
                             let m_places = map_for_svg.clone();
                             let m_cap = map_for_svg.clone();
-                            const W: f64 = 640.0;
-                            const H: f64 = 480.0;
-                            const PAD: f64 = 28.0;
+                            let m_districts = map_for_svg.clone();
+                            const W: f64 = 960.0;
+                            const H: f64 = 720.0;
+                            const PAD: f64 = 20.0;
                             view! {
                                 <div
                                     class="map-world"
@@ -879,23 +961,43 @@ pub fn CyberiaPage() -> impl IntoView {
                                     }
                                 >
                                 <svg class="flat-map" viewBox=format!("0 0 {W} {H}") preserveAspectRatio="xMidYMid meet">
-                                    // soft ground
                                     <rect x="0" y="0" width=W height=H fill="#070707" />
-                                    {(0..8).map(|i| {
-                                        let x = PAD + i as f64 * (W - 2.0*PAD) / 7.0;
+                                    {(0..12).map(|i| {
+                                        let x = PAD + i as f64 * (W - 2.0*PAD) / 11.0;
                                         let y2 = H - PAD;
                                         view! {
-                                            <line x1=x y1=PAD x2=x y2=y2 stroke="#141414" stroke-width="1" />
+                                            <line x1=x y1=PAD x2=x y2=y2 stroke="#121212" stroke-width="1" />
                                         }
                                     }).collect_view()}
-                                    {(0..6).map(|i| {
-                                        let y = PAD + i as f64 * (H - 2.0*PAD) / 5.0;
+                                    {(0..9).map(|i| {
+                                        let y = PAD + i as f64 * (H - 2.0*PAD) / 8.0;
                                         let x2 = W - PAD;
                                         view! {
-                                            <line x1=PAD y1=y x2=x2 y2=y stroke="#141414" stroke-width="1" />
+                                            <line x1=PAD y1=y x2=x2 y2=y stroke="#121212" stroke-width="1" />
                                         }
                                     }).collect_view()}
 
+                                    // district outlines — full site ~37 ha envelope
+                                    {m_districts.districts.iter().map(|d| {
+                                        let path = poly_path(&d.coords, &m_districts.bbox, W, H, PAD);
+                                        let (clon, clat) = centroid(&d.coords);
+                                        let (lx, ly) = project(clon, clat, &m_districts.bbox, W, H, PAD);
+                                        let label = d.name.to_uppercase();
+                                        view! {
+                                            <g class="district-poly" pointer-events="none">
+                                                <path
+                                                    d=path
+                                                    fill="rgba(255,255,255,0.015)"
+                                                    stroke="rgba(255,255,255,0.12)"
+                                                    stroke-width="1"
+                                                    stroke-dasharray="4 3"
+                                                />
+                                                <text x=lx y=ly text-anchor="middle" class="district-label">{label}</text>
+                                            </g>
+                                        }
+                                    }).collect_view()}
+
+                                    // ALL plots (interactive)
                                     {move || {
                                         let list = flats.get();
                                         list.into_iter().map(|flat| {
@@ -907,12 +1009,18 @@ pub fn CyberiaPage() -> impl IntoView {
                                             let id_lab = flat.id.clone();
                                             let id_hov = flat.id.clone();
                                             let id_hov2 = flat.id.clone();
+                                            let zkey = zone_key(&flat).to_string();
+                                            let z_fill = zkey.clone();
+                                            let z_stroke = zkey.clone();
+                                            let z_hov = zkey.clone();
                                             let label_hov = flat.name.to_uppercase();
                                             let area = area_m2(&flat.coords);
                                             let d = poly_path(&flat.coords, &m.bbox, W, H, PAD);
                                             let (clon, clat) = centroid(&flat.coords);
                                             let (lx, ly) = project(clon, clat, &m.bbox, W, H, PAD);
+                                            // labels only when zoomed or selected/hovered — keep default clean
                                             let base_label = flat.name.to_uppercase();
+                                            let show_label_always = false;
                                             view! {
                                                 <g class="flat-poly"
                                                     on:click=move |ev| {
@@ -936,30 +1044,24 @@ pub fn CyberiaPage() -> impl IntoView {
                                                             let sel = selected_flat.get().as_deref() == Some(id_fill.as_str());
                                                             let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_fill.as_str());
                                                             if hov && !sel {
-                                                                if id_fill.contains("avalon") {
-                                                                    "rgba(255,102,0,0.38)".into()
-                                                                } else if id_fill.contains("sinwood") {
-                                                                    "rgba(0,255,65,0.38)".into()
-                                                                } else {
-                                                                    "rgba(0,229,255,0.35)".into()
-                                                                }
+                                                                zone_hover_fill(&z_hov).to_string()
                                                             } else {
-                                                                flat_fill(&id_fill, sel).to_string()
+                                                                flat_fill(&z_fill, sel).to_string()
                                                             }
                                                         }
                                                         stroke=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_stroke.as_str());
                                                             let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_stroke.as_str());
-                                                            if hov {
+                                                            if hov || sel {
                                                                 "#ffffff".into()
                                                             } else {
-                                                                flat_stroke_col(&id_stroke, sel).to_string()
+                                                                flat_stroke_col(&z_stroke, sel).to_string()
                                                             }
                                                         }
                                                         stroke-width=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_sw.as_str());
                                                             let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_sw.as_str());
-                                                            if sel { "2.8" } else if hov { "2.4" } else { "1.4" }
+                                                            if sel { "2.2" } else if hov { "1.8" } else { "0.9" }
                                                         }
                                                         class=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_cls.as_str());
@@ -971,15 +1073,22 @@ pub fn CyberiaPage() -> impl IntoView {
                                                             )
                                                         }
                                                     />
-                                                    <text x=lx y=ly text-anchor="middle" class="flat-label">
-                                                        {move || {
-                                                            if leased.get().iter().any(|x| x == &id_lab) {
-                                                                format!("{base_label} · LEASED")
-                                                            } else {
-                                                                base_label.clone()
-                                                            }
-                                                        }}
-                                                    </text>
+                                                    {move || {
+                                                        let sel = selected_flat.get().as_deref() == Some(id_lab.as_str());
+                                                        let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_lab.as_str());
+                                                        let zoomed = map_zoom.get() >= 1.8;
+                                                        if !(show_label_always || sel || hov || zoomed) {
+                                                            return view! { <g></g> }.into_any();
+                                                        }
+                                                        let text = if leased.get().iter().any(|x| x == &id_lab) {
+                                                            format!("{base_label} · LEASED")
+                                                        } else {
+                                                            base_label.clone()
+                                                        };
+                                                        view! {
+                                                            <text x=lx y=ly text-anchor="middle" class="flat-label">{text}</text>
+                                                        }.into_any()
+                                                    }}
                                                 </g>
                                             }
                                         }).collect_view()
@@ -989,17 +1098,23 @@ pub fn CyberiaPage() -> impl IntoView {
                                         if p.coords.is_empty() { return view! { <g></g> }.into_any(); }
                                         let (x, y) = project(p.coords[0][0], p.coords[0][1], &m_places.bbox, W, H, PAD);
                                         let name = p.name.clone();
-                                        let ty = y - 7.0;
+                                        let ty = y - 6.0;
                                         view! {
                                             <g class="place-dot">
-                                                <circle cx=x cy=y r="3.5" fill="#444" stroke="#777" stroke-width="1" />
+                                                <circle cx=x cy=y r="2.5" fill="#3a3a3a" stroke="#666" stroke-width="0.8" />
                                                 <text x=x y=ty text-anchor="middle" class="place-label">{name}</text>
                                             </g>
                                         }.into_any()
                                     }).collect_view()}
 
                                     <text x=PAD y={H - 8.0} class="map-caption">
-                                        {format!("N ↑  ·  {}  ·  open KML", m_cap.source)}
+                                        {format!(
+                                            "N ↑  ·  {} plots  ·  {:.1} ha plots / {:.0} ha site  ·  {}",
+                                            m_cap.stats.plot_count,
+                                            m_cap.stats.plot_ha,
+                                            m_cap.stats.district_ha,
+                                            m_cap.source
+                                        )}
                                     </text>
                                 </svg>
                                 </div>
@@ -1026,7 +1141,10 @@ pub fn CyberiaPage() -> impl IntoView {
                     <div class="flat-legend">
                         <span class="leg sin">"SINWOOD"</span>
                         <span class="leg avalon">"AVALON"</span>
-                        <span class="leg dim">"hover zone · game cam"</span>
+                        <span class="leg bridge">"BRIDGE"</span>
+                        <span class="leg core">"CORE"</span>
+                        <span class="leg ether">"ETHERLAND"</span>
+                        <span class="leg dim">"dashed = district · hover plot"</span>
                     </div>
                 </section>
 

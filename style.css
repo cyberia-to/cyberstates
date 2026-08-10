@@ -3098,8 +3098,29 @@ svg.world-map path.map-sync-hover {
 .flat-legend .leg.avalon {
     color: var(--cyber-orange);
 }
+.flat-legend .leg.bridge {
+    color: var(--cyber-cyan);
+}
+.flat-legend .leg.core {
+    color: var(--cyber-yellow);
+}
+.flat-legend .leg.ether {
+    color: var(--cyber-purple);
+}
 .flat-legend .leg.dim {
     color: #444;
+}
+.district-label {
+    fill: rgba(255, 255, 255, 0.18);
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    pointer-events: none;
+    font-family: "Play", sans-serif;
+}
+.flat-label {
+    font-size: 8px;
+    letter-spacing: 0.6px;
 }
 
 .cyberia-right {
