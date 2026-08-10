@@ -281,23 +281,6 @@ pub fn CyberiaPage() -> impl IntoView {
                     "soft3 · intent → fleet × flat × work"
                 </span>
             </div>
-            // primary CTAs — full-width bar, hard to miss
-            <div class="cyberia-cta-bar">
-                <button class="cta-btn cta-buy cta-lg" on:click=move |_| sheet.set(Sheet::BuyRobot)>
-                    <span class="cta-ico">"🤖"</span>
-                    <span class="cta-copy">
-                        <span class="cta-title">"BUY ROBOT"</span>
-                        <span class="cta-sub">"add a unit to your fleet"</span>
-                    </span>
-                </button>
-                <button class="cta-btn cta-lease cta-lg" on:click=move |_| sheet.set(Sheet::LeaseLand)>
-                    <span class="cta-ico">"🗺"</span>
-                    <span class="cta-copy">
-                        <span class="cta-title">"LEASE LAND"</span>
-                        <span class="cta-sub">"hold a phase-0 flat"</span>
-                    </span>
-                </button>
-            </div>
             </div>
             </div>
 
@@ -307,7 +290,6 @@ pub fn CyberiaPage() -> impl IntoView {
                     <div class="cyberia-panel-h">
                         <span class="panel-kicker">"FLEETS"</span>
                         <span class="panel-sub">"workers · machines"</span>
-                        <button class="panel-cta" on:click=move |_| sheet.set(Sheet::BuyRobot)>"+ BUY ROBOT"</button>
                     </div>
                     <div class="fleet-list">
                         {FLEETS.iter().map(|f| {
@@ -390,7 +372,6 @@ pub fn CyberiaPage() -> impl IntoView {
                     <div class="cyberia-panel-h">
                         <span class="panel-kicker">"FLATS"</span>
                         <span class="panel-sub">"Gesing local · phase 0"</span>
-                        <button class="panel-cta lease" on:click=move |_| sheet.set(Sheet::LeaseLand)>"LEASE LAND"</button>
                     </div>
                     <div class="flat-map-wrap">
                         {
@@ -814,9 +795,22 @@ pub fn CyberiaPage() -> impl IntoView {
                         )
                     }}
                 </span>
-                <span class="dock-credit cyberia-soft3-dock">
-                    "soft3-compliant · buy/lease = local intent · no closed backend"
-                </span>
+                <div class="cyberia-cta-bar dock-ctas">
+                    <button class="cta-btn cta-buy cta-lg" on:click=move |_| sheet.set(Sheet::BuyRobot)>
+                        <span class="cta-ico">"🤖"</span>
+                        <span class="cta-copy">
+                            <span class="cta-title">"BUY ROBOT"</span>
+                            <span class="cta-sub">"add a unit to your fleet"</span>
+                        </span>
+                    </button>
+                    <button class="cta-btn cta-lease cta-lg" on:click=move |_| sheet.set(Sheet::LeaseLand)>
+                        <span class="cta-ico">"🗺"</span>
+                        <span class="cta-copy">
+                            <span class="cta-title">"LEASE LAND"</span>
+                            <span class="cta-sub">"hold a phase-0 flat"</span>
+                        </span>
+                    </button>
+                </div>
                 <a href="https://x.com/cyberiacap" target="_blank" rel="noopener" class="dock-credit">
                     "🏴 a "<span style="color: var(--cyber-green);">"cyberia"</span>" project"
                 </a>

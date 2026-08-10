@@ -2424,13 +2424,28 @@ svg.world-map path.map-sync-hover {
     gap: 8px;
     align-items: center;
 }
-/* full-width action strip under chrome — primary market actions */
+/* primary market actions — live in the footer dock */
 .cyberia-cta-bar {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    padding: 10px 0 4px;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+}
+.cyberia-dock.dock-ctas,
+.cyberia-dock .dock-ctas {
+    flex: 1 1 auto;
+}
+.cyberia-dock {
+    gap: 12px;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-height: 72px;
+}
+/* stage needs room above the taller dock */
+.cyberia-shell .cyberia-stage {
+    padding-bottom: 100px;
 }
 .cta-btn {
     font-family: inherit;
