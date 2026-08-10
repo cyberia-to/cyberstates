@@ -3,10 +3,10 @@
 //! time by `cargo run --bin update-market-data --features tools`
 //! (gold via PAXG = 1 troy oz).
 
-pub const CNY_USD: f64 = 0.147936; // USD per 1 CNY
-pub const BTC_USD: f64 = 64888.0;
-pub const ETH_USD: f64 = 1912.02;
-pub const XAU_USD: f64 = 4336.28; // per troy oz
+pub const CNY_USD: f64 = 0.148098; // USD per 1 CNY
+pub const BTC_USD: f64 = 65048.0;
+pub const ETH_USD: f64 = 1922.27;
+pub const XAU_USD: f64 = 4311.86; // per troy oz
 
 pub const GRAMS_PER_OZ: f64 = 31.1034768;
 

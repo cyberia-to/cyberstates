@@ -9,9 +9,9 @@ land_area_km2 = 1862
 currency_code = "KMF"
 currency_name = "Comorian Franc"
 money_supply_b_usd = 0.671
-money_supply_b_usd_prev = 0.670
+money_supply_b_usd_prev = 0.671
 token_price_usd = 0.002348
-token_price_usd_prev = 0.002344
+token_price_usd_prev = 0.002348
 visa_free_destinations = 55
 visa_free_inbound = 182
 

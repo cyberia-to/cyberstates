@@ -9,9 +9,9 @@ land_area_km2 = 312696
 currency_code = "PLN"
 currency_name = "Polish Zloty"
 money_supply_b_usd = 666
-money_supply_b_usd_prev = 664
-token_price_usd = 0.268738
-token_price_usd_prev = 0.268132
+money_supply_b_usd_prev = 666
+token_price_usd = 0.268745
+token_price_usd_prev = 0.268738
 visa_free_destinations = 189
 visa_free_inbound = 93
 

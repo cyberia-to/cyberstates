@@ -10,8 +10,8 @@ currency_code = "HNL"
 currency_name = "Honduran Lempira"
 money_supply_b_usd = 28.4
 money_supply_b_usd_prev = 28.4
-token_price_usd = 0.037293
-token_price_usd_prev = 0.037292
+token_price_usd = 0.037314
+token_price_usd_prev = 0.037293
 visa_free_destinations = 138
 visa_free_inbound = 138
 

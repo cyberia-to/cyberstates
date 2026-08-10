@@ -8,10 +8,10 @@ population = 23894394
 land_area_km2 = 36193
 currency_code = "TWD"
 currency_name = "New Taiwan Dollar"
-money_supply_b_usd = 1746
-money_supply_b_usd_prev = 1745
-token_price_usd = 0.031060
-token_price_usd_prev = 0.031040
+money_supply_b_usd = 1747
+money_supply_b_usd_prev = 1746
+token_price_usd = 0.031075
+token_price_usd_prev = 0.031060
 visa_free_destinations = 146
 visa_free_inbound = 95
 

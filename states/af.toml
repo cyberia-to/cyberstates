@@ -8,10 +8,10 @@ population = 41128771
 land_area_km2 = 652230
 currency_code = "AFN"
 currency_name = "Afghan Afghani"
-money_supply_b_usd = 8.7
-money_supply_b_usd_prev = 8.8
-token_price_usd = 0.015195
-token_price_usd_prev = 0.015198
+money_supply_b_usd = 8.8
+money_supply_b_usd_prev = 8.7
+token_price_usd = 0.015239
+token_price_usd_prev = 0.015195
 visa_free_destinations = 28
 visa_free_inbound = 8
 
