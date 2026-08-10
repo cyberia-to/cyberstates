@@ -801,11 +801,14 @@ pub fn CyberiaPage() -> impl IntoView {
                                             <div class="prism-name" style:color=bot_hue>{bot_name}</div>
                                             <div class="prism-sub">{bot_role}</div>
                                             <div class="prism-sub">
-                                                {format!(
-                                                    "{} · {}",
-                                                    bot_kind.to_uppercase(),
-                                                    if bot_owned { "OWNED" } else { &bot_status.to_uppercase() }
-                                                )}
+                                                {
+                                                    let status_lbl = if bot_owned {
+                                                        "OWNED".to_string()
+                                                    } else {
+                                                        bot_status.to_uppercase()
+                                                    };
+                                                    format!("{} · {}", bot_kind.to_uppercase(), status_lbl)
+                                                }
                                             </div>
                                         </div>
                                     </div>
