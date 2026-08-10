@@ -51,21 +51,143 @@ struct FleetUnit {
     phase: u32,
 }
 
-/// Phase-0 fleets: the units you can actually assign today.
-const FLEETS: &[FleetUnit] = &[
+/// Existing Gesing hard-force workers (ops roster) — 15 people on site.
+/// Source: cve/ops/hard force.md crews (repair · cube · base · pruning · delivery).
+const WORKERS: &[FleetUnit] = &[
+    // repair
+    FleetUnit {
+        id: "w-sutar",
+        name: "SUTAR",
+        kind: "worker",
+        role: "repair lead · energy/water",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-witaya",
+        name: "WITAYA",
+        kind: "worker",
+        role: "repair · electronics",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-lupus",
+        name: "LUPUS",
+        kind: "worker",
+        role: "repair · mechanical",
+        status: "idle",
+        phase: 0,
+    },
+    // cube
+    FleetUnit {
+        id: "w-sudi",
+        name: "SUDI",
+        kind: "worker",
+        role: "cube lead · build",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-budi",
+        name: "BUDI",
+        kind: "worker",
+        role: "cube · build",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-tika",
+        name: "TIKA",
+        kind: "worker",
+        role: "cube · stove",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-sastra",
+        name: "SASTRA",
+        kind: "worker",
+        role: "cube · build",
+        status: "idle",
+        phase: 0,
+    },
+    // base
+    FleetUnit {
+        id: "w-angga",
+        name: "ANGGA",
+        kind: "worker",
+        role: "base lead · road/trail",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-darma",
+        name: "DARMA",
+        kind: "worker",
+        role: "base · mason",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-darsana",
+        name: "DARSANA",
+        kind: "worker",
+        role: "base · terrace",
+        status: "idle",
+        phase: 0,
+    },
+    // pruning
+    FleetUnit {
+        id: "w-arima",
+        name: "ARIMA",
+        kind: "worker",
+        role: "pruning lead · land",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-doplang",
+        name: "DOPLANG",
+        kind: "worker",
+        role: "pruning · firewood",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-surya",
+        name: "SURYA",
+        kind: "worker",
+        role: "pruning · fodder",
+        status: "idle",
+        phase: 0,
+    },
+    FleetUnit {
+        id: "w-suardita",
+        name: "SUARDITA",
+        kind: "worker",
+        role: "pruning · compost",
+        status: "idle",
+        phase: 0,
+    },
+    // delivery
+    FleetUnit {
+        id: "w-pande",
+        name: "PANDE",
+        kind: "worker",
+        role: "delivery lead · haul",
+        status: "idle",
+        phase: 0,
+    },
+];
+
+/// Phase-0 machines (hardware fleet).
+const MACHINES: &[FleetUnit] = &[
     FleetUnit {
         id: "f-eye",
         name: "EYE-01",
         kind: "machine",
         role: "survey drone",
-        status: "idle",
-        phase: 0,
-    },
-    FleetUnit {
-        id: "f-hand",
-        name: "HAND-01",
-        kind: "worker",
-        role: "field hand",
         status: "idle",
         phase: 0,
     },
@@ -94,6 +216,64 @@ const FLEETS: &[FleetUnit] = &[
         phase: 1,
     },
 ];
+
+fn all_stock_fleets() -> impl Iterator<Item = &'static FleetUnit> {
+    WORKERS.iter().chain(MACHINES.iter())
+}
+
+fn stock_fleet(id: &str) -> Option<&'static FleetUnit> {
+    all_stock_fleets().find(|f| f.id == id)
+}
+
+fn stock_fleet_count() -> usize {
+    WORKERS.len() + MACHINES.len()
+}
+
+fn render_fleet_card(
+    f: &'static FleetUnit,
+    selected_fleet: RwSignal<Option<String>>,
+) -> impl IntoView {
+    let id = f.id.to_string();
+    let id2 = id.clone();
+    let offline = f.status == "offline" || f.phase > 0;
+    let kind_worker = f.kind == "worker";
+    let name = f.name;
+    let role = f.role;
+    let kind = f.kind;
+    let status = f.status;
+    let phase = f.phase;
+    view! {
+        <button
+            class=move || {
+                let sel = selected_fleet.get().as_deref() == Some(id.as_str());
+                format!(
+                    "fleet-card{}{}{}",
+                    if sel { " sel" } else { "" },
+                    if offline { " offline" } else { "" },
+                    if kind_worker { " worker" } else { " machine" },
+                )
+            }
+            disabled=offline
+            on:click=move |_| {
+                if !offline {
+                    selected_fleet.set(Some(id2.clone()));
+                }
+            }
+        >
+            <div class="fleet-top">
+                <span class="fleet-name">{name}</span>
+                <span class="fleet-status" style:color=status_color(status)>
+                    {status.to_uppercase()}
+                </span>
+            </div>
+            <div class="fleet-role">{role}</div>
+            <div class="fleet-meta">
+                <span>{kind.to_uppercase()}</span>
+                <span>{format!("P{phase}")}</span>
+            </div>
+        </button>
+    }
+}
 
 const ACTIONS: &[(&str, &str)] = &[
     ("survey", "map + sense the flat"),
@@ -239,7 +419,7 @@ pub fn CyberiaPage() -> impl IntoView {
     let map = std::sync::Arc::new(map);
 
     let selected_flat = RwSignal::new(Some("sinwood".to_string()));
-    let selected_fleet = RwSignal::new(Some("f-eye".to_string()));
+    let selected_fleet = RwSignal::new(Some("w-sutar".to_string()));
     let selected_action = RwSignal::new("survey".to_string());
     let intents = RwSignal::new(Vec::<Intent>::new());
     let next_id = RwSignal::new(1u64);
@@ -289,46 +469,13 @@ pub fn CyberiaPage() -> impl IntoView {
                 <section class="cyberia-panel cyberia-fleets">
                     <div class="cyberia-panel-h">
                         <span class="panel-kicker">"FLEETS"</span>
-                        <span class="panel-sub">"workers · machines"</span>
+                        <span class="panel-sub">{format!("{} workers · {} machines", WORKERS.len(), MACHINES.len())}</span>
                     </div>
                     <div class="fleet-list">
-                        {FLEETS.iter().map(|f| {
-                            let id = f.id.to_string();
-                            let id2 = id.clone();
-                            let offline = f.status == "offline" || f.phase > 0;
-                            let kind_worker = f.kind == "worker";
-                            view! {
-                                <button
-                                    class=move || {
-                                        let sel = selected_fleet.get().as_deref() == Some(id.as_str());
-                                        format!(
-                                            "fleet-card{}{}{}",
-                                            if sel { " sel" } else { "" },
-                                            if offline { " offline" } else { "" },
-                                            if kind_worker { " worker" } else { " machine" },
-                                        )
-                                    }
-                                    disabled=offline
-                                    on:click=move |_| {
-                                        if !offline {
-                                            selected_fleet.set(Some(id2.clone()));
-                                        }
-                                    }
-                                >
-                                    <div class="fleet-top">
-                                        <span class="fleet-name">{f.name}</span>
-                                        <span class="fleet-status" style:color=status_color(f.status)>
-                                            {f.status.to_uppercase()}
-                                        </span>
-                                    </div>
-                                    <div class="fleet-role">{f.role}</div>
-                                    <div class="fleet-meta">
-                                        <span>{f.kind.to_uppercase()}</span>
-                                        <span>{format!("P{}", f.phase)}</span>
-                                    </div>
-                                </button>
-                            }
-                        }).collect_view()}
+                        <div class="fleet-section">"WORKERS · HARD FORCE"</div>
+                        {WORKERS.iter().map(|f| render_fleet_card(f, selected_fleet)).collect_view()}
+                        <div class="fleet-section">"MACHINES"</div>
+                        {MACHINES.iter().map(|f| render_fleet_card(f, selected_fleet)).collect_view()}
                         // robots you bought this session
                         {move || owned.get().into_iter().map(|r| {
                             let id = r.id.clone();
@@ -512,8 +659,18 @@ pub fn CyberiaPage() -> impl IntoView {
                             <span class="intent-k">"fleet"</span>
                             <span class="intent-v">
                                 {move || selected_fleet.get()
-                                    .and_then(|id| FLEETS.iter().find(|f| f.id == id).map(|f| f.name))
-                                    .unwrap_or("—")}
+                                    .and_then(|id| {
+                                        stock_fleet(&id)
+                                            .map(|f| f.name.to_string())
+                                            .or_else(|| {
+                                                owned
+                                                    .get_untracked()
+                                                    .into_iter()
+                                                    .find(|r| r.id == id)
+                                                    .map(|r| r.name)
+                                            })
+                                    })
+                                    .unwrap_or_else(|| "—".into())}
                             </span>
                         </div>
                         <div class="intent-row">
@@ -550,12 +707,12 @@ pub fn CyberiaPage() -> impl IntoView {
                                 let Some(flat) = selected_flat.get() else { return };
                                 let action = selected_action.get();
                                 // soft3: offline stock fleets cannot take intent
-                                if FLEETS.iter().any(|f| f.id == fleet && (f.status == "offline" || f.phase > 0)) {
+                                if stock_fleet(&fleet)
+                                    .is_some_and(|f| f.status == "offline" || f.phase > 0)
+                                {
                                     return;
                                 }
-                                let fleet_name = FLEETS
-                                    .iter()
-                                    .find(|f| f.id == fleet)
+                                let fleet_name = stock_fleet(&fleet)
                                     .map(|f| f.name.to_string())
                                     .or_else(|| {
                                         owned
@@ -790,8 +947,9 @@ pub fn CyberiaPage() -> impl IntoView {
                         let o = owned.get().len();
                         let l = leased.get().len();
                         format!(
-                            "{n} intents · {m} flats · {}+{o} fleets · {l} leases",
-                            FLEETS.len()
+                            "{n} intents · {m} flats · {}w+{}m+{o} fleets · {l} leases",
+                            WORKERS.len(),
+                            MACHINES.len(),
                         )
                     }}
                 </span>
