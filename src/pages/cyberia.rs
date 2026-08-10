@@ -10,6 +10,7 @@ use crate::components::brand::BrandChooser;
 use crate::components::nav::SiteNav;
 use leptos::prelude::*;
 use serde::Deserialize;
+use wasm_bindgen::JsCast;
 
 const MAP_JSON: &str = include_str!("cyberia_map.json");
 
@@ -640,6 +641,44 @@ pub fn CyberiaPage() -> impl IntoView {
     let split_axis = RwSignal::new(0usize);
     let split_ratio = RwSignal::new(0.50_f64); // 0..1 across bbox
 
+    // game map camera — static viewport, zoom/pan never scroll the panel
+    let map_zoom = RwSignal::new(1.0_f64);
+    let map_pan = RwSignal::new((0.0_f64, 0.0_f64)); // px in wrap space
+    let map_hover = RwSignal::new(None::<(String, String, f64)>); // id, label, m2
+    let map_dragging = RwSignal::new(false);
+    let map_drag_last = RwSignal::new((0.0_f64, 0.0_f64));
+    let map_wrap_ref = NodeRef::<leptos::html::Div>::new();
+
+    let zoom_by = move |factor: f64| {
+        map_zoom.update(|z| *z = (*z * factor).clamp(0.6, 8.0));
+    };
+    let zoom_at = move |factor: f64, cx: f64, cy: f64| {
+        // keep world point under (cx,cy) stable while scaling
+        let z0 = map_zoom.get_untracked();
+        let z1 = (z0 * factor).clamp(0.6, 8.0);
+        if (z1 - z0).abs() < 1e-9 {
+            return;
+        }
+        let (px, py) = map_pan.get_untracked();
+        // point in world = (screen - pan) / z
+        let wx = (cx - px) / z0;
+        let wy = (cy - py) / z0;
+        let npx = cx - wx * z1;
+        let npy = cy - wy * z1;
+        map_zoom.set(z1);
+        map_pan.set((npx, npy));
+    };
+    let pan_by = move |dx: f64, dy: f64| {
+        map_pan.update(|(x, y)| {
+            *x += dx;
+            *y += dy;
+        });
+    };
+    let reset_cam = move || {
+        map_zoom.set(1.0);
+        map_pan.set((0.0, 0.0));
+    };
+
     Effect::new(move |_| {
         document().set_title("Cyberia — fleets & flats · Gesing, Bali");
     });
@@ -722,13 +761,107 @@ pub fn CyberiaPage() -> impl IntoView {
                     </div>
                 </section>
 
-                // CENTER — FLATS MAP
+                // CENTER — FLATS MAP (game camera: static viewport, wheel/keys zoom, drag pan)
                 <section class="cyberia-panel cyberia-flats">
                     <div class="cyberia-panel-h">
                         <span class="panel-kicker">"FLATS"</span>
-                        <span class="panel-sub">"Gesing local · phase 0"</span>
+                        <span class="panel-sub">"Gesing · scroll zoom · drag pan · arrows"</span>
+                        <span class="map-zoom-readout">
+                            {move || format!("×{:.1}", map_zoom.get())}
+                        </span>
                     </div>
-                    <div class="flat-map-wrap">
+                    <div
+                        class="flat-map-wrap game-map"
+                        node_ref=map_wrap_ref
+                        tabindex="0"
+                        on:wheel=move |ev| {
+                            ev.prevent_default();
+                            ev.stop_propagation();
+                            let dy = ev.delta_y();
+                            if dy == 0.0 { return; }
+                            let factor = if dy < 0.0 { 1.12 } else { 1.0 / 1.12 };
+                            if let Some(el) = map_wrap_ref.get_untracked() {
+                                let rect = el.get_bounding_client_rect();
+                                let cx = ev.client_x() as f64 - rect.left();
+                                let cy = ev.client_y() as f64 - rect.top();
+                                zoom_at(factor, cx, cy);
+                            } else {
+                                zoom_by(factor);
+                            }
+                        }
+                        on:keydown=move |ev| {
+                            let key = ev.key();
+                            let step = 36.0;
+                            match key.as_str() {
+                                "ArrowLeft" | "a" | "A" => { ev.prevent_default(); pan_by(step, 0.0); }
+                                "ArrowRight" | "d" | "D" => { ev.prevent_default(); pan_by(-step, 0.0); }
+                                "ArrowUp" | "w" | "W" => { ev.prevent_default(); pan_by(0.0, step); }
+                                "ArrowDown" | "s" | "S" => { ev.prevent_default(); pan_by(0.0, -step); }
+                                "+" | "=" => { ev.prevent_default(); zoom_by(1.15); }
+                                "-" | "_" => { ev.prevent_default(); zoom_by(1.0 / 1.15); }
+                                "0" => { ev.prevent_default(); reset_cam(); }
+                                _ => {}
+                            }
+                        }
+                        on:pointerdown=move |ev| {
+                            // only pan with primary button on empty space / background
+                            if ev.button() != 0 { return; }
+                            let target = ev.target().and_then(|t| t.dyn_into::<web_sys::Element>().ok());
+                            let on_zone = target
+                                .as_ref()
+                                .and_then(|el| el.closest(".flat-poly, .flat-path, .place-dot").ok().flatten())
+                                .is_some();
+                            if on_zone {
+                                return; // zone click selects, no drag
+                            }
+                            map_dragging.set(true);
+                            map_drag_last.set((ev.client_x() as f64, ev.client_y() as f64));
+                            if let Some(el) = map_wrap_ref.get_untracked() {
+                                let _ = el.set_pointer_capture(ev.pointer_id());
+                            }
+                        }
+                        on:pointermove=move |ev| {
+                            if !map_dragging.get_untracked() { return; }
+                            let (lx, ly) = map_drag_last.get_untracked();
+                            let cx = ev.client_x() as f64;
+                            let cy = ev.client_y() as f64;
+                            pan_by(cx - lx, cy - ly);
+                            map_drag_last.set((cx, cy));
+                        }
+                        on:pointerup=move |_| map_dragging.set(false)
+                        on:pointercancel=move |_| map_dragging.set(false)
+                        on:pointerleave=move |_| {
+                            if !map_dragging.get_untracked() {
+                                map_hover.set(None);
+                            }
+                        }
+                    >
+                        // left zoom rail (game-style)
+                        <div class="map-zoom-rail" aria-label="map zoom">
+                            <button class="map-cam-btn" type="button" title="zoom in"
+                                on:click=move |ev| { ev.stop_propagation(); zoom_by(1.2); }
+                            >"+"</button>
+                            <button class="map-cam-btn" type="button" title="zoom out"
+                                on:click=move |ev| { ev.stop_propagation(); zoom_by(1.0 / 1.2); }
+                            >"−"</button>
+                            <button class="map-cam-btn" type="button" title="reset view"
+                                on:click=move |ev| { ev.stop_propagation(); reset_cam(); }
+                            >"⌂"</button>
+                            <div class="map-cam-sep"></div>
+                            <button class="map-cam-btn" type="button" title="pan left"
+                                on:click=move |ev| { ev.stop_propagation(); pan_by(48.0, 0.0); }
+                            >"←"</button>
+                            <button class="map-cam-btn" type="button" title="pan right"
+                                on:click=move |ev| { ev.stop_propagation(); pan_by(-48.0, 0.0); }
+                            >"→"</button>
+                            <button class="map-cam-btn" type="button" title="pan up"
+                                on:click=move |ev| { ev.stop_propagation(); pan_by(0.0, 48.0); }
+                            >"↑"</button>
+                            <button class="map-cam-btn" type="button" title="pan down"
+                                on:click=move |ev| { ev.stop_propagation(); pan_by(0.0, -48.0); }
+                            >"↓"</button>
+                        </div>
+
                         {
                             let m = map_for_svg.clone();
                             let m_places = map_for_svg.clone();
@@ -737,19 +870,29 @@ pub fn CyberiaPage() -> impl IntoView {
                             const H: f64 = 480.0;
                             const PAD: f64 = 28.0;
                             view! {
+                                <div
+                                    class="map-world"
+                                    style:transform=move || {
+                                        let z = map_zoom.get();
+                                        let (x, y) = map_pan.get();
+                                        format!("translate({x}px, {y}px) scale({z})")
+                                    }
+                                >
                                 <svg class="flat-map" viewBox=format!("0 0 {W} {H}") preserveAspectRatio="xMidYMid meet">
+                                    // soft ground
+                                    <rect x="0" y="0" width=W height=H fill="#070707" />
                                     {(0..8).map(|i| {
                                         let x = PAD + i as f64 * (W - 2.0*PAD) / 7.0;
                                         let y2 = H - PAD;
                                         view! {
-                                            <line x1=x y1=PAD x2=x y2=y2 stroke="#1a1a1a" stroke-width="1" />
+                                            <line x1=x y1=PAD x2=x y2=y2 stroke="#141414" stroke-width="1" />
                                         }
                                     }).collect_view()}
                                     {(0..6).map(|i| {
                                         let y = PAD + i as f64 * (H - 2.0*PAD) / 5.0;
                                         let x2 = W - PAD;
                                         view! {
-                                            <line x1=PAD y1=y x2=x2 y2=y stroke="#1a1a1a" stroke-width="1" />
+                                            <line x1=PAD y1=y x2=x2 y2=y stroke="#141414" stroke-width="1" />
                                         }
                                     }).collect_view()}
 
@@ -759,30 +902,74 @@ pub fn CyberiaPage() -> impl IntoView {
                                             let id_click = flat.id.clone();
                                             let id_fill = flat.id.clone();
                                             let id_stroke = flat.id.clone();
-                                            let id_w = flat.id.clone();
+                                            let id_sw = flat.id.clone();
+                                            let id_cls = flat.id.clone();
                                             let id_lab = flat.id.clone();
+                                            let id_hov = flat.id.clone();
+                                            let id_hov2 = flat.id.clone();
+                                            let label_hov = flat.name.to_uppercase();
+                                            let area = area_m2(&flat.coords);
                                             let d = poly_path(&flat.coords, &m.bbox, W, H, PAD);
                                             let (clon, clat) = centroid(&flat.coords);
                                             let (lx, ly) = project(clon, clat, &m.bbox, W, H, PAD);
                                             let base_label = flat.name.to_uppercase();
                                             view! {
                                                 <g class="flat-poly"
-                                                    on:click=move |_| selected_flat.set(Some(id_click.clone()))
+                                                    on:click=move |ev| {
+                                                        ev.stop_propagation();
+                                                        selected_flat.set(Some(id_click.clone()));
+                                                    }
+                                                    on:pointerenter=move |_| {
+                                                        map_hover.set(Some((id_hov.clone(), label_hov.clone(), area)));
+                                                    }
+                                                    on:pointerleave=move |_| {
+                                                        map_hover.update(|h| {
+                                                            if h.as_ref().map(|t| t.0.as_str()) == Some(id_hov2.as_str()) {
+                                                                *h = None;
+                                                            }
+                                                        });
+                                                    }
                                                 >
                                                     <path
                                                         d=d
                                                         fill=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_fill.as_str());
-                                                            flat_fill(&id_fill, sel).to_string()
+                                                            let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_fill.as_str());
+                                                            if hov && !sel {
+                                                                if id_fill.contains("avalon") {
+                                                                    "rgba(255,102,0,0.38)".into()
+                                                                } else if id_fill.contains("sinwood") {
+                                                                    "rgba(0,255,65,0.38)".into()
+                                                                } else {
+                                                                    "rgba(0,229,255,0.35)".into()
+                                                                }
+                                                            } else {
+                                                                flat_fill(&id_fill, sel).to_string()
+                                                            }
                                                         }
                                                         stroke=move || {
                                                             let sel = selected_flat.get().as_deref() == Some(id_stroke.as_str());
-                                                            flat_stroke_col(&id_stroke, sel).to_string()
+                                                            let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_stroke.as_str());
+                                                            if hov {
+                                                                "#ffffff".into()
+                                                            } else {
+                                                                flat_stroke_col(&id_stroke, sel).to_string()
+                                                            }
                                                         }
                                                         stroke-width=move || {
-                                                            if selected_flat.get().as_deref() == Some(id_w.as_str()) { "2.5" } else { "1.5" }
+                                                            let sel = selected_flat.get().as_deref() == Some(id_sw.as_str());
+                                                            let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_sw.as_str());
+                                                            if sel { "2.8" } else if hov { "2.4" } else { "1.4" }
                                                         }
-                                                        class="flat-path"
+                                                        class=move || {
+                                                            let sel = selected_flat.get().as_deref() == Some(id_cls.as_str());
+                                                            let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_cls.as_str());
+                                                            format!(
+                                                                "flat-path{}{}",
+                                                                if sel { " is-sel" } else { "" },
+                                                                if hov { " is-hov" } else { "" },
+                                                            )
+                                                        }
                                                     />
                                                     <text x=lx y=ly text-anchor="middle" class="flat-label">
                                                         {move || {
@@ -815,13 +1002,31 @@ pub fn CyberiaPage() -> impl IntoView {
                                         {format!("N ↑  ·  {}  ·  open KML", m_cap.source)}
                                     </text>
                                 </svg>
+                                </div>
                             }
                         }
+
+                        // hover tooltip (game HUD)
+                        {move || map_hover.get().map(|(id, label, m2)| {
+                            let leased_tag = if leased.get().iter().any(|x| x == &id) { " · LEASED" } else { "" };
+                            let sel = selected_flat.get().as_deref() == Some(id.as_str());
+                            view! {
+                                <div class="map-tooltip">
+                                    <div class="mt-name">{format!("{label}{leased_tag}")}</div>
+                                    <div class="mt-area">{fmt_area_m2(m2)}</div>
+                                    <div class="mt-hint">{if sel { "SELECTED" } else { "click to select" }}</div>
+                                </div>
+                            }
+                        })}
+
+                        <div class="map-hud-hint">
+                            "scroll zoom · drag pan · ←→↑↓ pan · +/− zoom · 0 reset"
+                        </div>
                     </div>
                     <div class="flat-legend">
                         <span class="leg sin">"SINWOOD"</span>
                         <span class="leg avalon">"AVALON"</span>
-                        <span class="leg dim">"split/merge live"</span>
+                        <span class="leg dim">"hover zone · game cam"</span>
                     </div>
                 </section>
 

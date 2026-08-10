@@ -2912,23 +2912,156 @@ svg.world-map path.map-sync-hover {
 .flat-map-wrap {
     flex: 1 1 auto;
     min-height: 0;
-    padding: 6px;
+    padding: 0;
     display: flex;
+    position: relative;
+    overflow: hidden; /* static viewport — camera never scrolls the panel */
+    touch-action: none;
+    cursor: grab;
+    outline: none;
+    background: #050505;
+    user-select: none;
+}
+.flat-map-wrap:active,
+.flat-map-wrap.game-map:active {
+    cursor: grabbing;
+}
+.flat-map-wrap:focus-visible {
+    box-shadow: inset 0 0 0 1px rgba(0, 255, 65, 0.35);
+}
+/* camera world — pan/zoom via transform, origin top-left */
+.map-world {
+    width: 100%;
+    height: 100%;
+    transform-origin: 0 0;
+    will-change: transform;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
 }
 .flat-map {
     width: 100%;
     height: 100%;
-    background: radial-gradient(ellipse at center, #0c0c0c 0%, #000 70%);
+    display: block;
+    background: radial-gradient(
+        ellipse at 50% 45%,
+        #0c0c0c 0%,
+        #050505 55%,
+        #000 100%
+    );
+    border-radius: 0;
+    overflow: visible;
+}
+/* left game zoom / pan rail */
+.map-zoom-rail {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 4px;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid #222;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+}
+.map-cam-btn {
+    width: 28px;
+    height: 28px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ccc;
+    background: #0c0c0c;
+    border: 1px solid #2a2a2a;
     border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+}
+.map-cam-btn:hover {
+    color: var(--cyber-green);
+    border-color: rgba(0, 255, 65, 0.45);
+    background: rgba(0, 255, 65, 0.08);
+}
+.map-cam-sep {
+    height: 1px;
+    background: #222;
+    margin: 2px 2px;
+}
+.map-zoom-readout {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--cyber-yellow);
+    font-variant-numeric: tabular-nums;
+}
+.map-tooltip {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    z-index: 6;
+    min-width: 140px;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.88);
+    border: 1px solid rgba(0, 255, 65, 0.35);
+    border-radius: 3px;
+    pointer-events: none;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.12);
+}
+.mt-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #e0e0e0;
+}
+.mt-area {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--cyber-cyan);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.mt-hint {
+    margin-top: 4px;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    color: #666;
+}
+.map-hud-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    z-index: 4;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    color: #444;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 3px 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    white-space: nowrap;
 }
 .flat-path {
     cursor: pointer;
     transition:
-        fill 0.12s,
-        stroke 0.12s;
+        fill 0.1s,
+        stroke 0.1s,
+        filter 0.1s;
+}
+.flat-path.is-hov {
+    filter: brightness(1.25) drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+}
+.flat-path.is-sel {
+    filter: brightness(1.15) drop-shadow(0 0 8px rgba(0, 255, 65, 0.45));
 }
 .flat-path:hover {
-    filter: brightness(1.25);
+    filter: brightness(1.2);
 }
 .flat-label {
     fill: #e0e0e0;
