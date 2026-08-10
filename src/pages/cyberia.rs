@@ -225,30 +225,155 @@ fn stock_fleet(id: &str) -> Option<&'static FleetUnit> {
     all_stock_fleets().find(|f| f.id == id)
 }
 
-/// Split a polygon by median longitude into west / east halves.
-fn split_flat(flat: &Flat) -> (Flat, Flat) {
-    let mut coords = flat.coords.clone();
-    if coords.len() > 1 && coords.first() == coords.last() {
-        coords.pop(); // drop closing point for split
+/// Open ring (no duplicate close point).
+fn open_ring(coords: &[[f64; 2]]) -> Vec<[f64; 2]> {
+    let mut c = coords.to_vec();
+    if c.len() > 1 && c.first() == c.last() {
+        c.pop();
     }
-    let mut lons: Vec<f64> = coords.iter().map(|c| c[0]).collect();
-    lons.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    let mid = lons[lons.len() / 2];
-    let mut west: Vec<[f64; 2]> = coords.iter().copied().filter(|c| c[0] <= mid).collect();
-    let mut east: Vec<[f64; 2]> = coords.iter().copied().filter(|c| c[0] >= mid).collect();
-    // ensure polygons close
-    if west.len() >= 2 && west.first() != west.last() {
-        west.push(west[0]);
+    c
+}
+
+fn close_ring(mut c: Vec<[f64; 2]>) -> Vec<[f64; 2]> {
+    if c.len() >= 2 && c.first() != c.last() {
+        let first = c[0];
+        c.push(first);
     }
-    if east.len() >= 2 && east.first() != east.last() {
-        east.push(east[0]);
+    c
+}
+
+fn poly_bbox(coords: &[[f64; 2]]) -> (f64, f64, f64, f64) {
+    let ring = open_ring(coords);
+    let mut min_lon = f64::INFINITY;
+    let mut max_lon = f64::NEG_INFINITY;
+    let mut min_lat = f64::INFINITY;
+    let mut max_lat = f64::NEG_INFINITY;
+    for p in &ring {
+        min_lon = min_lon.min(p[0]);
+        max_lon = max_lon.max(p[0]);
+        min_lat = min_lat.min(p[1]);
+        max_lat = max_lat.max(p[1]);
     }
-    // fallback if a half collapsed
-    if west.len() < 3 {
-        west = flat.coords.clone();
+    (min_lon, max_lon, min_lat, max_lat)
+}
+
+/// Planar area in m² via equirectangular projection around centroid (WGS84).
+fn area_m2(coords: &[[f64; 2]]) -> f64 {
+    let ring = open_ring(coords);
+    if ring.len() < 3 {
+        return 0.0;
     }
-    if east.len() < 3 {
-        east = flat.coords.clone();
+    let lat0 = ring.iter().map(|c| c[1]).sum::<f64>() / ring.len() as f64;
+    let lon0 = ring.iter().map(|c| c[0]).sum::<f64>() / ring.len() as f64;
+    const R: f64 = 6_378_137.0;
+    let cos_lat = lat0.to_radians().cos();
+    let to_xy = |lon: f64, lat: f64| -> (f64, f64) {
+        let x = (lon - lon0).to_radians() * R * cos_lat;
+        let y = (lat - lat0).to_radians() * R;
+        (x, y)
+    };
+    let mut a = 0.0;
+    for i in 0..ring.len() {
+        let (x1, y1) = to_xy(ring[i][0], ring[i][1]);
+        let j = (i + 1) % ring.len();
+        let (x2, y2) = to_xy(ring[j][0], ring[j][1]);
+        a += x1 * y2 - x2 * y1;
+    }
+    (a.abs()) * 0.5
+}
+
+fn fmt_area_m2(m2: f64) -> String {
+    if m2 >= 10_000.0 {
+        format!("{:.2} ha ({:.0} m²)", m2 / 10_000.0, m2)
+    } else if m2 >= 100.0 {
+        format!("{:.0} m²", m2)
+    } else {
+        format!("{:.1} m²", m2)
+    }
+}
+
+/// Bbox span along axis in meters (axis 0 = lon width, 1 = lat height).
+fn bbox_span_m(coords: &[[f64; 2]], axis: usize) -> f64 {
+    let (min_lon, max_lon, min_lat, max_lat) = poly_bbox(coords);
+    const R: f64 = 6_378_137.0;
+    let mid_lat = (min_lat + max_lat) * 0.5;
+    if axis == 0 {
+        (max_lon - min_lon).to_radians() * R * mid_lat.to_radians().cos()
+    } else {
+        (max_lat - min_lat).to_radians() * R
+    }
+}
+
+/// Sutherland–Hodgman clip against half-plane on lon (axis=0) or lat (axis=1).
+/// `keep_le`: keep points with value ≤ t (west / south side).
+fn clip_half_plane(poly: &[[f64; 2]], axis: usize, t: f64, keep_le: bool) -> Vec<[f64; 2]> {
+    let ring = open_ring(poly);
+    if ring.is_empty() {
+        return vec![];
+    }
+    let inside = |p: [f64; 2]| -> bool {
+        let v = p[axis];
+        if keep_le {
+            v <= t + 1e-12
+        } else {
+            v >= t - 1e-12
+        }
+    };
+    let intersect = |a: [f64; 2], b: [f64; 2]| -> [f64; 2] {
+        let da = a[axis] - t;
+        let db = b[axis] - t;
+        let denom = da - db;
+        let u = if denom.abs() < 1e-15 { 0.5 } else { da / denom };
+        [a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1])]
+    };
+    let mut out: Vec<[f64; 2]> = Vec::new();
+    let n = ring.len();
+    for i in 0..n {
+        let cur = ring[i];
+        let prev = ring[(i + n - 1) % n];
+        let cur_in = inside(cur);
+        let prev_in = inside(prev);
+        if cur_in {
+            if !prev_in {
+                out.push(intersect(prev, cur));
+            }
+            out.push(cur);
+        } else if prev_in {
+            out.push(intersect(prev, cur));
+        }
+    }
+    // dedupe consecutive near-equal points
+    let mut cleaned: Vec<[f64; 2]> = Vec::new();
+    for p in out {
+        if cleaned
+            .last()
+            .map(|q| (q[0] - p[0]).abs() > 1e-10 || (q[1] - p[1]).abs() > 1e-10)
+            .unwrap_or(true)
+        {
+            cleaned.push(p);
+        }
+    }
+    close_ring(cleaned)
+}
+
+/// User-controlled split: axis 0 = vertical cut (E/W), 1 = horizontal (N/S).
+/// `ratio` in (0,1) is cut position across the polygon bbox (0 = west/south).
+fn split_flat_at(flat: &Flat, axis: usize, ratio: f64) -> Option<(Flat, Flat, f64)> {
+    let r = ratio.clamp(0.05, 0.95);
+    let (min_lon, max_lon, min_lat, max_lat) = poly_bbox(&flat.coords);
+    let t = if axis == 0 {
+        min_lon + r * (max_lon - min_lon)
+    } else {
+        min_lat + r * (max_lat - min_lat)
+    };
+    let a_coords = clip_half_plane(&flat.coords, axis, t, true);
+    let b_coords = clip_half_plane(&flat.coords, axis, t, false);
+    // closed ring needs ≥4 points (triangle + close)
+    if a_coords.len() < 4 || b_coords.len() < 4 {
+        return None;
+    }
+    if area_m2(&a_coords) < 1.0 || area_m2(&b_coords) < 1.0 {
+        return None;
     }
     let a = Flat {
         id: format!("{}-a", flat.id),
@@ -256,7 +381,7 @@ fn split_flat(flat: &Flat) -> (Flat, Flat) {
         kind: flat.kind.clone(),
         phase: flat.phase,
         geom: "polygon".into(),
-        coords: west,
+        coords: a_coords,
     };
     let b = Flat {
         id: format!("{}-b", flat.id),
@@ -264,9 +389,9 @@ fn split_flat(flat: &Flat) -> (Flat, Flat) {
         kind: flat.kind.clone(),
         phase: flat.phase,
         geom: "polygon".into(),
-        coords: east,
+        coords: b_coords,
     };
-    (a, b)
+    Some((a, b, t))
 }
 
 fn merge_flats(a: &Flat, b: &Flat) -> Flat {
@@ -511,6 +636,9 @@ pub fn CyberiaPage() -> impl IntoView {
     let buy_pick = RwSignal::new("cat-eye".to_string());
     let robot_serial = RwSignal::new(1u32);
     let merge_pick = RwSignal::new(None::<String>); // second flat for merge
+                                                    // split controls: axis 0 = E/W (vertical line), 1 = N/S (horizontal line)
+    let split_axis = RwSignal::new(0usize);
+    let split_ratio = RwSignal::new(0.50_f64); // 0..1 across bbox
 
     Effect::new(move |_| {
         document().set_title("Cyberia — fleets & flats · Gesing, Bali");
@@ -1105,51 +1233,189 @@ pub fn CyberiaPage() -> impl IntoView {
                 }.into_any(),
                 Sheet::SplitLand => view! {
                     <div class="cyberia-sheet-backdrop" on:click=move |_| sheet.set(Sheet::None)>
-                        <div class="cyberia-sheet" on:click=move |ev| ev.stop_propagation()>
+                        <div class="cyberia-sheet sheet-wide" on:click=move |ev| ev.stop_propagation()>
                             <div class="sheet-h">
                                 <span class="panel-kicker">"SPLIT LAND"</span>
                                 <button class="sheet-x" on:click=move |_| sheet.set(Sheet::None)>"✕"</button>
                             </div>
                             <p class="sheet-note">
-                                "Split the selected flat into west / east halves (local geometry). Soft3 intent — no closed cadastral backend."
+                                "Pick a flat, set cut direction and position. Areas are geodesic-approx m² (equirectangular). Soft3 local intent."
                             </p>
-                            <div class="sheet-catalog">
+
+                            <div class="split-pick-label">"1 · SELECT FLAT"</div>
+                            <div class="sheet-catalog sheet-catalog-compact">
                                 {move || flats.get().into_iter().map(|f| {
                                     let id = f.id.clone();
                                     let id2 = id.clone();
                                     let name = f.name.to_uppercase();
+                                    let a = area_m2(&f.coords);
                                     view! {
                                         <button
                                             class=move || {
                                                 let sel = selected_flat.get().as_deref() == Some(id.as_str());
                                                 format!("fleet-card catalog flat-pick{}", if sel { " sel" } else { "" })
                                             }
-                                            on:click=move |_| selected_flat.set(Some(id2.clone()))
+                                            on:click=move |_| {
+                                                selected_flat.set(Some(id2.clone()));
+                                                split_ratio.set(0.50);
+                                            }
                                         >
                                             <div class="fleet-top">
                                                 <span class="fleet-name">{name}</span>
-                                                <span class="fleet-status" style:color="var(--cyber-cyan)">"SPLIT?"</span>
+                                                <span class="fleet-status" style:color="var(--cyber-cyan)">{fmt_area_m2(a)}</span>
                                             </div>
-                                            <div class="fleet-role">"click to select · confirm below"</div>
                                         </button>
                                     }
                                 }).collect_view()}
                             </div>
+
+                            <div class="split-pick-label">"2 · CUT DIRECTION"</div>
+                            <div class="split-dir-row">
+                                <button
+                                    class=move || if split_axis.get() == 0 { "act-pill sel" } else { "act-pill" }
+                                    on:click=move |_| split_axis.set(0)
+                                >"↕ E / W  ·  vertical cut"</button>
+                                <button
+                                    class=move || if split_axis.get() == 1 { "act-pill sel" } else { "act-pill" }
+                                    on:click=move |_| split_axis.set(1)
+                                >"↔ N / S  ·  horizontal cut"</button>
+                            </div>
+
+                            <div class="split-pick-label">
+                                {move || {
+                                    if split_axis.get() == 0 {
+                                        "3 · POSITION  (west ← → east)"
+                                    } else {
+                                        "3 · POSITION  (south ← → north)"
+                                    }
+                                }}
+                            </div>
+                            <div class="split-slider-row">
+                                <input
+                                    type="range"
+                                    min="5"
+                                    max="95"
+                                    step="1"
+                                    class="split-range"
+                                    prop:value=move || format!("{:.0}", split_ratio.get() * 100.0)
+                                    on:input=move |ev| {
+                                        if let Ok(v) = event_target_value(&ev).parse::<f64>() {
+                                            split_ratio.set((v / 100.0).clamp(0.05, 0.95));
+                                        }
+                                    }
+                                />
+                                <span class="split-ratio-lbl">
+                                    {move || format!("{:.0}%", split_ratio.get() * 100.0)}
+                                </span>
+                            </div>
+
+                            // live preview metrics + mini map
+                            {move || {
+                                let fid = selected_flat.get();
+                                let axis = split_axis.get();
+                                let ratio = split_ratio.get();
+                                let list = flats.get();
+                                let Some(src) = fid.as_ref().and_then(|id| list.iter().find(|f| &f.id == id).cloned()) else {
+                                    return view! {
+                                        <div class="split-metrics empty">"select a flat to preview the cut"</div>
+                                    }.into_any();
+                                };
+                                let total = area_m2(&src.coords);
+                                let span = bbox_span_m(&src.coords, axis);
+                                let offset = span * ratio;
+                                let preview = split_flat_at(&src, axis, ratio);
+                                let (ok, a_m2, b_m2, a_coords, b_coords) = match &preview {
+                                    Some((a, b, _)) => (
+                                        true,
+                                        area_m2(&a.coords),
+                                        area_m2(&b.coords),
+                                        a.coords.clone(),
+                                        b.coords.clone(),
+                                    ),
+                                    None => (false, 0.0, 0.0, vec![], vec![]),
+                                };
+                                let pct_a = if total > 0.0 { a_m2 / total * 100.0 } else { 0.0 };
+                                let pct_b = if total > 0.0 { b_m2 / total * 100.0 } else { 0.0 };
+                                let side_a = if axis == 0 { "WEST (A)" } else { "SOUTH (A)" };
+                                let side_b = if axis == 0 { "EAST (B)" } else { "NORTH (B)" };
+                                let (min_lon, max_lon, min_lat, max_lat) = poly_bbox(&src.coords);
+                                // mini viewBox
+                                const MW: f64 = 320.0;
+                                const MH: f64 = 180.0;
+                                const MP: f64 = 12.0;
+                                let bbox = BBox { min_lon, max_lon, min_lat, max_lat };
+                                let path_src = poly_path(&src.coords, &bbox, MW, MH, MP);
+                                let path_a = poly_path(&a_coords, &bbox, MW, MH, MP);
+                                let path_b = poly_path(&b_coords, &bbox, MW, MH, MP);
+                                let (cut_x1, cut_y1, cut_x2, cut_y2) = if axis == 0 {
+                                    let t = min_lon + ratio * (max_lon - min_lon);
+                                    let (x, y1) = project(t, max_lat, &bbox, MW, MH, MP);
+                                    let (_, y2) = project(t, min_lat, &bbox, MW, MH, MP);
+                                    (x, y1, x, y2)
+                                } else {
+                                    let t = min_lat + ratio * (max_lat - min_lat);
+                                    let (x1, y) = project(min_lon, t, &bbox, MW, MH, MP);
+                                    let (x2, _) = project(max_lon, t, &bbox, MW, MH, MP);
+                                    (x1, y, x2, y)
+                                };
+                                view! {
+                                    <div class="split-preview">
+                                        <svg class="split-mini" viewBox=format!("0 0 {MW} {MH}")>
+                                            <path d=path_src fill="rgba(255,255,255,0.03)" stroke="#333" stroke-width="1" />
+                                            {ok.then(|| view! {
+                                                <path d=path_a fill="rgba(0,229,255,0.28)" stroke="var(--cyber-cyan)" stroke-width="1.5" />
+                                                <path d=path_b fill="rgba(255,0,255,0.22)" stroke="var(--cyber-magenta)" stroke-width="1.5" />
+                                                <line x1=cut_x1 y1=cut_y1 x2=cut_x2 y2=cut_y2
+                                                    stroke="var(--cyber-yellow)" stroke-width="2"
+                                                    stroke-dasharray="4 3" />
+                                            })}
+                                        </svg>
+                                        <div class="split-metrics">
+                                            <div class="sm-row total">
+                                                <span>"TOTAL"</span>
+                                                <span>{fmt_area_m2(total)}</span>
+                                            </div>
+                                            <div class="sm-row a">
+                                                <span>{side_a}</span>
+                                                <span>{if ok { format!("{} · {:.1}%", fmt_area_m2(a_m2), pct_a) } else { "—".into() }}</span>
+                                            </div>
+                                            <div class="sm-row b">
+                                                <span>{side_b}</span>
+                                                <span>{if ok { format!("{} · {:.1}%", fmt_area_m2(b_m2), pct_b) } else { "—".into() }}</span>
+                                            </div>
+                                            <div class="sm-row dim">
+                                                <span>"cut offset"</span>
+                                                <span>{format!("{:.1} m from {}", offset, if axis == 0 { "west" } else { "south" })}</span>
+                                            </div>
+                                            <div class="sm-row dim">
+                                                <span>"bbox span"</span>
+                                                <span>{format!("{:.1} m", span)}</span>
+                                            </div>
+                                            {(!ok).then(|| view! {
+                                                <div class="sm-row warn">"cut invalid — move slider (sliver or empty half)"</div>
+                                            })}
+                                        </div>
+                                    </div>
+                                }.into_any()
+                            }}
+
                             <button
                                 class="intent-commit split"
                                 on:click=move |_| {
                                     let Some(fid) = selected_flat.get() else { return };
                                     let list = flats.get_untracked();
                                     let Some(src) = list.iter().find(|f| f.id == fid).cloned() else { return };
-                                    if src.coords.len() < 3 { return; }
-                                    let (a, b) = split_flat(&src);
+                                    let axis = split_axis.get_untracked();
+                                    let ratio = split_ratio.get_untracked();
+                                    let Some((a, b, _)) = split_flat_at(&src, axis, ratio) else { return };
+                                    let a_m2 = area_m2(&a.coords);
+                                    let b_m2 = area_m2(&b.coords);
                                     let a_id = a.id.clone();
                                     flats.update(|v| {
                                         v.retain(|f| f.id != fid);
                                         v.push(a);
                                         v.push(b);
                                     });
-                                    // leases on parent drop — sub-flats are open
                                     leased.update(|v| v.retain(|x| x != &fid));
                                     selected_flat.set(Some(a_id));
                                     let id = next_id.get();
@@ -1159,7 +1425,10 @@ pub fn CyberiaPage() -> impl IntoView {
                                             id,
                                             fleet: "YOU".into(),
                                             action: "split".into(),
-                                            flat: fid,
+                                            flat: format!(
+                                                "{fid} → {:.0}+{:.0} m²",
+                                                a_m2, b_m2
+                                            ),
                                         });
                                     });
                                     sheet.set(Sheet::None);
@@ -1306,11 +1575,14 @@ pub fn CyberiaPage() -> impl IntoView {
                             <span class="cta-sub">"hold a phase-0 flat"</span>
                         </span>
                     </button>
-                    <button class="cta-btn cta-split cta-lg cta-bold" on:click=move |_| sheet.set(Sheet::SplitLand)>
+                    <button class="cta-btn cta-split cta-lg cta-bold" on:click=move |_| {
+                        split_ratio.set(0.50);
+                        sheet.set(Sheet::SplitLand);
+                    }>
                         <span class="cta-ico">"✂"</span>
                         <span class="cta-copy">
                             <span class="cta-title">"SPLIT LAND"</span>
-                            <span class="cta-sub">"cut flat west / east"</span>
+                            <span class="cta-sub">"precise cut · m² preview"</span>
                         </span>
                     </button>
                     <button class="cta-btn cta-merge cta-lg cta-bold" on:click=move |_| {

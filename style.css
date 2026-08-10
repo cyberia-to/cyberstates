@@ -2651,6 +2651,106 @@ svg.world-map path.map-sync-hover {
     gap: 6px;
     margin-bottom: 12px;
 }
+.sheet-wide {
+    width: min(520px, 100%);
+}
+.sheet-catalog-compact {
+    max-height: 140px;
+    overflow: auto;
+}
+.split-pick-label {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    color: #666;
+    font-weight: 700;
+    margin: 10px 0 6px;
+}
+.split-dir-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.split-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.split-range {
+    flex: 1;
+    accent-color: var(--cyber-cyan);
+    height: 4px;
+    cursor: pointer;
+}
+.split-ratio-lbl {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cyber-yellow);
+    min-width: 40px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.split-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 8px 0 12px;
+    align-items: stretch;
+}
+.split-mini {
+    width: 100%;
+    height: 160px;
+    background: #050505;
+    border: 1px solid #1a1a1a;
+    border-radius: 3px;
+}
+.split-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 0;
+}
+.split-metrics.empty {
+    color: #555;
+    padding: 12px 0;
+}
+.sm-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    letter-spacing: 0.3px;
+}
+.sm-row.total {
+    color: #e0e0e0;
+    font-weight: 700;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 6px;
+    margin-bottom: 2px;
+}
+.sm-row.a {
+    color: var(--cyber-cyan);
+    font-weight: 700;
+}
+.sm-row.b {
+    color: var(--cyber-magenta);
+    font-weight: 700;
+}
+.sm-row.dim {
+    color: #555;
+    font-size: 11px;
+}
+.sm-row.warn {
+    color: var(--cyber-red);
+    font-size: 11px;
+    margin-top: 4px;
+}
+@media (max-width: 520px) {
+    .split-preview {
+        grid-template-columns: 1fr;
+    }
+}
 .intent-commit.lease {
     border-color: var(--cyber-green);
 }
