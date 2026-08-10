@@ -165,8 +165,8 @@ fn flat_color(id: &str, selected: bool) -> &'static str {
     match (id, selected) {
         ("sinwood", true) => "rgba(0,255,65,0.45)",
         ("sinwood", false) => "rgba(0,255,65,0.18)",
-        ("cofe", true) => "rgba(255,102,0,0.45)",
-        ("cofe", false) => "rgba(255,102,0,0.18)",
+        ("avalon", true) => "rgba(255,102,0,0.45)",
+        ("avalon", false) => "rgba(255,102,0,0.18)",
         _ => "rgba(0,229,255,0.15)",
     }
 }
@@ -175,8 +175,8 @@ fn flat_stroke(id: &str, selected: bool) -> &'static str {
     match (id, selected) {
         ("sinwood", true) => "var(--cyber-green)",
         ("sinwood", false) => "rgba(0,255,65,0.55)",
-        ("cofe", true) => "var(--cyber-orange)",
-        ("cofe", false) => "rgba(255,102,0,0.55)",
+        ("avalon", true) => "var(--cyber-orange)",
+        ("avalon", false) => "rgba(255,102,0,0.55)",
         _ => "var(--cyber-cyan)",
     }
 }
@@ -212,7 +212,7 @@ pub fn CyberiaPage() -> impl IntoView {
                 </div>
                 <div class="cyberia-phase-pill">
                     <span class="phase-dot"></span>
-                    "PHASE 0 · SINWOOD + COFE"
+                    "PHASE 0 · SINWOOD + AVALON"
                 </div>
                 <SiteNav active="CYBERIA" />
             </div>
@@ -367,7 +367,7 @@ pub fn CyberiaPage() -> impl IntoView {
                     </div>
                     <div class="flat-legend">
                         <span class="leg sin">"SINWOOD"</span>
-                        <span class="leg cof">"COFE"</span>
+                        <span class="leg avalon">"AVALON"</span>
                         <span class="leg dim">"places P1+"</span>
                     </div>
                 </section>
