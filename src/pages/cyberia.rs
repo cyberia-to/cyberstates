@@ -701,34 +701,113 @@ pub fn CyberiaPage() -> impl IntoView {
                 <section class="cyberia-panel cyberia-right">
                     <div class="cyberia-panel-h">
                         <span class="panel-kicker">"RENDER"</span>
-                        <span class="panel-sub">"selected flat · 3d"</span>
+                        <span class="panel-sub">"flat · robot · 3d"</span>
                     </div>
                     <div class="render-3d">
                         {move || {
+                            // —— flat ——
                             let fid = selected_flat.get().unwrap_or_else(|| "sinwood".into());
                             let list = flats.get();
                             let flat = list.iter().find(|f| f.id == fid);
-                            let name = flat.map(|f| f.name.to_uppercase()).unwrap_or_else(|| fid.to_uppercase());
-                            let kind = flat.map(|f| f.kind.clone()).unwrap_or_default();
+                            let flat_name = flat
+                                .map(|f| f.name.to_uppercase())
+                                .unwrap_or_else(|| fid.to_uppercase());
+                            let flat_kind = flat.map(|f| f.kind.clone()).unwrap_or_default();
                             let n = flat.map(|f| f.coords.len()).unwrap_or(0);
-                            let hue = if fid.contains("avalon") {
+                            let land_hue = if fid.contains("avalon") {
                                 "var(--cyber-orange)"
                             } else if fid.contains("sinwood") {
                                 "var(--cyber-green)"
                             } else {
                                 "var(--cyber-cyan)"
                             };
+                            let leased_tag = if leased.get().iter().any(|x| x == &fid) {
+                                " · LEASED"
+                            } else {
+                                ""
+                            };
+
+                            // —— robot / worker ——
+                            let rid = selected_fleet.get();
+                            let (bot_name, bot_kind, bot_role, bot_status, bot_owned) = rid
+                                .as_ref()
+                                .and_then(|id| {
+                                    stock_fleet(id).map(|f| {
+                                        (
+                                            f.name.to_string(),
+                                            f.kind.to_string(),
+                                            f.role.to_string(),
+                                            f.status.to_string(),
+                                            false,
+                                        )
+                                    }).or_else(|| {
+                                        owned.get().into_iter().find(|r| &r.id == id).map(|r| {
+                                            (r.name, r.kind, r.role, "idle".into(), true)
+                                        })
+                                    })
+                                })
+                                .unwrap_or_else(|| {
+                                    ("—".into(), "none".into(), "no unit selected".into(), "—".into(), false)
+                                });
+                            let is_worker = bot_kind == "worker";
+                            let bot_hue = if bot_kind == "none" {
+                                "#444"
+                            } else if is_worker {
+                                "var(--cyber-cyan)"
+                            } else {
+                                "var(--cyber-orange)"
+                            };
+                            let bot_cls = if bot_kind == "none" {
+                                "bot-figure empty"
+                            } else if is_worker {
+                                "bot-figure worker"
+                            } else {
+                                "bot-figure machine"
+                            };
+
                             view! {
-                                <div class="prism-scene">
-                                    <div class="prism" style:--prism-color=hue>
-                                        <div class="prism-face prism-top"></div>
-                                        <div class="prism-face prism-front"></div>
-                                        <div class="prism-face prism-side"></div>
+                                <div class="render-pair">
+                                    // LAND
+                                    <div class="prism-scene">
+                                        <div class="render-tag">"FLAT"</div>
+                                        <div class="prism" style:--prism-color=land_hue>
+                                            <div class="prism-face prism-top"></div>
+                                            <div class="prism-face prism-front"></div>
+                                            <div class="prism-face prism-side"></div>
+                                        </div>
+                                        <div class="prism-meta">
+                                            <div class="prism-name">{format!("{flat_name}{leased_tag}")}</div>
+                                            <div class="prism-sub">{format!("{flat_kind} · {n} verts")}</div>
+                                            <div class="prism-sub">"Gesing hold"</div>
+                                        </div>
                                     </div>
-                                    <div class="prism-meta">
-                                        <div class="prism-name">{name}</div>
-                                        <div class="prism-sub">{format!("{kind} · {n} vertices · phase 0")}</div>
-                                        <div class="prism-sub">"Gesing · local hold"</div>
+                                    // ROBOT
+                                    <div class="prism-scene bot-scene">
+                                        <div class="render-tag">"ROBOT"</div>
+                                        <div class=bot_cls style:--bot-color=bot_hue>
+                                            <div class="bot-head"></div>
+                                            <div class="bot-body">
+                                                <div class="bot-chest"></div>
+                                                <div class="bot-arm bot-arm-l"></div>
+                                                <div class="bot-arm bot-arm-r"></div>
+                                            </div>
+                                            <div class="bot-legs">
+                                                <div class="bot-leg"></div>
+                                                <div class="bot-leg"></div>
+                                            </div>
+                                            <div class="bot-glow"></div>
+                                        </div>
+                                        <div class="prism-meta">
+                                            <div class="prism-name" style:color=bot_hue>{bot_name}</div>
+                                            <div class="prism-sub">{bot_role}</div>
+                                            <div class="prism-sub">
+                                                {format!(
+                                                    "{} · {}",
+                                                    bot_kind.to_uppercase(),
+                                                    if bot_owned { "OWNED" } else { &bot_status.to_uppercase() }
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             }

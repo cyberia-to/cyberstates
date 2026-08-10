@@ -2842,19 +2842,187 @@ svg.world-map path.map-sync-hover {
     min-width: 0;
 }
 .render-3d {
-    padding: 16px 12px;
-    min-height: 180px;
+    padding: 14px 10px;
+    min-height: 220px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid #111;
+}
+.render-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    align-items: start;
+}
+.render-tag {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #555;
+    font-weight: 700;
+    margin-bottom: 4px;
 }
 .prism-scene {
     perspective: 600px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 18px;
+    gap: 14px;
+    min-width: 0;
+}
+/* stylized unit: worker (cyan biped) / machine (orange blocky) */
+.bot-scene {
+    perspective: 500px;
+}
+.bot-figure {
+    --bot-color: var(--cyber-cyan);
+    position: relative;
+    width: 72px;
+    height: 96px;
+    transform-style: preserve-3d;
+    animation: bot-bob 2.8s ease-in-out infinite;
+}
+.bot-figure.machine {
+    animation: bot-spin 10s linear infinite;
+}
+.bot-figure.empty {
+    opacity: 0.35;
+    animation: none;
+}
+@keyframes bot-bob {
+    0%,
+    100% {
+        transform: translateY(0) rotateY(-12deg);
+    }
+    50% {
+        transform: translateY(-6px) rotateY(12deg);
+    }
+}
+@keyframes bot-spin {
+    from {
+        transform: rotateY(0deg) translateY(0);
+    }
+    to {
+        transform: rotateY(360deg) translateY(0);
+    }
+}
+.bot-head {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 28px;
+    height: 24px;
+    margin-left: -14px;
+    border-radius: 4px 4px 2px 2px;
+    background: color-mix(in srgb, var(--bot-color) 55%, #000);
+    border: 1px solid var(--bot-color);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--bot-color) 40%, transparent);
+}
+.bot-figure.machine .bot-head {
+    width: 36px;
+    height: 20px;
+    margin-left: -18px;
+    border-radius: 2px;
+}
+.bot-head::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bot-color);
+    box-shadow:
+        12px 0 0 var(--bot-color),
+        0 0 8px var(--bot-color);
+}
+.bot-figure.machine .bot-head::after {
+    left: 8px;
+    width: 8px;
+    height: 4px;
+    border-radius: 1px;
+    box-shadow: 12px 0 0 var(--bot-color);
+}
+.bot-body {
+    position: absolute;
+    left: 50%;
+    top: 28px;
+    width: 40px;
+    height: 36px;
+    margin-left: -20px;
+}
+.bot-chest {
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--bot-color) 28%, #0a0a0a);
+    border: 1px solid color-mix(in srgb, var(--bot-color) 70%, #333);
+    box-shadow: inset 0 0 12px
+        color-mix(in srgb, var(--bot-color) 15%, transparent);
+}
+.bot-figure.machine .bot-chest {
+    border-radius: 2px;
+    height: 42px;
+}
+.bot-arm {
+    position: absolute;
+    top: 4px;
+    width: 10px;
+    height: 28px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--bot-color) 40%, #111);
+    border: 1px solid color-mix(in srgb, var(--bot-color) 50%, #222);
+}
+.bot-arm-l {
+    left: -12px;
+    transform: rotate(12deg);
+}
+.bot-arm-r {
+    right: -12px;
+    transform: rotate(-12deg);
+}
+.bot-figure.machine .bot-arm {
+    width: 14px;
+    height: 12px;
+    top: 12px;
+}
+.bot-legs {
+    position: absolute;
+    left: 50%;
+    top: 66px;
+    width: 36px;
+    margin-left: -18px;
+    display: flex;
+    justify-content: space-between;
+}
+.bot-leg {
+    width: 12px;
+    height: 26px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--bot-color) 35%, #000);
+    border: 1px solid color-mix(in srgb, var(--bot-color) 45%, #222);
+}
+.bot-figure.machine .bot-leg {
+    width: 16px;
+    height: 14px;
+    border-radius: 1px;
+}
+.bot-glow {
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 48px;
+    height: 8px;
+    margin-left: -24px;
+    border-radius: 50%;
+    background: radial-gradient(
+        ellipse,
+        color-mix(in srgb, var(--bot-color) 45%, transparent),
+        transparent 70%
+    );
+    filter: blur(2px);
 }
 .prism {
     --prism-color: var(--cyber-green);
