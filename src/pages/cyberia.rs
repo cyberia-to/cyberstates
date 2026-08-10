@@ -1018,9 +1018,8 @@ pub fn CyberiaPage() -> impl IntoView {
                                             let d = poly_path(&flat.coords, &m.bbox, W, H, PAD);
                                             let (clon, clat) = centroid(&flat.coords);
                                             let (lx, ly) = project(clon, clat, &m.bbox, W, H, PAD);
-                                            // labels only when zoomed or selected/hovered — keep default clean
+                                            // labels only on selected plot (click) — hover uses HUD tooltip
                                             let base_label = flat.name.to_uppercase();
-                                            let show_label_always = false;
                                             view! {
                                                 <g class="flat-poly"
                                                     on:click=move |ev| {
@@ -1075,9 +1074,7 @@ pub fn CyberiaPage() -> impl IntoView {
                                                     />
                                                     {move || {
                                                         let sel = selected_flat.get().as_deref() == Some(id_lab.as_str());
-                                                        let hov = map_hover.get().as_ref().map(|t| t.0.as_str()) == Some(id_lab.as_str());
-                                                        let zoomed = map_zoom.get() >= 1.8;
-                                                        if !(show_label_always || sel || hov || zoomed) {
+                                                        if !sel {
                                                             return view! { <g></g> }.into_any();
                                                         }
                                                         let text = if leased.get().iter().any(|x| x == &id_lab) {
