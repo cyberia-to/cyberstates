@@ -5,7 +5,6 @@ use leptos_router::path;
 
 use crate::pages::corridor::CorridorPage;
 use crate::pages::country::CountryPage;
-use crate::pages::cyberia::CyberiaPage;
 use crate::pages::home::HomePage;
 use crate::pages::listing::ListingPage;
 use crate::pages::methodology::MethodologyPage;
@@ -137,7 +136,6 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/country/:slug") view=CountryPage />
                 <Route path=path!("/from/:from/to/:to") view=CorridorPage />
                 <Route path=path!("/token/:code") view=TokenPage />
-                <Route path=path!("/cyberia") view=CyberiaPage />
             </Routes>
         </Router>
     }

@@ -11,7 +11,7 @@ pub fn SiteNav(active: &'static str) -> impl IntoView {
         ("TOKENS", "/tokens", "nav-tokens"),
         ("TOTALS", "/totals", "nav-totals"),
         ("DOCTRINE", "/doctrine", "nav-method"),
-        ("CYBERIA", "/cyberia", "nav-cyberia"),
+        ("CYBERIA", "https://cyberia.my/", "nav-cyberia"),
     ];
 
     view! {
