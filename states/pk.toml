@@ -9,9 +9,9 @@ land_area_km2 = 881912
 currency_code = "PKR"
 currency_name = "Pakistani Rupee"
 money_supply_b_usd = 167
-money_supply_b_usd_prev = 168
+money_supply_b_usd_prev = 167
 token_price_usd = 0.003600
-token_price_usd_prev = 0.003601
+token_price_usd_prev = 0.003600
 visa_free_destinations = 41
 visa_free_inbound = 30
 

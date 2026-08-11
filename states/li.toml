@@ -10,8 +10,8 @@ currency_code = "CHF"
 currency_name = "Swiss Franc"
 money_supply_b_usd = 3.3
 money_supply_b_usd_prev = 3.3
-token_price_usd = 1.236858
-token_price_usd_prev = 1.236705
+token_price_usd = 1.235330
+token_price_usd_prev = 1.236858
 visa_free_destinations = 190
 visa_free_inbound = 93
 

@@ -10,8 +10,8 @@ currency_code = "BND"
 currency_name = "Brunei Dollar"
 money_supply_b_usd = 13.7
 money_supply_b_usd_prev = 13.7
-token_price_usd = 0.781800
-token_price_usd_prev = 0.781739
+token_price_usd = 0.781189
+token_price_usd_prev = 0.781800
 visa_free_destinations = 166
 visa_free_inbound = 100
 

@@ -10,8 +10,8 @@ currency_code = "MXN"
 currency_name = "Mexican Peso"
 money_supply_b_usd = 987
 money_supply_b_usd_prev = 987
-token_price_usd = 0.058340
-token_price_usd_prev = 0.058297
+token_price_usd = 0.058342
+token_price_usd_prev = 0.058340
 visa_free_destinations = 159
 visa_free_inbound = 125
 

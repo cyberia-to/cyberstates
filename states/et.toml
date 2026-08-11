@@ -10,8 +10,8 @@ currency_code = "ETB"
 currency_name = "Ethiopian Birr"
 money_supply_b_usd = 12.1
 money_supply_b_usd_prev = 12.1
-token_price_usd = 0.006216
-token_price_usd_prev = 0.006199
+token_price_usd = 0.006207
+token_price_usd_prev = 0.006216
 visa_free_destinations = 48
 visa_free_inbound = 183
 
