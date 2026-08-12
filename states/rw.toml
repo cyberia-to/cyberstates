@@ -10,8 +10,8 @@ currency_code = "RWF"
 currency_name = "Rwandan Franc"
 money_supply_b_usd = 3.5
 money_supply_b_usd_prev = 3.5
-token_price_usd = 0.000679
-token_price_usd_prev = 0.000680
+token_price_usd = 0.000678
+token_price_usd_prev = 0.000679
 visa_free_destinations = 66
 visa_free_inbound = 198
 

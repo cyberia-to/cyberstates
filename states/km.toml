@@ -10,8 +10,8 @@ currency_code = "KMF"
 currency_name = "Comorian Franc"
 money_supply_b_usd = 0.671
 money_supply_b_usd_prev = 0.671
-token_price_usd = 0.002347
-token_price_usd_prev = 0.002348
+token_price_usd = 0.002346
+token_price_usd_prev = 0.002347
 visa_free_destinations = 55
 visa_free_inbound = 182
 

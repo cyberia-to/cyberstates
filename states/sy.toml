@@ -10,8 +10,8 @@ currency_code = "SYP"
 currency_name = "Syrian Pound"
 money_supply_b_usd = 5.0
 money_supply_b_usd_prev = 5.0
-token_price_usd = 0.008209
-token_price_usd_prev = 0.008220
+token_price_usd = 0.008221
+token_price_usd_prev = 0.008209
 visa_free_destinations = 33
 visa_free_inbound = 25
 

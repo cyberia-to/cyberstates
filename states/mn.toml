@@ -9,9 +9,9 @@ land_area_km2 = 1564116
 currency_code = "MNT"
 currency_name = "Mongolian Tugrik"
 money_supply_b_usd = 11.9
-money_supply_b_usd_prev = 12.0
-token_price_usd = 0.000275
-token_price_usd_prev = 0.000276
+money_supply_b_usd_prev = 11.9
+token_price_usd = 0.000276
+token_price_usd_prev = 0.000275
 visa_free_destinations = 81
 visa_free_inbound = 65
 

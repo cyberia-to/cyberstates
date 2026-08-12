@@ -8,10 +8,10 @@ population = 109262178
 land_area_km2 = 1001450
 currency_code = "EGP"
 currency_name = "Egyptian Pound"
-money_supply_b_usd = 281
-money_supply_b_usd_prev = 282
-token_price_usd = 0.020023
-token_price_usd_prev = 0.020073
+money_supply_b_usd = 279
+money_supply_b_usd_prev = 281
+token_price_usd = 0.019907
+token_price_usd_prev = 0.020023
 visa_free_destinations = 54
 visa_free_inbound = 105
 
