@@ -10,8 +10,8 @@ currency_code = "LYD"
 currency_name = "Libyan Dinar"
 money_supply_b_usd = 16.1
 money_supply_b_usd_prev = 16.1
-token_price_usd = 0.156873
-token_price_usd_prev = 0.157203
+token_price_usd = 0.157117
+token_price_usd_prev = 0.156873
 visa_free_destinations = 40
 visa_free_inbound = 20
 

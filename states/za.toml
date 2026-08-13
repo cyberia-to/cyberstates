@@ -8,10 +8,10 @@ population = 60414495
 land_area_km2 = 1221037
 currency_code = "ZAR"
 currency_name = "South African Rand"
-money_supply_b_usd = 363
+money_supply_b_usd = 364
 money_supply_b_usd_prev = 363
-token_price_usd = 0.061762
-token_price_usd_prev = 0.061794
+token_price_usd = 0.061956
+token_price_usd_prev = 0.061762
 visa_free_destinations = 106
 visa_free_inbound = 72
 

@@ -10,8 +10,8 @@ currency_code = "TJS"
 currency_name = "Tajikistani Somoni"
 money_supply_b_usd = 4.3
 money_supply_b_usd_prev = 4.3
-token_price_usd = 0.108332
-token_price_usd_prev = 0.108280
+token_price_usd = 0.108345
+token_price_usd_prev = 0.108332
 visa_free_destinations = 64
 visa_free_inbound = 50
 

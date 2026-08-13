@@ -8,10 +8,10 @@ population = 2777970
 land_area_km2 = 29743
 currency_code = "AMD"
 currency_name = "Armenian Dram"
-money_supply_b_usd = 18.9
+money_supply_b_usd = 19.0
 money_supply_b_usd_prev = 18.9
-token_price_usd = 0.002729
-token_price_usd_prev = 0.002728
+token_price_usd = 0.002732
+token_price_usd_prev = 0.002729
 visa_free_destinations = 91
 visa_free_inbound = 115
 

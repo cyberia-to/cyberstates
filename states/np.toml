@@ -10,8 +10,8 @@ currency_code = "NPR"
 currency_name = "Nepalese Rupee"
 money_supply_b_usd = 53.3
 money_supply_b_usd_prev = 53.3
-token_price_usd = 0.006547
-token_price_usd_prev = 0.006554
+token_price_usd = 0.006550
+token_price_usd_prev = 0.006547
 visa_free_destinations = 48
 visa_free_inbound = 165
 

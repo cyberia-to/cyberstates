@@ -10,8 +10,8 @@ currency_code = "NOK"
 currency_name = "Norwegian Krone"
 money_supply_b_usd = 336
 money_supply_b_usd_prev = 336
-token_price_usd = 0.105336
-token_price_usd_prev = 0.105285
+token_price_usd = 0.105371
+token_price_usd_prev = 0.105336
 visa_free_destinations = 190
 visa_free_inbound = 93
 

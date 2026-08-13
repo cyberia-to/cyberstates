@@ -9,9 +9,9 @@ land_area_km2 = 2842
 currency_code = "WST"
 currency_name = "Samoan Tala"
 money_supply_b_usd = 0.674
-money_supply_b_usd_prev = 0.673
-token_price_usd = 0.371181
-token_price_usd_prev = 0.370645
+money_supply_b_usd_prev = 0.674
+token_price_usd = 0.370934
+token_price_usd_prev = 0.371181
 visa_free_destinations = 131
 visa_free_inbound = 198
 

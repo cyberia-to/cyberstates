@@ -10,8 +10,8 @@ currency_code = "ILS"
 currency_name = "Israeli New Shekel"
 money_supply_b_usd = 5.9
 money_supply_b_usd_prev = 5.9
-token_price_usd = 0.333300
-token_price_usd_prev = 0.333645
+token_price_usd = 0.335098
+token_price_usd_prev = 0.333300
 visa_free_destinations = 37
 visa_free_inbound = 40
 
