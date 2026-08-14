@@ -10,8 +10,8 @@ currency_code = "HTG"
 currency_name = "Haitian Gourde"
 money_supply_b_usd = 4.9
 money_supply_b_usd_prev = 4.9
-token_price_usd = 0.007645
-token_price_usd_prev = 0.007651
+token_price_usd = 0.007649
+token_price_usd_prev = 0.007645
 visa_free_destinations = 57
 visa_free_inbound = 186
 

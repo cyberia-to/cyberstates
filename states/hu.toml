@@ -10,8 +10,8 @@ currency_code = "HUF"
 currency_name = "Hungarian Forint"
 money_supply_b_usd = 155
 money_supply_b_usd_prev = 155
-token_price_usd = 0.003166
-token_price_usd_prev = 0.003163
+token_price_usd = 0.003175
+token_price_usd_prev = 0.003166
 visa_free_destinations = 188
 visa_free_inbound = 93
 

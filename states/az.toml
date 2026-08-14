@@ -10,8 +10,8 @@ currency_code = "AZN"
 currency_name = "Azerbaijani Manat"
 money_supply_b_usd = 29.3
 money_supply_b_usd_prev = 29.3
-token_price_usd = 0.588408
-token_price_usd_prev = 0.588478
+token_price_usd = 0.588235
+token_price_usd_prev = 0.588408
 visa_free_destinations = 74
 visa_free_inbound = 65
 
