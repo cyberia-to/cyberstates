@@ -8,10 +8,10 @@ population = 55100586
 land_area_km2 = 580367
 currency_code = "KES"
 currency_name = "Kenyan Shilling"
-money_supply_b_usd = 47.2
+money_supply_b_usd = 47.3
 money_supply_b_usd_prev = 47.2
-token_price_usd = 0.007737
-token_price_usd_prev = 0.007738
+token_price_usd = 0.007739
+token_price_usd_prev = 0.007737
 visa_free_destinations = 74
 visa_free_inbound = 190
 

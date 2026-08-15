@@ -10,8 +10,8 @@ currency_code = "SCR"
 currency_name = "Seychellois Rupee"
 money_supply_b_usd = 2.1
 money_supply_b_usd_prev = 2.1
-token_price_usd = 0.069542
-token_price_usd_prev = 0.070046
+token_price_usd = 0.071603
+token_price_usd_prev = 0.069542
 visa_free_destinations = 95
 visa_free_inbound = 196
 

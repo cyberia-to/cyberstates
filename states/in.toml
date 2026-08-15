@@ -8,10 +8,10 @@ population = 1428627663
 land_area_km2 = 3287263
 currency_code = "INR"
 currency_name = "Indian Rupee"
-money_supply_b_usd = 2029
-money_supply_b_usd_prev = 2031
-token_price_usd = 0.010474
-token_price_usd_prev = 0.010481
+money_supply_b_usd = 2028
+money_supply_b_usd_prev = 2029
+token_price_usd = 0.010468
+token_price_usd_prev = 0.010474
 visa_free_destinations = 57
 visa_free_inbound = 60
 

@@ -9,9 +9,9 @@ land_area_km2 = 801590
 currency_code = "MZN"
 currency_name = "Mozambican Metical"
 money_supply_b_usd = 13.4
-money_supply_b_usd_prev = 13.3
-token_price_usd = 0.015714
-token_price_usd_prev = 0.015685
+money_supply_b_usd_prev = 13.4
+token_price_usd = 0.015719
+token_price_usd_prev = 0.015714
 visa_free_destinations = 68
 visa_free_inbound = 198
 

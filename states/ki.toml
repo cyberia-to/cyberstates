@@ -10,8 +10,8 @@ currency_code = "AUD"
 currency_name = "Australian Dollar"
 money_supply_b_usd = 0.106
 money_supply_b_usd_prev = 0.106
-token_price_usd = 0.705816
-token_price_usd_prev = 0.706414
+token_price_usd = 0.708065
+token_price_usd_prev = 0.705816
 visa_free_destinations = 91
 visa_free_inbound = 192
 

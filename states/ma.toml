@@ -10,8 +10,8 @@ currency_code = "MAD"
 currency_name = "Moroccan Dirham"
 money_supply_b_usd = 222
 money_supply_b_usd_prev = 222
-token_price_usd = 0.107512
-token_price_usd_prev = 0.107537
+token_price_usd = 0.107548
+token_price_usd_prev = 0.107512
 visa_free_destinations = 72
 visa_free_inbound = 95
 

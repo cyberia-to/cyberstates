@@ -10,8 +10,8 @@ currency_code = "YER"
 currency_name = "Yemeni Rial"
 money_supply_b_usd = 5.2
 money_supply_b_usd_prev = 5.2
-token_price_usd = 0.004216
-token_price_usd_prev = 0.004217
+token_price_usd = 0.004217
+token_price_usd_prev = 0.004216
 visa_free_destinations = 34
 visa_free_inbound = 20
 

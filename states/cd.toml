@@ -10,8 +10,8 @@ currency_code = "CDF"
 currency_name = "Congolese Franc"
 money_supply_b_usd = 11.1
 money_supply_b_usd_prev = 11.1
-token_price_usd = 0.000437
-token_price_usd_prev = 0.000438
+token_price_usd = 0.000438
+token_price_usd_prev = 0.000437
 visa_free_destinations = 43
 visa_free_inbound = 158
 
