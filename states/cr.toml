@@ -11,7 +11,7 @@ currency_name = "Costa Rican Colon"
 money_supply_b_usd = 58.0
 money_supply_b_usd_prev = 58.0
 token_price_usd = 0.002213
-token_price_usd_prev = 0.002211
+token_price_usd_prev = 0.002213
 visa_free_destinations = 148
 visa_free_inbound = 128
 

@@ -11,7 +11,7 @@ currency_name = "Zimbabwean Dollar"
 money_supply_b_usd = 0.285
 money_supply_b_usd_prev = 0.285
 token_price_usd = 0.037640
-token_price_usd_prev = 0.037609
+token_price_usd_prev = 0.037640
 visa_free_destinations = 65
 visa_free_inbound = 162
 

@@ -11,7 +11,7 @@ currency_name = "Ugandan Shilling"
 money_supply_b_usd = 13.8
 money_supply_b_usd_prev = 13.8
 token_price_usd = 0.000271
-token_price_usd_prev = 0.000272
+token_price_usd_prev = 0.000271
 visa_free_destinations = 66
 visa_free_inbound = 188
 

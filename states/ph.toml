@@ -10,8 +10,8 @@ currency_code = "PHP"
 currency_name = "Philippine Peso"
 money_supply_b_usd = 308
 money_supply_b_usd_prev = 308
-token_price_usd = 0.016263
-token_price_usd_prev = 0.016297
+token_price_usd = 0.016269
+token_price_usd_prev = 0.016263
 visa_free_destinations = 72
 visa_free_inbound = 95
 

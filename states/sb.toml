@@ -10,8 +10,8 @@ currency_code = "SBD"
 currency_name = "Solomon Islands Dollar"
 money_supply_b_usd = 0.808
 money_supply_b_usd_prev = 0.808
-token_price_usd = 0.126142
-token_price_usd_prev = 0.126122
+token_price_usd = 0.126150
+token_price_usd_prev = 0.126142
 visa_free_destinations = 99
 visa_free_inbound = 165
 
