@@ -8,10 +8,10 @@ population = 40528396
 land_area_km2 = 9984670
 currency_code = "CAD"
 currency_name = "Canadian Dollar"
-money_supply_b_usd = 1559
+money_supply_b_usd = 1560
 money_supply_b_usd_prev = 1559
-token_price_usd = 0.720721
-token_price_usd_prev = 0.720565
+token_price_usd = 0.721189
+token_price_usd_prev = 0.720721
 visa_free_destinations = 188
 visa_free_inbound = 44
 

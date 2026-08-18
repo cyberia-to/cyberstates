@@ -8,10 +8,10 @@ population = 12458223
 land_area_km2 = 163610
 currency_code = "TND"
 currency_name = "Tunisian Dinar"
-money_supply_b_usd = 50.3
+money_supply_b_usd = 50.4
 money_supply_b_usd_prev = 50.3
-token_price_usd = 0.342372
-token_price_usd_prev = 0.342419
+token_price_usd = 0.343018
+token_price_usd_prev = 0.342372
 visa_free_destinations = 72
 visa_free_inbound = 95
 

@@ -8,10 +8,10 @@ population = 51784059
 land_area_km2 = 100210
 currency_code = "KRW"
 currency_name = "South Korean Won"
-money_supply_b_usd = 2942
-money_supply_b_usd_prev = 2939
+money_supply_b_usd = 2941
+money_supply_b_usd_prev = 2942
 token_price_usd = 0.000707
-token_price_usd_prev = 0.000706
+token_price_usd_prev = 0.000707
 visa_free_destinations = 193
 visa_free_inbound = 98
 

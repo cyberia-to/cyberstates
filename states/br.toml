@@ -8,10 +8,10 @@ population = 216422446
 land_area_km2 = 8515767
 currency_code = "BRL"
 currency_name = "Brazilian Real"
-money_supply_b_usd = 2905
+money_supply_b_usd = 2893
 money_supply_b_usd_prev = 2905
-token_price_usd = 0.192853
-token_price_usd_prev = 0.192886
+token_price_usd = 0.192075
+token_price_usd_prev = 0.192853
 visa_free_destinations = 170
 visa_free_inbound = 115
 
