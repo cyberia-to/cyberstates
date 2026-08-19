@@ -8,10 +8,10 @@ population = 20569737
 land_area_km2 = 752618
 currency_code = "ZMW"
 currency_name = "Zambian Kwacha"
-money_supply_b_usd = 11.8
-money_supply_b_usd_prev = 11.9
-token_price_usd = 0.053042
-token_price_usd_prev = 0.053140
+money_supply_b_usd = 11.9
+money_supply_b_usd_prev = 11.8
+token_price_usd = 0.053156
+token_price_usd_prev = 0.053042
 visa_free_destinations = 75
 visa_free_inbound = 155
 

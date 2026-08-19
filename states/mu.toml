@@ -10,8 +10,8 @@ currency_code = "MUR"
 currency_name = "Mauritian Rupee"
 money_supply_b_usd = 22.5
 money_supply_b_usd_prev = 22.5
-token_price_usd = 0.021307
-token_price_usd_prev = 0.021264
+token_price_usd = 0.021293
+token_price_usd_prev = 0.021307
 visa_free_destinations = 90
 visa_free_inbound = 125
 

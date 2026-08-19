@@ -10,8 +10,8 @@ currency_code = "GMD"
 currency_name = "Gambian Dalasi"
 money_supply_b_usd = 1.0
 money_supply_b_usd_prev = 1.0
-token_price_usd = 0.013390
-token_price_usd_prev = 0.013388
+token_price_usd = 0.013387
+token_price_usd_prev = 0.013390
 visa_free_destinations = 59
 visa_free_inbound = 158
 
