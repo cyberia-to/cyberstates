@@ -10,8 +10,8 @@ currency_code = "XOF"
 currency_name = "West African Franc"
 money_supply_b_usd = 3.9
 money_supply_b_usd_prev = 3.9
-token_price_usd = 0.001765
-token_price_usd_prev = 0.001766
+token_price_usd = 0.001776
+token_price_usd_prev = 0.001765
 visa_free_destinations = 50
 visa_free_inbound = 168
 

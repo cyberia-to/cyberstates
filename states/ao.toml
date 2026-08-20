@@ -8,10 +8,10 @@ population = 36684202
 land_area_km2 = 1246700
 currency_code = "AOA"
 currency_name = "Angolan Kwanza"
-money_supply_b_usd = 19.2
+money_supply_b_usd = 19.3
 money_supply_b_usd_prev = 19.2
-token_price_usd = 0.001076
-token_price_usd_prev = 0.001078
+token_price_usd = 0.001083
+token_price_usd_prev = 0.001076
 visa_free_destinations = 51
 visa_free_inbound = 140
 

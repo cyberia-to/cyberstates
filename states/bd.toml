@@ -9,9 +9,9 @@ land_area_km2 = 147570
 currency_code = "BDT"
 currency_name = "Bangladeshi Taka"
 money_supply_b_usd = 216
-money_supply_b_usd_prev = 215
-token_price_usd = 0.008184
-token_price_usd_prev = 0.008151
+money_supply_b_usd_prev = 216
+token_price_usd = 0.008183
+token_price_usd_prev = 0.008184
 visa_free_destinations = 42
 visa_free_inbound = 50
 

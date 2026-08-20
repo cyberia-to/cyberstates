@@ -10,8 +10,8 @@ currency_code = "RON"
 currency_name = "Romanian Leu"
 money_supply_b_usd = 176
 money_supply_b_usd_prev = 176
-token_price_usd = 0.220794
-token_price_usd_prev = 0.221234
+token_price_usd = 0.221239
+token_price_usd_prev = 0.220794
 visa_free_destinations = 178
 visa_free_inbound = 90
 

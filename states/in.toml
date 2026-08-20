@@ -9,9 +9,9 @@ land_area_km2 = 3287263
 currency_code = "INR"
 currency_name = "Indian Rupee"
 money_supply_b_usd = 2023
-money_supply_b_usd_prev = 2025
-token_price_usd = 0.010442
-token_price_usd_prev = 0.010450
+money_supply_b_usd_prev = 2023
+token_price_usd = 0.010444
+token_price_usd_prev = 0.010442
 visa_free_destinations = 57
 visa_free_inbound = 60
 

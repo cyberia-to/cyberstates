@@ -8,10 +8,10 @@ population = 35648100
 land_area_km2 = 447400
 currency_code = "UZS"
 currency_name = "Uzbekistani Som"
-money_supply_b_usd = 32.0
+money_supply_b_usd = 32.1
 money_supply_b_usd_prev = 32.0
 token_price_usd = 0.000085
-token_price_usd_prev = 0.000084
+token_price_usd_prev = 0.000085
 visa_free_destinations = 66
 visa_free_inbound = 65
 

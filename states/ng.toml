@@ -9,9 +9,9 @@ land_area_km2 = 923768
 currency_code = "NGN"
 currency_name = "Nigerian Naira"
 money_supply_b_usd = 58.3
-money_supply_b_usd_prev = 57.9
-token_price_usd = 0.000740
-token_price_usd_prev = 0.000735
+money_supply_b_usd_prev = 58.3
+token_price_usd = 0.000741
+token_price_usd_prev = 0.000740
 visa_free_destinations = 47
 visa_free_inbound = 115
 

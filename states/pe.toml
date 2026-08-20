@@ -10,8 +10,8 @@ currency_code = "PEN"
 currency_name = "Peruvian Sol"
 money_supply_b_usd = 173
 money_supply_b_usd_prev = 173
-token_price_usd = 0.297133
-token_price_usd_prev = 0.297265
+token_price_usd = 0.297000
+token_price_usd_prev = 0.297133
 visa_free_destinations = 143
 visa_free_inbound = 130
 
