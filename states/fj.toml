@@ -8,10 +8,10 @@ population = 936375
 land_area_km2 = 18274
 currency_code = "FJD"
 currency_name = "Fijian Dollar"
-money_supply_b_usd = 5.0
+money_supply_b_usd = 5.1
 money_supply_b_usd_prev = 5.0
-token_price_usd = 0.452714
-token_price_usd_prev = 0.452899
+token_price_usd = 0.454174
+token_price_usd_prev = 0.452714
 visa_free_destinations = 94
 visa_free_inbound = 120
 

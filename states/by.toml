@@ -10,8 +10,8 @@ currency_code = "BYN"
 currency_name = "Belarusian Ruble"
 money_supply_b_usd = 17.9
 money_supply_b_usd_prev = 17.9
-token_price_usd = 0.329196
-token_price_usd_prev = 0.329424
+token_price_usd = 0.329099
+token_price_usd_prev = 0.329196
 visa_free_destinations = 78
 visa_free_inbound = 50
 

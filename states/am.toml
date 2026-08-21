@@ -10,8 +10,8 @@ currency_code = "AMD"
 currency_name = "Armenian Dram"
 money_supply_b_usd = 19.0
 money_supply_b_usd_prev = 19.0
-token_price_usd = 0.002743
-token_price_usd_prev = 0.002733
+token_price_usd = 0.002741
+token_price_usd_prev = 0.002743
 visa_free_destinations = 91
 visa_free_inbound = 115
 

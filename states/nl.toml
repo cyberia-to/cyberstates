@@ -8,10 +8,10 @@ population = 17618299
 land_area_km2 = 41543
 currency_code = "EUR"
 currency_name = "Euro"
-money_supply_b_usd = 1186
-money_supply_b_usd_prev = 1178
-token_price_usd = 1.164958
-token_price_usd_prev = 1.157541
+money_supply_b_usd = 1189
+money_supply_b_usd_prev = 1186
+token_price_usd = 1.168224
+token_price_usd_prev = 1.164958
 visa_free_destinations = 191
 visa_free_inbound = 93
 

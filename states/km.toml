@@ -8,10 +8,10 @@ population = 836774
 land_area_km2 = 1862
 currency_code = "KMF"
 currency_name = "Comorian Franc"
-money_supply_b_usd = 0.677
-money_supply_b_usd_prev = 0.673
-token_price_usd = 0.002368
-token_price_usd_prev = 0.002353
+money_supply_b_usd = 0.679
+money_supply_b_usd_prev = 0.677
+token_price_usd = 0.002374
+token_price_usd_prev = 0.002368
 visa_free_destinations = 55
 visa_free_inbound = 182
 
