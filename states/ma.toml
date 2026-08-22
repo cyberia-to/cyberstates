@@ -9,9 +9,9 @@ land_area_km2 = 446550
 currency_code = "MAD"
 currency_name = "Moroccan Dirham"
 money_supply_b_usd = 224
-money_supply_b_usd_prev = 223
-token_price_usd = 0.108142
-token_price_usd_prev = 0.107650
+money_supply_b_usd_prev = 224
+token_price_usd = 0.108349
+token_price_usd_prev = 0.108142
 visa_free_destinations = 72
 visa_free_inbound = 95
 

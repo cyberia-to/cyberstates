@@ -10,8 +10,8 @@ currency_code = "INR"
 currency_name = "Indian Rupee"
 money_supply_b_usd = 2023
 money_supply_b_usd_prev = 2023
-token_price_usd = 0.010441
-token_price_usd_prev = 0.010444
+token_price_usd = 0.010443
+token_price_usd_prev = 0.010441
 visa_free_destinations = 57
 visa_free_inbound = 60
 

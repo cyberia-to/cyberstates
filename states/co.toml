@@ -8,10 +8,10 @@ population = 52085168
 land_area_km2 = 1141748
 currency_code = "COP"
 currency_name = "Colombian Peso"
-money_supply_b_usd = 261
-money_supply_b_usd_prev = 258
-token_price_usd = 0.000327
-token_price_usd_prev = 0.000323
+money_supply_b_usd = 218
+money_supply_b_usd_prev = 261
+token_price_usd = 0.000273
+token_price_usd_prev = 0.000327
 visa_free_destinations = 142
 visa_free_inbound = 150
 

@@ -8,10 +8,10 @@ population = 37950802
 land_area_km2 = 312696
 currency_code = "PLN"
 currency_name = "Polish Zloty"
-money_supply_b_usd = 670
-money_supply_b_usd_prev = 668
-token_price_usd = 0.270585
-token_price_usd_prev = 0.269724
+money_supply_b_usd = 671
+money_supply_b_usd_prev = 670
+token_price_usd = 0.271113
+token_price_usd_prev = 0.270585
 visa_free_destinations = 189
 visa_free_inbound = 93
 

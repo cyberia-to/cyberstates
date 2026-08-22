@@ -8,10 +8,10 @@ population = 2512758
 land_area_km2 = 33846
 currency_code = "MDL"
 currency_name = "Moldovan Leu"
-money_supply_b_usd = 11.1
+money_supply_b_usd = 11.5
 money_supply_b_usd_prev = 11.1
-token_price_usd = 0.058208
-token_price_usd_prev = 0.058051
+token_price_usd = 0.060204
+token_price_usd_prev = 0.058208
 visa_free_destinations = 122
 visa_free_inbound = 70
 

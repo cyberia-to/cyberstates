@@ -8,10 +8,10 @@ population = 7500000
 land_area_km2 = 1114
 currency_code = "HKD"
 currency_name = "Hong Kong Dollar"
-money_supply_b_usd = 2043
-money_supply_b_usd_prev = 2044
-token_price_usd = 0.127510
-token_price_usd_prev = 0.127533
+money_supply_b_usd = 2044
+money_supply_b_usd_prev = 2043
+token_price_usd = 0.127548
+token_price_usd_prev = 0.127510
 visa_free_destinations = 0
 visa_free_inbound = 0
 

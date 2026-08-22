@@ -8,10 +8,10 @@ population = 2630296
 land_area_km2 = 581730
 currency_code = "BWP"
 currency_name = "Botswana Pula"
-money_supply_b_usd = 8.5
-money_supply_b_usd_prev = 8.4
-token_price_usd = 0.073663
-token_price_usd_prev = 0.073012
+money_supply_b_usd = 8.2
+money_supply_b_usd_prev = 8.5
+token_price_usd = 0.071068
+token_price_usd_prev = 0.073663
 visa_free_destinations = 86
 visa_free_inbound = 150
 

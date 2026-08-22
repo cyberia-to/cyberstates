@@ -10,8 +10,8 @@ currency_code = "ZWL"
 currency_name = "Zimbabwean Dollar"
 money_supply_b_usd = 0.284
 money_supply_b_usd_prev = 0.284
-token_price_usd = 0.037557
-token_price_usd_prev = 0.037516
+token_price_usd = 0.037553
+token_price_usd_prev = 0.037557
 visa_free_destinations = 65
 visa_free_inbound = 162
 

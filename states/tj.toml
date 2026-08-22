@@ -8,10 +8,10 @@ population = 10143543
 land_area_km2 = 143100
 currency_code = "TJS"
 currency_name = "Tajikistani Somoni"
-money_supply_b_usd = 4.3
+money_supply_b_usd = 4.1
 money_supply_b_usd_prev = 4.3
-token_price_usd = 0.108253
-token_price_usd_prev = 0.108295
+token_price_usd = 0.103573
+token_price_usd_prev = 0.108253
 visa_free_destinations = 64
 visa_free_inbound = 50
 

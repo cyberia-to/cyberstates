@@ -9,9 +9,9 @@ land_area_km2 = 330803
 currency_code = "MYR"
 currency_name = "Malaysian Ringgit"
 money_supply_b_usd = 604
-money_supply_b_usd_prev = 601
-token_price_usd = 0.247317
-token_price_usd_prev = 0.246427
+money_supply_b_usd_prev = 604
+token_price_usd = 0.247574
+token_price_usd_prev = 0.247317
 visa_free_destinations = 183
 visa_free_inbound = 108
 

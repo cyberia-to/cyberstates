@@ -8,10 +8,10 @@ population = 10412651
 land_area_km2 = 86600
 currency_code = "AZN"
 currency_name = "Azerbaijani Manat"
-money_supply_b_usd = 29.3
+money_supply_b_usd = 31.4
 money_supply_b_usd_prev = 29.3
-token_price_usd = 0.587855
-token_price_usd_prev = 0.588166
+token_price_usd = 0.628773
+token_price_usd_prev = 0.587855
 visa_free_destinations = 74
 visa_free_inbound = 65
 

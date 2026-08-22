@@ -9,9 +9,9 @@ land_area_km2 = 110879
 currency_code = "BGN"
 currency_name = "Bulgarian Lev"
 money_supply_b_usd = 51.4
-money_supply_b_usd_prev = 51.3
-token_price_usd = 0.597265
-token_price_usd_prev = 0.595699
+money_supply_b_usd_prev = 51.4
+token_price_usd = 0.597300
+token_price_usd_prev = 0.597265
 visa_free_destinations = 175
 visa_free_inbound = 88
 

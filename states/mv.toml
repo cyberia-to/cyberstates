@@ -8,10 +8,10 @@ population = 521021
 land_area_km2 = 300
 currency_code = "MVR"
 currency_name = "Maldivian Rufiyaa"
-money_supply_b_usd = 4.7
+money_supply_b_usd = 5.0
 money_supply_b_usd_prev = 4.7
-token_price_usd = 0.064726
-token_price_usd_prev = 0.064706
+token_price_usd = 0.069854
+token_price_usd_prev = 0.064726
 visa_free_destinations = 83
 visa_free_inbound = 196
 

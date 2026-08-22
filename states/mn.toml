@@ -8,10 +8,10 @@ population = 3447157
 land_area_km2 = 1564116
 currency_code = "MNT"
 currency_name = "Mongolian Tugrik"
-money_supply_b_usd = 12.1
+money_supply_b_usd = 12.8
 money_supply_b_usd_prev = 12.1
-token_price_usd = 0.000279
-token_price_usd_prev = 0.000280
+token_price_usd = 0.000296
+token_price_usd_prev = 0.000279
 visa_free_destinations = 81
 visa_free_inbound = 65
 

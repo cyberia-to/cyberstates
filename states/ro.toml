@@ -9,9 +9,9 @@ land_area_km2 = 238391
 currency_code = "RON"
 currency_name = "Romanian Leu"
 money_supply_b_usd = 177
-money_supply_b_usd_prev = 176
-token_price_usd = 0.222568
-token_price_usd_prev = 0.221239
+money_supply_b_usd_prev = 177
+token_price_usd = 0.222479
+token_price_usd_prev = 0.222568
 visa_free_destinations = 178
 visa_free_inbound = 90
 

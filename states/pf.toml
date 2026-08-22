@@ -11,7 +11,7 @@ currency_name = "Franc Pacifique"
 money_supply_b_usd = 5.3
 money_supply_b_usd_prev = 5.3
 token_price_usd = 0.009789
-token_price_usd_prev = 0.009763
+token_price_usd_prev = 0.009789
 visa_free_destinations = 0
 visa_free_inbound = 0
 

@@ -8,10 +8,10 @@ population = 123294513
 land_area_km2 = 377975
 currency_code = "JPY"
 currency_name = "Japanese Yen"
-money_supply_b_usd = 10313
-money_supply_b_usd_prev = 10331
-token_price_usd = 0.006296
-token_price_usd_prev = 0.006307
+money_supply_b_usd = 10305
+money_supply_b_usd_prev = 10313
+token_price_usd = 0.006291
+token_price_usd_prev = 0.006296
 visa_free_destinations = 199
 visa_free_inbound = 100
 

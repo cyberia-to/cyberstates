@@ -8,10 +8,10 @@ population = 7100800
 land_area_km2 = 199951
 currency_code = "KGS"
 currency_name = "Kyrgyzstani Som"
-money_supply_b_usd = 5.1
+money_supply_b_usd = 5.4
 money_supply_b_usd_prev = 5.1
-token_price_usd = 0.011434
-token_price_usd_prev = 0.011436
+token_price_usd = 0.012124
+token_price_usd_prev = 0.011434
 visa_free_destinations = 76
 visa_free_inbound = 58
 

@@ -10,8 +10,8 @@ currency_code = "NAD"
 currency_name = "Namibian Dollar"
 money_supply_b_usd = 8.3
 money_supply_b_usd_prev = 8.3
-token_price_usd = 0.062022
-token_price_usd_prev = 0.062042
+token_price_usd = 0.062415
+token_price_usd_prev = 0.062022
 visa_free_destinations = 79
 visa_free_inbound = 148
 
