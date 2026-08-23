@@ -10,8 +10,8 @@ currency_code = "DKK"
 currency_name = "Danish Krone"
 money_supply_b_usd = 286
 money_supply_b_usd_prev = 286
-token_price_usd = 0.156348
-token_price_usd_prev = 0.156248
+token_price_usd = 0.156350
+token_price_usd_prev = 0.156348
 visa_free_destinations = 191
 visa_free_inbound = 93
 

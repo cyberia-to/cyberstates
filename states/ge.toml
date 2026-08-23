@@ -8,10 +8,10 @@ population = 3728573
 land_area_km2 = 69700
 currency_code = "GEL"
 currency_name = "Georgian Lari"
-money_supply_b_usd = 23.3
-money_supply_b_usd_prev = 22.1
-token_price_usd = 0.404957
-token_price_usd_prev = 0.383171
+money_supply_b_usd = 22.3
+money_supply_b_usd_prev = 23.3
+token_price_usd = 0.385996
+token_price_usd_prev = 0.404957
 visa_free_destinations = 116
 visa_free_inbound = 110
 
