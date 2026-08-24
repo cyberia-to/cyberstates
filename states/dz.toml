@@ -8,10 +8,10 @@ population = 45606480
 land_area_km2 = 2381741
 currency_code = "DZD"
 currency_name = "Algerian Dinar"
-money_supply_b_usd = 201
-money_supply_b_usd_prev = 213
-token_price_usd = 0.007595
-token_price_usd_prev = 0.008034
+money_supply_b_usd = 200
+money_supply_b_usd_prev = 201
+token_price_usd = 0.007540
+token_price_usd_prev = 0.007595
 visa_free_destinations = 55
 visa_free_inbound = 65
 
