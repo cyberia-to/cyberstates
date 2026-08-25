@@ -10,8 +10,8 @@ currency_code = "VUV"
 currency_name = "Vanuatu Vatu"
 money_supply_b_usd = 1.1
 money_supply_b_usd_prev = 1.1
-token_price_usd = 0.008502
-token_price_usd_prev = 0.008632
+token_price_usd = 0.008495
+token_price_usd_prev = 0.008502
 visa_free_destinations = 143
 visa_free_inbound = 165
 

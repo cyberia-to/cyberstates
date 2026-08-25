@@ -8,10 +8,10 @@ population = 6430770
 land_area_km2 = 488100
 currency_code = "TMT"
 currency_name = "Turkmenistani Manat"
-money_supply_b_usd = 10.1
+money_supply_b_usd = 10.0
 money_supply_b_usd_prev = 10.1
-token_price_usd = 0.288492
-token_price_usd_prev = 0.288484
+token_price_usd = 0.286311
+token_price_usd_prev = 0.288492
 visa_free_destinations = 62
 visa_free_inbound = 12
 

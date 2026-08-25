@@ -9,9 +9,9 @@ land_area_km2 = 1759540
 currency_code = "LYD"
 currency_name = "Libyan Dinar"
 money_supply_b_usd = 16.2
-money_supply_b_usd_prev = 16.3
-token_price_usd = 0.158098
-token_price_usd_prev = 0.159013
+money_supply_b_usd_prev = 16.2
+token_price_usd = 0.157968
+token_price_usd_prev = 0.158098
 visa_free_destinations = 40
 visa_free_inbound = 20
 
