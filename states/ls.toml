@@ -8,10 +8,10 @@ population = 2330318
 land_area_km2 = 30355
 currency_code = "LSL"
 currency_name = "Lesotho Loti"
-money_supply_b_usd = 0.896
-money_supply_b_usd_prev = 0.892
-token_price_usd = 0.062732
-token_price_usd_prev = 0.062422
+money_supply_b_usd = 0.895
+money_supply_b_usd_prev = 0.896
+token_price_usd = 0.062685
+token_price_usd_prev = 0.062732
 visa_free_destinations = 73
 visa_free_inbound = 150
 
