@@ -10,8 +10,8 @@ currency_code = "EUR"
 currency_name = "Euro"
 money_supply_b_usd = 19.5
 money_supply_b_usd_prev = 19.5
-token_price_usd = 1.165773
-token_price_usd_prev = 1.166997
+token_price_usd = 1.165094
+token_price_usd_prev = 1.165773
 visa_free_destinations = 188
 visa_free_inbound = 93
 

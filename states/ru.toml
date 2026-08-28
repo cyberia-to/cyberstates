@@ -8,10 +8,10 @@ population = 144236933
 land_area_km2 = 17098242
 currency_code = "RUB"
 currency_name = "Russian Ruble"
-money_supply_b_usd = 893
-money_supply_b_usd_prev = 896
-token_price_usd = 0.011861
-token_price_usd_prev = 0.011896
+money_supply_b_usd = 877
+money_supply_b_usd_prev = 893
+token_price_usd = 0.011645
+token_price_usd_prev = 0.011861
 visa_free_destinations = 118
 visa_free_inbound = 70
 

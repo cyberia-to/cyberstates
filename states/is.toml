@@ -8,10 +8,10 @@ population = 383726
 land_area_km2 = 103000
 currency_code = "ISK"
 currency_name = "Icelandic Krona"
-money_supply_b_usd = 25.5
+money_supply_b_usd = 25.6
 money_supply_b_usd_prev = 25.5
-token_price_usd = 0.008265
-token_price_usd_prev = 0.008270
+token_price_usd = 0.008293
+token_price_usd_prev = 0.008265
 visa_free_destinations = 187
 visa_free_inbound = 93
 
