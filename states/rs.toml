@@ -11,7 +11,7 @@ currency_name = "Serbian Dinar"
 money_supply_b_usd = 51.3
 money_supply_b_usd_prev = 51.3
 token_price_usd = 0.009933
-token_price_usd_prev = 0.009932
+token_price_usd_prev = 0.009933
 visa_free_destinations = 143
 visa_free_inbound = 95
 

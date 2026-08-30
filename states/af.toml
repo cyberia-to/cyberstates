@@ -10,8 +10,8 @@ currency_code = "AFN"
 currency_name = "Afghan Afghani"
 money_supply_b_usd = 8.9
 money_supply_b_usd_prev = 8.9
-token_price_usd = 0.015424
-token_price_usd_prev = 0.015391
+token_price_usd = 0.015460
+token_price_usd_prev = 0.015424
 visa_free_destinations = 28
 visa_free_inbound = 8
 
