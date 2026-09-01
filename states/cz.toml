@@ -10,8 +10,8 @@ currency_code = "CZK"
 currency_name = "Czech Koruna"
 money_supply_b_usd = 337
 money_supply_b_usd_prev = 337
-token_price_usd = 0.048072
-token_price_usd_prev = 0.048082
+token_price_usd = 0.048079
+token_price_usd_prev = 0.048072
 visa_free_destinations = 191
 visa_free_inbound = 93
 

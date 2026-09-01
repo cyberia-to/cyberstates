@@ -9,9 +9,9 @@ land_area_km2 = 7692024
 currency_code = "AUD"
 currency_name = "Australian Dollar"
 money_supply_b_usd = 2650
-money_supply_b_usd_prev = 2652
-token_price_usd = 0.716384
-token_price_usd_prev = 0.717000
+money_supply_b_usd_prev = 2650
+token_price_usd = 0.716332
+token_price_usd_prev = 0.716384
 visa_free_destinations = 189
 visa_free_inbound = 44
 

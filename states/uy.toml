@@ -8,10 +8,10 @@ population = 3423108
 land_area_km2 = 176215
 currency_code = "UYU"
 currency_name = "Uruguayan Peso"
-money_supply_b_usd = 45.0
+money_supply_b_usd = 44.8
 money_supply_b_usd_prev = 45.0
-token_price_usd = 0.024878
-token_price_usd_prev = 0.024876
+token_price_usd = 0.024745
+token_price_usd_prev = 0.024878
 visa_free_destinations = 155
 visa_free_inbound = 125
 
