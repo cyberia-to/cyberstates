@@ -8,10 +8,10 @@ population = 1534937
 land_area_km2 = 5130
 currency_code = "TTD"
 currency_name = "Trinidad and Tobago Dollar"
-money_supply_b_usd = 18.4
-money_supply_b_usd_prev = 18.5
-token_price_usd = 0.146696
-token_price_usd_prev = 0.147595
+money_supply_b_usd = 18.6
+money_supply_b_usd_prev = 18.4
+token_price_usd = 0.148454
+token_price_usd_prev = 0.146696
 visa_free_destinations = 132
 visa_free_inbound = 130
 

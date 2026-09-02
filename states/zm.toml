@@ -11,7 +11,7 @@ currency_name = "Zambian Kwacha"
 money_supply_b_usd = 11.7
 money_supply_b_usd_prev = 11.7
 token_price_usd = 0.052550
-token_price_usd_prev = 0.052511
+token_price_usd_prev = 0.052550
 visa_free_destinations = 75
 visa_free_inbound = 155
 
