@@ -8,10 +8,10 @@ population = 26473055
 land_area_km2 = 7692024
 currency_code = "AUD"
 currency_name = "Australian Dollar"
-money_supply_b_usd = 2649
-money_supply_b_usd_prev = 2644
-token_price_usd = 0.715973
-token_price_usd_prev = 0.714694
+money_supply_b_usd = 2662
+money_supply_b_usd_prev = 2649
+token_price_usd = 0.719580
+token_price_usd_prev = 0.715973
 visa_free_destinations = 189
 visa_free_inbound = 44
 

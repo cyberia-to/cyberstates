@@ -11,7 +11,7 @@ currency_name = "Iraqi Dinar"
 money_supply_b_usd = 133
 money_supply_b_usd_prev = 133
 token_price_usd = 0.000763
-token_price_usd_prev = 0.000762
+token_price_usd_prev = 0.000763
 visa_free_destinations = 36
 visa_free_inbound = 30
 

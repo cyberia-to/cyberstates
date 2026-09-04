@@ -8,10 +8,10 @@ population = 223804632
 land_area_km2 = 923768
 currency_code = "NGN"
 currency_name = "Nigerian Naira"
-money_supply_b_usd = 59.3
-money_supply_b_usd_prev = 59.1
-token_price_usd = 0.000752
-token_price_usd_prev = 0.000750
+money_supply_b_usd = 59.5
+money_supply_b_usd_prev = 59.3
+token_price_usd = 0.000755
+token_price_usd_prev = 0.000752
 visa_free_destinations = 47
 visa_free_inbound = 115
 

@@ -10,8 +10,8 @@ currency_code = "CLP"
 currency_name = "Chilean Peso"
 money_supply_b_usd = 250
 money_supply_b_usd_prev = 250
-token_price_usd = 0.001068
-token_price_usd_prev = 0.001070
+token_price_usd = 0.001067
+token_price_usd_prev = 0.001068
 visa_free_destinations = 176
 visa_free_inbound = 112
 
