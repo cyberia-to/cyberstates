@@ -10,8 +10,8 @@ currency_code = "TOP"
 currency_name = "Tongan Pa'anga"
 money_supply_b_usd = 0.411
 money_supply_b_usd_prev = 0.411
-token_price_usd = 0.422672
-token_price_usd_prev = 0.422940
+token_price_usd = 0.423173
+token_price_usd_prev = 0.422672
 visa_free_destinations = 133
 visa_free_inbound = 170
 
