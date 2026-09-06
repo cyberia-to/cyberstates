@@ -11,7 +11,7 @@ currency_name = "Armenian Dram"
 money_supply_b_usd = 19.1
 money_supply_b_usd_prev = 19.1
 token_price_usd = 0.002749
-token_price_usd_prev = 0.002747
+token_price_usd_prev = 0.002749
 visa_free_destinations = 91
 visa_free_inbound = 115
 

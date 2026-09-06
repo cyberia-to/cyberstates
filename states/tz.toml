@@ -9,9 +9,9 @@ land_area_km2 = 945087
 currency_code = "TZS"
 currency_name = "Tanzanian Shilling"
 money_supply_b_usd = 16.7
-money_supply_b_usd_prev = 16.6
+money_supply_b_usd_prev = 16.7
 token_price_usd = 0.000379
-token_price_usd_prev = 0.000378
+token_price_usd_prev = 0.000379
 visa_free_destinations = 73
 visa_free_inbound = 165
 
