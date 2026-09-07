@@ -10,8 +10,8 @@ currency_code = "FJD"
 currency_name = "Fijian Dollar"
 money_supply_b_usd = 5.1
 money_supply_b_usd_prev = 5.1
-token_price_usd = 0.454545
-token_price_usd_prev = 0.454566
+token_price_usd = 0.455415
+token_price_usd_prev = 0.454545
 visa_free_destinations = 94
 visa_free_inbound = 120
 

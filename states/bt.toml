@@ -10,8 +10,8 @@ currency_code = "BTN"
 currency_name = "Bhutanese Ngultrum"
 money_supply_b_usd = 2.5
 money_supply_b_usd_prev = 2.5
-token_price_usd = 0.010581
-token_price_usd_prev = 0.010580
+token_price_usd = 0.010578
+token_price_usd_prev = 0.010581
 visa_free_destinations = 57
 visa_free_inbound = 20
 
