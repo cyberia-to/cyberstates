@@ -8,10 +8,10 @@ population = 10612086
 land_area_km2 = 450295
 currency_code = "SEK"
 currency_name = "Swedish Krona"
-money_supply_b_usd = 519
-money_supply_b_usd_prev = 520
-token_price_usd = 0.104476
-token_price_usd_prev = 0.104548
+money_supply_b_usd = 518
+money_supply_b_usd_prev = 519
+token_price_usd = 0.104211
+token_price_usd_prev = 0.104476
 visa_free_destinations = 191
 visa_free_inbound = 93
 

@@ -10,8 +10,8 @@ currency_code = "RSD"
 currency_name = "Serbian Dinar"
 money_supply_b_usd = 51.1
 money_supply_b_usd_prev = 51.1
-token_price_usd = 0.009902
-token_price_usd_prev = 0.009900
+token_price_usd = 0.009905
+token_price_usd_prev = 0.009902
 visa_free_destinations = 143
 visa_free_inbound = 95
 
