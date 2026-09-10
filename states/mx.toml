@@ -8,10 +8,10 @@ population = 128455567
 land_area_km2 = 1964375
 currency_code = "MXN"
 currency_name = "Mexican Peso"
-money_supply_b_usd = 1000
-money_supply_b_usd_prev = 999
-token_price_usd = 0.059089
-token_price_usd_prev = 0.059056
+money_supply_b_usd = 1001
+money_supply_b_usd_prev = 1000
+token_price_usd = 0.059175
+token_price_usd_prev = 0.059089
 visa_free_destinations = 159
 visa_free_inbound = 125
 

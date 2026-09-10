@@ -10,8 +10,8 @@ currency_code = "KZT"
 currency_name = "Kazakhstani Tenge"
 money_supply_b_usd = 116
 money_supply_b_usd_prev = 116
-token_price_usd = 0.002201
-token_price_usd_prev = 0.002202
+token_price_usd = 0.002200
+token_price_usd_prev = 0.002201
 visa_free_destinations = 85
 visa_free_inbound = 55
 

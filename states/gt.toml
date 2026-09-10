@@ -10,8 +10,8 @@ currency_code = "GTQ"
 currency_name = "Guatemalan Quetzal"
 money_supply_b_usd = 74.9
 money_supply_b_usd_prev = 74.9
-token_price_usd = 0.130935
-token_price_usd_prev = 0.130998
+token_price_usd = 0.130993
+token_price_usd_prev = 0.130935
 visa_free_destinations = 140
 visa_free_inbound = 138
 
