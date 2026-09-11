@@ -8,10 +8,10 @@ population = 9174520
 land_area_km2 = 22072
 currency_code = "ILS"
 currency_name = "Israeli New Shekel"
-money_supply_b_usd = 724
-money_supply_b_usd_prev = 725
-token_price_usd = 0.330972
-token_price_usd_prev = 0.331334
+money_supply_b_usd = 718
+money_supply_b_usd_prev = 724
+token_price_usd = 0.328515
+token_price_usd_prev = 0.330972
 visa_free_destinations = 167
 visa_free_inbound = 73
 
