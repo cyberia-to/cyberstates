@@ -10,8 +10,8 @@ currency_code = "ISK"
 currency_name = "Icelandic Krona"
 money_supply_b_usd = 25.6
 money_supply_b_usd_prev = 25.6
-token_price_usd = 0.008300
-token_price_usd_prev = 0.008291
+token_price_usd = 0.008308
+token_price_usd_prev = 0.008300
 visa_free_destinations = 187
 visa_free_inbound = 93
 

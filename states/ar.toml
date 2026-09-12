@@ -8,10 +8,10 @@ population = 46654581
 land_area_km2 = 2780400
 currency_code = "ARS"
 currency_name = "Argentine Peso"
-money_supply_b_usd = 147
+money_supply_b_usd = 148
 money_supply_b_usd_prev = 147
-token_price_usd = 0.000661
-token_price_usd_prev = 0.000660
+token_price_usd = 0.000662
+token_price_usd_prev = 0.000661
 visa_free_destinations = 171
 visa_free_inbound = 128
 
