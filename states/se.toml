@@ -10,8 +10,8 @@ currency_code = "SEK"
 currency_name = "Swedish Krona"
 money_supply_b_usd = 513
 money_supply_b_usd_prev = 513
-token_price_usd = 0.103108
-token_price_usd_prev = 0.103113
+token_price_usd = 0.103113
+token_price_usd_prev = 0.103108
 visa_free_destinations = 191
 visa_free_inbound = 93
 
