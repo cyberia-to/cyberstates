@@ -10,8 +10,8 @@ currency_code = "LRD"
 currency_name = "Liberian Dollar"
 money_supply_b_usd = 0.007
 money_supply_b_usd_prev = 0.007
-token_price_usd = 0.005750
-token_price_usd_prev = 0.005731
+token_price_usd = 0.005747
+token_price_usd_prev = 0.005750
 visa_free_destinations = 52
 visa_free_inbound = 162
 
