@@ -10,8 +10,8 @@ currency_code = "GHS"
 currency_name = "Ghanaian Cedi"
 money_supply_b_usd = 30.9
 money_supply_b_usd_prev = 30.9
-token_price_usd = 0.087408
-token_price_usd_prev = 0.087352
+token_price_usd = 0.087520
+token_price_usd_prev = 0.087408
 visa_free_destinations = 68
 visa_free_inbound = 125
 
