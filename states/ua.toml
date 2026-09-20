@@ -10,8 +10,8 @@ currency_code = "UAH"
 currency_name = "Ukrainian Hryvnia"
 money_supply_b_usd = 90.0
 money_supply_b_usd_prev = 90.0
-token_price_usd = 0.022376
-token_price_usd_prev = 0.022379
+token_price_usd = 0.022373
+token_price_usd_prev = 0.022376
 visa_free_destinations = 144
 visa_free_inbound = 90
 

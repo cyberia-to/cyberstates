@@ -10,8 +10,8 @@ currency_code = "KES"
 currency_name = "Kenyan Shilling"
 money_supply_b_usd = 47.1
 money_supply_b_usd_prev = 47.1
-token_price_usd = 0.007721
-token_price_usd_prev = 0.007720
+token_price_usd = 0.007722
+token_price_usd_prev = 0.007721
 visa_free_destinations = 74
 visa_free_inbound = 190
 
