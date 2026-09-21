@@ -10,8 +10,8 @@ currency_code = "BGN"
 currency_name = "Bulgarian Lev"
 money_supply_b_usd = 50.5
 money_supply_b_usd_prev = 50.5
-token_price_usd = 0.586958
-token_price_usd_prev = 0.586923
+token_price_usd = 0.586786
+token_price_usd_prev = 0.586958
 visa_free_destinations = 175
 visa_free_inbound = 88
 

@@ -10,8 +10,8 @@ currency_code = "NZD"
 currency_name = "New Zealand Dollar"
 money_supply_b_usd = 0.189
 money_supply_b_usd_prev = 0.189
-token_price_usd = 0.572017
-token_price_usd_prev = 0.572050
+token_price_usd = 0.571951
+token_price_usd_prev = 0.572017
 visa_free_destinations = 0
 visa_free_inbound = 0
 
