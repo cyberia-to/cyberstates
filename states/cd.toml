@@ -8,10 +8,10 @@ population = 102262808
 land_area_km2 = 2344858
 currency_code = "CDF"
 currency_name = "Congolese Franc"
-money_supply_b_usd = 10.9
+money_supply_b_usd = 11.0
 money_supply_b_usd_prev = 10.9
-token_price_usd = 0.000432
-token_price_usd_prev = 0.000429
+token_price_usd = 0.000433
+token_price_usd_prev = 0.000432
 visa_free_destinations = 43
 visa_free_inbound = 158
 
