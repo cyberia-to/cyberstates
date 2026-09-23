@@ -8,10 +8,10 @@ population = 18143378
 land_area_km2 = 637657
 currency_code = "SOS"
 currency_name = "Somali Shilling"
-money_supply_b_usd = 0.989
-money_supply_b_usd_prev = 0.987
-token_price_usd = 0.001746
-token_price_usd_prev = 0.001742
+money_supply_b_usd = 0.990
+money_supply_b_usd_prev = 0.989
+token_price_usd = 0.001748
+token_price_usd_prev = 0.001746
 visa_free_destinations = 35
 visa_free_inbound = 28
 

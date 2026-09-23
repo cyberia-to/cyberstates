@@ -9,9 +9,9 @@ land_area_km2 = 323802
 currency_code = "NOK"
 currency_name = "Norwegian Krone"
 money_supply_b_usd = 338
-money_supply_b_usd_prev = 339
-token_price_usd = 0.105996
-token_price_usd_prev = 0.106215
+money_supply_b_usd_prev = 338
+token_price_usd = 0.105946
+token_price_usd_prev = 0.105996
 visa_free_destinations = 190
 visa_free_inbound = 93
 

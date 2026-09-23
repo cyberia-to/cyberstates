@@ -8,10 +8,10 @@ population = 11724763
 land_area_km2 = 27750
 currency_code = "HTG"
 currency_name = "Haitian Gourde"
-money_supply_b_usd = 4.8
+money_supply_b_usd = 4.9
 money_supply_b_usd_prev = 4.8
-token_price_usd = 0.007636
-token_price_usd_prev = 0.007626
+token_price_usd = 0.007646
+token_price_usd_prev = 0.007636
 visa_free_destinations = 57
 visa_free_inbound = 186
 
