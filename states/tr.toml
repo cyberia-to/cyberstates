@@ -10,8 +10,8 @@ currency_code = "TRY"
 currency_name = "Turkish Lira"
 money_supply_b_usd = 547
 money_supply_b_usd_prev = 547
-token_price_usd = 0.020466
-token_price_usd_prev = 0.020476
+token_price_usd = 0.020452
+token_price_usd_prev = 0.020466
 visa_free_destinations = 116
 visa_free_inbound = 75
 

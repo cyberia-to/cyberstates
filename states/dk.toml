@@ -9,9 +9,9 @@ land_area_km2 = 43094
 currency_code = "DKK"
 currency_name = "Danish Krone"
 money_supply_b_usd = 279
-money_supply_b_usd_prev = 281
-token_price_usd = 0.152583
-token_price_usd_prev = 0.153325
+money_supply_b_usd_prev = 279
+token_price_usd = 0.152114
+token_price_usd_prev = 0.152583
 visa_free_destinations = 191
 visa_free_inbound = 93
 
