@@ -9,9 +9,9 @@ land_area_km2 = 756102
 currency_code = "CLP"
 currency_name = "Chilean Peso"
 money_supply_b_usd = 243
-money_supply_b_usd_prev = 247
-token_price_usd = 0.001039
-token_price_usd_prev = 0.001057
+money_supply_b_usd_prev = 243
+token_price_usd = 0.001038
+token_price_usd_prev = 0.001039
 visa_free_destinations = 176
 visa_free_inbound = 112
 

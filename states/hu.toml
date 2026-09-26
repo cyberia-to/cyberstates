@@ -8,10 +8,10 @@ population = 9597085
 land_area_km2 = 93028
 currency_code = "HUF"
 currency_name = "Hungarian Forint"
-money_supply_b_usd = 152
-money_supply_b_usd_prev = 153
-token_price_usd = 0.003111
-token_price_usd_prev = 0.003129
+money_supply_b_usd = 153
+money_supply_b_usd_prev = 152
+token_price_usd = 0.003124
+token_price_usd_prev = 0.003111
 visa_free_destinations = 188
 visa_free_inbound = 93
 
