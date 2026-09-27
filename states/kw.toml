@@ -9,9 +9,9 @@ land_area_km2 = 17818
 currency_code = "KWD"
 currency_name = "Kuwaiti Dinar"
 money_supply_b_usd = 137
-money_supply_b_usd_prev = 136
+money_supply_b_usd_prev = 137
 token_price_usd = 3.241491
-token_price_usd_prev = 3.240441
+token_price_usd_prev = 3.241491
 visa_free_destinations = 99
 visa_free_inbound = 68
 
