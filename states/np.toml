@@ -9,9 +9,9 @@ land_area_km2 = 147516
 currency_code = "NPR"
 currency_name = "Nepalese Rupee"
 money_supply_b_usd = 52.9
-money_supply_b_usd_prev = 53.0
-token_price_usd = 0.006505
-token_price_usd_prev = 0.006515
+money_supply_b_usd_prev = 52.9
+token_price_usd = 0.006506
+token_price_usd_prev = 0.006505
 visa_free_destinations = 48
 visa_free_inbound = 165
 
