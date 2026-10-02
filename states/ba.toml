@@ -8,10 +8,10 @@ population = 3210847
 land_area_km2 = 51197
 currency_code = "BAM"
 currency_name = "Bosnia-Herzegovina Mark"
-money_supply_b_usd = 22.7
+money_supply_b_usd = 22.5
 money_supply_b_usd_prev = 22.7
-token_price_usd = 0.579945
-token_price_usd_prev = 0.580013
+token_price_usd = 0.576203
+token_price_usd_prev = 0.579945
 visa_free_destinations = 121
 visa_free_inbound = 70
 
