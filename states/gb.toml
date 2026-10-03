@@ -8,10 +8,10 @@ population = 67886011
 land_area_km2 = 243610
 currency_code = "GBP"
 currency_name = "British Pound"
-money_supply_b_usd = 5419
-money_supply_b_usd_prev = 5443
-token_price_usd = 1.320655
-token_price_usd_prev = 1.326436
+money_supply_b_usd = 5427
+money_supply_b_usd_prev = 5419
+token_price_usd = 1.322751
+token_price_usd_prev = 1.320655
 visa_free_destinations = 191
 visa_free_inbound = 90
 

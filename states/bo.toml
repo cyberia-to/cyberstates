@@ -10,8 +10,8 @@ currency_code = "BOB"
 currency_name = "Bolivian Boliviano"
 money_supply_b_usd = 21.4
 money_supply_b_usd_prev = 21.4
-token_price_usd = 0.083123
-token_price_usd_prev = 0.083049
+token_price_usd = 0.083095
+token_price_usd_prev = 0.083123
 visa_free_destinations = 82
 visa_free_inbound = 165
 

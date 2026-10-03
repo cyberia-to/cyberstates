@@ -9,9 +9,9 @@ land_area_km2 = 28748
 currency_code = "ALL"
 currency_name = "Albanian Lek"
 money_supply_b_usd = 21.9
-money_supply_b_usd_prev = 22.0
-token_price_usd = 0.012285
-token_price_usd_prev = 0.012322
+money_supply_b_usd_prev = 21.9
+token_price_usd = 0.012295
+token_price_usd_prev = 0.012285
 visa_free_destinations = 119
 visa_free_inbound = 80
 

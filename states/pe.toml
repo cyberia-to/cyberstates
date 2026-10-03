@@ -8,10 +8,10 @@ population = 34352719
 land_area_km2 = 1285216
 currency_code = "PEN"
 currency_name = "Peruvian Sol"
-money_supply_b_usd = 168
-money_supply_b_usd_prev = 169
-token_price_usd = 0.289830
-token_price_usd_prev = 0.290487
+money_supply_b_usd = 169
+money_supply_b_usd_prev = 168
+token_price_usd = 0.290470
+token_price_usd_prev = 0.289830
 visa_free_destinations = 143
 visa_free_inbound = 130
 
