@@ -9,9 +9,9 @@ land_area_km2 = 49035
 currency_code = "EUR"
 currency_name = "Euro"
 money_supply_b_usd = 68.0
-money_supply_b_usd_prev = 68.1
+money_supply_b_usd_prev = 68.0
 token_price_usd = 1.125113
-token_price_usd_prev = 1.127015
+token_price_usd_prev = 1.125113
 visa_free_destinations = 187
 visa_free_inbound = 93
 

@@ -10,8 +10,8 @@ currency_code = "MDL"
 currency_name = "Moldovan Leu"
 money_supply_b_usd = 10.7
 money_supply_b_usd_prev = 10.7
-token_price_usd = 0.056230
-token_price_usd_prev = 0.056409
+token_price_usd = 0.056248
+token_price_usd_prev = 0.056230
 visa_free_destinations = 122
 visa_free_inbound = 70
 
