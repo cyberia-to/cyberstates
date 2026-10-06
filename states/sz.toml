@@ -10,8 +10,8 @@ currency_code = "SZL"
 currency_name = "Swazi Lilangeni"
 money_supply_b_usd = 1.3
 money_supply_b_usd_prev = 1.3
-token_price_usd = 0.060066
-token_price_usd_prev = 0.060023
+token_price_usd = 0.060067
+token_price_usd_prev = 0.060066
 visa_free_destinations = 72
 visa_free_inbound = 148
 
