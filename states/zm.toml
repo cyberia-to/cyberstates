@@ -10,8 +10,8 @@ currency_code = "ZMW"
 currency_name = "Zambian Kwacha"
 money_supply_b_usd = 11.3
 money_supply_b_usd_prev = 11.3
-token_price_usd = 0.050638
-token_price_usd_prev = 0.050665
+token_price_usd = 0.050745
+token_price_usd_prev = 0.050638
 visa_free_destinations = 75
 visa_free_inbound = 155
 
