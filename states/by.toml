@@ -9,9 +9,9 @@ land_area_km2 = 207600
 currency_code = "BYN"
 currency_name = "Belarusian Ruble"
 money_supply_b_usd = 17.7
-money_supply_b_usd_prev = 17.8
-token_price_usd = 0.325712
-token_price_usd_prev = 0.328246
+money_supply_b_usd_prev = 17.7
+token_price_usd = 0.326275
+token_price_usd_prev = 0.325712
 visa_free_destinations = 78
 visa_free_inbound = 50
 
