@@ -9,9 +9,9 @@ land_area_km2 = 77474
 currency_code = "RSD"
 currency_name = "Serbian Dinar"
 money_supply_b_usd = 49.2
-money_supply_b_usd_prev = 49.5
-token_price_usd = 0.009537
-token_price_usd_prev = 0.009582
+money_supply_b_usd_prev = 49.2
+token_price_usd = 0.009538
+token_price_usd_prev = 0.009537
 visa_free_destinations = 143
 visa_free_inbound = 95
 
