@@ -10,8 +10,8 @@ currency_code = "TND"
 currency_name = "Tunisian Dinar"
 money_supply_b_usd = 48.9
 money_supply_b_usd_prev = 48.9
-token_price_usd = 0.332923
-token_price_usd_prev = 0.332779
+token_price_usd = 0.332557
+token_price_usd_prev = 0.332923
 visa_free_destinations = 72
 visa_free_inbound = 95
 
