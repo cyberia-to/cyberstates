@@ -9,9 +9,9 @@ land_area_km2 = 1001450
 currency_code = "EGP"
 currency_name = "Egyptian Pound"
 money_supply_b_usd = 266
-money_supply_b_usd_prev = 267
-token_price_usd = 0.018990
-token_price_usd_prev = 0.019058
+money_supply_b_usd_prev = 266
+token_price_usd = 0.018938
+token_price_usd_prev = 0.018990
 visa_free_destinations = 54
 visa_free_inbound = 105
 

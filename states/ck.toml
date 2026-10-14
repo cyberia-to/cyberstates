@@ -8,10 +8,10 @@ population = 17000
 land_area_km2 = 236
 currency_code = "NZD"
 currency_name = "New Zealand Dollar"
-money_supply_b_usd = 0.182
-money_supply_b_usd_prev = 0.183
-token_price_usd = 0.559065
-token_price_usd_prev = 0.561262
+money_supply_b_usd = 0.183
+money_supply_b_usd_prev = 0.182
+token_price_usd = 0.561262
+token_price_usd_prev = 0.559065
 visa_free_destinations = 0
 visa_free_inbound = 0
 
