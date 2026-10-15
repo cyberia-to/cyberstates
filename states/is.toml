@@ -11,7 +11,7 @@ currency_name = "Icelandic Krona"
 money_supply_b_usd = 25.3
 money_supply_b_usd_prev = 25.3
 token_price_usd = 0.008216
-token_price_usd_prev = 0.008191
+token_price_usd_prev = 0.008216
 visa_free_destinations = 187
 visa_free_inbound = 93
 
