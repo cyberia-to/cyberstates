@@ -8,10 +8,10 @@ population = 11088796
 land_area_km2 = 619745
 currency_code = "SSP"
 currency_name = "South Sudanese Pound"
-money_supply_b_usd = 0.779
-money_supply_b_usd_prev = 0.755
-token_price_usd = 0.000169
-token_price_usd_prev = 0.000164
+money_supply_b_usd = 0.770
+money_supply_b_usd_prev = 0.779
+token_price_usd = 0.000167
+token_price_usd_prev = 0.000169
 visa_free_destinations = 40
 visa_free_inbound = 152
 

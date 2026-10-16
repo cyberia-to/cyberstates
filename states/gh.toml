@@ -9,9 +9,9 @@ land_area_km2 = 238535
 currency_code = "GHS"
 currency_name = "Ghanaian Cedi"
 money_supply_b_usd = 35.5
-money_supply_b_usd_prev = 35.3
-token_price_usd = 0.085568
-token_price_usd_prev = 0.085194
+money_supply_b_usd_prev = 35.5
+token_price_usd = 0.085729
+token_price_usd_prev = 0.085568
 visa_free_destinations = 68
 visa_free_inbound = 125
 
