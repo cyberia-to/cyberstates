@@ -198,7 +198,7 @@ pub fn TotalsPage() -> impl IntoView {
 
     view! {
         <div class="page-frame">
-            <div class="site-chrome">
+            <div class="site-chroma">
             <div class="header-row1">
                 <div class="logo-zone">
                     <BrandChooser active="TOTALS" />

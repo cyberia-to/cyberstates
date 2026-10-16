@@ -316,7 +316,7 @@ pub fn CountryPage() -> impl IntoView {
 #[component]
 pub fn SiteHeader() -> impl IntoView {
     view! {
-        <div class="site-chrome">
+        <div class="site-chroma">
         <div class="header-row1">
             <div class="logo-zone">
                 <BrandChooser />

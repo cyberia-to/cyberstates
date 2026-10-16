@@ -13,22 +13,22 @@ use crate::pages::token::TokenPage;
 use crate::pages::tokens::TokensPage;
 use crate::pages::totals::TotalsPage;
 
-/// Publish the sticky chrome's height as --chrome-h on <html>, so table
+/// Publish the sticky chroma's height as --chroma-h on <html>, so table
 /// headers and the map know where to stick. Re-measured after every
-/// navigation (chrome height differs per page) and on resize.
-fn measure_chrome() {
-    crate::pages::map::measure_chrome_height();
+/// navigation (chroma height differs per page) and on resize.
+fn measure_chroma() {
+    crate::pages::map::measure_chroma_height();
 }
 
 #[component]
-fn ChromeMeter() -> impl IntoView {
+fn ChromaMeter() -> impl IntoView {
     use wasm_bindgen::prelude::*;
     use wasm_bindgen::JsCast;
     let location = leptos_router::hooks::use_location();
 
     // once: keep the var honest across viewport changes
     Effect::new(move |_| {
-        let on_resize = Closure::wrap(Box::new(measure_chrome) as Box<dyn FnMut()>);
+        let on_resize = Closure::wrap(Box::new(measure_chroma) as Box<dyn FnMut()>);
         if let Some(w) = web_sys::window() {
             let _ =
                 w.add_event_listener_with_callback("resize", on_resize.as_ref().unchecked_ref());
@@ -96,7 +96,7 @@ fn ChromeMeter() -> impl IntoView {
     Effect::new(move |_| {
         let _ = location.pathname.get();
         if let Some(w) = web_sys::window() {
-            let cb = Closure::wrap(Box::new(measure_chrome) as Box<dyn FnMut()>);
+            let cb = Closure::wrap(Box::new(measure_chroma) as Box<dyn FnMut()>);
             let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(
                 cb.as_ref().unchecked_ref(),
                 130,
@@ -116,7 +116,7 @@ pub fn App() -> impl IntoView {
 
     view! {
         <Router>
-            <ChromeMeter />
+            <ChromaMeter />
             <Routes fallback=|| view! { <p style="color: var(--cyber-red); padding: 40px;">"404 — NOT FOUND"</p> }>
                 <Route path=path!("/") view=HomePage />
                 <Route path=path!("/by/:field") view=HomePage />

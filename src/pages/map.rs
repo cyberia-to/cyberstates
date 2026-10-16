@@ -61,12 +61,12 @@ pub fn value_to_color(val: f64, max: f64) -> String {
 /// Client-side navigation from plain DOM handlers: push the URL, then
 /// wake the router with a synthetic popstate — no full page reload, so
 /// the wasm app, fonts and state all survive the hop. Wrapped in a view
-/// transition where the browser has one: frozen chrome/map, body fades.
+/// transition where the browser has one: frozen chroma/map, body fades.
 ///
 /// Keep the update callback *synchronous* — waiting on rAF/Promise before
 /// the new snapshot made every hop feel laggy (click → stall → fade).
-/// Map position stability comes from `--map-chrome-h` (listing-only,
-/// never inherits short state/token chrome), not from delaying the hop.
+/// Map position stability comes from `--map-chroma-h` (listing-only,
+/// never inherits short state/token chroma), not from delaying the hop.
 pub fn navigate_client(path: &str) {
     let path = path.to_string();
 
@@ -97,8 +97,8 @@ pub fn navigate_client(path: &str) {
                 }
             }
         }
-        // pin chrome height for the fixed map ASAP (no extra frames)
-        measure_chrome_height();
+        // pin chroma height for the fixed map ASAP (no extra frames)
+        measure_chroma_height();
     };
 
     let doc = web_sys::window().and_then(|w| w.document());
@@ -127,7 +127,7 @@ pub fn navigate_client(path: &str) {
                             let _ = root.class_list().remove_1("vt-active");
                         }
                     }
-                    measure_chrome_height();
+                    measure_chroma_height();
                 })
             };
 
@@ -175,29 +175,29 @@ pub fn navigate_client(path: &str) {
     }
 }
 
-/// Publish chrome heights on <html> without clobbering other inline styles.
+/// Publish chroma heights on <html> without clobbering other inline styles.
 ///
-/// - `--chrome-h` — every page (sticky thead, etc.)
-/// - `--map-chrome-h` — **only** when `.map-pane` is in the DOM (home /
-///   tokens listing chrome with pills). State/token pages have a shorter
-///   chrome; writing that into the map variable made the map mount high
+/// - `--chroma-h` — every page (sticky thead, etc.)
+/// - `--map-chroma-h` — **only** when `.map-pane` is in the DOM (home /
+///   tokens listing chroma with pills). State/token pages have a shorter
+///   chroma; writing that into the map variable made the map mount high
 ///   on the next listing hop and then drop when remeasured.
-pub fn measure_chrome_height() {
+pub fn measure_chroma_height() {
     if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
-        if let (Ok(Some(chrome)), Some(root)) =
-            (doc.query_selector(".site-chrome"), doc.document_element())
+        if let (Ok(Some(chroma)), Some(root)) =
+            (doc.query_selector(".site-chroma"), doc.document_element())
         {
-            let h = chrome
+            let h = chroma
                 .unchecked_into::<web_sys::HtmlElement>()
                 .offset_height();
             let root_el = root.unchecked_into::<web_sys::HtmlElement>();
             let px = format!("{}px", h);
-            let _ = root_el.style().set_property("--chrome-h", &px);
+            let _ = root_el.style().set_property("--chroma-h", &px);
 
-            // listing chrome only — keep the last good map offset across
+            // listing chroma only — keep the last good map offset across
             // detail pages so the fixed map never inherits a short header
             if doc.query_selector(".map-pane").ok().flatten().is_some() {
-                let _ = root_el.style().set_property("--map-chrome-h", &px);
+                let _ = root_el.style().set_property("--map-chroma-h", &px);
             }
         }
     }
@@ -256,7 +256,7 @@ pub fn set_hover_sync(code: &str, scroll_row: bool) {
             // scrollIntoView options via JS object — web_sys feature flags
             // for ScrollIntoViewOptions vary; Reflect keeps this portable.
             // center the row in the viewport so the highlight is obvious
-            // (nearest often leaves it under sticky chrome / half off-screen)
+            // (nearest often leaves it under sticky chroma / half off-screen)
             let opts = js_sys::Object::new();
             let _ = js_sys::Reflect::set(
                 &opts,

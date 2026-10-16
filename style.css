@@ -13,12 +13,12 @@
     --cyber-dim: #1a1a1a;
     --cyber-muted: #333333;
     --cyber-text: #e0e0e0;
-    /* sticky thead / general chrome — remeasured every page */
-    --chrome-h: 112px;
+    /* sticky thead / general chroma — remeasured every page */
+    --chroma-h: 112px;
     /* map top ONLY. Updated only while .map-pane is mounted (listing
-       chrome with pills). Never inherits short state/token chrome —
+       chroma with pills). Never inherits short state/token chroma —
        that was the "map falls from the top" after /state or /token. */
-    --map-chrome-h: 112px;
+    --map-chroma-h: 112px;
 }
 
 /* SEO breadcrumbs (prerender / noscript surface) */
@@ -201,7 +201,7 @@ body {
     white-space: nowrap;
 }
 
-/* Mobile: compact chrome — it serves the table, not itself.
+/* Mobile: compact chroma — it serves the table, not itself.
    Control box metrics live in the LATE @media block at the end of this
    file so they win over base .nav-btn / .region-pill / .num-btn rules. */
 @media (max-width: 640px) {
@@ -659,9 +659,9 @@ body {
     padding: var(--pad-t) var(--pad-x) 20px;
 }
 
-/* The site chrome sticks; everything sails under it. Full-bleed via the
+/* The site chroma sticks; everything sails under it. Full-bleed via the
    shell's own padding vars; flow-root so child margins paint background. */
-.site-chrome {
+.site-chroma {
     position: sticky;
     top: 0;
     z-index: 60;
@@ -673,7 +673,7 @@ body {
 
 /* header + rating pills + filters: same horizontal stage as home-split
    (table 540 + gap + map to the right edge) — never a narrower 1400 box */
-.chrome-inner {
+.chroma-inner {
     width: 100%;
     max-width: none;
     margin: 0;
@@ -708,11 +708,11 @@ body {
 .map-pane {
     /* fixed, not sticky: the map is an instrument panel, it never scrolls.
        left = shell pad 20 + table pane 540 + gap 16.
-       top uses --map-chrome-h (listing-only), NOT --chrome-h: leaving a
-       state/token page leaves a short --chrome-h and the map would mount
-       too high, then drop when listing chrome is measured. */
+       top uses --map-chroma-h (listing-only), NOT --chroma-h: leaving a
+       state/token page leaves a short --chroma-h and the map would mount
+       too high, then drop when listing chroma is measured. */
     position: fixed;
-    top: calc(var(--map-chrome-h, 112px) + 8px);
+    top: calc(var(--map-chroma-h, 112px) + 8px);
     left: 576px;
     right: 0;
     z-index: 5;
@@ -1071,7 +1071,7 @@ body {
 .cyber-table th {
     position: sticky;
     /* -1px: offsetHeight rounds down, the overlap seals the seam */
-    top: calc(var(--chrome-h, 112px) - 1px);
+    top: calc(var(--chroma-h, 112px) - 1px);
     z-index: 10;
     background: #050505;
     border-bottom: 1px solid var(--cyber-muted);
@@ -1343,12 +1343,12 @@ body {
     stroke-width: 1;
 }
 
-/* ---- motion: pure cross-fade, frozen chrome -------------------------------
+/* ---- motion: pure cross-fade, frozen chroma -------------------------------
    Previous iterations used blur + translateY + named map/pills layers.
    Blur is GPU-heavy on large WASM snapshots (stutter), Y-motion fights the
    sticky header, and map/pills only exist on some routes so they entered/exited
    as separate layers on top of root — double-dissolve, not smooth.
-   This pass: single opacity cross-fade on root only; chrome + dock stay put. */
+   This pass: single opacity cross-fade on root only; chroma + dock stay put. */
 
 /* Fallback when View Transitions API is missing */
 @keyframes page-in {
@@ -1361,7 +1361,7 @@ body {
 }
 
 /* Kill UA size/position morph on every named group — geometry morph is
-   what made the header twitch between pages of different chrome height. */
+   what made the header twitch between pages of different chroma height. */
 ::view-transition-group(*) {
     animation: none;
 }
@@ -1410,24 +1410,24 @@ body {
     animation-name: vt-cross-in;
 }
 
-/* ---- named layers: only always-present chrome ---------------------------- */
+/* ---- named layers: only always-present chroma ---------------------------- */
 
 /* logo + primary nav — bolted to the viewport; instant handoff so the
    brand never blinks or double-exposes during the body fade. */
 .header-row1 {
-    view-transition-name: chrome;
+    view-transition-name: chroma;
     position: relative;
     z-index: 5;
 }
 
-/* floating search — same freeze treatment as chrome */
+/* floating search — same freeze treatment as chroma */
 .search-dock {
     view-transition-name: dock;
 }
 
 /* Map intentionally UNNAMED in view transitions: a named enter from a
    page without map still risks a group box at the wrong Y. It rides in
-   root (opacity-only) at the stable --map-chrome-h position instead. */
+   root (opacity-only) at the stable --map-chroma-h position instead. */
 
 /* while a hop is running, kill sticky transitions that reflow mid-fade */
 html.vt-active {
@@ -1444,17 +1444,17 @@ html.vt-active .world-map-container path {
     display: inline-block;
 }
 
-::view-transition-group(chrome),
+::view-transition-group(chroma),
 ::view-transition-group(dock) {
     animation: none;
     z-index: 1000; /* above dissolving content */
 }
-::view-transition-old(chrome),
+::view-transition-old(chroma),
 ::view-transition-old(dock) {
     animation: none;
     opacity: 0;
 }
-::view-transition-new(chrome),
+::view-transition-new(chroma),
 ::view-transition-new(dock) {
     animation: none;
     opacity: 1;
@@ -1649,7 +1649,7 @@ html.vt-active .world-map-container path {
     border-color: var(--cyber-green);
 }
 
-/* chrome is full-width with the table+map; pills still need to stay compact
+/* chroma is full-width with the table+map; pills still need to stay compact
    enough to fit with toggles + legend on one row */
 @media (min-width: 0px) {
     .header-row2 {
@@ -1806,7 +1806,7 @@ html.vt-active .world-map-container path {
 .solar-cockpit {
     display: grid;
     grid-template-columns: 1fr minmax(720px, 61%);
-    height: calc(100vh - var(--chrome-h, 112px) - 118px);
+    height: calc(100vh - var(--chroma-h, 112px) - 118px);
     min-height: 520px;
     margin: 2px calc(-1 * var(--pad-x, 20px)) 0;
 }
@@ -1867,7 +1867,7 @@ html.vt-active .world-map-container path {
 }
 
 /* inside its own scroll container the thead sticks to ITS top,
-   not below the page chrome */
+   not below the page chroma */
 .cockpit-table .cyber-table th {
     top: 0;
 }
@@ -2385,15 +2385,15 @@ svg.world-map path.map-sync-hover {
     display: flex;
     flex-direction: column;
 }
-.cyberia-shell .site-chrome,
-.cyberia-chrome {
+.cyberia-shell .site-chroma,
+.cyberia-chroma {
     flex-shrink: 0;
 }
 /* single header row only — no subhead strip; stage eats the rest */
-.cyberia-chrome .header-row2 {
+.cyberia-chroma .header-row2 {
     display: none;
 }
-.cyberia-chrome .chrome-inner {
+.cyberia-chroma .chroma-inner {
     padding-bottom: 6px;
 }
 .cyberia-phase-pill {

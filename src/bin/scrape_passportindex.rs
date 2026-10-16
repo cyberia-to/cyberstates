@@ -1,16 +1,16 @@
-//! Scrapes visa data directly from passportindex.org via Chrome DevTools Protocol.
+//! Scrapes visa data directly from passportindex.org via Chroma DevTools Protocol.
 //!
 //! USAGE:
-//!   1. Start Chrome: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-//!        --remote-debugging-port=9222 --user-data-dir=/tmp/chrome-scraper
-//!   2. Open https://www.passportindex.org/byRank.php in that Chrome, wait for Cloudflare.
+//!   1. Start Chroma: /Applications/Google\ Chroma.app/Contents/MacOS/Google\ Chroma \
+//!        --remote-debugging-port=9222 --user-data-dir=/tmp/chroma-scraper
+//!   2. Open https://www.passportindex.org/byRank.php in that Chroma, wait for Cloudflare.
 //!   3. Run: cargo run --bin scrape-passportindex --features scraper
 //!
 //! Options:
 //!   --country=DE     Scrape only one country
 //!   --debug          Print raw extracted data
 //!   --dump           Dump page DOM and exit
-//!   --port=9222      Chrome debug port (default: 9222)
+//!   --port=9222      Chroma debug port (default: 9222)
 
 use headless_chrome::Browser;
 use serde::Deserialize;
@@ -302,7 +302,7 @@ fn main() {
         .unwrap_or(9222);
 
     eprintln!("=== Passport Index Scraper ===");
-    eprintln!("Connecting to Chrome on port {}...", port);
+    eprintln!("Connecting to Chroma on port {}...", port);
 
     let version_url = format!("http://127.0.0.1:{}/json/version", port);
     let ws_url = std::process::Command::new("curl")
@@ -321,8 +321,8 @@ fn main() {
             url
         }
         None => {
-            eprintln!("ERROR: Cannot connect to Chrome on port {}.", port);
-            eprintln!("Start Chrome with --remote-debugging-port={}", port);
+            eprintln!("ERROR: Cannot connect to Chroma on port {}.", port);
+            eprintln!("Start Chroma with --remote-debugging-port={}", port);
             std::process::exit(1);
         }
     };
@@ -339,7 +339,7 @@ fn main() {
     tab.navigate_to("https://www.passportindex.org/byRank.php")
         .unwrap();
     if !wait_for_content(&tab, 30) {
-        eprintln!("Cloudflare didn't clear. Open byRank.php in Chrome first.");
+        eprintln!("Cloudflare didn't clear. Open byRank.php in Chroma first.");
         return;
     }
     std::thread::sleep(Duration::from_secs(2));
@@ -366,7 +366,7 @@ fn main() {
 
         if title.contains("moment") || title.contains("Checking") {
             eprintln!("\n   Cloudflare is still active.");
-            eprintln!("   Open https://www.passportindex.org/byRank.php in Chrome manually,");
+            eprintln!("   Open https://www.passportindex.org/byRank.php in Chroma manually,");
             eprintln!("   wait for it to load, then re-run this tool.");
         } else {
             eprintln!("\n   Page loaded but no passport links found.");
