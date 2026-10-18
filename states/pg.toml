@@ -10,8 +10,8 @@ currency_code = "PGK"
 currency_name = "Papua New Guinean Kina"
 money_supply_b_usd = 4.9
 money_supply_b_usd_prev = 4.9
-token_price_usd = 0.221141
-token_price_usd_prev = 0.221685
+token_price_usd = 0.221166
+token_price_usd_prev = 0.221141
 visa_free_destinations = 57
 visa_free_inbound = 130
 

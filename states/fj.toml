@@ -11,7 +11,7 @@ currency_name = "Fijian Dollar"
 money_supply_b_usd = 4.9
 money_supply_b_usd_prev = 4.9
 token_price_usd = 0.443971
-token_price_usd_prev = 0.442008
+token_price_usd_prev = 0.443971
 visa_free_destinations = 94
 visa_free_inbound = 120
 
