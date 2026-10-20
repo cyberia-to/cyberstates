@@ -10,8 +10,8 @@ currency_code = "TTD"
 currency_name = "Trinidad and Tobago Dollar"
 money_supply_b_usd = 19.2
 money_supply_b_usd_prev = 19.2
-token_price_usd = 0.147545
-token_price_usd_prev = 0.147833
+token_price_usd = 0.147765
+token_price_usd_prev = 0.147545
 visa_free_destinations = 132
 visa_free_inbound = 130
 
