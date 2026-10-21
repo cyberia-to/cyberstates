@@ -8,10 +8,10 @@ population = 37000000
 land_area_km2 = 603500
 currency_code = "UAH"
 currency_name = "Ukrainian Hryvnia"
-money_supply_b_usd = 89.4
-money_supply_b_usd_prev = 89.6
-token_price_usd = 0.022229
-token_price_usd_prev = 0.022291
+money_supply_b_usd = 89.2
+money_supply_b_usd_prev = 89.4
+token_price_usd = 0.022177
+token_price_usd_prev = 0.022229
 visa_free_destinations = 144
 visa_free_inbound = 90
 
