@@ -10,8 +10,8 @@ currency_code = "LKR"
 currency_name = "Sri Lankan Rupee"
 money_supply_b_usd = 28.5
 money_supply_b_usd_prev = 28.5
-token_price_usd = 0.003015
-token_price_usd_prev = 0.003016
+token_price_usd = 0.003012
+token_price_usd_prev = 0.003015
 visa_free_destinations = 47
 visa_free_inbound = 160
 

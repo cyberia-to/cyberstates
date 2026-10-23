@@ -9,9 +9,9 @@ land_area_km2 = 71740
 currency_code = "SLE"
 currency_name = "Sierra Leonean Leone"
 money_supply_b_usd = 1.7
-money_supply_b_usd_prev = 1.6
+money_supply_b_usd_prev = 1.7
 token_price_usd = 0.043532
-token_price_usd_prev = 0.041054
+token_price_usd_prev = 0.043532
 visa_free_destinations = 52
 visa_free_inbound = 162
 
