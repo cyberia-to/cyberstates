@@ -9,9 +9,9 @@ land_area_km2 = 8515767
 currency_code = "BRL"
 currency_name = "Brazilian Real"
 money_supply_b_usd = 2996
-money_supply_b_usd_prev = 3006
+money_supply_b_usd_prev = 2996
 token_price_usd = 0.198303
-token_price_usd_prev = 0.199021
+token_price_usd_prev = 0.198303
 visa_free_destinations = 170
 visa_free_inbound = 115
 

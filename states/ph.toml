@@ -8,10 +8,10 @@ population = 117337368
 land_area_km2 = 300000
 currency_code = "PHP"
 currency_name = "Philippine Peso"
-money_supply_b_usd = 298
+money_supply_b_usd = 297
 money_supply_b_usd_prev = 298
-token_price_usd = 0.015742
-token_price_usd_prev = 0.015777
+token_price_usd = 0.015711
+token_price_usd_prev = 0.015742
 visa_free_destinations = 72
 visa_free_inbound = 95
 
