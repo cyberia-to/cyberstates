@@ -10,8 +10,8 @@ currency_code = "WST"
 currency_name = "Samoan Tala"
 money_supply_b_usd = 0.665
 money_supply_b_usd_prev = 0.665
-token_price_usd = 0.366220
-token_price_usd_prev = 0.366139
+token_price_usd = 0.366247
+token_price_usd_prev = 0.366220
 visa_free_destinations = 131
 visa_free_inbound = 198
 
