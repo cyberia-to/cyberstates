@@ -10,8 +10,8 @@ currency_code = "THB"
 currency_name = "Thai Baht"
 money_supply_b_usd = 780
 money_supply_b_usd_prev = 780
-token_price_usd = 0.029624
-token_price_usd_prev = 0.029622
+token_price_usd = 0.029620
+token_price_usd_prev = 0.029624
 visa_free_destinations = 84
 visa_free_inbound = 130
 
