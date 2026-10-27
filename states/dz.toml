@@ -9,9 +9,9 @@ land_area_km2 = 2381741
 currency_code = "DZD"
 currency_name = "Algerian Dinar"
 money_supply_b_usd = 210
-money_supply_b_usd_prev = 211
-token_price_usd = 0.007412
-token_price_usd_prev = 0.007427
+money_supply_b_usd_prev = 210
+token_price_usd = 0.007402
+token_price_usd_prev = 0.007412
 visa_free_destinations = 55
 visa_free_inbound = 65
 
