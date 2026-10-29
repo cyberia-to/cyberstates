@@ -10,8 +10,8 @@ currency_code = "DZD"
 currency_name = "Algerian Dinar"
 money_supply_b_usd = 210
 money_supply_b_usd_prev = 210
-token_price_usd = 0.007401
-token_price_usd_prev = 0.007402
+token_price_usd = 0.007394
+token_price_usd_prev = 0.007401
 visa_free_destinations = 55
 visa_free_inbound = 65
 
