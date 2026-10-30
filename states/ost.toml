@@ -10,8 +10,8 @@ currency_code = "RUB"
 currency_name = "Russian Ruble"
 money_supply_b_usd = 0.115
 money_supply_b_usd_prev = 0.115
-token_price_usd = 0.012416
-token_price_usd_prev = 0.012412
+token_price_usd = 0.012411
+token_price_usd_prev = 0.012416
 visa_free_destinations = 0
 visa_free_inbound = 0
 
