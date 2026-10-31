@@ -10,8 +10,8 @@ currency_code = "ALL"
 currency_name = "Albanian Lek"
 money_supply_b_usd = 21.9
 money_supply_b_usd_prev = 21.9
-token_price_usd = 0.012265
-token_price_usd_prev = 0.012254
+token_price_usd = 0.012266
+token_price_usd_prev = 0.012265
 visa_free_destinations = 119
 visa_free_inbound = 80
 

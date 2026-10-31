@@ -8,10 +8,10 @@ population = 1425671352
 land_area_km2 = 9596961
 currency_code = "CNY"
 currency_name = "Chinese Yuan"
-money_supply_b_usd = 45966
-money_supply_b_usd_prev = 45942
-token_price_usd = 0.149770
-token_price_usd_prev = 0.149689
+money_supply_b_usd = 46017
+money_supply_b_usd_prev = 45966
+token_price_usd = 0.149934
+token_price_usd_prev = 0.149770
 visa_free_destinations = 85
 visa_free_inbound = 77
 

@@ -10,8 +10,8 @@ currency_code = "BAM"
 currency_name = "Bosnia-Herzegovina Mark"
 money_supply_b_usd = 22.3
 money_supply_b_usd_prev = 22.3
-token_price_usd = 0.570711
-token_price_usd_prev = 0.569866
+token_price_usd = 0.570907
+token_price_usd_prev = 0.570711
 visa_free_destinations = 121
 visa_free_inbound = 70
 
