@@ -9,9 +9,9 @@ land_area_km2 = 300000
 currency_code = "PHP"
 currency_name = "Philippine Peso"
 money_supply_b_usd = 297
-money_supply_b_usd_prev = 296
-token_price_usd = 0.015696
-token_price_usd_prev = 0.015671
+money_supply_b_usd_prev = 297
+token_price_usd = 0.015697
+token_price_usd_prev = 0.015696
 visa_free_destinations = 72
 visa_free_inbound = 95
 
